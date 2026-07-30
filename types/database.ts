@@ -210,6 +210,7 @@ export type Database = {
         {
           id: string;
           submission_id: string;
+          task_id: string | null;
           image_url: string;
           caption: string | null;
           created_at: string;
@@ -217,11 +218,12 @@ export type Database = {
         {
           id?: string;
           submission_id: string;
+          task_id?: string | null;
           image_url: string;
           caption?: string | null;
           created_at?: string;
         },
-        { caption?: string | null }
+        { caption?: string | null; task_id?: string | null }
       >;
       approvals: Table<
         {
@@ -971,6 +973,54 @@ export type Database = {
       calculate_day_xp: {
         Args: { p_status: string; p_focus_pomodoros: number; p_streak: number };
         Returns: number;
+      };
+      start_pyq_attempt: {
+        Args: { p_set_name: string; p_subject: string; p_year: number; p_mode: string };
+        Returns: Database['public']['Tables']['pyq_attempts']['Row'];
+      };
+      finish_pyq_attempt: {
+        Args: { p_attempt_id: string; p_answers: Json };
+        Returns: Database['public']['Tables']['pyq_attempts']['Row'];
+      };
+      log_water: {
+        Args: { p_amount_ml: number };
+        Returns: Database['public']['Tables']['water_logs']['Row'];
+      };
+      mark_word_learned: {
+        Args: { p_word_id: string };
+        Returns: Database['public']['Tables']['vocabulary_progress']['Row'];
+      };
+      finish_grammar_quiz: {
+        Args: {
+          p_topic: string;
+          p_correct: number;
+          p_wrong: number;
+          p_score: number;
+          p_set_name?: string;
+        };
+        Returns: Database['public']['Tables']['grammar_attempts']['Row'];
+      };
+      create_flashcard_collection: {
+        Args: { p_title: string; p_description?: string | null };
+        Returns: Database['public']['Tables']['flashcard_collections']['Row'];
+      };
+      create_flashcard: {
+        Args: { p_collection_id: string; p_question: string; p_answer: string };
+        Returns: Database['public']['Tables']['flashcards']['Row'];
+      };
+      update_flashcard: {
+        Args: {
+          p_card_id: string;
+          p_question: string;
+          p_answer: string;
+          p_collection_id?: string | null;
+        };
+        Returns: Database['public']['Tables']['flashcards']['Row'];
+      };
+      delete_flashcard: { Args: { p_card_id: string }; Returns: undefined };
+      review_flashcard: {
+        Args: { p_card_id: string; p_rating: 'again' | 'hard' | 'good' | 'easy' };
+        Returns: Database['public']['Tables']['flashcard_reviews']['Row'];
       };
     };
     Enums: {

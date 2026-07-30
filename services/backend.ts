@@ -2,6 +2,28 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 
 import { supabase } from '@/lib/supabase';
 import type { Json, TableInsert, TableRow, TableUpdate } from '@/types/database';
+import {
+  flashcardCollectionSchema,
+  flashcardIdSchema,
+  flashcardReviewSchema,
+  flashcardSchema,
+  flashcardUpdateSchema,
+  grammarQuizSchema,
+  pyqFinishSchema,
+  pyqStartSchema,
+  waterLogSchema,
+  wordLearnedSchema,
+  type FlashcardCollectionInput,
+  type FlashcardIdInput,
+  type FlashcardInput,
+  type FlashcardReviewInput,
+  type FlashcardUpdateInput,
+  type GrammarQuizInput,
+  type PyqFinishInput,
+  type PyqStartInput,
+  type WaterLogInput,
+  type WordLearnedInput,
+} from '@/features/activity';
 
 export type DraftTaskInput = Pick<TableInsert<'draft_tasks'>, 'title' | 'estimated_minutes'>;
 export type CurrentTaskInput = Pick<
@@ -203,5 +225,104 @@ export const notificationService = {
         (payload) => onInsert(payload.new as TableRow<'notifications'>),
       )
       .subscribe();
+  },
+};
+
+export const pyqService = {
+  async start(input: PyqStartInput) {
+    const values = pyqStartSchema.parse(input);
+    const { data, error } = await supabase.rpc('start_pyq_attempt', {
+      p_set_name: values.set_name,
+      p_subject: values.subject,
+      p_year: values.year,
+      p_mode: values.mode,
+    });
+    return throwIfError(data, error);
+  },
+
+  async finish(input: PyqFinishInput) {
+    const values = pyqFinishSchema.parse(input);
+    const { data, error } = await supabase.rpc('finish_pyq_attempt', {
+      p_attempt_id: values.attempt_id,
+      p_answers: values.answers as unknown as Json,
+    });
+    return throwIfError(data, error);
+  },
+};
+
+export const waterService = {
+  async log(input: WaterLogInput) {
+    const values = waterLogSchema.parse(input);
+    const { data, error } = await supabase.rpc('log_water', { p_amount_ml: values.amount_ml });
+    return throwIfError(data, error);
+  },
+};
+
+export const vocabularyService = {
+  async markLearned(input: WordLearnedInput) {
+    const values = wordLearnedSchema.parse(input);
+    const { data, error } = await supabase.rpc('mark_word_learned', { p_word_id: values.word_id });
+    return throwIfError(data, error);
+  },
+};
+
+export const grammarService = {
+  async finishQuiz(input: GrammarQuizInput) {
+    const values = grammarQuizSchema.parse(input);
+    const { data, error } = await supabase.rpc('finish_grammar_quiz', {
+      p_topic: values.topic,
+      p_correct: values.correct,
+      p_wrong: values.wrong,
+      p_score: values.score,
+      p_set_name: values.set_name,
+    });
+    return throwIfError(data, error);
+  },
+};
+
+export const flashcardService = {
+  async createCollection(input: FlashcardCollectionInput) {
+    const values = flashcardCollectionSchema.parse(input);
+    const { data, error } = await supabase.rpc('create_flashcard_collection', {
+      p_title: values.title,
+      p_description: values.description ?? null,
+    });
+    return throwIfError(data, error);
+  },
+
+  async create(input: FlashcardInput) {
+    const values = flashcardSchema.parse(input);
+    const { data, error } = await supabase.rpc('create_flashcard', {
+      p_collection_id: values.collection_id,
+      p_question: values.question,
+      p_answer: values.answer,
+    });
+    return throwIfError(data, error);
+  },
+
+  async update(input: FlashcardUpdateInput) {
+    const values = flashcardUpdateSchema.parse(input);
+    const { data, error } = await supabase.rpc('update_flashcard', {
+      p_card_id: values.card_id,
+      p_question: values.question,
+      p_answer: values.answer,
+      p_collection_id: values.collection_id,
+    });
+    return throwIfError(data, error);
+  },
+
+  async delete(input: FlashcardIdInput) {
+    const values = flashcardIdSchema.parse(input);
+    const { data, error } = await supabase.rpc('delete_flashcard', { p_card_id: values.card_id });
+    return throwIfError(data, error);
+  },
+
+  async review(input: FlashcardReviewInput) {
+    const values = flashcardReviewSchema.parse(input);
+    const { data, error } = await supabase.rpc('review_flashcard', {
+      p_card_id: values.card_id,
+      p_rating: values.rating,
+    });
+    return throwIfError(data, error);
   },
 };

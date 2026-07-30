@@ -1,45 +1,145 @@
-import { useState } from 'react';
-import { Text, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { ScrollView, Text, View } from 'react-native';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
-import { Button, Card, Screen } from '@/components/ui';
+import { Button, Card, Loading, Screen } from '@/components/ui';
+import { notificationService } from '@/services/backend';
+import { reportService } from '@/services/backend';
+import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
+import type { TableRow } from '@/types/database';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const profile = useAuthStore((state) => state.profile);
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-  const loading = useAuthStore((state) => state.loading);
-  const [message, setMessage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+  const profile = useAuthStore((s) => s.profile);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
 
-  const handleLogout = async () => {
-    setMessage(null);
-    const result = await logout();
-    if (result.error) setMessage(result.error);
+  // User stats
+  const statsQ = useQuery({
+    queryKey: queryKeys.userStats,
+    queryFn: () => reportService.stats(),
+    enabled: !!user,
+  });
+
+  const stats = statsQ.data as {
+    xp: number;
+    level: number;
+    current_streak: number;
+    approved_days: number;
+    total_pomodoros: number;
+  } | null;
+
+  // Notifications
+  const notifQ = useQuery({
+    queryKey: queryKeys.notifications,
+    queryFn: () => notificationService.listUnread(),
+    enabled: !!user,
+  });
+
+  const notifications = (notifQ.data ?? []) as TableRow<'notifications'>[];
+
+  // Realtime notification subscription
+  useEffect(() => {
+    channelRef.current = notificationService.subscribe(() => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+    });
+    return () => {
+      channelRef.current?.unsubscribe();
+    };
+  }, [queryClient]);
+
+  const handleMarkRead = async (id: string) => {
+    await notificationService.markRead(id);
+    void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
   };
 
   return (
     <Screen>
-      <View style={{ flex: 1, gap: spacing.lg, justifyContent: 'center' }}>
-        <Text style={typography.heading}>Home</Text>
-        <Card>
-          <View style={{ gap: spacing.sm }}>
-            <Text style={{ color: colors.light.mutedText }}>User name</Text>
-            <Text style={typography.title}>{profile?.full_name}</Text>
-            <Text style={{ color: colors.light.mutedText }}>User email</Text>
-            <Text style={typography.body}>{user?.email}</Text>
-            <Text style={{ color: colors.light.mutedText }}>Partner connected</Text>
-            <Text style={typography.body}>{profile?.partner_id ? 'Yes' : 'No'}</Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+          {/* Greeting */}
+          <View style={{ gap: spacing.xs }}>
+            <Text style={[typography.heading, { color: colors.light.text }]}>
+              Hello, {profile?.full_name?.split(' ')[0] ?? 'there'} 👋
+            </Text>
+            <Text style={{ color: colors.light.mutedText }}>{user?.email}</Text>
           </View>
-        </Card>
-        {message ? <Text style={{ color: colors.light.danger }}>{message}</Text> : null}
-        <Button disabled={loading} onPress={() => void handleLogout()}>
-          {loading ? 'Signing out…' : 'Logout'}
-        </Button>
-        <Button onPress={() => router.push('/(app)/testing')}>Open backend test lab</Button>
-      </View>
+
+          {/* Stats */}
+          {statsQ.isLoading ? (
+            <Loading />
+          ) : stats ? (
+            <Card>
+              <View style={{ gap: spacing.sm }}>
+                <Text style={{ fontWeight: '700', color: colors.light.text }}>Your Progress</Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.lg }}>
+                  {[
+                    { label: 'Level', value: stats.level },
+                    { label: 'XP', value: stats.xp },
+                    { label: 'Streak', value: `${stats.current_streak}d` },
+                    { label: '✅ Days', value: stats.approved_days },
+                    { label: '🍅', value: stats.total_pomodoros },
+                  ].map((s) => (
+                    <View key={s.label} style={{ alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '700', fontSize: 22, color: colors.light.primary }}>
+                        {s.value}
+                      </Text>
+                      <Text style={{ color: colors.light.mutedText, fontSize: 12 }}>{s.label}</Text>
+                    </View>
+                  ))}
+                </View>
+              </View>
+            </Card>
+          ) : null}
+
+          {/* Quick actions */}
+          <Card>
+            <View style={{ gap: spacing.sm }}>
+              <Text style={{ fontWeight: '700', color: colors.light.text }}>Quick Actions</Text>
+              <Button onPress={() => router.push('/(app)/accountability')}>
+                ✅ Accountability
+              </Button>
+              <Button onPress={() => router.push('/(app)/accountability/reports')}>
+                📊 Reports & Achievements
+              </Button>
+            </View>
+          </Card>
+
+          {/* Notifications */}
+          {notifications.length > 0 ? (
+            <Card>
+              <View style={{ gap: spacing.sm }}>
+                <Text style={{ fontWeight: '700', color: colors.light.text }}>
+                  Notifications ({notifications.length})
+                </Text>
+                {notifications.map((n) => (
+                  <View
+                    key={n.id}
+                    style={{
+                      borderBottomColor: colors.light.border,
+                      borderBottomWidth: 1,
+                      paddingVertical: spacing.xs,
+                      gap: spacing.xs,
+                    }}
+                  >
+                    <Text style={{ color: colors.light.text, fontWeight: '600' }}>{n.title}</Text>
+                    <Text style={{ color: colors.light.mutedText, fontSize: 13 }}>{n.body}</Text>
+                    <Button onPress={() => void handleMarkRead(n.id)}>Mark read</Button>
+                  </View>
+                ))}
+              </View>
+            </Card>
+          ) : null}
+
+          {/* Logout */}
+          <Button onPress={() => void logout()}>Logout</Button>
+        </View>
+      </ScrollView>
     </Screen>
   );
 }

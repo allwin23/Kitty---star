@@ -1,0 +1,66 @@
+import { supabase } from '@/lib/supabase';
+import {
+  buildPageResult,
+  paginationRange,
+  throwIfError,
+  throwIfErrorOrNull,
+  type PageOptions,
+  type PageResult,
+} from '@/lib/supabase-helpers';
+import { grammarQuizSchema, type GrammarQuizInput } from '@/features/activity';
+import type { TableRow } from '@/types/database';
+
+export type GrammarAttemptRow = TableRow<'grammar_attempts'>;
+export type GrammarStatsRow = TableRow<'grammar_stats'>;
+
+/** Submit a completed grammar quiz and update statistics. */
+export async function finishGrammarQuiz(input: GrammarQuizInput): Promise<GrammarAttemptRow> {
+  const values = grammarQuizSchema.parse(input);
+  const { data, error } = await supabase.rpc('finish_grammar_quiz', {
+    p_topic: values.topic,
+    p_correct: values.correct,
+    p_wrong: values.wrong,
+    p_score: values.score,
+    p_set_name: values.set_name,
+  });
+  return throwIfErrorOrNull(data, error, 'Failed to record grammar quiz.');
+}
+
+/** Get current user's aggregated grammar statistics. */
+export async function getStats(): Promise<GrammarStatsRow | null> {
+  const { data, error } = await supabase.from('grammar_stats').select('*').maybeSingle();
+  return throwIfError(data, error);
+}
+
+/** Paginated grammar attempt history for the current user, newest first. */
+export async function getHistory(
+  opts: PageOptions & { topic?: string } = {},
+): Promise<PageResult<GrammarAttemptRow>> {
+  const { topic, ...pageOpts } = opts;
+  const { from, to } = paginationRange(pageOpts);
+
+  let q = supabase
+    .from('grammar_attempts')
+    .select('*')
+    .order('completed_at', { ascending: false })
+    .range(from, to);
+
+  if (topic) q = q.eq('topic', topic);
+  const { data, error } = await q;
+  return buildPageResult(throwIfError(data ?? [], error), pageOpts);
+}
+
+/** Topic breakdown: distinct topics the user has attempted, with attempt counts. */
+export async function getTopicBreakdown(): Promise<{ topic: string; attempts: number }[]> {
+  const { data, error } = await supabase
+    .from('grammar_attempts')
+    .select('topic')
+    .order('topic', { ascending: true });
+  throwIfError(data, error);
+
+  const counts: Record<string, number> = {};
+  for (const row of data ?? []) {
+    counts[row.topic] = (counts[row.topic] ?? 0) + 1;
+  }
+  return Object.entries(counts).map(([topic, attempts]) => ({ topic, attempts }));
+}

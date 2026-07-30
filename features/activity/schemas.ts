@@ -33,6 +33,20 @@ export const pyqAttemptAnswerSchema = z
   })
   .strict();
 
+export const pyqStartSchema = pyqAttemptSchema.pick({
+  set_name: true,
+  subject: true,
+  year: true,
+  mode: true,
+});
+
+export const pyqFinishSchema = z
+  .object({
+    attempt_id: z.string().uuid(),
+    answers: z.array(pyqAttemptAnswerSchema.omit({ attempt_id: true })).min(1),
+  })
+  .strict();
+
 export const waterLogSchema = z
   .object({ amount_ml: z.number().int().min(1).max(10000), logged_at: timestampSchema.optional() })
   .strict();
@@ -59,6 +73,8 @@ export const vocabularyProgressSchema = z
       });
   });
 
+export const wordLearnedSchema = z.object({ word_id: identifierSchema }).strict();
+
 export const grammarAttemptSchema = z
   .object({
     set_name: identifierSchema,
@@ -69,6 +85,15 @@ export const grammarAttemptSchema = z
     completed_at: timestampSchema.optional(),
   })
   .strict();
+
+export const grammarQuizSchema = grammarAttemptSchema
+  .pick({
+    topic: true,
+    correct: true,
+    wrong: true,
+    score: true,
+  })
+  .extend({ set_name: identifierSchema.default('default') });
 
 export const flashcardCollectionSchema = z
   .object({ title: identifierSchema, description: z.string().max(1000).nullable().optional() })
@@ -90,6 +115,10 @@ export const flashcardReviewSchema = z
     rating: z.enum(['again', 'hard', 'good', 'easy']),
   })
   .strict();
+
+export const flashcardIdSchema = z.object({ card_id: z.string().uuid() }).strict();
+
+export const flashcardUpdateSchema = flashcardSchema.extend({ card_id: z.string().uuid() });
 
 export const activityEventSchema = z
   .object({
@@ -150,11 +179,17 @@ export const dailyActivityDateSchema = dateSchema;
 
 export type PyqAttemptInput = z.infer<typeof pyqAttemptSchema>;
 export type PyqAttemptAnswerInput = z.infer<typeof pyqAttemptAnswerSchema>;
+export type PyqStartInput = z.infer<typeof pyqStartSchema>;
+export type PyqFinishInput = z.infer<typeof pyqFinishSchema>;
 export type WaterLogInput = z.infer<typeof waterLogSchema>;
 export type VocabularyProgressInput = z.infer<typeof vocabularyProgressSchema>;
+export type WordLearnedInput = z.infer<typeof wordLearnedSchema>;
 export type GrammarAttemptInput = z.infer<typeof grammarAttemptSchema>;
+export type GrammarQuizInput = z.infer<typeof grammarQuizSchema>;
 export type FlashcardCollectionInput = z.infer<typeof flashcardCollectionSchema>;
 export type FlashcardInput = z.infer<typeof flashcardSchema>;
 export type FlashcardReviewInput = z.infer<typeof flashcardReviewSchema>;
+export type FlashcardIdInput = z.infer<typeof flashcardIdSchema>;
+export type FlashcardUpdateInput = z.infer<typeof flashcardUpdateSchema>;
 export type ActivityEventInput = z.infer<typeof activityEventSchema>;
 export type MascotFeedInput = z.infer<typeof mascotFeedSchema>;
