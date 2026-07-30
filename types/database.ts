@@ -410,6 +410,514 @@ export type Database = {
         },
         { read_at?: string | null }
       >;
+      pyq_attempts: Table<
+        {
+          id: string;
+          user_id: string;
+          set_name: string;
+          subject: string;
+          year: number;
+          mode: string;
+          started_at: string;
+          submitted_at: string | null;
+          score: number;
+          correct: number;
+          wrong: number;
+          unanswered: number;
+          accuracy: number;
+          time_taken_seconds: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          set_name: string;
+          subject: string;
+          year: number;
+          mode: string;
+          started_at?: string;
+          submitted_at?: string | null;
+          score?: number;
+          correct?: number;
+          wrong?: number;
+          unanswered?: number;
+          accuracy?: number;
+          time_taken_seconds?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          set_name?: string;
+          subject?: string;
+          year?: number;
+          mode?: string;
+          started_at?: string;
+          submitted_at?: string | null;
+          score?: number;
+          correct?: number;
+          wrong?: number;
+          unanswered?: number;
+          accuracy?: number;
+          time_taken_seconds?: number;
+        }
+      >;
+      pyq_attempt_answers: Table<
+        {
+          id: string;
+          attempt_id: string;
+          question_id: string;
+          selected_option: string | null;
+          correct: boolean;
+          time_taken_seconds: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          attempt_id: string;
+          question_id: string;
+          selected_option?: string | null;
+          correct: boolean;
+          time_taken_seconds?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { selected_option?: string | null; correct?: boolean; time_taken_seconds?: number }
+      >;
+      pyq_stats: Table<
+        {
+          id: string;
+          user_id: string;
+          total_tests: number;
+          total_questions: number;
+          correct_answers: number;
+          wrong_answers: number;
+          accuracy: number;
+          best_score: number;
+          today_tests: number;
+          today_questions: number;
+          last_attempt_at: string | null;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id: string;
+          total_tests?: number;
+          total_questions?: number;
+          correct_answers?: number;
+          wrong_answers?: number;
+          accuracy?: number;
+          best_score?: number;
+          today_tests?: number;
+          today_questions?: number;
+          last_attempt_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          total_tests?: number;
+          total_questions?: number;
+          correct_answers?: number;
+          wrong_answers?: number;
+          accuracy?: number;
+          best_score?: number;
+          today_tests?: number;
+          today_questions?: number;
+          last_attempt_at?: string | null;
+        }
+      >;
+      water_logs: Table<
+        {
+          id: string;
+          user_id: string;
+          amount_ml: number;
+          logged_at: string;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          amount_ml: number;
+          logged_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { amount_ml?: number; logged_at?: string }
+      >;
+      water_daily_stats: Table<
+        {
+          id: string;
+          user_id: string;
+          date: string;
+          total_ml: number;
+          goal_ml: number;
+          goal_completed: boolean;
+          current_streak: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          date: string;
+          total_ml?: number;
+          goal_ml?: number;
+          goal_completed?: boolean;
+          current_streak?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { total_ml?: number; goal_ml?: number; goal_completed?: boolean; current_streak?: number }
+      >;
+      vocabulary_progress: Table<
+        {
+          id: string;
+          user_id: string;
+          word_id: string;
+          learned: boolean;
+          learned_at: string | null;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          word_id: string;
+          learned?: boolean;
+          learned_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { learned?: boolean; learned_at?: string | null }
+      >;
+      vocabulary_stats: Table<
+        {
+          id: string;
+          user_id: string;
+          today_words: number;
+          total_words: number;
+          current_streak: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id: string;
+          today_words?: number;
+          total_words?: number;
+          current_streak?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { today_words?: number; total_words?: number; current_streak?: number }
+      >;
+      grammar_attempts: Table<
+        {
+          id: string;
+          user_id: string;
+          set_name: string;
+          topic: string;
+          correct: number;
+          wrong: number;
+          score: number;
+          completed_at: string;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          set_name: string;
+          topic: string;
+          correct?: number;
+          wrong?: number;
+          score?: number;
+          completed_at?: string;
+          created_at?: string;
+          updated_at?: string;
+        },
+        never
+      >;
+      grammar_stats: Table<
+        {
+          id: string;
+          user_id: string;
+          today_questions: number;
+          today_correct: number;
+          total_questions: number;
+          accuracy: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id: string;
+          today_questions?: number;
+          today_correct?: number;
+          total_questions?: number;
+          accuracy?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          today_questions?: number;
+          today_correct?: number;
+          total_questions?: number;
+          accuracy?: number;
+        }
+      >;
+      flashcard_collections: Table<
+        {
+          id: string;
+          user_id: string;
+          title: string;
+          description: string | null;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          title: string;
+          description?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { title?: string; description?: string | null }
+      >;
+      flashcards: Table<
+        {
+          id: string;
+          collection_id: string;
+          created_by: string;
+          type: 'builtin' | 'user';
+          question: string;
+          answer: string;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          collection_id: string;
+          created_by?: string;
+          type?: 'builtin' | 'user';
+          question: string;
+          answer: string;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { collection_id?: string; type?: 'builtin' | 'user'; question?: string; answer?: string }
+      >;
+      flashcard_reviews: Table<
+        {
+          id: string;
+          card_id: string;
+          user_id: string;
+          reviewed_at: string;
+          rating: 'again' | 'hard' | 'good' | 'easy';
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          card_id: string;
+          user_id?: string;
+          reviewed_at?: string;
+          rating: 'again' | 'hard' | 'good' | 'easy';
+          created_at?: string;
+          updated_at?: string;
+        },
+        never
+      >;
+      flashcard_schedule: Table<
+        {
+          id: string;
+          card_id: string;
+          user_id: string;
+          next_review: string | null;
+          last_review: string | null;
+          ease_factor: number;
+          interval_days: number;
+          repetitions: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          card_id: string;
+          user_id?: string;
+          next_review?: string | null;
+          last_review?: string | null;
+          ease_factor?: number;
+          interval_days?: number;
+          repetitions?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          next_review?: string | null;
+          last_review?: string | null;
+          ease_factor?: number;
+          interval_days?: number;
+          repetitions?: number;
+        }
+      >;
+      daily_user_activity: Table<
+        {
+          id: string;
+          user_id: string;
+          date: string;
+          study_minutes: number;
+          pomodoros_completed: number;
+          planned_tasks: number;
+          completed_tasks: number;
+          water_ml: number;
+          pyq_tests: number;
+          pyq_questions: number;
+          grammar_questions: number;
+          grammar_correct: number;
+          vocabulary_words: number;
+          flashcards_reviewed: number;
+          xp_earned: number;
+          achievements_unlocked: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          date: string;
+          study_minutes?: number;
+          pomodoros_completed?: number;
+          planned_tasks?: number;
+          completed_tasks?: number;
+          water_ml?: number;
+          pyq_tests?: number;
+          pyq_questions?: number;
+          grammar_questions?: number;
+          grammar_correct?: number;
+          vocabulary_words?: number;
+          flashcards_reviewed?: number;
+          xp_earned?: number;
+          achievements_unlocked?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          study_minutes?: number;
+          pomodoros_completed?: number;
+          planned_tasks?: number;
+          completed_tasks?: number;
+          water_ml?: number;
+          pyq_tests?: number;
+          pyq_questions?: number;
+          grammar_questions?: number;
+          grammar_correct?: number;
+          vocabulary_words?: number;
+          flashcards_reviewed?: number;
+          xp_earned?: number;
+          achievements_unlocked?: number;
+        }
+      >;
+      activity_events: Table<
+        {
+          id: string;
+          user_id: string;
+          event_type:
+            | 'planner_created'
+            | 'planner_updated'
+            | 'task_completed'
+            | 'pomodoro_started'
+            | 'pomodoro_completed'
+            | 'pyq_started'
+            | 'pyq_completed'
+            | 'grammar_completed'
+            | 'vocabulary_learned'
+            | 'flashcard_created'
+            | 'flashcard_reviewed'
+            | 'water_logged'
+            | 'submission_sent'
+            | 'submission_approved'
+            | 'submission_rejected'
+            | 'achievement_unlocked'
+            | 'level_up'
+            | 'streak_increased'
+            | 'daily_goal_completed'
+            | 'partner_connected';
+          reference_table: string | null;
+          reference_id: string | null;
+          metadata: Json;
+          visibility: 'private' | 'partner' | 'public';
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          event_type:
+            | 'planner_created'
+            | 'planner_updated'
+            | 'task_completed'
+            | 'pomodoro_started'
+            | 'pomodoro_completed'
+            | 'pyq_started'
+            | 'pyq_completed'
+            | 'grammar_completed'
+            | 'vocabulary_learned'
+            | 'flashcard_created'
+            | 'flashcard_reviewed'
+            | 'water_logged'
+            | 'submission_sent'
+            | 'submission_approved'
+            | 'submission_rejected'
+            | 'achievement_unlocked'
+            | 'level_up'
+            | 'streak_increased'
+            | 'daily_goal_completed'
+            | 'partner_connected';
+          reference_table?: string | null;
+          reference_id?: string | null;
+          metadata?: Json;
+          visibility?: 'private' | 'partner' | 'public';
+          created_at?: string;
+          updated_at?: string;
+        },
+        never
+      >;
+      mascot_feed: Table<
+        {
+          id: string;
+          user_id: string;
+          event_id: string | null;
+          message_type: string;
+          title: string;
+          subtitle: string | null;
+          icon: string | null;
+          emotion: 'happy' | 'celebrate' | 'encourage' | 'remind' | 'concerned';
+          priority: 'low' | 'normal' | 'high' | 'critical';
+          is_read: boolean;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id?: string;
+          event_id?: string | null;
+          message_type: string;
+          title: string;
+          subtitle?: string | null;
+          icon?: string | null;
+          emotion: 'happy' | 'celebrate' | 'encourage' | 'remind' | 'concerned';
+          priority?: 'low' | 'normal' | 'high' | 'critical';
+          is_read?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        },
+        { is_read?: boolean }
+      >;
     };
     Views: Record<string, never>;
     Functions: {
@@ -465,7 +973,14 @@ export type Database = {
         Returns: number;
       };
     };
-    Enums: Record<string, never>;
+    Enums: {
+      flashcard_type: 'builtin' | 'user';
+      flashcard_review_rating: 'again' | 'hard' | 'good' | 'easy';
+      activity_event_visibility: 'private' | 'partner' | 'public';
+      activity_event_type: Database['public']['Tables']['activity_events']['Row']['event_type'];
+      mascot_emotion: 'happy' | 'celebrate' | 'encourage' | 'remind' | 'concerned';
+      mascot_priority: 'low' | 'normal' | 'high' | 'critical';
+    };
     CompositeTypes: Record<string, never>;
   };
 };
