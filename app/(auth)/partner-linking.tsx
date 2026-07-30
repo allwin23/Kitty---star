@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
 
 import { Button, Card, Screen } from '@/components/ui';
 import { connectWithInvite, createPartnerInvite } from '@/features/auth/invites';
@@ -11,12 +12,15 @@ import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
 
 export default function PartnerLinkingScreen() {
+  const router = useRouter();
   const user = useAuthStore((state) => state.user);
   const refreshProfile = useAuthStore((state) => state.refreshProfile);
+  const logout = useAuthStore((state) => state.logout);
   const [createdCode, setCreatedCode] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [switchingAccount, setSwitchingAccount] = useState(false);
   const { control, handleSubmit } = useForm<InviteCodeFormValues>({
     defaultValues: { code: '' },
     resolver: zodResolver(inviteCodeSchema),
@@ -45,9 +49,28 @@ export default function PartnerLinkingScreen() {
     setConnecting(false);
   };
 
+  const switchAccount = async () => {
+    setSwitchingAccount(true);
+    setMessage(null);
+    const result = await logout();
+    setSwitchingAccount(false);
+    if (result.error) {
+      setMessage(result.error);
+      return;
+    }
+    router.replace('/(auth)/login');
+  };
+
   return (
     <Screen>
       <View style={{ flex: 1, gap: spacing.lg, justifyContent: 'center' }}>
+        <Button
+          disabled={generating || connecting || switchingAccount}
+          onPress={() => void switchAccount()}
+          style={{ alignSelf: 'flex-start' }}
+        >
+          {switchingAccount ? 'Signing out…' : 'Use a different account'}
+        </Button>
         <View style={{ gap: spacing.xs }}>
           <Text style={typography.heading}>Link your partner</Text>
           <Text style={{ color: colors.light.mutedText }}>

@@ -1,0 +1,26 @@
+[functions.submit-day]
+verify_jwt = true
+
+[functions.approve-submission]
+verify_jwt = true
+
+[functions.reject-submission]
+verify_jwt = true
+
+[functions.finalize-report]
+verify_jwt = true
+
+[functions.update-statistics]
+verify_jwt = true
+
+[functions.calculate-xp]
+verify_jwt = true
+
+[functions.unlock-achievements]
+verify_jwt = true
+
+[functions.delete-temporary-files]
+verify_jwt = true
+
+[functions.send-notifications]
+verify_jwt = true

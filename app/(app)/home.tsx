@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 
 import { Button, Card, Screen } from '@/components/ui';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
 
 export default function HomeScreen() {
+  const router = useRouter();
   const profile = useAuthStore((state) => state.profile);
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
@@ -36,6 +38,7 @@ export default function HomeScreen() {
         <Button disabled={loading} onPress={() => void handleLogout()}>
           {loading ? 'Signing out…' : 'Logout'}
         </Button>
+        <Button onPress={() => router.push('/(app)/testing')}>Open backend test lab</Button>
       </View>
     </Screen>
   );
