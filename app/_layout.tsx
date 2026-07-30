@@ -5,6 +5,7 @@ import { Stack } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AuthGate } from '@/components/common';
 import { queryClient } from '@/lib/query-client';
 
 export default function RootLayout() {
@@ -13,6 +14,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <Stack screenOptions={{ headerShown: false }} />
+          <AuthGate />
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
