@@ -389,16 +389,8 @@ export default function PomodoroScreen() {
                     )}
 
                     <Pressable
-                      disabled={completeMutation.isPending}
-                      onPress={() => void handleComplete(false)}
-                      style={[styles.controlButton, { backgroundColor: '#16a34a', flex: 1.2 }]}
-                    >
-                      <Text style={{ color: '#fff', fontWeight: '700', fontSize: 16 }}>Complete</Text>
-                    </Pressable>
-
-                    <Pressable
                       onPress={handleReset}
-                      style={[styles.controlButton, { backgroundColor: '#fef2f2', borderColor: palette.danger, borderWidth: 1, flex: 0.8 }]}
+                      style={[styles.controlButton, { backgroundColor: '#fef2f2', borderColor: palette.danger, borderWidth: 1, flex: 1 }]}
                     >
                       <Text style={{ color: palette.danger, fontWeight: '700', fontSize: 16 }}>Reset</Text>
                     </Pressable>
