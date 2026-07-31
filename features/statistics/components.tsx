@@ -309,11 +309,10 @@ export function OverviewSection({
   const filteredPomodoros = activityRows.reduce((s, r) => s + r.pomodoros_completed, 0);
   const filteredMinutes = activityRows.reduce((s, r) => s + r.study_minutes, 0);
 
-  // Use backend values for all-time, derived for filtered ranges
   const isFiltered = activityRows.length > 0;
   const displayPomodoros = isFiltered ? filteredPomodoros : userStats.total_pomodoros;
   const displayMinutes = isFiltered ? filteredMinutes : userStats.total_minutes;
-  const displayXP = isFiltered ? totalXP : userStats.xp;
+  const displayXP = userStats.xp;
 
   const metrics = [
     { label: 'Study Minutes', value: displayMinutes, emoji: '⏱️' },
@@ -531,6 +530,10 @@ export interface FlashcardSectionProps {
     avgEaseFactor: number;
   } | null;
   reviewsCount: number;
+  userStats?: {
+    xp: number;
+    level: number;
+  } | null;
   isLoading: boolean;
   error?: string | null;
   onRetry?: () => void;
@@ -539,6 +542,7 @@ export interface FlashcardSectionProps {
 export function FlashcardSection({
   scheduleStats,
   reviewsCount,
+  userStats,
   isLoading,
   error,
   onRetry,
@@ -556,21 +560,21 @@ export function FlashcardSection({
   }
 
   const metrics = [
-    { label: 'Cards Reviewed', value: reviewsCount, emoji: '🔄' },
+    { label: 'Total Cards', value: scheduleStats.totalCards, emoji: '📚' },
+    { label: 'Reviewed Today', value: reviewsCount, emoji: '🔄' },
     {
       label: 'Cards Due',
       value: scheduleStats.dueCards,
       emoji: '📅',
       valueColor: scheduleStats.dueCards > 0 ? '#f97316' : undefined,
     },
-    { label: 'Total Cards', value: scheduleStats.totalCards, emoji: '📚' },
     {
       label: 'Avg Interval',
       value: `${scheduleStats.avgIntervalDays}d`,
       emoji: '📊',
     },
     {
-      label: 'Longest Interval',
+      label: 'Max Interval',
       value: `${scheduleStats.longestIntervalDays}d`,
       emoji: '⭐',
     },
@@ -578,6 +582,17 @@ export function FlashcardSection({
       label: 'Ease Factor',
       value: scheduleStats.avgEaseFactor.toFixed(1),
       emoji: '🎯',
+    },
+    {
+      label: 'XP Level',
+      value: `Level ${userStats?.level ?? 1}`,
+      emoji: '🎖️',
+    },
+    {
+      label: 'Total XP',
+      value: `${userStats?.xp ?? 0} XP`,
+      emoji: '✨',
+      valueColor: '#10b981',
     },
   ];
 

@@ -325,6 +325,7 @@ export default function StatisticsScreen() {
               <FlashcardSection
                 scheduleStats={flashcardScheduleQ.data ?? null}
                 reviewsCount={flashcardReviewsQ.data?.length ?? 0}
+                userStats={userStatsQ.data ?? null}
                 isLoading={flashcardScheduleQ.isLoading || flashcardReviewsQ.isLoading}
                 error={
                   flashcardScheduleQ.error
