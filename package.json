@@ -42,14 +42,14 @@
     "typescript": "~6.0.3"
   },
   "scripts": {
-    "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web",
+    "start": "node generate-assets-map.js && expo start",
+    "android": "node generate-assets-map.js && expo start --android",
+    "ios": "node generate-assets-map.js && expo start --ios",
+    "web": "node generate-assets-map.js && expo start --web",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "node generate-assets-map.js && tsc --noEmit"
   },
   "private": true
 }
