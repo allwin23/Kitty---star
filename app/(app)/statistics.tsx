@@ -38,7 +38,6 @@ import {
 } from '@/features/statistics';
 import {
   deriveAccountabilityStats,
-  derivePomodoroStats,
   type TimeFilter,
 } from '@/services/statistics.service';
 
@@ -184,6 +183,14 @@ export default function StatisticsScreen() {
     ...queryOptions,
   });
 
+  // ── Query: Pomodoro sessions ───────────────────────────────────────────────
+
+  const pomodoroSessionsQ = useQuery({
+    queryKey: ['stats', 'pomodoro-sessions', targetUserId ?? '', timeFilter],
+    queryFn: () => statsService.getPomodoroStats(targetUserId!, timeFilter),
+    ...queryOptions,
+  });
+
   // ── Derived values (no recalculation — uses backend rows only) ─────────────
 
   const activityRows = activityQ.data ?? [];
@@ -194,11 +201,6 @@ export default function StatisticsScreen() {
     [reportsRows],
   );
 
-  const pomodoroStats = useMemo(
-    () => derivePomodoroStats(activityRows),
-    [activityRows],
-  );
-
   // ── Refresh all queries ────────────────────────────────────────────────────
 
   const isAnyRefreshing = [
@@ -206,6 +208,7 @@ export default function StatisticsScreen() {
     achievementsQ,
     activityQ,
     reportsQ,
+    pomodoroSessionsQ,
     pyqStatsQ,
     vocabStatsQ,
     grammarStatsQ,
@@ -304,10 +307,10 @@ export default function StatisticsScreen() {
 
               {/* Section 3: Pomodoro */}
               <PomodoroSection
-                stats={activityRows.length > 0 ? pomodoroStats : null}
-                isLoading={activityQ.isLoading}
-                error={activityQ.error ? (activityQ.error as Error).message : null}
-                onRetry={() => void activityQ.refetch()}
+                stats={pomodoroSessionsQ.data ?? null}
+                isLoading={pomodoroSessionsQ.isLoading}
+                error={pomodoroSessionsQ.error ? (pomodoroSessionsQ.error as Error).message : null}
+                onRetry={() => void pomodoroSessionsQ.refetch()}
               />
 
               {/* Section 4: PYQ */}

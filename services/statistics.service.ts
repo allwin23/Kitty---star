@@ -232,6 +232,15 @@ export async function getFlashcardScheduleStats(userId: string): Promise<{
   longestIntervalDays: number;
   avgEaseFactor: number;
 }> {
+  // Fetch user-created cards count
+  const { data: userCards } = await supabase
+    .from('flashcards')
+    .select('id')
+    .eq('created_by', userId)
+    .eq('type', 'user');
+
+  const totalUserCards = userCards?.length ?? 0;
+
   const { data, error } = await supabase
     .from('flashcard_schedule')
     .select('*')
@@ -245,14 +254,14 @@ export async function getFlashcardScheduleStats(userId: string): Promise<{
       ? Math.round(rows.reduce((s, r) => s + r.interval_days, 0) / rows.length)
       : 0;
   const longestIntervalDays =
-    rows.length > 0 ? Math.max(...rows.map((r) => r.interval_days)) : 0;
+    rows.length > 0 ? Math.max(...rows.map((r) => r.interval_days), 0) : 0;
   const avgEaseFactor =
     rows.length > 0
       ? Math.round((rows.reduce((s, r) => s + r.ease_factor, 0) / rows.length) * 100) / 100
       : 0;
 
   return {
-    totalCards: rows.length,
+    totalCards: Math.max(totalUserCards, rows.length),
     dueCards,
     avgIntervalDays,
     longestIntervalDays,
@@ -316,7 +325,7 @@ export function deriveAccountabilityStats(
   };
 }
 
-// ─── Pomodoro Statistics (derived from daily_activity) ────────────────────────
+// ─── Pomodoro Statistics (queried from pomodoro_sessions) ──────────────────────
 
 export interface PomodoroStats {
   pomodorosCompleted: number;
@@ -325,28 +334,48 @@ export interface PomodoroStats {
   mostProductiveDay: string | null;
 }
 
-/**
- * Derive pomodoro stats from daily_user_activity rows.
- * All values come from the backend aggregate rows.
- */
-export function derivePomodoroStats(activity: DailyActivityRow[]): PomodoroStats {
-  const pomodorosCompleted = activity.reduce((s, r) => s + r.pomodoros_completed, 0);
-  const focusMinutes = activity.reduce((s, r) => s + r.study_minutes, 0);
-  const daysWithPomodoros = activity.filter((r) => r.pomodoros_completed > 0);
+/** Fetch pomodoro stats for a given user from pomodoro_sessions table. */
+export async function getPomodoroStats(
+  userId: string,
+  filter: TimeFilter,
+): Promise<PomodoroStats> {
+  const start = filterStartDate(filter);
+  let q = supabase
+    .from('pomodoro_sessions')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('session_type', 'focus');
+
+  if (start) q = q.gte('ended_at', `${start}T00:00:00Z`);
+
+  const { data, error } = await q;
+  const sessions = throwIfError(data ?? [], error) as TableRow<'pomodoro_sessions'>[];
+
+  const pomodorosCompleted = sessions.length;
+  const focusMinutes = sessions.reduce((s, r) => s + r.duration, 0);
   const avgSessionMinutes =
-    daysWithPomodoros.length > 0
-      ? Math.round(focusMinutes / daysWithPomodoros.length)
-      : 0;
-  const bestDay = activity.reduce<DailyActivityRow | null>(
-    (best, r) =>
-      best === null || r.pomodoros_completed > best.pomodoros_completed ? r : best,
-    null,
-  );
+    pomodorosCompleted > 0 ? Math.round(focusMinutes / pomodorosCompleted) : 0;
+
+  const dayCounts = new Map<string, number>();
+  sessions.forEach((s) => {
+    const day = s.ended_at.slice(0, 10);
+    dayCounts.set(day, (dayCounts.get(day) ?? 0) + 1);
+  });
+
+  let bestDay: string | null = null;
+  let maxCount = 0;
+  dayCounts.forEach((count, day) => {
+    if (count > maxCount) {
+      maxCount = count;
+      bestDay = day;
+    }
+  });
+
   return {
     pomodorosCompleted,
     focusMinutes,
     avgSessionMinutes,
-    mostProductiveDay: bestDay?.date ?? null,
+    mostProductiveDay: bestDay,
   };
 }
 
@@ -401,6 +430,16 @@ export function subscribeToStatistics(
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'water_daily_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'pomodoro_sessions', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'flashcards', filter: `user_id=eq.${userId}` },
       onChange,
     )
     .on(
