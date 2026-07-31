@@ -103,13 +103,18 @@ export default function PomodoroScreen() {
         throw new Error('A focus session requires a selected task');
       }
 
-      const pStartedAt = startedAt ?? new Date(Date.now() - durationMinutes * 60000).toISOString();
+      // Calculate actual elapsed minutes: if timer finished (0s left), log full duration; otherwise log elapsed time.
+      const elapsedSeconds = durationMinutes * 60 - timerSeconds;
+      const loggedDuration =
+        timerSeconds === 0 ? durationMinutes : Math.max(1, Math.floor(elapsedSeconds / 60));
+
+      const pStartedAt = startedAt ?? new Date(Date.now() - loggedDuration * 60000).toISOString();
       const pEndedAt = new Date().toISOString();
 
       return pomodoroService.complete({
         planId: currentPlan.id,
         taskId: sessionType === 'focus' ? selectedTaskId! : undefined,
-        duration: durationMinutes,
+        duration: loggedDuration,
         sessionType,
         startedAt: pStartedAt,
         endedAt: pEndedAt,
@@ -459,14 +464,11 @@ export default function PomodoroScreen() {
                   const isCompleted = task.status === 'completed';
                   const isSelected = selectedTaskId === task.id;
 
-                  // Pomodoro stats
+                  // Minutes & Pomodoro stats
                   const estMins = task.estimated_minutes;
                   const compMins = task.completed_minutes;
-
-                  // 1 pomodoro = 25 minutes
-                  const estPomodoros = Math.ceil(estMins / 25);
+                  const remainingMins = Math.max(0, estMins - compMins);
                   const completedPomodoros = task.completed_pomodoros;
-                  const remainingPomodoros = Math.max(0, estPomodoros - completedPomodoros);
 
                   // Progress percent
                   const progressPct = Math.min(100, Math.round((compMins / estMins) * 100));
@@ -476,18 +478,18 @@ export default function PomodoroScreen() {
                   let badgeColor: string = palette.mutedText;
                   let badgeBg: string = palette.surface;
 
-                  if (isCompleted) {
+                  if (isCompleted || compMins >= estMins) {
                     stateLabel = 'Completed';
                     badgeColor = '#16a34a';
                     badgeBg = '#f0fdf4';
-                  } else if (completedPomodoros > 0) {
+                  } else if (compMins > 0) {
                     stateLabel = 'In Progress';
                     badgeColor = palette.primary;
                     badgeBg = '#e0e7ff';
                   }
 
                   const handleSelectTask = () => {
-                    if (isCompleted) return;
+                    if (isCompleted || compMins >= estMins) return;
                     if (isRunning && sessionType === 'focus') return;
                     setSelectedTaskId(isSelected ? null : task.id);
                   };
@@ -495,7 +497,7 @@ export default function PomodoroScreen() {
                   return (
                     <Pressable
                       key={task.id}
-                      disabled={isCompleted || (isRunning && sessionType === 'focus')}
+                      disabled={isCompleted || compMins >= estMins || (isRunning && sessionType === 'focus')}
                       onPress={handleSelectTask}
                       style={[
                         styles.taskCard,
@@ -503,11 +505,11 @@ export default function PomodoroScreen() {
                           backgroundColor: isSelected ? '#f5f3ff' : palette.surface,
                           borderColor: isSelected
                             ? palette.primary
-                            : isCompleted
+                            : isCompleted || compMins >= estMins
                             ? '#d1fae5'
                             : palette.border,
                         },
-                        isCompleted && { opacity: 0.75 },
+                        (isCompleted || compMins >= estMins) && { opacity: 0.75 },
                       ]}
                     >
                       <View style={{ gap: spacing.xs }}>
@@ -517,7 +519,7 @@ export default function PomodoroScreen() {
                             style={[
                               styles.taskTitle,
                               { color: palette.text },
-                              isCompleted && { textDecorationLine: 'line-through', color: '#94a3b8' },
+                              (isCompleted || compMins >= estMins) && { textDecorationLine: 'line-through', color: '#94a3b8' },
                             ]}
                             numberOfLines={1}
                           >
@@ -534,11 +536,15 @@ export default function PomodoroScreen() {
                         {/* Pomodoro stats details */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
                           <Text style={{ fontSize: 13, color: palette.mutedText }}>
-                            🍅 {completedPomodoros} / {estPomodoros} Completed
+                            🍅 {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}m / {estMins}m)
                           </Text>
-                          {!isCompleted && remainingPomodoros > 0 && (
+                          {!isCompleted && remainingMins > 0 ? (
                             <Text style={{ fontSize: 13, color: palette.mutedText, fontWeight: '600' }}>
-                              {remainingPomodoros} Remaining
+                              ⏳ {remainingMins} min remaining
+                            </Text>
+                          ) : (
+                            <Text style={{ fontSize: 13, color: '#16a34a', fontWeight: '700' }}>
+                              ✓ Goal Met
                             </Text>
                           )}
                         </View>
