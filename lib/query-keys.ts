@@ -3,6 +3,7 @@ export const queryKeys = {
   draft: (date: string) => ['draft', date] as const,
   initialPlan: (date: string) => ['initial-plan', date] as const,
   currentPlan: (date: string) => ['current-plan', date] as const,
+  partnerPlan: (date: string) => ['partner-plan', date] as const,
   partnerSubmission: ['partner-submission'] as const,
   mySubmission: (date: string) => ['my-submission', date] as const,
   reports: ['reports'] as const,

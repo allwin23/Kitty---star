@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { Card, ErrorState, Loading, Screen } from '@/components/ui';
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, spacing, typography } from '@/theme';
 
 async function fetchReport(id: string) {
   const { data, error } = await supabase
@@ -96,7 +96,7 @@ export default function ReportDetailScreen() {
                   </Text>
                   {r.review_comment ? (
                     <Text style={{ color: palette.mutedText, fontSize: 14 }}>
-                      Partner note: "{r.review_comment}"
+                      Partner note: &quot;{r.review_comment}&quot;
                     </Text>
                   ) : null}
 

@@ -5,13 +5,14 @@
  *  - Partner name + submitted time
  *  - Initial plan (snapshot)
  *  - Final todo list with completion + pomodoros
- *  - Proof images
+ *  - Proof images (grouped by task, and general)
  *  - Optional comment
- *  - Approve / Reject buttons → submissionService.review()
- *    (which calls review_submission RPC → approve_day or reject_day)
+ *  - Approve / Reject buttons -> submissionService.review()
+ *    (which calls review_submission RPC -> approve_day or reject_day)
  */
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Image,
   Pressable,
@@ -28,16 +29,17 @@ import { submissionService } from '@/services/backend';
 import { getProofImageUrl } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
-import { Button, Card, ErrorState, Loading, Screen } from '@/components/ui';
-import { TodoList, type TodoTask } from '@/features/accountability/todo-list';
+import { Card, ErrorState, Loading, Screen } from '@/components/ui';
+import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, radius, spacing, typography } from '@/theme';
 
 type SubmissionWithRelations = {
   id: string;
+  user_id: string;
   submitted_at: string;
   status: 'pending' | 'approved' | 'rejected';
   remark: string | null;
-  submission_proofs: { id: string; image_url: string; caption: string | null }[];
+  submission_proofs: { id: string; image_url: string; caption: string | null; task_id: string | null }[];
   current_plans: {
     id: string;
     date: string;
@@ -66,10 +68,11 @@ async function fetchSubmission(submissionId: string): Promise<SubmissionWithRela
   return data as unknown as SubmissionWithRelations;
 }
 
-async function fetchInitialPlan(date: string) {
+async function fetchInitialPlan(userId: string, date: string) {
   const { data, error } = await supabase
     .from('initial_plans')
     .select('*, initial_tasks(*)')
+    .eq('user_id', userId)
     .eq('date', date)
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -94,11 +97,12 @@ export default function ReviewScreen() {
 
   const submission = submissionQ.data;
   const planDate = submission?.current_plans?.date;
+  const submitterId = submission?.user_id;
 
   const initialPlanQ = useQuery({
-    queryKey: queryKeys.initialPlan(planDate ?? ''),
-    queryFn: () => fetchInitialPlan(planDate!),
-    enabled: !!planDate,
+    queryKey: ['partner-initial-plan', submitterId, planDate],
+    queryFn: () => fetchInitialPlan(submitterId!, planDate!),
+    enabled: !!planDate && !!submitterId,
   });
 
   // Load signed URLs for proof images
@@ -115,6 +119,14 @@ export default function ReviewScreen() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
       void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      void queryClient.invalidateQueries({ queryKey: ['current-plan'] });
+      void queryClient.invalidateQueries({ queryKey: ['initial-plan'] });
+      void queryClient.invalidateQueries({ queryKey: ['my-submission'] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
       Alert.alert('Done', 'Review submitted. The report has been finalised.', [
         { text: 'OK', onPress: () => router.replace('/(app)/accountability') },
       ]);
@@ -183,6 +195,8 @@ export default function ReviewScreen() {
   if (!submission) return null;
 
   const alreadyReviewed = submission.status !== 'pending';
+  const generalProofs = submission.submission_proofs.filter((p) => !p.task_id);
+  const totalProofsUploaded = submission.submission_proofs.length;
 
   return (
     <Screen>
@@ -208,8 +222,8 @@ export default function ReviewScreen() {
                 Submitted {new Date(submission.submitted_at).toLocaleString()}
               </Text>
               {submission.remark ? (
-                <Text style={{ color: palette.text, fontSize: 14, marginTop: spacing.xs }}>
-                  "{submission.remark}"
+                <Text style={{ color: palette.text, fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic' }}>
+                  &quot;{submission.remark}&quot;
                 </Text>
               ) : null}
               {/* Study summary */}
@@ -240,40 +254,147 @@ export default function ReviewScreen() {
           <Card>
             <View style={{ gap: spacing.md }}>
               <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                Initial Plan
+                Initial Plan snapshot
               </Text>
               {initialPlanQ.isLoading ? (
                 <Loading />
+              ) : initialTasks.length === 0 ? (
+                <Text style={{ color: palette.mutedText }}>No initial plan snapshot available.</Text>
               ) : (
-                <TodoList tasks={initialTasks} readOnly />
+                initialTasks.map((t) => (
+                  <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: palette.border, paddingVertical: 4 }}>
+                    <Text style={{ color: palette.text }}>{t.title}</Text>
+                    <Text style={{ color: palette.mutedText, fontSize: 12 }}>{t.estimated_minutes} min</Text>
+                  </View>
+                ))
               )}
             </View>
           </Card>
 
-          {/* Final Todo */}
+          {/* Final Todo & Proofs Grouped */}
           <Card>
             <View style={{ gap: spacing.md }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                  Final Plan
+                  Final Plan & Task Proofs
                 </Text>
                 <Text style={{ color: palette.mutedText, fontSize: 12 }}>
                   {completedCount}/{currentTasks.length} done
                 </Text>
               </View>
-              <TodoList tasks={currentTasks} readOnly showPomodoro />
+
+              <View style={{ gap: spacing.sm }}>
+                {currentTasks.map((task) => {
+                  const taskProofs = submission.submission_proofs.filter((p) => p.task_id === task.id);
+                  const isDone = task.status === 'completed';
+
+                  return (
+                    <View
+                      key={task.id}
+                      style={{
+                        backgroundColor: palette.surface,
+                        borderColor: palette.border,
+                        borderRadius: radius.md,
+                        borderWidth: 1,
+                        padding: spacing.sm,
+                        gap: spacing.xs,
+                      }}
+                    >
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+                        <View
+                          style={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: 4,
+                            borderWidth: 2,
+                            borderColor: isDone ? palette.primary : palette.border,
+                            backgroundColor: isDone ? palette.primary : 'transparent',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          {isDone ? (
+                            <Text style={{ color: palette.primaryText, fontSize: 11, fontWeight: '700' }}>✓</Text>
+                          ) : null}
+                        </View>
+                        <View style={{ flex: 1 }}>
+                          <Text
+                            style={{
+                              color: palette.text,
+                              textDecorationLine: isDone ? 'line-through' : 'none',
+                              opacity: isDone ? 0.6 : 1,
+                              fontWeight: '600',
+                            }}
+                          >
+                            {task.title}
+                          </Text>
+                          <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                            {task.estimated_minutes} min · 🍅 {task.completed_pomodoros ?? 0} focus sessions
+                          </Text>
+                        </View>
+                      </View>
+
+                      {/* Display task-specific proofs */}
+                      {taskProofs.length > 0 && (
+                        <View style={{ paddingLeft: 28, marginTop: spacing.xs, gap: spacing.xs }}>
+                          <Text style={{ color: palette.mutedText, fontSize: 11, fontWeight: '700' }}>
+                            Attached Proofs ({taskProofs.length})
+                          </Text>
+                          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
+                            {taskProofs.map((proof) => {
+                              void loadProofUrl(proof.image_url);
+                              const url = proofUrls[proof.image_url];
+                              return (
+                                <View key={proof.id}>
+                                  {url ? (
+                                    <Image
+                                      source={{ uri: url }}
+                                      style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: radius.sm,
+                                        borderWidth: 1,
+                                        borderColor: palette.border,
+                                      }}
+                                    />
+                                  ) : (
+                                    <View
+                                      style={{
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: radius.sm,
+                                        borderWidth: 1,
+                                        borderColor: palette.border,
+                                        backgroundColor: palette.surface,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                      }}
+                                    >
+                                      <ActivityIndicator size="small" />
+                                    </View>
+                                  )}
+                                </View>
+                              );
+                            })}
+                          </View>
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
             </View>
           </Card>
 
-          {/* Proofs */}
-          {submission.submission_proofs.length > 0 ? (
+          {/* General Proofs */}
+          {generalProofs.length > 0 && (
             <Card>
               <View style={{ gap: spacing.md }}>
                 <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                  Proof Images ({submission.submission_proofs.length})
+                  General Proofs ({generalProofs.length})
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-                  {submission.submission_proofs.map((proof) => {
+                  {generalProofs.map((proof) => {
                     void loadProofUrl(proof.image_url);
                     const url = proofUrls[proof.image_url];
                     return (
@@ -302,29 +423,18 @@ export default function ReviewScreen() {
                               justifyContent: 'center',
                             }}
                           >
-                            <Loading />
+                            <ActivityIndicator size="small" />
                           </View>
                         )}
-                        {proof.caption ? (
-                          <Text style={{ color: palette.mutedText, fontSize: 11, marginTop: 2, maxWidth: 100 }}>
-                            {proof.caption}
-                          </Text>
-                        ) : null}
                       </View>
                     );
                   })}
                 </View>
               </View>
             </Card>
-          ) : (
-            <Card>
-              <Text style={{ color: palette.mutedText, textAlign: 'center' }}>
-                No proof images uploaded. Review requires at least one proof.
-              </Text>
-            </Card>
           )}
 
-          {/* Review section */}
+          {/* Review status and comments */}
           {alreadyReviewed ? (
             <Card>
               <Text
@@ -333,9 +443,10 @@ export default function ReviewScreen() {
                   fontWeight: '700',
                   textAlign: 'center',
                   textTransform: 'capitalize',
+                  fontSize: 16,
                 }}
               >
-                {submission.status}
+                Reviewed: {submission.status}
               </Text>
             </Card>
           ) : (
@@ -367,28 +478,28 @@ export default function ReviewScreen() {
                   <View style={{ flexDirection: 'row', gap: spacing.sm }}>
                     <Pressable
                       onPress={() => handleDecision('approved')}
-                      disabled={submission.submission_proofs.length === 0}
+                      disabled={totalProofsUploaded === 0}
                       style={{
                         flex: 1,
-                        backgroundColor: submission.submission_proofs.length === 0 ? palette.surface : '#16a34a',
+                        backgroundColor: totalProofsUploaded === 0 ? palette.surface : '#16a34a',
                         borderRadius: radius.md,
                         padding: spacing.sm,
                         alignItems: 'center',
-                        opacity: submission.submission_proofs.length === 0 ? 0.5 : 1,
+                        opacity: totalProofsUploaded === 0 ? 0.5 : 1,
                       }}
                     >
                       <Text style={{ color: '#fff', fontWeight: '700' }}>✓ Approve</Text>
                     </Pressable>
                     <Pressable
                       onPress={() => handleDecision('rejected')}
-                      disabled={submission.submission_proofs.length === 0}
+                      disabled={totalProofsUploaded === 0}
                       style={{
                         flex: 1,
-                        backgroundColor: submission.submission_proofs.length === 0 ? palette.surface : palette.danger,
+                        backgroundColor: totalProofsUploaded === 0 ? palette.surface : palette.danger,
                         borderRadius: radius.md,
                         padding: spacing.sm,
                         alignItems: 'center',
-                        opacity: submission.submission_proofs.length === 0 ? 0.5 : 1,
+                        opacity: totalProofsUploaded === 0 ? 0.5 : 1,
                       }}
                     >
                       <Text style={{ color: '#fff', fontWeight: '700' }}>✗ Reject</Text>
@@ -396,7 +507,7 @@ export default function ReviewScreen() {
                   </View>
                 )}
 
-                {submission.submission_proofs.length === 0 ? (
+                {totalProofsUploaded === 0 ? (
                   <Text style={{ color: palette.danger, fontSize: 12, textAlign: 'center' }}>
                     The backend requires at least one proof image before you can review.
                   </Text>

@@ -61,9 +61,12 @@ export const plannerService = {
   },
 
   async getCurrentPlan(date: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
     const { data, error } = await supabase
       .from('current_plans')
       .select('*, current_tasks(*)')
+      .eq('user_id', user.id)
       .eq('date', date)
       .maybeSingle();
     return throwIfError(data, error);
@@ -76,6 +79,14 @@ export const plannerService = {
       .eq('id', taskId)
       .select()
       .single();
+    return throwIfError(data, error);
+  },
+
+  async toggleTask(taskId: string, completed: boolean) {
+    const { data, error } = await supabase.rpc('toggle_task_completion' as any, {
+      p_task_id: taskId,
+      p_completed: completed,
+    });
     return throwIfError(data, error);
   },
 
@@ -103,6 +114,37 @@ export const plannerService = {
         onChange,
       )
       .subscribe();
+  },
+
+  /** Subscribe to ALL plan changes for a user (catches plan creation + task changes). */
+  subscribeToPartnerChanges(partnerUserId: string, onChange: () => void): RealtimeChannel {
+    return supabase
+      .channel(`partner-changes:${partnerUserId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'current_plans', filter: `user_id=eq.${partnerUserId}` },
+        onChange,
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'current_tasks' },
+        (payload) => {
+          // Filter client-side: only fire for tasks belonging to the partner's plan
+          // We accept all events here because server-side filter by plan_id may miss
+          // INSERT events when we don't yet know the plan ID
+          onChange();
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'daily_submissions', filter: `user_id=eq.${partnerUserId}` },
+        onChange,
+      )
+      .subscribe();
+  },
+
+  unsubscribe(channel: RealtimeChannel) {
+    void supabase.removeChannel(channel);
   },
 };
 
@@ -135,6 +177,7 @@ export const submissionService = {
     file: Blob | ArrayBuffer,
     extension: 'jpg' | 'png' | 'webp',
     caption?: string,
+    taskId?: string,
   ) {
     const path = `${userId}/${submissionId}/${crypto.randomUUID()}.${extension}`;
     const contentType = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
@@ -146,6 +189,7 @@ export const submissionService = {
       p_submission_id: submissionId,
       p_image_url: path,
       p_caption: caption ?? null,
+      p_task_id: taskId ?? null,
     });
     if (error) {
       await supabase.storage.from('proof-images').remove([path]);
@@ -217,8 +261,9 @@ export const notificationService = {
   },
 
   subscribe(onInsert: (notification: TableRow<'notifications'>) => void): RealtimeChannel {
+    const channelId = `notifications-${Math.random().toString(36).substring(2)}`;
     return supabase
-      .channel('notifications')
+      .channel(channelId)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'notifications' },

@@ -2,12 +2,13 @@
  * Reports Screen — list of finalized daily_reports.
  * Each row links to the report detail screen.
  */
+import { useEffect, useRef } from 'react';
 import { Pressable, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 
-import { reportService } from '@/services/backend';
+import { reportService, notificationService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
 import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
 import { colors, radius, spacing, typography } from '@/theme';
@@ -16,6 +17,8 @@ export default function ReportsScreen() {
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
 
   const reportsQ = useQuery({
     queryKey: queryKeys.reports,
@@ -31,6 +34,20 @@ export default function ReportsScreen() {
     queryKey: queryKeys.achievements,
     queryFn: () => reportService.achievements(),
   });
+
+  // Realtime notification subscription to update reports when review is submitted
+  useEffect(() => {
+    channelRef.current = notificationService.subscribe((notification) => {
+      if (notification.type === 'submission_approved' || notification.type === 'submission_rejected') {
+        void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+      }
+    });
+    return () => {
+      channelRef.current?.unsubscribe();
+    };
+  }, [queryClient]);
 
   const reports = (reportsQ.data ?? []) as {
     id: string;

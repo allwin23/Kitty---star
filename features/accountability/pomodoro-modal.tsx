@@ -28,29 +28,26 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
 
   const [secondsLeft, setSecondsLeft] = useState(FOCUS_DURATION * 60);
   const [running, setRunning] = useState(false);
-  const startedAtRef = useRef<string | null>(null);
+  const [startedAt, setStartedAt] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Reset when a new task is selected
+  // Clean up interval on unmount
   useEffect(() => {
-    if (visible) {
-      setSecondsLeft(FOCUS_DURATION * 60);
-      setRunning(false);
-      startedAtRef.current = null;
-    }
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [visible, task?.id]);
+  }, []);
+
+
 
   const completeMutation = useMutation({
-    mutationFn: (vars: { startedAt: string; endedAt: string }) =>
+    mutationFn: (vars: { endedAt: string }) =>
       pomodoroService.complete({
         planId,
         taskId: task!.id,
         duration: FOCUS_DURATION,
         sessionType: 'focus',
-        startedAt: vars.startedAt,
+        startedAt: startedAt ?? new Date(Date.now() - FOCUS_DURATION * 60 * 1000).toISOString(),
         endedAt: vars.endedAt,
       }),
     onSuccess: () => {
@@ -63,7 +60,9 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
   });
 
   const startTimer = () => {
-    startedAtRef.current = new Date().toISOString();
+    if (!startedAt) {
+      setStartedAt(new Date().toISOString());
+    }
     setRunning(true);
     intervalRef.current = setInterval(() => {
       setSecondsLeft((s) => {
@@ -86,10 +85,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
     if (intervalRef.current) clearInterval(intervalRef.current);
     setRunning(false);
     const endedAt = new Date().toISOString();
-    completeMutation.mutate({
-      startedAt: startedAtRef.current ?? new Date(Date.now() - FOCUS_DURATION * 60 * 1000).toISOString(),
-      endedAt,
-    });
+    completeMutation.mutate({ endedAt });
   };
 
   const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
@@ -139,7 +135,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
                   }}
                 >
                   <Text style={{ color: palette.primaryText, fontWeight: '600' }}>
-                    {startedAtRef.current ? 'Resume' : 'Start'}
+                    {startedAt ? 'Resume' : 'Start'}
                   </Text>
                 </Pressable>
               ) : (
@@ -158,7 +154,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
                 </Pressable>
               )}
 
-              {startedAtRef.current ? (
+              {startedAt ? (
                 <Pressable
                   onPress={finishNow}
                   style={{

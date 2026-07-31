@@ -4,8 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
 import { Button, Card, Loading, Screen } from '@/components/ui';
-import { notificationService } from '@/services/backend';
-import { reportService } from '@/services/backend';
+import { notificationService, reportService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
@@ -45,8 +44,18 @@ export default function HomeScreen() {
 
   // Realtime notification subscription
   useEffect(() => {
-    channelRef.current = notificationService.subscribe(() => {
+    channelRef.current = notificationService.subscribe((notification) => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
+      if (notification.type === 'submission_approved' || notification.type === 'submission_rejected') {
+        void queryClient.invalidateQueries({ queryKey: ['reports'] });
+        void queryClient.invalidateQueries({ queryKey: ['current-plan'] });
+        void queryClient.invalidateQueries({ queryKey: ['initial-plan'] });
+        void queryClient.invalidateQueries({ queryKey: ['my-submission'] });
+      }
     });
     return () => {
       channelRef.current?.unsubscribe();
