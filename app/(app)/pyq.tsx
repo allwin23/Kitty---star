@@ -11,7 +11,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
 import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
@@ -79,6 +79,7 @@ export default function PYQScreen() {
 
   // Zustand used questions store
   const { usedQuestionIds, addUsedQuestionIds, clearUsedQuestionIds } = usePyqStore();
+  const queryClient = useQueryClient();
 
   // Load backend stats
   const statsQ = useQuery({
@@ -144,6 +145,9 @@ export default function PYQScreen() {
       setViewState('result');
       void statsQ.refetch();
       void historyQ.refetch();
+      void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
 
       // Track completed questions for study cycle
       const questionIds = testQuestions.map((q) => q.id);

@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
 import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
@@ -89,6 +89,7 @@ export default function FlashcardsScreen() {
   // Built-in cards browsing state
   const [selectedBuiltInSubject, setSelectedBuiltInSubject] = useState<string | null>(null);
   const [selectedBuiltInTopic, setSelectedBuiltInTopic] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   // Queries
   const collectionsQ = useQuery({
@@ -150,6 +151,9 @@ export default function FlashcardsScreen() {
     mutationFn: flashcardService.create,
     onSuccess: () => {
       void cardsQ.refetch();
+      void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
       setCardModalVisible(false);
       setCardFront('');
       setCardBack('');
@@ -178,6 +182,9 @@ export default function FlashcardsScreen() {
     onSuccess: () => {
       void cardsQ.refetch();
       void statsQ.refetch();
+      void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
     },
   });
 

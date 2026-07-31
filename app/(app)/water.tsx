@@ -69,7 +69,9 @@ export default function WaterTrackerScreen() {
       void queryClient.invalidateQueries({ queryKey: ['water-today-logs'] });
       void queryClient.invalidateQueries({ queryKey: ['water-weekly-stats'] });
       void queryClient.invalidateQueries({ queryKey: ['water-stats-history'] });
-      void queryClient.invalidateQueries({ queryKey: ['user-stats'] }); // Invalidate global stats for XP/achievements
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
     },
     onError: (err: any) => {
       Alert.alert('Error Logging Water', err?.message || 'Failed to log water intake.');

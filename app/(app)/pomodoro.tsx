@@ -128,6 +128,8 @@ export default function PomodoroScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
       void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
 
       // Clean up timer state
       resetTimer();

@@ -146,6 +146,8 @@ export default function EnglishScreen() {
       void queryClient.invalidateQueries({ queryKey: ['vocabulary-learned-today'] });
       void queryClient.invalidateQueries({ queryKey: ['vocabulary-stats'] });
       void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-feed'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-unread'] });
     },
@@ -161,6 +163,8 @@ export default function EnglishScreen() {
       void queryClient.invalidateQueries({ queryKey: ['grammar-stats'] });
       void queryClient.invalidateQueries({ queryKey: ['grammar-history'] });
       void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-feed'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-unread'] });
     },
