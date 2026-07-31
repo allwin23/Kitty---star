@@ -223,7 +223,7 @@ export function FlashcardViewer({
   return (
     <Card style={[styles.viewerCard, { borderColor: palette.border, backgroundColor: palette.surface }]}>
       <View style={{ position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md, flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={[styles.badge, { backgroundColor: type === 'builtin' ? '#E0E7FF' : '#FEF3C7', color: type === 'builtin' ? '#4F46E5' : '#D97706' }]}>
+        <Text style={[styles.badge, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, borderWidth: 1 }]}>
           {type === 'builtin' ? '📖 Revision Note' : '✍️ Custom Card'}
         </Text>
       </View>

@@ -533,7 +533,7 @@ export interface PartnerRewardEditorProps {
 }
 
 const EMOJIS = ['🎁', '🍕', '🎬', '🍦', '🎮', '☕', '📚', '🏖️', '🍿', '💖'];
-const COLORS = ['#4F46E5', '#16A34A', '#D97706', '#EC4899', '#9333EA', '#0284C7'];
+const COLORS = ['#000000', '#18181B', '#27272A', '#52525B', '#71717A', '#A1A1AA'];
 
 export function PartnerRewardEditor({
   milestone,
@@ -546,7 +546,7 @@ export function PartnerRewardEditor({
   const [title, setTitle] = useState(milestone?.reward_title ?? '');
   const [description, setDescription] = useState(milestone?.reward_description ?? '');
   const [emoji, setEmoji] = useState(milestone?.reward_emoji ?? '🎁');
-  const [color, setColor] = useState(milestone?.reward_color ?? '#4F46E5');
+  const [color, setColor] = useState(milestone?.reward_color ?? '#000000');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   React.useEffect(() => {
@@ -554,7 +554,7 @@ export function PartnerRewardEditor({
       setTitle(milestone.reward_title);
       setDescription(milestone.reward_description);
       setEmoji(milestone.reward_emoji || '🎁');
-      setColor(milestone.reward_color || '#4F46E5');
+      setColor(milestone.reward_color || '#000000');
     }
   }, [milestone]);
 

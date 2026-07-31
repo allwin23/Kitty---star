@@ -1097,7 +1097,7 @@ const styles = StyleSheet.create({
   },
   modalSaveBtn: {
     borderRadius: radius.md,
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#3F3F46',
     paddingVertical: 6,
     paddingHorizontal: 12,
     alignItems: 'center',
@@ -1105,7 +1105,7 @@ const styles = StyleSheet.create({
   },
   reviewTopicBtn: {
     borderRadius: radius.md,
-    backgroundColor: '#4F46E5',
+    backgroundColor: '#3F3F46',
     paddingVertical: 6,
     paddingHorizontal: 12,
     alignItems: 'center',
@@ -1141,7 +1141,7 @@ const styles = StyleSheet.create({
   },
   statsLabel: {
     fontSize: 11,
-    color: '#64748B',
+    color: '#71717A',
     textAlign: 'center',
   },
   summaryHeader: {
@@ -1152,7 +1152,6 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#4F46E5',
   },
   summaryStatsRow: {
     flexDirection: 'row',
