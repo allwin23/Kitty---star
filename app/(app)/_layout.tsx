@@ -58,6 +58,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="journey"
+        options={{
+          title: 'Journey',
+          tabBarIcon: () => <TabIcon label="Journey" emoji="🗺️" />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',

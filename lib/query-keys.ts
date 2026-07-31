@@ -44,4 +44,10 @@ export const queryKeys = {
   statsFlashcardReviews: (userId: string, filter: string) =>
     ['stats', 'flashcard-reviews', userId, filter] as const,
   statsPartnerId: ['stats', 'partner-id'] as const,
+
+  // ── XP Journey Feature ───────────────────────────────────────────────────────
+  journey: (userId: string) => ['journey', userId] as const,
+  journeyMilestones: (journeyId: string) => ['journey-milestones', journeyId] as const,
+  journeyChallenges: (journeyId: string) => ['journey-challenges', journeyId] as const,
+  journeyEvents: (journeyId: string) => ['journey-events', journeyId] as const,
 };

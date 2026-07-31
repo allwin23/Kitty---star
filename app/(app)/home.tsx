@@ -113,6 +113,9 @@ export default function HomeScreen() {
               <Button onPress={() => router.push('/(app)/accountability')}>
                 ✅ Accountability
               </Button>
+              <Button onPress={() => router.push('/(app)/journey')}>
+                🗺️ XP Journey & Rewards Path
+              </Button>
               <Button onPress={() => router.push('/(app)/achievements')}>
                 🏆 Achievements & Recognition
               </Button>

@@ -94,6 +94,126 @@ export type Database = {
         },
         never
       >;
+      journeys: Table<
+        {
+          id: string;
+          user_id: string;
+          partner_id: string | null;
+          milestone_interval: number;
+          current_max_milestone: number;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          id?: string;
+          user_id: string;
+          partner_id?: string | null;
+          milestone_interval?: number;
+          current_max_milestone?: number;
+          created_at?: string;
+          updated_at?: string;
+        },
+        {
+          partner_id?: string | null;
+          milestone_interval?: number;
+          current_max_milestone?: number;
+          updated_at?: string;
+        }
+      >;
+      journey_milestones: Table<
+        {
+          id: string;
+          journey_id: string;
+          required_xp: number;
+          reward_title: string;
+          reward_description: string;
+          reward_image: string | null;
+          reward_emoji: string;
+          reward_color: string;
+          is_hidden: boolean;
+          is_unlocked: boolean;
+          unlocked_at: string | null;
+          is_claimed: boolean;
+          claimed_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        },
+        {
+          id?: string;
+          journey_id: string;
+          required_xp: number;
+          reward_title?: string;
+          reward_description?: string;
+          reward_image?: string | null;
+          reward_emoji?: string;
+          reward_color?: string;
+          is_hidden?: boolean;
+          is_unlocked?: boolean;
+          unlocked_at?: string | null;
+          is_claimed?: boolean;
+          claimed_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        },
+        {
+          reward_title?: string;
+          reward_description?: string;
+          reward_image?: string | null;
+          reward_emoji?: string;
+          reward_color?: string;
+          is_hidden?: boolean;
+          is_unlocked?: boolean;
+          unlocked_at?: string | null;
+          is_claimed?: boolean;
+          claimed_at?: string | null;
+        }
+      >;
+      journey_challenges: Table<
+        {
+          id: string;
+          milestone_id: string;
+          deadline: string;
+          success_reward_message: string;
+          failure_message: string;
+          status: 'pending' | 'success' | 'failed';
+          completed_at: string | null;
+          created_at: string;
+        },
+        {
+          id?: string;
+          milestone_id: string;
+          deadline: string;
+          success_reward_message: string;
+          failure_message: string;
+          status?: 'pending' | 'success' | 'failed';
+          completed_at?: string | null;
+          created_at?: string;
+        },
+        {
+          deadline?: string;
+          success_reward_message?: string;
+          failure_message?: string;
+          status?: 'pending' | 'success' | 'failed';
+          completed_at?: string | null;
+        }
+      >;
+      journey_events: Table<
+        {
+          id: string;
+          journey_id: string;
+          event_type: 'milestone_created' | 'milestone_unlocked' | 'reward_claimed' | 'challenge_completed' | 'challenge_failed';
+          data: Json;
+          created_at: string;
+        },
+        {
+          id?: string;
+          journey_id: string;
+          event_type: 'milestone_created' | 'milestone_unlocked' | 'reward_claimed' | 'challenge_completed' | 'challenge_failed';
+          data?: Json;
+          created_at?: string;
+        },
+        never
+      >;
       planner_drafts: Table<
         { id: string; user_id: string; date: string; created_at: string; updated_at: string },
         { id?: string; user_id?: string; date: string; created_at?: string; updated_at?: string },
@@ -1057,6 +1177,42 @@ export type Database = {
           p_xp_bonus?: number;
         };
         Returns: Database['public']['Tables']['partner_awards']['Row'];
+      };
+      get_or_create_journey: {
+        Args: { p_user_id: string };
+        Returns: Database['public']['Tables']['journeys']['Row'];
+      };
+      evaluate_journey_milestones: {
+        Args: { p_user_id: string };
+        Returns: undefined;
+      };
+      expand_journey_milestones: {
+        Args: { p_journey_id: string; p_num_steps?: number };
+        Returns: undefined;
+      };
+      edit_journey_milestone: {
+        Args: {
+          p_milestone_id: string;
+          p_reward_title: string;
+          p_reward_description: string;
+          p_reward_emoji?: string;
+          p_reward_color?: string;
+          p_reward_image?: string | null;
+        };
+        Returns: Database['public']['Tables']['journey_milestones']['Row'];
+      };
+      attach_journey_challenge: {
+        Args: {
+          p_milestone_id: string;
+          p_deadline: string;
+          p_success_message: string;
+          p_failure_message: string;
+        };
+        Returns: Database['public']['Tables']['journey_challenges']['Row'];
+      };
+      claim_journey_reward: {
+        Args: { p_milestone_id: string };
+        Returns: Database['public']['Tables']['journey_milestones']['Row'];
       };
     };
     Enums: {
