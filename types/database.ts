@@ -487,8 +487,8 @@ export type Database = {
         never
       >;
       achievements: Table<
-        { id: string; code: string; name: string; description: string; created_at: string },
-        { id?: string; code: string; name: string; description: string; created_at?: string },
+        { id: string; code: string; name: string; description: string; xp_reward?: number; created_at: string },
+        { id?: string; code: string; name: string; description: string; xp_reward?: number; created_at?: string },
         never
       >;
       user_achievements: Table<

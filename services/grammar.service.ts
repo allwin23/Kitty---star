@@ -28,7 +28,13 @@ export async function finishGrammarQuiz(input: GrammarQuizInput): Promise<Gramma
 
 /** Get current user's aggregated grammar statistics. */
 export async function getStats(): Promise<GrammarStatsRow | null> {
-  const { data, error } = await supabase.from('grammar_stats').select('*').maybeSingle();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data, error } = await supabase
+    .from('grammar_stats')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
   return throwIfError(data, error);
 }
 
@@ -36,12 +42,15 @@ export async function getStats(): Promise<GrammarStatsRow | null> {
 export async function getHistory(
   opts: PageOptions & { topic?: string } = {},
 ): Promise<PageResult<GrammarAttemptRow>> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return buildPageResult([], opts);
   const { topic, ...pageOpts } = opts;
   const { from, to } = paginationRange(pageOpts);
 
   let q = supabase
     .from('grammar_attempts')
     .select('*')
+    .eq('user_id', user.id)
     .order('completed_at', { ascending: false })
     .range(from, to);
 
@@ -52,9 +61,12 @@ export async function getHistory(
 
 /** Topic breakdown: distinct topics the user has attempted, with attempt counts. */
 export async function getTopicBreakdown(): Promise<{ topic: string; attempts: number }[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   const { data, error } = await supabase
     .from('grammar_attempts')
     .select('topic')
+    .eq('user_id', user.id)
     .order('topic', { ascending: true });
   throwIfError(data, error);
 

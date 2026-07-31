@@ -22,7 +22,13 @@ export async function markLearned(input: WordLearnedInput): Promise<VocabularyPr
 
 /** Get current user's vocabulary statistics. */
 export async function getStats(): Promise<VocabularyStatsRow | null> {
-  const { data, error } = await supabase.from('vocabulary_stats').select('*').maybeSingle();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data, error } = await supabase
+    .from('vocabulary_stats')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
   return throwIfError(data, error);
 }
 
@@ -31,9 +37,12 @@ export async function getStats(): Promise<VocabularyStatsRow | null> {
  * Returns `true` if learned, `false` otherwise.
  */
 export async function isWordLearned(wordId: string): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
   const { data, error } = await supabase
     .from('vocabulary_progress')
     .select('id')
+    .eq('user_id', user.id)
     .eq('word_id', wordId)
     .eq('learned', true)
     .maybeSingle();
@@ -45,10 +54,13 @@ export async function isWordLearned(wordId: string): Promise<boolean> {
 export async function getLearnedWords(
   opts: PageOptions = {},
 ): Promise<PageResult<VocabularyProgressRow>> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return buildPageResult([], opts);
   const { from, to } = paginationRange(opts);
   const { data, error } = await supabase
     .from('vocabulary_progress')
     .select('*')
+    .eq('user_id', user.id)
     .eq('learned', true)
     .order('learned_at', { ascending: false })
     .range(from, to);
@@ -58,9 +70,12 @@ export async function getLearnedWords(
 /** Returns learned word_ids for a given list – useful for bulk "already learned?" checks. */
 export async function filterLearned(wordIds: string[]): Promise<string[]> {
   if (wordIds.length === 0) return [];
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   const { data, error } = await supabase
     .from('vocabulary_progress')
     .select('word_id')
+    .eq('user_id', user.id)
     .in('word_id', wordIds)
     .eq('learned', true);
   return throwIfError(data ?? [], error).map((r) => r.word_id);
