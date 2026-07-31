@@ -51,6 +51,13 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="statistics"
+        options={{
+          title: 'Stats',
+          tabBarIcon: () => <TabIcon label="Statistics" emoji="📊" />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',

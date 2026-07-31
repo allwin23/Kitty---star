@@ -22,4 +22,26 @@ export const queryKeys = {
   // Mascot
   mascotFeed: ['mascot', 'feed'] as const,
   mascotUnread: ['mascot', 'unread'] as const,
+
+  // ── Statistics dashboard ───────────────────────────────────────────────────
+  statsUserStats: (userId: string) => ['stats', 'user-stats', userId] as const,
+  statsAchievements: (userId: string) => ['stats', 'achievements', userId] as const,
+  statsDailyActivity: (userId: string, filter: string) =>
+    ['stats', 'daily-activity', userId, filter] as const,
+  statsReports: (userId: string, filter: string) =>
+    ['stats', 'reports', userId, filter] as const,
+  statsPYQ: (userId: string) => ['stats', 'pyq', userId] as const,
+  statsPYQAttempts: (userId: string, filter: string) =>
+    ['stats', 'pyq-attempts', userId, filter] as const,
+  statsVocabulary: (userId: string) => ['stats', 'vocabulary', userId] as const,
+  statsGrammar: (userId: string) => ['stats', 'grammar', userId] as const,
+  statsGrammarAttempts: (userId: string, filter: string) =>
+    ['stats', 'grammar-attempts', userId, filter] as const,
+  statsWater: (userId: string, filter: string) =>
+    ['stats', 'water', userId, filter] as const,
+  statsFlashcardSchedule: (userId: string) =>
+    ['stats', 'flashcard-schedule', userId] as const,
+  statsFlashcardReviews: (userId: string, filter: string) =>
+    ['stats', 'flashcard-reviews', userId, filter] as const,
+  statsPartnerId: ['stats', 'partner-id'] as const,
 };
