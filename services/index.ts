@@ -7,3 +7,5 @@ export * as flashcardService from './flashcard.service';
 export * as activityService from './activity.service';
 export * as activityEventsService from './activity-events.service';
 export * as mascotService from './mascot.service';
+export * as writingService from './writing.service';
+

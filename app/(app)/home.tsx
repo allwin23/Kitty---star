@@ -125,7 +125,11 @@ export default function HomeScreen() {
               <Button onPress={() => router.push('/(app)/water')}>
                 💧 Water Tracker
               </Button>
+              <Button onPress={() => router.push('/(app)/english')}>
+                📖 Daily English Practice
+              </Button>
             </View>
+
           </Card>
 
           {/* Notifications */}

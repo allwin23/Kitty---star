@@ -5,3 +5,5 @@ export * from './pomodoro-store';
 export * from './settings-store';
 export * from './pyq-store';
 export * from './flashcard-store';
+export * from './english-store';
+

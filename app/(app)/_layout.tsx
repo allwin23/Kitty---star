@@ -63,6 +63,8 @@ export default function AppLayout() {
       <Tabs.Screen name="pyq" options={{ href: null }} />
       <Tabs.Screen name="flashcards" options={{ href: null }} />
       <Tabs.Screen name="water" options={{ href: null }} />
+      <Tabs.Screen name="english" options={{ href: null }} />
     </Tabs>
+
   );
 }
