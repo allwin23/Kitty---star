@@ -385,3 +385,10 @@ export const flashcardService = {
     return throwIfError(data, error);
   },
 };
+
+export const testingService = {
+  async resetAllData() {
+    const { data, error } = await (supabase as any).rpc('reset_all_data');
+    return throwIfError(data, error);
+  },
+};

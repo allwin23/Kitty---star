@@ -13,7 +13,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { format, addDays } from 'date-fns';
 
 import { plannerService, notificationService } from '@/services/backend';
@@ -118,6 +118,13 @@ export default function AccountabilityScreen() {
   });
 
   const todayReport = todayReportQ.data;
+
+  useFocusEffect(
+    useCallback(() => {
+      void currentPlanQ.refetch();
+      void todayReportQ.refetch();
+    }, [currentPlanQ, todayReportQ])
+  );
 
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────
 
@@ -284,19 +291,6 @@ export default function AccountabilityScreen() {
       completed_pomodoros: t.completed_pomodoros,
       order: t.order,
     }));
-
-  const handleTaskToggle = async (task: TodoTask) => {
-    setSavingTaskId(task.id);
-    try {
-      const isCompleted = task.status !== 'completed';
-      await plannerService.toggleTask(task.id, isCompleted);
-      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
-    } catch (e: any) {
-      Alert.alert('Error updating task', e.message);
-    } finally {
-      setSavingTaskId(null);
-    }
-  };
 
   const handleTaskEdit = async (task: TodoTask, title: string, minutes: number) => {
     setSavingTaskId(task.id);
@@ -560,7 +554,6 @@ export default function AccountabilityScreen() {
               ) : (
                 <TodoList
                   tasks={currentTasks}
-                  onToggle={handleTaskToggle}
                   onEdit={handleTaskEdit}
                   onDelete={handleTaskDelete}
                   onAdd={handleTaskAdd}

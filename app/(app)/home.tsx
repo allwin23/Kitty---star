@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
 import { Button, Card, Loading, Screen } from '@/components/ui';
-import { notificationService, reportService } from '@/services/backend';
+import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
@@ -144,6 +144,53 @@ export default function HomeScreen() {
               </View>
             </Card>
           ) : null}
+
+          {/* Database Reset (Testing Only) */}
+          <Card>
+            <View style={{ gap: spacing.sm }}>
+              <Text style={{ fontWeight: '700', color: colors.light.danger }}>
+                Developer testing tools
+              </Text>
+              <Text style={{ color: colors.light.mutedText, fontSize: 13 }}>
+                Delete all plan, task, submission, report and notification histories and reset streaks back to zero.
+              </Text>
+              <Button
+                onPress={async () => {
+                  const title = 'Reset all data?';
+                  const msg = 'This will delete all daily plans, tasks, submissions, reports, notifications and reset stats to 0.';
+                  const confirmed =
+                    Platform.OS === 'web'
+                      ? window.confirm(`${title}\n\n${msg}`)
+                      : await new Promise((resolve) => {
+                          Alert.alert(title, msg, [
+                            { text: 'Cancel', onPress: () => resolve(false), style: 'cancel' },
+                            { text: 'Reset', onPress: () => resolve(true), style: 'destructive' },
+                          ]);
+                        });
+
+                  if (confirmed) {
+                    try {
+                      await testingService.resetAllData();
+                      queryClient.clear();
+                      if (Platform.OS === 'web') {
+                        window.alert('Database successfully reset to clean state!');
+                      } else {
+                        Alert.alert('Success', 'Database successfully reset to clean state!');
+                      }
+                    } catch (e: any) {
+                      if (Platform.OS === 'web') {
+                        window.alert(`Failed to reset: ${e.message}`);
+                      } else {
+                        Alert.alert('Error', e.message);
+                      }
+                    }
+                  }
+                }}
+              >
+                Reset Database (Unseed)
+              </Button>
+            </View>
+          </Card>
 
           {/* Logout */}
           <Button onPress={() => void logout()}>Logout</Button>
