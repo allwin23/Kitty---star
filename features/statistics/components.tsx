@@ -543,12 +543,14 @@ export function FlashcardSection({
   error,
   onRetry,
 }: FlashcardSectionProps) {
+  const hasData = scheduleStats && (scheduleStats.totalCards > 0 || reviewsCount > 0 || scheduleStats.dueCards > 0);
+
   if (isLoading) return <StatisticsSection title="Flashcards" emoji="⚡" isLoading />;
   if (error) return <StatisticsSection title="Flashcards" emoji="⚡" error={error} onRetry={onRetry} />;
-  if (!scheduleStats || scheduleStats.totalCards === 0) {
+  if (!hasData) {
     return (
       <StatisticsSection title="Flashcards" emoji="⚡">
-        <EmptyState title="No flashcards yet" description="Create and review flashcards to see stats." />
+        <EmptyState title="No flashcards reviewed" description="Review or create flashcards to see stats." />
       </StatisticsSection>
     );
   }

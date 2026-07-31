@@ -236,10 +236,17 @@ export async function getFlashcardScheduleStats(userId: string): Promise<{
   const { data: userCards } = await supabase
     .from('flashcards')
     .select('id')
-    .eq('created_by', userId)
-    .eq('type', 'user');
+    .eq('created_by', userId);
 
   const totalUserCards = userCards?.length ?? 0;
+
+  // Fetch built-in cards count
+  const { data: builtinCards } = await supabase
+    .from('flashcards')
+    .select('id')
+    .eq('type', 'builtin');
+
+  const totalBuiltinCards = builtinCards?.length ?? 0;
 
   const { data, error } = await supabase
     .from('flashcard_schedule')
@@ -260,8 +267,10 @@ export async function getFlashcardScheduleStats(userId: string): Promise<{
       ? Math.round((rows.reduce((s, r) => s + r.ease_factor, 0) / rows.length) * 100) / 100
       : 0;
 
+  const totalCards = Math.max(totalUserCards + totalBuiltinCards, rows.length);
+
   return {
-    totalCards: Math.max(totalUserCards, rows.length),
+    totalCards,
     dueCards,
     avgIntervalDays,
     longestIntervalDays,
