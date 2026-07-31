@@ -342,7 +342,7 @@ export function LockedRewardCard({ milestone, currentXP }: LockedRewardCardProps
 
         <Text style={{ color: palette.mutedText, textAlign: 'center', fontSize: 12 }}>
           Unlocks automatically at <Text style={{ fontWeight: '700', color: palette.primary }}>{milestone.required_xp} XP</Text>.
-          Keep studying to reveal your partner's surprise!
+          {" Keep studying to reveal your partner's surprise!"}
         </Text>
 
         <View
@@ -491,7 +491,7 @@ export function RewardRevealModal({
           </View>
 
           <Text style={{ color: palette.mutedText, textAlign: 'center', fontSize: 13 }}>
-            "{milestone.reward_description}"
+            {`"${milestone.reward_description}"`}
           </Text>
 
           {/* Action Buttons */}
@@ -548,15 +548,15 @@ export function PartnerRewardEditor({
   const [emoji, setEmoji] = useState(milestone?.reward_emoji ?? '🎁');
   const [color, setColor] = useState(milestone?.reward_color ?? '#000000');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [prevMilestoneId, setPrevMilestoneId] = useState<string | null>(milestone?.id ?? null);
 
-  React.useEffect(() => {
-    if (milestone) {
-      setTitle(milestone.reward_title);
-      setDescription(milestone.reward_description);
-      setEmoji(milestone.reward_emoji || '🎁');
-      setColor(milestone.reward_color || '#000000');
-    }
-  }, [milestone]);
+  if (milestone && milestone.id !== prevMilestoneId) {
+    setPrevMilestoneId(milestone.id);
+    setTitle(milestone.reward_title);
+    setDescription(milestone.reward_description);
+    setEmoji(milestone.reward_emoji || '🎁');
+    setColor(milestone.reward_color || '#000000');
+  }
 
   if (!milestone) return null;
 

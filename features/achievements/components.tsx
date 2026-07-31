@@ -516,7 +516,7 @@ export function PartnerAwardCard({ award, isSent }: PartnerAwardCardProps) {
 
           {award.message ? (
             <Text style={{ color: palette.mutedText, fontSize: 12 }} numberOfLines={2}>
-              "{award.message}"
+              {`"${award.message}"`}
             </Text>
           ) : null}
 

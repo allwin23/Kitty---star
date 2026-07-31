@@ -274,8 +274,7 @@ export default function StatisticsScreen() {
               }}
             >
               <Text style={{ color: palette.mutedText, textAlign: 'center', fontSize: 13 }}>
-                You don't have a connected study partner yet. Connect with a partner to view their
-                statistics.
+                {"You don't have a connected study partner yet. Connect with a partner to view their statistics."}
               </Text>
             </View>
           ) : null}

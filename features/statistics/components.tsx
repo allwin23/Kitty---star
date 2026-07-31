@@ -19,15 +19,15 @@ import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 
 import { Card, Loading, ErrorState, EmptyState } from '@/components/ui';
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, radius, spacing } from '@/theme';
 import type {
   DailyActivityRow,
   DailyReportRow,
   UserAchievementRow,
   AccountabilityStats,
   PomodoroStats,
+  TimeFilter,
 } from '@/services/statistics.service';
-import type { TimeFilter } from '@/services/statistics.service';
 
 // ─── Palette hook ──────────────────────────────────────────────────────────────
 

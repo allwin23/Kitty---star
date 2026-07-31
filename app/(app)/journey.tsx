@@ -239,7 +239,7 @@ export default function JourneyScreen() {
                     fontWeight: '600',
                   }}
                 >
-                  My Journey Path
+                  {"My Journey Path"}
                 </Text>
               </Button>
               <Button
@@ -255,7 +255,7 @@ export default function JourneyScreen() {
                     fontWeight: '600',
                   }}
                 >
-                  Manage Partner's Rewards ✏️
+                  {"Manage Partner's Rewards ✏️"}
                 </Text>
               </Button>
             </View>
@@ -265,8 +265,8 @@ export default function JourneyScreen() {
             <Loading />
           ) : !journey ? (
             <EmptyState
-              title="Journey Not Initialized"
-              description="Start studying to initialize your lifetime XP Journey path."
+              title={"Journey Not Initialized"}
+              description={"Start studying to initialize your lifetime XP Journey path."}
             />
           ) : (
             <>
@@ -291,17 +291,16 @@ export default function JourneyScreen() {
               <Card style={{ backgroundColor: palette.surface }}>
                 <View style={{ gap: spacing.md, alignItems: 'center' }}>
                   <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>
-                    🗺️ Milestone Checkpoints Path
+                    {"🗺️ Milestone Checkpoints Path"}
                   </Text>
 
-                  {viewingPartner ? (
-                    <Text
-                      style={{ color: palette.mutedText, fontSize: 12, textAlign: 'center' }}
-                    >
-                      Tap "✏️ Edit Reward" on any node below to customize your partner's secret
-                      surprise for that milestone!
-                    </Text>
-                  ) : null}
+                    {viewingPartner ? (
+                      <Text
+                        style={{ color: palette.mutedText, fontSize: 12, textAlign: 'center' }}
+                      >
+                        {`Tap "✏️ Edit Reward" on any node below to customize your partner's secret surprise for that milestone!`}
+                      </Text>
+                    ) : null}
 
                   {milestonesQ.isLoading ? (
                     <Loading />
