@@ -349,3 +349,90 @@ export function derivePomodoroStats(activity: DailyActivityRow[]): PomodoroStats
     mostProductiveDay: bestDay?.date ?? null,
   };
 }
+
+// ─── Realtime Subscription ───────────────────────────────────────────────────
+
+/**
+ * Subscribe to real-time changes across all statistics-related tables for a target user.
+ * Works seamlessly for both the current user and their connected partner.
+ */
+export function subscribeToStatistics(
+  userId: string,
+  onChange: () => void,
+) {
+  const channelId = `stats-sync:${userId}-${Math.random().toString(36).substring(2)}`;
+  return supabase
+    .channel(channelId)
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'daily_user_activity', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'user_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'daily_reports', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'pyq_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'pyq_attempts', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'vocabulary_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'grammar_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'water_daily_stats', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'flashcard_schedule', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'flashcard_reviews', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'user_achievements', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'activity_events', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'current_plans', filter: `user_id=eq.${userId}` },
+      onChange,
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'current_tasks' },
+      onChange,
+    )
+    .subscribe();
+}
+

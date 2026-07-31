@@ -10,11 +10,12 @@
  * No frontend calculations duplicate backend logic.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Screen } from '@/components/ui';
+import { supabase } from '@/lib/supabase';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
@@ -52,16 +53,14 @@ export default function StatisticsScreen() {
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [viewingPartner, setViewingPartner] = useState(false);
 
-  // ── Resolve which user's stats to show ─────────────────────────────────────
-
-  // Fetch partner_id for current user (needed to know if partner exists)
+  // Fetch partner_id for current user (or fallback to auth store profile)
   const partnerIdQ = useQuery({
     queryKey: queryKeys.statsPartnerId,
     queryFn: () => statsService.getPartnerIdForCurrentUser(),
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 10_000,
   });
-  const partnerId = partnerIdQ.data ?? null;
+  const partnerId = profile?.partner_id ?? partnerIdQ.data ?? null;
   const hasPartner = !!partnerId;
 
   // The user_id whose statistics we display
@@ -70,12 +69,32 @@ export default function StatisticsScreen() {
     return user?.id ?? null;
   }, [viewingPartner, partnerId, user?.id]);
 
+  // Realtime subscription for ultimate live sync (for own user AND partner!)
+  useEffect(() => {
+    if (!targetUserId) return;
+
+    const channel = statsService.subscribeToStatistics(targetUserId, () => {
+      void queryClient.invalidateQueries({ queryKey: ['stats'] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+    });
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [targetUserId, queryClient]);
+
+  const queryOptions = {
+    enabled: !!targetUserId,
+    staleTime: 0,
+    refetchInterval: 3000, // 3-second live sync interval for ultimate smoothness
+  };
+
   // ── Query: User Stats (overview) ────────────────────────────────────────────
 
   const userStatsQ = useQuery({
     queryKey: queryKeys.statsUserStats(targetUserId ?? ''),
     queryFn: () => statsService.getUserStats(targetUserId ?? undefined),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Achievements ────────────────────────────────────────────────────
@@ -83,7 +102,7 @@ export default function StatisticsScreen() {
   const achievementsQ = useQuery({
     queryKey: queryKeys.statsAchievements(targetUserId ?? ''),
     queryFn: () => statsService.getAchievements(targetUserId ?? undefined),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Daily Activity ──────────────────────────────────────────────────
@@ -91,7 +110,7 @@ export default function StatisticsScreen() {
   const activityQ = useQuery({
     queryKey: queryKeys.statsDailyActivity(targetUserId ?? '', timeFilter),
     queryFn: () => statsService.getDailyActivity(targetUserId!, timeFilter),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Reports ────────────────────────────────────────────────────────
@@ -99,7 +118,7 @@ export default function StatisticsScreen() {
   const reportsQ = useQuery({
     queryKey: queryKeys.statsReports(targetUserId ?? '', timeFilter),
     queryFn: () => statsService.getReports(targetUserId!, timeFilter),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: PYQ Stats ──────────────────────────────────────────────────────
@@ -107,7 +126,7 @@ export default function StatisticsScreen() {
   const pyqStatsQ = useQuery({
     queryKey: queryKeys.statsPYQ(targetUserId ?? ''),
     queryFn: () => statsService.getPYQStats(targetUserId!),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Vocabulary Stats ────────────────────────────────────────────────
@@ -115,7 +134,7 @@ export default function StatisticsScreen() {
   const vocabStatsQ = useQuery({
     queryKey: queryKeys.statsVocabulary(targetUserId ?? ''),
     queryFn: () => statsService.getVocabularyStats(targetUserId!),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Grammar Stats ──────────────────────────────────────────────────
@@ -123,11 +142,10 @@ export default function StatisticsScreen() {
   const grammarStatsQ = useQuery({
     queryKey: queryKeys.statsGrammar(targetUserId ?? ''),
     queryFn: () => statsService.getGrammarStats(targetUserId!),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
-  // Grammar topic breakdown — derived from attempt history (no userId filter needed for own user)
-  // For partner, we read their grammar_attempts directly.
+  // Grammar topic breakdown
   const grammarTopicsQ = useQuery({
     queryKey: ['stats', 'grammar-topics', targetUserId ?? ''],
     queryFn: async () => {
@@ -139,7 +157,7 @@ export default function StatisticsScreen() {
       }
       return Object.entries(counts).map(([topic, attempts]) => ({ topic, attempts }));
     },
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Water Stats ─────────────────────────────────────────────────────
@@ -147,7 +165,7 @@ export default function StatisticsScreen() {
   const waterQ = useQuery({
     queryKey: queryKeys.statsWater(targetUserId ?? '', timeFilter),
     queryFn: () => statsService.getWaterStats(targetUserId!, timeFilter),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Flashcard schedule stats ───────────────────────────────────────
@@ -155,7 +173,7 @@ export default function StatisticsScreen() {
   const flashcardScheduleQ = useQuery({
     queryKey: queryKeys.statsFlashcardSchedule(targetUserId ?? ''),
     queryFn: () => statsService.getFlashcardScheduleStats(targetUserId!),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Query: Flashcard reviews ───────────────────────────────────────────────
@@ -163,7 +181,7 @@ export default function StatisticsScreen() {
   const flashcardReviewsQ = useQuery({
     queryKey: queryKeys.statsFlashcardReviews(targetUserId ?? '', timeFilter),
     queryFn: () => statsService.getFlashcardReviews(targetUserId!, timeFilter),
-    enabled: !!targetUserId,
+    ...queryOptions,
   });
 
   // ── Derived values (no recalculation — uses backend rows only) ─────────────

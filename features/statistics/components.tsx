@@ -295,8 +295,8 @@ export function OverviewSection({
   error,
   onRetry,
 }: OverviewSectionProps) {
-  if (isLoading) return <StatisticsSection title="Overview" emoji="📊" isLoading />;
-  if (error) return <StatisticsSection title="Overview" emoji="📊" error={error} onRetry={onRetry} />;
+  if (isLoading && !userStats) return <StatisticsSection title="Overview" emoji="📊" isLoading />;
+  if (error && !userStats) return <StatisticsSection title="Overview" emoji="📊" error={error} onRetry={onRetry} />;
   if (!userStats) {
     return (
       <StatisticsSection title="Overview" emoji="📊">
@@ -373,8 +373,8 @@ export function AccountabilitySection({
   error,
   onRetry,
 }: AccountabilitySectionProps) {
-  if (isLoading) return <StatisticsSection title="Accountability" emoji="✅" isLoading />;
-  if (error) return <StatisticsSection title="Accountability" emoji="✅" error={error} onRetry={onRetry} />;
+  if (isLoading && !stats) return <StatisticsSection title="Accountability" emoji="✅" isLoading />;
+  if (error && !stats) return <StatisticsSection title="Accountability" emoji="✅" error={error} onRetry={onRetry} />;
   if (!stats || stats.daysSubmitted === 0) {
     return (
       <StatisticsSection title="Accountability" emoji="✅">
@@ -428,8 +428,8 @@ export interface PomodoroSectionProps {
 }
 
 export function PomodoroSection({ stats, isLoading, error, onRetry }: PomodoroSectionProps) {
-  if (isLoading) return <StatisticsSection title="Pomodoro" emoji="🍅" isLoading />;
-  if (error) return <StatisticsSection title="Pomodoro" emoji="🍅" error={error} onRetry={onRetry} />;
+  if (isLoading && !stats) return <StatisticsSection title="Pomodoro" emoji="🍅" isLoading />;
+  if (error && !stats) return <StatisticsSection title="Pomodoro" emoji="🍅" error={error} onRetry={onRetry} />;
   if (!stats || stats.pomodorosCompleted === 0) {
     return (
       <StatisticsSection title="Pomodoro" emoji="🍅">
@@ -438,7 +438,6 @@ export function PomodoroSection({ stats, isLoading, error, onRetry }: PomodoroSe
     );
   }
 
-  const palette = colors.light; // used only for value colors
   const metrics = [
     { label: 'Completed', value: stats.pomodorosCompleted, emoji: '🍅' },
     { label: 'Focus Time', value: `${stats.focusMinutes}m`, emoji: '⏱️' },
@@ -481,8 +480,8 @@ export interface PYQSectionProps {
 }
 
 export function PYQSection({ stats, isLoading, error, onRetry }: PYQSectionProps) {
-  if (isLoading) return <StatisticsSection title="PYQ Practice" emoji="📚" isLoading />;
-  if (error) return <StatisticsSection title="PYQ Practice" emoji="📚" error={error} onRetry={onRetry} />;
+  if (isLoading && !stats) return <StatisticsSection title="PYQ Practice" emoji="📚" isLoading />;
+  if (error && !stats) return <StatisticsSection title="PYQ Practice" emoji="📚" error={error} onRetry={onRetry} />;
   if (!stats || stats.total_tests === 0) {
     return (
       <StatisticsSection title="PYQ Practice" emoji="📚">
