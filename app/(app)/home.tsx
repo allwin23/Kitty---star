@@ -119,9 +119,6 @@ export default function HomeScreen() {
               <Button onPress={() => router.push('/(app)/achievements')}>
                 🏆 Achievements & Recognition
               </Button>
-              <Button onPress={() => router.push('/(app)/accountability/reports')}>
-                📊 Reports
-              </Button>
               <Button onPress={() => router.push('/(app)/pyq')}>
                 📚 PYQ Practice
               </Button>

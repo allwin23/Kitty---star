@@ -274,7 +274,6 @@ export default function JourneyScreen() {
               <JourneyHeader
                 currentXP={currentXP}
                 level={level}
-                streak={streak}
                 todayXP={todayXP}
                 nextMilestoneXP={nextMilestoneXP}
                 remainingXP={remainingXP}

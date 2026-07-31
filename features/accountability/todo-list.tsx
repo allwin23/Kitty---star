@@ -274,20 +274,6 @@ export function TodoList({
                   <ActivityIndicator size="small" color={palette.primary} />
                 ) : (
                   <View style={{ flexDirection: 'row', gap: spacing.xs }}>
-                    {showPomodoro && onPomodoro && !isDone ? (
-                      <Pressable
-                        onPress={() => onPomodoro(task)}
-                        style={{
-                          paddingHorizontal: spacing.sm,
-                          paddingVertical: 4,
-                          borderRadius: radius.sm,
-                          borderWidth: 1,
-                          borderColor: palette.border,
-                        }}
-                      >
-                        <Text style={{ fontSize: 12, color: palette.text }}>🍅 Start</Text>
-                      </Pressable>
-                    ) : null}
                     {!readOnly && onEdit ? (
                       <Pressable
                         onPress={() => startEdit(task)}

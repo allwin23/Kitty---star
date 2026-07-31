@@ -501,7 +501,6 @@ export default function AccountabilityScreen() {
                       order: t.order ?? 0,
                     }))}
                     readOnly
-                    showPomodoro
                   />
                   <View
                     style={{
@@ -546,7 +545,7 @@ export default function AccountabilityScreen() {
                 />
               ) : currentPlan.status === 'submitted' ? (
                 <View style={{ gap: spacing.sm }}>
-                  <TodoList tasks={currentTasks} readOnly showPomodoro />
+                  <TodoList tasks={currentTasks} readOnly />
                   <Text style={{ color: palette.mutedText, fontSize: 13, textAlign: 'center' }}>
                     Day submitted. Awaiting partner review.
                   </Text>
@@ -557,8 +556,6 @@ export default function AccountabilityScreen() {
                   onEdit={handleTaskEdit}
                   onDelete={handleTaskDelete}
                   onAdd={handleTaskAdd}
-                  onPomodoro={(task) => setPomodoroTask(task)}
-                  showPomodoro
                   savingId={savingTaskId}
                 />
               )}

@@ -25,9 +25,12 @@ export async function logWater(input: WaterLogInput): Promise<WaterLogRow> {
 
 /** Get today's aggregated water stats for the current user. */
 export async function getTodayStats(): Promise<WaterDailyStatsRow | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
   const { data, error } = await supabase
     .from('water_daily_stats')
     .select('*')
+    .eq('user_id', user.id)
     .eq('date', todayIso())
     .maybeSingle();
   return throwIfError(data, error);
@@ -35,9 +38,12 @@ export async function getTodayStats(): Promise<WaterDailyStatsRow | null> {
 
 /** Get individual water log entries for a specific date (defaults to today). */
 export async function getDailyHistory(date = todayIso()): Promise<WaterLogRow[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   const { data, error } = await supabase
     .from('water_logs')
     .select('*')
+    .eq('user_id', user.id)
     .gte('logged_at', `${date}T00:00:00Z`)
     .lt('logged_at', `${date}T23:59:59.999Z`)
     .order('logged_at', { ascending: false });
@@ -46,6 +52,8 @@ export async function getDailyHistory(date = todayIso()): Promise<WaterLogRow[]>
 
 /** Get daily stats for the most recent N days (default 7). */
 export async function getWeeklyStats(days = 7): Promise<WaterDailyStatsRow[]> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   const since = new Date();
   since.setDate(since.getDate() - (days - 1));
   const sinceIso = since.toISOString().slice(0, 10);
@@ -53,6 +61,7 @@ export async function getWeeklyStats(days = 7): Promise<WaterDailyStatsRow[]> {
   const { data, error } = await supabase
     .from('water_daily_stats')
     .select('*')
+    .eq('user_id', user.id)
     .gte('date', sinceIso)
     .order('date', { ascending: true });
   return throwIfError(data ?? [], error);

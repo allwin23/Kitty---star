@@ -35,7 +35,6 @@ function usePalette() {
 export interface JourneyHeaderProps {
   currentXP: number;
   level: number;
-  streak: number;
   todayXP: number;
   nextMilestoneXP: number;
   remainingXP: number;
@@ -45,7 +44,6 @@ export interface JourneyHeaderProps {
 export function JourneyHeader({
   currentXP,
   level,
-  streak,
   todayXP,
   nextMilestoneXP,
   remainingXP,
@@ -82,22 +80,6 @@ export function JourneyHeader({
 
         {/* Quick Stat Badges */}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: palette.background,
-              borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: palette.border,
-              padding: spacing.xs,
-              alignItems: 'center',
-            }}
-          >
-            <Text style={{ fontSize: 16 }}>🔥</Text>
-            <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14 }}>{streak}d</Text>
-            <Text style={{ color: palette.mutedText, fontSize: 10 }}>Streak</Text>
-          </View>
-
           <View
             style={{
               flex: 1,

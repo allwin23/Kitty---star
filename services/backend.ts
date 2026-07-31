@@ -229,7 +229,13 @@ export const reportService = {
   },
 
   async stats() {
-    const { data, error } = await supabase.from('user_stats').select('*').single();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('user_stats')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
     return throwIfError(data, error);
   },
 
@@ -317,22 +323,28 @@ export const waterService = {
   },
 
   async getTodayStats() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
     const today = new Date().toISOString().slice(0, 10);
     const { data, error } = await supabase
       .from('water_daily_stats')
       .select('*')
+      .eq('user_id', user.id)
       .eq('date', today)
       .maybeSingle();
     return throwIfError(data, error);
   },
 
   async getTodayLogs() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
     const todayStr = new Date().toISOString().slice(0, 10);
     const startOfToday = `${todayStr}T00:00:00.000Z`;
     const endOfToday = `${todayStr}T23:59:59.999Z`;
     const { data, error } = await supabase
       .from('water_logs')
       .select('*')
+      .eq('user_id', user.id)
       .gte('logged_at', startOfToday)
       .lte('logged_at', endOfToday)
       .order('logged_at', { ascending: false });
@@ -340,21 +352,27 @@ export const waterService = {
   },
 
   async getWeeklyStats() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
     const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
     const { data, error } = await supabase
       .from('water_daily_stats')
       .select('*')
+      .eq('user_id', user.id)
       .gte('date', sevenDaysAgoStr)
       .order('date', { ascending: true });
     return throwIfError(data ?? [], error);
   },
 
   async getStatsHistory() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
     const { data, error } = await supabase
       .from('water_daily_stats')
       .select('*')
+      .eq('user_id', user.id)
       .order('date', { ascending: false });
     return throwIfError(data ?? [], error);
   },
