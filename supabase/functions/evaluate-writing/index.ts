@@ -53,40 +53,40 @@ You must return a JSON response with the following keys:
 `;
 
     const responseSchema = {
-      type: "OBJECT",
+      type: "object",
       properties: {
-        overallFeedback: { type: "STRING" },
+        overallFeedback: { type: "string" },
         grammarMistakes: {
-          type: "ARRAY",
+          type: "array",
           items: {
-            type: "OBJECT",
+            type: "object",
             properties: {
-              original: { type: "STRING" },
-              correction: { type: "STRING" },
-              explanation: { type: "STRING" }
+              original: { type: "string" },
+              correction: { type: "string" },
+              explanation: { type: "string" }
             },
             required: ["original", "correction", "explanation"]
           }
         },
         vocabularySuggestions: {
-          type: "ARRAY",
+          type: "array",
           items: {
-            type: "OBJECT",
+            type: "object",
             properties: {
-              word: { type: "STRING" },
-              suggestion: { type: "STRING" }
+              word: { type: "string" },
+              suggestion: { type: "string" }
             },
             required: ["word", "suggestion"]
           }
         },
-        improvedParagraph: { type: "STRING" },
+        improvedParagraph: { type: "string" },
         wordsUsedCorrectly: {
-          type: "ARRAY",
-          items: { type: "STRING" }
+          type: "array",
+          items: { type: "string" }
         },
         wordsUsedIncorrectly: {
-          type: "ARRAY",
-          items: { type: "STRING" }
+          type: "array",
+          items: { type: "string" }
         }
       },
       required: [
@@ -99,7 +99,7 @@ You must return a JSON response with the following keys:
       ]
     };
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(geminiUrl, {
       method: 'POST',
