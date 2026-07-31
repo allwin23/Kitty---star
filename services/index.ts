@@ -9,3 +9,5 @@ export * as activityEventsService from './activity-events.service';
 export * as mascotService from './mascot.service';
 export * as writingService from './writing.service';
 export * as statisticsService from './statistics.service';
+export * as achievementService from './achievement.service';
+
