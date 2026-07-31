@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import { format } from 'date-fns';
 
-import { Card, Loading, EmptyState, Button } from '@/components/ui';
+import { Card, Loading, EmptyState, Button, Input } from '@/components/ui';
 import { colors, radius, spacing, typography } from '@/theme';
 import {
   getAchievementCategory,
@@ -37,24 +37,10 @@ function usePalette() {
 
 export function CategoryPill({ category }: { category: AchievementCategory }) {
   const palette = usePalette();
-  const label =
-    category === 'system'
-      ? '🏅 System'
-      : category === 'milestone'
-        ? '🎖️ Milestone'
-        : '💝 Partner Award';
-  const bg =
-    category === 'system'
-      ? 'rgba(79, 70, 229, 0.15)'
-      : category === 'milestone'
-        ? 'rgba(234, 179, 8, 0.15)'
-        : 'rgba(236, 72, 153, 0.15)';
-  const color =
-    category === 'system'
-      ? palette.primary
-      : category === 'milestone'
-        ? '#d97706'
-        : '#ec4899';
+  const isAward = category === 'partner_award';
+  const label = isAward ? '💝 Partner Award' : '🏅 System Badge';
+  const bg = isAward ? 'rgba(236, 72, 153, 0.15)' : 'rgba(79, 70, 229, 0.15)';
+  const color = isAward ? '#ec4899' : palette.primary;
 
   return (
     <View
@@ -492,57 +478,252 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
   );
 }
 
+// ─── PartnerAwardCard ─────────────────────────────────────────────────────────
+
+export interface PartnerAwardCardProps {
+  award: any;
+  isSent?: boolean;
+}
+
+export function PartnerAwardCard({ award, isSent }: PartnerAwardCardProps) {
+  const palette = usePalette();
+
+  return (
+    <Card style={{ backgroundColor: palette.surface }}>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
+        <View
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            backgroundColor: award.color ? `${award.color}22` : 'rgba(79,70,229,0.15)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 1,
+            borderColor: award.color ?? palette.primary,
+          }}
+        >
+          <Text style={{ fontSize: 26 }}>{award.icon ?? '🌟'}</Text>
+        </View>
+
+        <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14 }}>
+              {award.title}
+            </Text>
+            <CategoryPill category="partner_award" />
+          </View>
+
+          {award.message ? (
+            <Text style={{ color: palette.mutedText, fontSize: 12 }} numberOfLines={2}>
+              "{award.message}"
+            </Text>
+          ) : null}
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 2 }}>
+            <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 11 }}>
+              +{award.xp_bonus} XP Bonus
+            </Text>
+            <Text style={{ color: palette.mutedText, fontSize: 11 }}>•</Text>
+            <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+              {isSent ? 'Sent' : 'Received'} {format(new Date(award.created_at), 'dd MMM yyyy')}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </Card>
+  );
+}
+
+// ─── CreatePartnerAwardModal ───────────────────────────────────────────────────
+
+export interface CreatePartnerAwardModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSend: (data: { title: string; message: string; icon: string; xp_bonus: number }) => Promise<void>;
+  isSending: boolean;
+}
+
+const ICONS = ['🌟', '❤️', '👑', '🔥', '🏆', '💎', '⚡', '🎯', '🥇', '🎉'];
+const XP_OPTIONS = [25, 50, 100];
+
+export function CreatePartnerAwardModal({
+  visible,
+  onClose,
+  onSend,
+  isSending,
+}: CreatePartnerAwardModalProps) {
+  const palette = usePalette();
+  const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
+  const [icon, setIcon] = useState('🌟');
+  const [xpBonus, setXpBonus] = useState(50);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleSend = async () => {
+    if (!title.trim()) {
+      setErrorMsg('Please enter an award title.');
+      return;
+    }
+    setErrorMsg(null);
+    try {
+      await onSend({
+        title: title.trim(),
+        message: message.trim(),
+        icon,
+        xp_bonus: xpBonus,
+      });
+      setTitle('');
+      setMessage('');
+      onClose();
+    } catch (err: any) {
+      setErrorMsg(err.message ?? 'Failed to send award.');
+    }
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: spacing.md,
+        }}
+      >
+        <ScrollView
+          style={{ width: '100%', maxWidth: 360 }}
+          contentContainerStyle={{
+            backgroundColor: palette.surface,
+            borderRadius: radius.lg,
+            borderWidth: 1,
+            borderColor: palette.border,
+            padding: spacing.lg,
+            gap: spacing.md,
+          }}
+        >
+          <Text style={{ color: palette.text, fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
+            💝 Award Your Partner
+          </Text>
+
+          {/* Icon Selector */}
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
+              Choose Icon
+            </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+              {ICONS.map((i) => (
+                <Pressable
+                  key={i}
+                  onPress={() => setIcon(i)}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    backgroundColor: icon === i ? palette.primary : palette.background,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderWidth: 1,
+                    borderColor: palette.border,
+                  }}
+                >
+                  <Text style={{ fontSize: 20 }}>{i}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Title Input */}
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
+              Award Title
+            </Text>
+            <Input
+              value={title}
+              onChangeText={setTitle}
+              placeholder="e.g. Best Study Partner"
+            />
+          </View>
+
+          {/* Message Input */}
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
+              Message (Optional)
+            </Text>
+            <Input
+              value={message}
+              onChangeText={setMessage}
+              placeholder="e.g. Thanks for motivating me every day!"
+            />
+          </View>
+
+          {/* Error Message */}
+          {errorMsg ? (
+            <Text style={{ color: palette.danger, fontSize: 12, textAlign: 'center' }}>
+              {errorMsg}
+            </Text>
+          ) : null}
+
+          {/* Action Buttons */}
+          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+            <Button onPress={onClose} style={{ flex: 1, backgroundColor: palette.background }}>
+              Cancel
+            </Button>
+            <Button onPress={handleSend} disabled={isSending} style={{ flex: 1 }}>
+              {isSending ? 'Sending...' : 'Send Award 🎁'}
+            </Button>
+          </View>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+}
+
 // ─── PartnerAwardSection ───────────────────────────────────────────────────────
 
 export interface PartnerAwardSectionProps {
   hasPartner: boolean;
-  supportsCustomBadges: boolean;
+  awards: any[];
+  onOpenCreate: () => void;
 }
 
-export function PartnerAwardSection({ hasPartner, supportsCustomBadges }: PartnerAwardSectionProps) {
+export function PartnerAwardSection({
+  hasPartner,
+  awards,
+  onOpenCreate,
+}: PartnerAwardSectionProps) {
   const palette = usePalette();
 
   return (
     <Card style={{ backgroundColor: palette.surface }}>
       <View style={{ gap: spacing.sm }}>
-        <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-          💝 Partner Awards
-        </Text>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
+            💝 Partner Awards ({awards.length})
+          </Text>
+          {hasPartner ? (
+            <Button onPress={onOpenCreate} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
+              + Award Partner
+            </Button>
+          ) : null}
+        </View>
 
         {!hasPartner ? (
           <EmptyState
             title="No Partner Connected"
             description="Connect with a study partner in Accountability to exchange appreciation awards."
           />
-        ) : !supportsCustomBadges ? (
-          <View
-            style={{
-              backgroundColor: palette.background,
-              borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: palette.border,
-              padding: spacing.md,
-              gap: spacing.xs,
-            }}
-          >
-            <Text style={{ color: palette.text, fontWeight: '600', fontSize: 14 }}>
-              Backend Capability Notice
-            </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 12 }}>
-              Partner-designed custom badges require the `partner_awards` database table and
-              `send_partner_award` RPC on Supabase.
-            </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 12, marginTop: 4 }}>
-              Automatic system & milestone achievements are fully active and awarded by the backend.
-            </Text>
-          </View>
-        ) : (
+        ) : awards.length === 0 ? (
           <EmptyState
             title="No Partner Awards Yet"
-            description="Custom partner awards given by your study partner will appear here permanently."
+            description="Tap '+ Award Partner' above to send a custom award badge to your study partner!"
           />
+        ) : (
+          awards.map((award) => <PartnerAwardCard key={award.id} award={award} />)
         )}
       </View>
     </Card>
   );
 }
+

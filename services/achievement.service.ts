@@ -8,7 +8,7 @@
  */
 
 import { supabase } from '@/lib/supabase';
-import { throwIfError } from '@/lib/supabase-helpers';
+import { throwIfError, throwIfErrorOrNull } from '@/lib/supabase-helpers';
 import type { TableRow } from '@/types/database';
 
 export type AchievementRow = TableRow<'achievements'>;
@@ -66,6 +66,17 @@ export function getAchievementXPReward(code: string): number {
   return 50;
 }
 
+export type PartnerAwardRow = TableRow<'partner_awards'>;
+
+export interface PartnerAwardInput {
+  recipient_id: string;
+  title: string;
+  message?: string;
+  icon?: string;
+  color?: string;
+  xp_bonus?: number;
+}
+
 export const achievementService = {
   /** Fetch all master achievements defined in the database (Badge Gallery). */
   async getAllAchievements(): Promise<AchievementRow[]> {
@@ -102,10 +113,41 @@ export const achievementService = {
     return this.getUserAchievements(userId);
   },
 
+  /** Send a custom partner award badge to connected partner via backend RPC. */
+  async sendPartnerAward(input: PartnerAwardInput): Promise<PartnerAwardRow> {
+    const { data, error } = await supabase.rpc('send_partner_award', {
+      p_recipient_id: input.recipient_id,
+      p_title: input.title,
+      p_message: input.message ?? null,
+      p_icon: input.icon ?? '🌟',
+      p_color: input.color ?? '#4F46E5',
+      p_xp_bonus: input.xp_bonus ?? 50,
+    });
+    return throwIfErrorOrNull(data, error, 'Failed to send partner award.');
+  },
+
+  /** Fetch partner awards received by a specific user (recipient_id = userId). */
+  async getReceivedPartnerAwards(userId: string): Promise<PartnerAwardRow[]> {
+    const { data, error } = await supabase
+      .from('partner_awards')
+      .select('*')
+      .eq('recipient_id', userId)
+      .order('created_at', { ascending: false });
+    return throwIfError(data ?? [], error);
+  },
+
+  /** Fetch partner awards sent by a specific user (sender_id = userId). */
+  async getSentPartnerAwards(userId: string): Promise<PartnerAwardRow[]> {
+    const { data, error } = await supabase
+      .from('partner_awards')
+      .select('*')
+      .eq('sender_id', userId)
+      .order('created_at', { ascending: false });
+    return throwIfError(data ?? [], error);
+  },
+
   /** Check if backend schema supports custom partner-designed awards table or RPC. */
   async supportsCustomPartnerAwards(): Promise<boolean> {
-    // Check if partner_awards table exists in database
-    const { error } = await supabase.from('partner_awards' as any).select('id').limit(1);
-    return !error;
+    return true;
   },
 };

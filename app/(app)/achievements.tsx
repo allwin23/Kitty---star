@@ -42,6 +42,8 @@ import {
   AchievementHistoryItem,
   AchievementDetailModal,
   PartnerAwardSection,
+  PartnerAwardCard,
+  CreatePartnerAwardModal,
 } from '@/features/achievements';
 
 type TopTab = 'my_achievements' | 'partner_achievements' | 'gallery' | 'history';
@@ -57,6 +59,8 @@ export default function AchievementsScreen() {
 
   const [activeTab, setActiveTab] = useState<TopTab>('my_achievements');
   const [galleryFilter, setGalleryFilter] = useState<GalleryFilter>('all');
+  const [showAwardModal, setShowAwardModal] = useState(false);
+  const [isSendingAward, setIsSendingAward] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<
     UserAchievementWithDetails | (AchievementRow & { unlocked?: boolean; unlockedAt?: string }) | null
   >(null);
@@ -91,6 +95,12 @@ export default function AchievementsScreen() {
     enabled: !!user,
   });
 
+  const myReceivedAwardsQ = useQuery({
+    queryKey: ['partner-awards', 'received', user?.id],
+    queryFn: () => achievementService.getReceivedPartnerAwards(user!.id),
+    enabled: !!user,
+  });
+
   // ── Queries: Partner Data ──────────────────────────────────────────────────
 
   const partnerUnlockedQ = useQuery({
@@ -105,10 +115,10 @@ export default function AchievementsScreen() {
     enabled: activeTab === 'partner_achievements' && !!partnerId,
   });
 
-  const supportsCustomBadgesQ = useQuery({
-    queryKey: ['achievements', 'supports-custom-badges'],
-    queryFn: () => achievementService.supportsCustomPartnerAwards(),
-    staleTime: Infinity,
+  const partnerReceivedAwardsQ = useQuery({
+    queryKey: ['partner-awards', 'received', partnerId ?? ''],
+    queryFn: () => achievementService.getReceivedPartnerAwards(partnerId!),
+    enabled: (activeTab === 'partner_achievements' || activeTab === 'my_achievements') && !!partnerId,
   });
 
   // ── Realtime Subscription ──────────────────────────────────────────────────
@@ -119,32 +129,56 @@ export default function AchievementsScreen() {
       if (n.type === 'achievement_unlocked') {
         void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
         void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+        void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
       }
     });
 
+    const awardsChannel = supabase
+      .channel(`partner-awards-sync:${user.id}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'partner_awards' },
+        () => {
+          void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
+          void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+        },
+      )
+      .subscribe();
+
     return () => {
       void supabase.removeChannel(channel);
+      void supabase.removeChannel(awardsChannel);
     };
   }, [user, queryClient]);
+
+  const handleSendAward = async (data: { title: string; message: string; icon: string; xp_bonus: number }) => {
+    if (!partnerId) return;
+    setIsSendingAward(true);
+    try {
+      await achievementService.sendPartnerAward({
+        recipient_id: partnerId,
+        title: data.title,
+        message: data.message,
+        icon: data.icon,
+        xp_bonus: data.xp_bonus,
+      });
+      void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+    } finally {
+      setIsSendingAward(false);
+    }
+  };
 
   // ── Derived Data ───────────────────────────────────────────────────────────
 
   const allBadges = allBadgesQ.data ?? [];
   const myUnlocked = (myUnlockedQ.data ?? []) as UserAchievementWithDetails[];
   const userStats = userStatsQ.data as { level: number; xp: number } | null;
+  const myReceivedAwards = myReceivedAwardsQ.data ?? [];
+  const partnerReceivedAwards = partnerReceivedAwardsQ.data ?? [];
 
   const unlockedBadgeIds = useMemo(
     () => new Set(myUnlocked.map((u) => u.achievement_id)),
-    [myUnlocked],
-  );
-
-  const mySystemBadges = useMemo(
-    () => myUnlocked.filter((u) => u.achievements && getAchievementCategory(u.achievements.code) === 'system'),
-    [myUnlocked],
-  );
-
-  const myMilestoneBadges = useMemo(
-    () => myUnlocked.filter((u) => u.achievements && getAchievementCategory(u.achievements.code) === 'milestone'),
     [myUnlocked],
   );
 
@@ -160,11 +194,13 @@ export default function AchievementsScreen() {
     void myUnlockedQ.refetch();
     void userStatsQ.refetch();
     void allBadgesQ.refetch();
+    void myReceivedAwardsQ.refetch();
     if (partnerId) {
       void partnerUnlockedQ.refetch();
       void partnerStatsQ.refetch();
+      void partnerReceivedAwardsQ.refetch();
     }
-  }, [myUnlockedQ, userStatsQ, allBadgesQ, partnerId, partnerUnlockedQ, partnerStatsQ]);
+  }, [myUnlockedQ, userStatsQ, allBadgesQ, myReceivedAwardsQ, partnerId, partnerUnlockedQ, partnerStatsQ, partnerReceivedAwardsQ]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -183,7 +219,7 @@ export default function AchievementsScreen() {
               Achievements
             </Text>
             <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-              Your central recognition & milestone hub
+              Your central recognition & achievement hub
             </Text>
           </View>
 
@@ -241,17 +277,17 @@ export default function AchievementsScreen() {
               {/* System Achievements */}
               <View style={{ gap: spacing.sm }}>
                 <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-                  🏅 System Achievements ({mySystemBadges.length})
+                  🏅 Unlocked Badges ({myUnlocked.length})
                 </Text>
                 {myUnlockedQ.isLoading ? (
                   <Loading />
-                ) : mySystemBadges.length === 0 ? (
+                ) : myUnlocked.length === 0 ? (
                   <EmptyState
                     title="No system achievements yet"
                     description="Complete daily plans and pomodoro sessions to unlock badges."
                   />
                 ) : (
-                  mySystemBadges.map((item) => (
+                  myUnlocked.map((item) => (
                     <AchievementCard
                       key={item.id}
                       item={item}
@@ -261,33 +297,11 @@ export default function AchievementsScreen() {
                 )}
               </View>
 
-              {/* Milestone Achievements */}
-              <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-                  🎖️ Milestone Badges ({myMilestoneBadges.length})
-                </Text>
-                {myUnlockedQ.isLoading ? (
-                  <Loading />
-                ) : myMilestoneBadges.length === 0 ? (
-                  <EmptyState
-                    title="No milestone badges unlocked"
-                    description="Hit lifetime study records (100 pomodoros, 100 hours) to earn rare milestones."
-                  />
-                ) : (
-                  myMilestoneBadges.map((item) => (
-                    <AchievementCard
-                      key={item.id}
-                      item={item}
-                      onPress={() => setSelectedDetail(item)}
-                    />
-                  ))
-                )}
-              </View>
-
-              {/* Partner Awards Section */}
+              {/* Partner Awards Section (Received Awards) */}
               <PartnerAwardSection
                 hasPartner={hasPartner}
-                supportsCustomBadges={supportsCustomBadgesQ.data ?? false}
+                awards={myReceivedAwards}
+                onOpenCreate={() => setShowAwardModal(true)}
               />
             </View>
           ) : null}
@@ -315,6 +329,9 @@ export default function AchievementsScreen() {
                     </View>
                   </Card>
 
+                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
+                    🏅 Partner Badges ({partnerUnlocked.length})
+                  </Text>
                   {partnerUnlocked.length === 0 ? (
                     <EmptyState
                       title="No partner achievements"
@@ -327,6 +344,20 @@ export default function AchievementsScreen() {
                         item={item}
                         onPress={() => setSelectedDetail(item)}
                       />
+                    ))
+                  )}
+
+                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
+                    💝 Awards Given to Partner ({partnerReceivedAwards.length})
+                  </Text>
+                  {partnerReceivedAwards.length === 0 ? (
+                    <EmptyState
+                      title="No Partner Awards Given Yet"
+                      description="Tap '+ Award Partner' in My Achievements to gift your partner an award badge!"
+                    />
+                  ) : (
+                    partnerReceivedAwards.map((award) => (
+                      <PartnerAwardCard key={award.id} award={award} isSent />
                     ))
                   )}
                 </>
@@ -440,6 +471,14 @@ export default function AchievementsScreen() {
         visible={!!selectedDetail}
         item={selectedDetail}
         onClose={() => setSelectedDetail(null)}
+      />
+
+      {/* Create Partner Award Modal */}
+      <CreatePartnerAwardModal
+        visible={showAwardModal}
+        onClose={() => setShowAwardModal(false)}
+        onSend={handleSendAward}
+        isSending={isSendingAward}
       />
     </Screen>
   );

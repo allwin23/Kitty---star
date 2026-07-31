@@ -69,6 +69,31 @@ export type Database = {
           expires_at?: string;
         }
       >;
+      partner_awards: Table<
+        {
+          id: string;
+          sender_id: string;
+          recipient_id: string;
+          title: string;
+          message: string | null;
+          icon: string;
+          color: string;
+          xp_bonus: number;
+          created_at: string;
+        },
+        {
+          id?: string;
+          sender_id: string;
+          recipient_id: string;
+          title: string;
+          message?: string | null;
+          icon?: string;
+          color?: string;
+          xp_bonus?: number;
+          created_at?: string;
+        },
+        never
+      >;
       planner_drafts: Table<
         { id: string; user_id: string; date: string; created_at: string; updated_at: string },
         { id?: string; user_id?: string; date: string; created_at?: string; updated_at?: string },
@@ -1021,6 +1046,17 @@ export type Database = {
       review_flashcard: {
         Args: { p_card_id: string; p_rating: 'again' | 'hard' | 'good' | 'easy' };
         Returns: Database['public']['Tables']['flashcard_reviews']['Row'];
+      };
+      send_partner_award: {
+        Args: {
+          p_recipient_id: string;
+          p_title: string;
+          p_message?: string | null;
+          p_icon?: string;
+          p_color?: string;
+          p_xp_bonus?: number;
+        };
+        Returns: Database['public']['Tables']['partner_awards']['Row'];
       };
     };
     Enums: {
