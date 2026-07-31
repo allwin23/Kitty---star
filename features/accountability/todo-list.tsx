@@ -11,6 +11,7 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  Platform,
   Pressable,
   Text,
   TextInput,
@@ -98,6 +99,14 @@ export function TodoList({
   };
 
   const confirmDelete = (task: TodoTask) => {
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(`Delete "${task.title}"?`);
+      if (confirmed) {
+        void onDelete?.(task.id);
+      }
+      return;
+    }
+
     Alert.alert('Delete task', `Delete "${task.title}"?`, [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete', style: 'destructive', onPress: () => void onDelete?.(task.id) },

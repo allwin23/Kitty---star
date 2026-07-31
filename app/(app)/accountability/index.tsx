@@ -26,6 +26,7 @@ import {
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
+import { supabase } from '@/lib/supabase';
 import {
   Button,
   Card,
@@ -36,7 +37,7 @@ import {
 } from '@/components/ui';
 import { TodoList, type TodoTask } from '@/features/accountability/todo-list';
 import { PomodoroModal } from '@/features/accountability/pomodoro-modal';
-import { colors, spacing, typography } from '@/theme';
+import { colors, radius, spacing, typography } from '@/theme';
 
 const today = new Date().toISOString().slice(0, 10);
 const tomorrow = addDays(new Date(), 1).toISOString().slice(0, 10);
@@ -100,6 +101,24 @@ export default function AccountabilityScreen() {
     enabled: !!user,
   });
 
+  const todayReportQ = useQuery({
+    queryKey: ['today-report', today],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from('daily_reports')
+        .select('*, report_tasks(*)')
+        .eq('date', today)
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const todayReport = todayReportQ.data;
+
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────
 
   const startDayMutation = useMutation({
@@ -108,6 +127,7 @@ export default function AccountabilityScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.initialPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
       void queryClient.invalidateQueries({ queryKey: ['draft'] });
+      void queryClient.invalidateQueries({ queryKey: ['today-report', today] });
     },
     onError: (e: Error) => Alert.alert('Error starting day', e.message),
   });
@@ -118,21 +138,24 @@ export default function AccountabilityScreen() {
   } | null;
 
   const hasTodayDraftTasks = (todayDraft?.draft_tasks ?? []).length > 0;
+  const hasTodayReport = !!todayReport;
 
   useEffect(() => {
-    // Auto-start: if today has a draft with tasks but no plan exists, auto-duplicate
+    // Auto-start: if today has a draft with tasks but no plan exists, and not finalized yet
     if (
       !currentPlan &&
       !currentPlanQ.isLoading &&
       hasTodayDraftTasks &&
       !todayDraftQ.isLoading &&
+      !hasTodayReport &&
+      !todayReportQ.isLoading &&
       !autoStartRef.current &&
       !startDayMutation.isPending
     ) {
       autoStartRef.current = true;
       void startDayMutation.mutateAsync();
     }
-  }, [currentPlan, currentPlanQ.isLoading, hasTodayDraftTasks, todayDraftQ.isLoading, startDayMutation]);
+  }, [currentPlan, currentPlanQ.isLoading, hasTodayDraftTasks, todayDraftQ.isLoading, hasTodayReport, todayReportQ.isLoading, startDayMutation]);
 
   // ─── Partner Queries ────────────────────────────────────────────────────────
 
@@ -159,6 +182,7 @@ export default function AccountabilityScreen() {
     void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
     void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
     void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+    void queryClient.invalidateQueries({ queryKey: ['today-report', today] });
   }, [queryClient]);
 
   // Realtime: listen for notifications to auto-refresh on review events
@@ -425,8 +449,8 @@ export default function AccountabilityScreen() {
                         : "You didn\u2019t set prior planning for today. Start an empty day to add tasks now."
                     }
                   />
-                  {/* If no plan exists and no draft, let user start an empty day */}
-                  {!currentPlan && !hasTodayDraftTasks ? (
+                  {/* If no plan exists, no draft, and no report for today, let user start an empty day */}
+                  {!currentPlan && !hasTodayDraftTasks && !todayReport ? (
                     <Button
                       disabled={startEmptyDayMutation.isPending}
                       onPress={() => void startEmptyDayMutation.mutateAsync()}
@@ -464,13 +488,63 @@ export default function AccountabilityScreen() {
                 ) : null}
               </View>
 
-              {currentPlanQ.isLoading || startDayMutation.isPending ? (
+              {currentPlanQ.isLoading || startDayMutation.isPending || todayReportQ.isLoading ? (
                 <Loading />
               ) : currentPlanQ.error ? (
                 <ErrorState
                   error={(currentPlanQ.error as Error).message}
                   onRetry={() => void currentPlanQ.refetch()}
                 />
+              ) : todayReport ? (
+                <View style={{ gap: spacing.sm }}>
+                  <TodoList
+                    tasks={(Array.isArray(todayReport.report_tasks) ? todayReport.report_tasks : []).map((t: any) => ({
+                      id: t.id,
+                      title: t.title,
+                      estimated_minutes: t.estimated_minutes,
+                      status: t.completed ? 'completed' : 'pending',
+                      completed_pomodoros: t.pomodoros,
+                      order: t.order ?? 0,
+                    }))}
+                    readOnly
+                    showPomodoro
+                  />
+                  <View
+                    style={{
+                      backgroundColor: todayReport.approval_status === 'approved' ? '#f0fdf4' : '#fef2f2',
+                      borderColor: todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
+                      borderRadius: radius.md,
+                      borderWidth: 1,
+                      padding: spacing.sm,
+                      marginTop: spacing.sm,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
+                        fontWeight: '700',
+                        textAlign: 'center',
+                        fontSize: 14,
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      Day Completed: {todayReport.approval_status} 🎉
+                    </Text>
+                    {todayReport.review_comment ? (
+                      <Text
+                        style={{
+                          color: palette.mutedText,
+                          fontSize: 12,
+                          textAlign: 'center',
+                          marginTop: 4,
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        &quot;{todayReport.review_comment}&quot;
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
               ) : !currentPlan ? (
                 <EmptyState
                   title="Not started"

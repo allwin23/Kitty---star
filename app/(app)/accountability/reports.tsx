@@ -8,8 +8,9 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 
-import { reportService, notificationService } from '@/services/backend';
+import { reportService, notificationService, plannerService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
+import { useAuthStore } from '@/stores';
 import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -18,7 +19,10 @@ export default function ReportsScreen() {
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
   const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
+
   const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
+  const reportsChannelRef = useRef<ReturnType<typeof reportService.subscribeToReports> | null>(null);
 
   const reportsQ = useQuery({
     queryKey: queryKeys.reports,
@@ -35,19 +39,37 @@ export default function ReportsScreen() {
     queryFn: () => reportService.achievements(),
   });
 
-  // Realtime notification subscription to update reports when review is submitted
+  // Realtime subscription to daily_reports and notifications to update reports when review is finalized
+  const userId = user?.id;
   useEffect(() => {
+    if (!userId) return;
+
+    // Listen directly to report insertions
+    reportsChannelRef.current = reportService.subscribeToReports(userId, () => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+    });
+
+    // Also keep notifications fallback listener
     channelRef.current = notificationService.subscribe((notification) => {
-      if (notification.type === 'submission_approved' || notification.type === 'submission_rejected') {
+      if (
+        notification.user_id === userId &&
+        (notification.type === 'submission_approved' || notification.type === 'submission_rejected')
+      ) {
         void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
         void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
         void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       }
     });
+
     return () => {
+      if (reportsChannelRef.current) {
+        plannerService.unsubscribe(reportsChannelRef.current);
+      }
       channelRef.current?.unsubscribe();
     };
-  }, [queryClient]);
+  }, [userId, queryClient]);
 
   const reports = (reportsQ.data ?? []) as {
     id: string;

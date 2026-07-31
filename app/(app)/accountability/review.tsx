@@ -15,6 +15,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -127,6 +128,13 @@ export default function ReviewScreen() {
       void queryClient.invalidateQueries({ queryKey: ['my-submission'] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
+      
+      if (Platform.OS === 'web') {
+        window.alert('Review submitted. The report has been finalised.');
+        router.replace('/(app)/accountability');
+        return;
+      }
+      
       Alert.alert('Done', 'Review submitted. The report has been finalised.', [
         { text: 'OK', onPress: () => router.replace('/(app)/accountability') },
       ]);
@@ -135,11 +143,22 @@ export default function ReviewScreen() {
   });
 
   const handleDecision = (decision: 'approved' | 'rejected') => {
+    const title = decision === 'approved' ? 'Approve submission' : 'Reject submission';
+    const message = decision === 'approved'
+      ? "Approve your partner's study day?"
+      : 'Reject this submission? Your partner will be notified.';
+
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(`${title}\n\n${message}`);
+      if (confirmed) {
+        reviewMutation.mutate(decision);
+      }
+      return;
+    }
+
     Alert.alert(
-      decision === 'approved' ? 'Approve submission' : 'Reject submission',
-      decision === 'approved'
-        ? "Approve your partner's study day?"
-        : 'Reject this submission? Your partner will be notified.',
+      title,
+      message,
       [
         { text: 'Cancel', style: 'cancel' },
         {

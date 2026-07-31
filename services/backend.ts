@@ -101,8 +101,9 @@ export const plannerService = {
   },
 
   subscribeToPlan(planId: string, onChange: () => void): RealtimeChannel {
+    const channelId = `current-plan:${planId}-${Math.random().toString(36).substring(2)}`;
     return supabase
-      .channel(`current-plan:${planId}`)
+      .channel(channelId)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'current_plans', filter: `id=eq.${planId}` },
@@ -118,8 +119,9 @@ export const plannerService = {
 
   /** Subscribe to ALL plan changes for a user (catches plan creation + task changes). */
   subscribeToPartnerChanges(partnerUserId: string, onChange: () => void): RealtimeChannel {
+    const channelId = `partner-changes:${partnerUserId}-${Math.random().toString(36).substring(2)}`;
     return supabase
-      .channel(`partner-changes:${partnerUserId}`)
+      .channel(channelId)
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'current_plans', filter: `user_id=eq.${partnerUserId}` },
@@ -237,6 +239,18 @@ export const reportService = {
       .select('*, achievements(*)')
       .order('unlocked_at', { ascending: false });
     return throwIfError(data, error);
+  },
+
+  subscribeToReports(userId: string, onChange: () => void): RealtimeChannel {
+    const channelId = `reports:${userId}-${Math.random().toString(36).substring(2)}`;
+    return supabase
+      .channel(channelId)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'daily_reports', filter: `user_id=eq.${userId}` },
+        onChange,
+      )
+      .subscribe();
   },
 };
 
