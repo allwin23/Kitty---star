@@ -122,6 +122,9 @@ export default function HomeScreen() {
               <Button onPress={() => router.push('/(app)/flashcards')}>
                 ⚡ Flashcards
               </Button>
+              <Button onPress={() => router.push('/(app)/water')}>
+                💧 Water Tracker
+              </Button>
             </View>
           </Card>
 

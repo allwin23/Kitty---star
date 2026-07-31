@@ -315,6 +315,49 @@ export const waterService = {
     const { data, error } = await supabase.rpc('log_water', { p_amount_ml: values.amount_ml });
     return throwIfError(data, error);
   },
+
+  async getTodayStats() {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data, error } = await supabase
+      .from('water_daily_stats')
+      .select('*')
+      .eq('date', today)
+      .maybeSingle();
+    return throwIfError(data, error);
+  },
+
+  async getTodayLogs() {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const startOfToday = `${todayStr}T00:00:00.000Z`;
+    const endOfToday = `${todayStr}T23:59:59.999Z`;
+    const { data, error } = await supabase
+      .from('water_logs')
+      .select('*')
+      .gte('logged_at', startOfToday)
+      .lte('logged_at', endOfToday)
+      .order('logged_at', { ascending: false });
+    return throwIfError(data ?? [], error);
+  },
+
+  async getWeeklyStats() {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
+    const { data, error } = await supabase
+      .from('water_daily_stats')
+      .select('*')
+      .gte('date', sevenDaysAgoStr)
+      .order('date', { ascending: true });
+    return throwIfError(data ?? [], error);
+  },
+
+  async getStatsHistory() {
+    const { data, error } = await supabase
+      .from('water_daily_stats')
+      .select('*')
+      .order('date', { ascending: false });
+    return throwIfError(data ?? [], error);
+  },
 };
 
 export const vocabularyService = {
