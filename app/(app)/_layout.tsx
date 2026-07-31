@@ -60,6 +60,7 @@ export default function AppLayout() {
       {/* Hidden tabs */}
       <Tabs.Screen name="testing" options={{ href: null }} />
       <Tabs.Screen name="dashboard" options={{ href: null }} />
+      <Tabs.Screen name="pyq" options={{ href: null }} />
     </Tabs>
   );
 }

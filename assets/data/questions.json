@@ -1,0 +1,31 @@
+[
+  {
+    "id": "23q182",
+    "year": 2023,
+    "subject": "Pathology",
+    "topic": "Hematology: Red Blood Cells",
+    "question": "A child presents with intermittent jaundice and splenomegaly. There is a history of similar complaints in the elder brother. Peripheral smear shows the following finding. How will you investigate this condition?",
+    "options": [
+      "Osmotic fragility test - Hereditary spherocytosis",
+      "Coombs test - AIHA",
+      "G6PD deficiency - Genetic testing",
+      "Paroxysmal nocturnal hemoglobinuria - Flow cytometry"
+    ],
+    "answer": 1,
+    "image": "23q182.jpeg"
+  },
+  {
+    "id": "23q183",
+    "year": 2023,
+    "subject": "Pediatrics",
+    "topic": "Pediatric Gastroenterology",
+    "question": "A 3-month-old baby presents with jaundice and clay-coloured stools. Lab investigation reveals that the baby has conjugated hyperbilirubinemia. The liver biopsy shows periductal proliferation. What is the most likely diagnosis?",
+    "options": [
+      "Crigler-Najjar syndrome",
+      "Rotor syndrome",
+      "Dubin-Johnson syndrome",
+      "Biliary atresia"
+    ],
+    "answer": 4
+  }
+]
