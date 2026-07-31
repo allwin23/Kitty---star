@@ -59,6 +59,7 @@ export default function EnglishScreen() {
     evaluation,
     setEvaluation,
     resetDailyWords,
+    _hasHydrated,
   } = useEnglishStore();
 
   // Screen Tabs & View states
@@ -81,22 +82,33 @@ export default function EnglishScreen() {
     score: number;
   } | null>(null);
 
-  // Fetch words that are already learned today
-  const todayWordIds = currentWords.map((w) => w.id);
+  // Fetch words that are already learned today — only after store has rehydrated
+  // Without this guard, currentWords is [] on first render and the query never fires
+  const todayWordIds = _hasHydrated ? currentWords.map((w) => w.id) : [];
   const learnedTodayQ = useQuery({
     queryKey: ['vocabulary-learned-today', todayWordIds],
     queryFn: () => vocabularyService.filterLearned(todayWordIds),
-    enabled: todayWordIds.length > 0 && !!user,
+    enabled: _hasHydrated && todayWordIds.length > 0 && !!user,
   });
 
   const learnedWordIds = learnedTodayQ.data ?? [];
   const allWordsLearnedToday =
-    currentWords.length > 0 && currentWords.every((w) => learnedWordIds.includes(w.id));
+    _hasHydrated && currentWords.length > 0 && currentWords.every((w) => learnedWordIds.includes(w.id));
 
-  // Initialize today's words on mount
+  // Initialize today's words once the store has hydrated
   useEffect(() => {
-    initializeDailyWords();
-  }, [initializeDailyWords]);
+    if (_hasHydrated) {
+      initializeDailyWords();
+    }
+  }, [_hasHydrated, initializeDailyWords]);
+
+  // Re-fetch learned status whenever currentWords change (e.g. after rotation)
+  useEffect(() => {
+    if (_hasHydrated && todayWordIds.length > 0) {
+      void learnedTodayQ.refetch();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_hasHydrated, todayWordIds.join(',')]);
 
   // Queries
   const vocabStatsQ = useQuery({
