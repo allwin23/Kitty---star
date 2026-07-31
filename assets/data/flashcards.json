@@ -41,4 +41,548 @@
     "front": "What is the most common cause of Nephrotic Syndrome in children?",
     "back": "Minimal Change Disease (MCD)"
   }
+
+,
+  {
+    "id": "anat_emb_0001",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "General Embryology",
+    "subtopic": "Fertilization",
+    "front": "Where does fertilization normally occur?",
+    "back": "Ampulla of the uterine tube"
+  },
+  {
+    "id": "anat_emb_0002",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "General Embryology",
+    "subtopic": "Fertilization",
+    "front": "Which sperm enzyme helps penetrate the corona radiata?",
+    "back": "Hyaluronidase"
+  },
+  {
+    "id": "anat_emb_0003",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "General Embryology",
+    "subtopic": "Fertilization",
+    "front": "Which sperm enzyme helps penetrate the zona pellucida?",
+    "back": "Acrosin"
+  },
+  {
+    "id": "anat_emb_0004",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "General Embryology",
+    "subtopic": "Fertilization",
+    "front": "Which reaction prevents polyspermy?",
+    "back": "Cortical (zona) reaction"
+  },
+  {
+    "id": "anat_emb_0005",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Cleavage",
+    "subtopic": "Blastomeres",
+    "front": "Cleavage increases the number of what?",
+    "back": "Blastomeres"
+  },
+  {
+    "id": "anat_emb_0006",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Cleavage",
+    "subtopic": "Morula",
+    "front": "At approximately how many cells is the morula formed?",
+    "back": "16 cells"
+  },
+  {
+    "id": "anat_emb_0007",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Blastocyst",
+    "subtopic": "Formation",
+    "front": "On which day is the blastocyst typically formed?",
+    "back": "Day 5"
+  },
+  {
+    "id": "anat_emb_0008",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Blastocyst",
+    "subtopic": "Layers",
+    "front": "Which part of the blastocyst gives rise to the embryo?",
+    "back": "Embryoblast (inner cell mass)"
+  },
+  {
+    "id": "anat_emb_0009",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Blastocyst",
+    "subtopic": "Layers",
+    "front": "Which part of the blastocyst contributes to the placenta?",
+    "back": "Trophoblast"
+  },
+  {
+    "id": "anat_emb_0010",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Implantation",
+    "subtopic": "Timing",
+    "front": "Implantation normally begins on which day after fertilization?",
+    "back": "Day 6–7"
+  },
+  {
+    "id": "anat_emb_0011",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Implantation",
+    "subtopic": "Trophoblast",
+    "front": "Which trophoblastic layer invades the endometrium?",
+    "back": "Syncytiotrophoblast"
+  },
+  {
+    "id": "anat_emb_0012",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Implantation",
+    "subtopic": "Hormones",
+    "front": "Which trophoblastic layer secretes hCG?",
+    "back": "Syncytiotrophoblast"
+  },
+  {
+    "id": "anat_emb_0013",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Bilaminar Disc",
+    "subtopic": "Layers",
+    "front": "The bilaminar germ disc consists of which two layers?",
+    "back": "Epiblast and Hypoblast"
+  },
+  {
+    "id": "anat_emb_0014",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Gastrulation",
+    "subtopic": "Primitive Streak",
+    "front": "Gastrulation begins with the formation of what structure?",
+    "back": "Primitive streak"
+  },
+  {
+    "id": "anat_emb_0015",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Gastrulation",
+    "subtopic": "Germ Layers",
+    "front": "Which germ layer forms first during gastrulation?",
+    "back": "Definitive endoderm"
+  },
+  {
+    "id": "anat_emb_0016",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Germ Layers",
+    "subtopic": "Ectoderm",
+    "front": "Which germ layer gives rise to the nervous system?",
+    "back": "Ectoderm"
+  },
+  {
+    "id": "anat_emb_0017",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Germ Layers",
+    "subtopic": "Mesoderm",
+    "front": "Which germ layer forms muscles and connective tissue?",
+    "back": "Mesoderm"
+  },
+  {
+    "id": "anat_emb_0018",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Germ Layers",
+    "subtopic": "Endoderm",
+    "front": "Which germ layer forms the epithelial lining of the gastrointestinal tract?",
+    "back": "Endoderm"
+  },
+  {
+    "id": "anat_emb_0019",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neurulation",
+    "subtopic": "Neural Tube",
+    "front": "The neural tube develops from which embryonic structure?",
+    "back": "Neural plate"
+  },
+  {
+    "id": "anat_emb_0020",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neural Crest",
+    "subtopic": "Derivatives",
+    "front": "Which cells give rise to dorsal root ganglia?",
+    "back": "Neural crest cells"
+  }
+,
+  {
+    "id": "anat_emb_0021",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neural Crest",
+    "subtopic": "Derivatives",
+    "front": "Neural crest cells give rise to which cells responsible for peripheral myelination?",
+    "back": "Schwann cells"
+  },
+  {
+    "id": "anat_emb_0022",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neural Crest",
+    "subtopic": "Derivatives",
+    "front": "Which endocrine cells are derived from neural crest cells?",
+    "back": "Chromaffin cells of the adrenal medulla"
+  },
+  {
+    "id": "anat_emb_0023",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neural Crest",
+    "subtopic": "Derivatives",
+    "front": "Melanocytes are derived from which embryonic cell population?",
+    "back": "Neural crest cells"
+  },
+  {
+    "id": "anat_emb_0024",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Notochord",
+    "subtopic": "Development",
+    "front": "The notochord is derived from which germ layer?",
+    "back": "Mesoderm"
+  },
+  {
+    "id": "anat_emb_0025",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Notochord",
+    "subtopic": "Function",
+    "front": "What is the primary role of the notochord?",
+    "back": "Induction of neural tube formation and establishment of the embryonic axis"
+  },
+  {
+    "id": "anat_emb_0026",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neurulation",
+    "subtopic": "Closure",
+    "front": "Closure of the cranial neuropore normally occurs on which day?",
+    "back": "Day 25"
+  },
+  {
+    "id": "anat_emb_0027",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neurulation",
+    "subtopic": "Closure",
+    "front": "Closure of the caudal neuropore normally occurs on which day?",
+    "back": "Day 27"
+  },
+  {
+    "id": "anat_emb_0028",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neurulation",
+    "subtopic": "Clinical",
+    "front": "Failure of cranial neuropore closure results in which condition?",
+    "back": "Anencephaly"
+  },
+  {
+    "id": "anat_emb_0029",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neurulation",
+    "subtopic": "Clinical",
+    "front": "Failure of caudal neuropore closure most commonly results in what condition?",
+    "back": "Spina bifida"
+  },
+  {
+    "id": "anat_emb_0030",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Somites",
+    "subtopic": "Formation",
+    "front": "Somites are formed from which part of the mesoderm?",
+    "back": "Paraxial mesoderm"
+  },
+  {
+    "id": "anat_emb_0031",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Somites",
+    "subtopic": "Derivatives",
+    "front": "Sclerotome gives rise to which structures?",
+    "back": "Vertebrae and ribs"
+  },
+  {
+    "id": "anat_emb_0032",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Somites",
+    "subtopic": "Derivatives",
+    "front": "Myotome forms which tissue?",
+    "back": "Skeletal muscles"
+  },
+  {
+    "id": "anat_emb_0033",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Somites",
+    "subtopic": "Derivatives",
+    "front": "Dermatome develops into which tissue?",
+    "back": "Dermis of the skin"
+  },
+  {
+    "id": "anat_emb_0034",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Mesoderm",
+    "subtopic": "Intermediate Mesoderm",
+    "front": "Intermediate mesoderm primarily forms which organ system?",
+    "back": "Urogenital system"
+  },
+  {
+    "id": "anat_emb_0035",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Mesoderm",
+    "subtopic": "Lateral Plate",
+    "front": "The lateral plate mesoderm divides into which two layers?",
+    "back": "Somatic mesoderm and splanchnic mesoderm"
+  },
+  {
+    "id": "anat_emb_0036",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Extraembryonic Membranes",
+    "subtopic": "Amnion",
+    "front": "Which extraembryonic membrane surrounds the amniotic fluid?",
+    "back": "Amnion"
+  },
+  {
+    "id": "anat_emb_0037",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Extraembryonic Membranes",
+    "subtopic": "Yolk Sac",
+    "front": "What is the first site of blood cell formation in the embryo?",
+    "back": "Yolk sac"
+  },
+  {
+    "id": "anat_emb_0038",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Extraembryonic Membranes",
+    "subtopic": "Allantois",
+    "front": "The allantois is connected to which adult structure?",
+    "back": "Urachus (median umbilical ligament)"
+  },
+  {
+    "id": "anat_emb_0039",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Chorion",
+    "subtopic": "Development",
+    "front": "Which membrane forms the fetal component of the placenta?",
+    "back": "Chorion"
+  },
+  {
+    "id": "anat_emb_0040",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Placenta",
+    "subtopic": "Hormones",
+    "front": "Which hormone is detected by pregnancy tests?",
+    "back": "Human chorionic gonadotropin (hCG)"
+  }
+,
+  {
+    "id": "anat_emb_0041",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Placenta",
+    "subtopic": "Formation",
+    "front": "The placenta develops from which fetal and maternal components?",
+    "back": "Chorion frondosum (fetal) and decidua basalis (maternal)"
+  },
+  {
+    "id": "anat_emb_0042",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Placenta",
+    "subtopic": "Function",
+    "front": "Which structure forms the placental barrier between maternal and fetal blood?",
+    "back": "Placental membrane"
+  },
+  {
+    "id": "anat_emb_0043",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Placenta",
+    "subtopic": "Hormones",
+    "front": "Name two major hormones produced by the placenta besides hCG.",
+    "back": "Progesterone and estrogens"
+  },
+  {
+    "id": "anat_emb_0044",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Umbilical Cord",
+    "subtopic": "Contents",
+    "front": "How many umbilical arteries are normally present?",
+    "back": "Two"
+  },
+  {
+    "id": "anat_emb_0045",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Umbilical Cord",
+    "subtopic": "Contents",
+    "front": "How many umbilical veins are normally present at birth?",
+    "back": "One"
+  },
+  {
+    "id": "anat_emb_0046",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Umbilical Cord",
+    "subtopic": "Supporting Tissue",
+    "front": "What gelatinous connective tissue surrounds umbilical vessels?",
+    "back": "Wharton's jelly"
+  },
+  {
+    "id": "anat_emb_0047",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Body Folding",
+    "subtopic": "Development",
+    "front": "During which week does embryonic body folding primarily occur?",
+    "back": "Fourth week"
+  },
+  {
+    "id": "anat_emb_0048",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Body Folding",
+    "subtopic": "Result",
+    "front": "Body folding converts the embryo from which shape into which shape?",
+    "back": "Flat trilaminar disc into a cylindrical body"
+  },
+  {
+    "id": "anat_emb_0049",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Apparatus",
+    "subtopic": "Arches",
+    "front": "How many pairs of pharyngeal arches develop in humans?",
+    "back": "Six pairs (the fifth is rudimentary)"
+  },
+  {
+    "id": "anat_emb_0050",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Arch",
+    "subtopic": "First Arch",
+    "front": "Which cranial nerve is associated with the first pharyngeal arch?",
+    "back": "Trigeminal nerve (CN V)"
+  },
+  {
+    "id": "anat_emb_0051",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Arch",
+    "subtopic": "Second Arch",
+    "front": "Which cranial nerve supplies the second pharyngeal arch?",
+    "back": "Facial nerve (CN VII)"
+  },
+  {
+    "id": "anat_emb_0052",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Arch",
+    "subtopic": "Third Arch",
+    "front": "Which cranial nerve is associated with the third pharyngeal arch?",
+    "back": "Glossopharyngeal nerve (CN IX)"
+  },
+  {
+    "id": "anat_emb_0053",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Arch",
+    "subtopic": "Fourth and Sixth Arches",
+    "front": "Which cranial nerve supplies the fourth and sixth pharyngeal arches?",
+    "back": "Vagus nerve (CN X)"
+  },
+  {
+    "id": "anat_emb_0054",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Pouches",
+    "subtopic": "First Pouch",
+    "front": "The first pharyngeal pouch forms which adult structure?",
+    "back": "Middle ear cavity and auditory tube"
+  },
+  {
+    "id": "anat_emb_0055",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Pouches",
+    "subtopic": "Second Pouch",
+    "front": "Which lymphoid organ develops from the second pharyngeal pouch?",
+    "back": "Palatine tonsil"
+  },
+  {
+    "id": "anat_emb_0056",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Pouches",
+    "subtopic": "Third Pouch",
+    "front": "Which organs develop from the third pharyngeal pouch?",
+    "back": "Inferior parathyroid glands and thymus"
+  },
+  {
+    "id": "anat_emb_0057",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Pharyngeal Pouches",
+    "subtopic": "Fourth Pouch",
+    "front": "Which endocrine glands develop from the fourth pharyngeal pouch?",
+    "back": "Superior parathyroid glands"
+  },
+  {
+    "id": "anat_emb_0058",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Neural Tube Defects",
+    "subtopic": "Prevention",
+    "front": "Deficiency of which vitamin increases the risk of neural tube defects?",
+    "back": "Folic acid (Vitamin B9)"
+  },
+  {
+    "id": "anat_emb_0059",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Twins",
+    "subtopic": "Monozygotic Twins",
+    "front": "Monozygotic twins arise from what embryological event?",
+    "back": "Division of a single fertilized ovum"
+  },
+  {
+    "id": "anat_emb_0060",
+    "subject": "Anatomy",
+    "chapter": "Embryology",
+    "topic": "Twins",
+    "subtopic": "Dizygotic Twins",
+    "front": "Dizygotic twins result from fertilization of what?",
+    "back": "Two separate ova by two different sperm"
+  }
 ]
