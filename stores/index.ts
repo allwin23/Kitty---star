@@ -4,3 +4,4 @@ export * from './planner-store';
 export * from './pomodoro-store';
 export * from './settings-store';
 export * from './pyq-store';
+export * from './flashcard-store';

@@ -119,6 +119,9 @@ export default function HomeScreen() {
               <Button onPress={() => router.push('/(app)/pyq')}>
                 📚 PYQ Practice
               </Button>
+              <Button onPress={() => router.push('/(app)/flashcards')}>
+                ⚡ Flashcards
+              </Button>
             </View>
           </Card>
 

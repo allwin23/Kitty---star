@@ -376,6 +376,49 @@ export const flashcardService = {
     return throwIfError(data, error);
   },
 
+  async getCollections() {
+    const { data, error } = await supabase
+      .from('flashcard_collections')
+      .select('*')
+      .order('title', { ascending: true });
+    return throwIfError(data ?? [], error);
+  },
+
+  async getFlashcards() {
+    const { data, error } = await supabase
+      .from('flashcards')
+      .select('*, flashcard_schedule(*)')
+      .eq('type', 'user');
+    return throwIfError(data ?? [], error);
+  },
+
+  async updateCollection(collectionId: string, title: string) {
+    const { data, error } = await supabase
+      .from('flashcard_collections')
+      .update({ title })
+      .eq('id', collectionId)
+      .select()
+      .single();
+    return throwIfError(data, error);
+  },
+
+  async deleteCollection(collectionId: string) {
+    // Delete all flashcards in the collection first to satisfy ON DELETE RESTRICT constraint
+    const { error: cardsError } = await supabase
+      .from('flashcards')
+      .delete()
+      .eq('collection_id', collectionId);
+    if (cardsError) throw cardsError;
+
+    const { data, error } = await supabase
+      .from('flashcard_collections')
+      .delete()
+      .eq('id', collectionId)
+      .select()
+      .single();
+    return throwIfError(data, error);
+  },
+
   async review(input: FlashcardReviewInput) {
     const values = flashcardReviewSchema.parse(input);
     const { data, error } = await supabase.rpc('review_flashcard', {

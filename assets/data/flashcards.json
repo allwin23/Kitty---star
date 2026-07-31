@@ -1,0 +1,44 @@
+[
+  {
+    "id": "path_001",
+    "subject": "Pathology",
+    "topic": "Hematology",
+    "front": "Most common cause of hereditary hemolytic anemia?",
+    "back": "Hereditary Spherocytosis"
+  },
+  {
+    "id": "path_002",
+    "subject": "Pathology",
+    "topic": "Cell Injury",
+    "front": "What is the hallmark of irreversible cell injury?",
+    "back": "Amorphous densities in mitochondria / Membrane damage"
+  },
+  {
+    "id": "path_003",
+    "subject": "Pathology",
+    "topic": "Neoplasia",
+    "front": "Which gene mutation is most commonly associated with Li-Fraumeni syndrome?",
+    "back": "TP53 gene mutation"
+  },
+  {
+    "id": "med_001",
+    "subject": "Medicine",
+    "topic": "Cardiology",
+    "front": "Most common congenital heart defect?",
+    "back": "Ventricular Septal Defect (VSD)"
+  },
+  {
+    "id": "med_002",
+    "subject": "Medicine",
+    "topic": "Neurology",
+    "front": "What is the classic triad of Wernicke encephalopathy?",
+    "back": "Ophthalmoplegia, Ataxia, and Confusion"
+  },
+  {
+    "id": "med_003",
+    "subject": "Medicine",
+    "topic": "Nephrology",
+    "front": "What is the most common cause of Nephrotic Syndrome in children?",
+    "back": "Minimal Change Disease (MCD)"
+  }
+]
