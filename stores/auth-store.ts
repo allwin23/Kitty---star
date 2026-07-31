@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { toReadableError } from '@/features/auth/errors';
 import { supabase } from '@/lib/supabase';
+import { queryClient } from '@/lib/query-client';
 import type { AuthResult, AuthState, Profile } from '@/types';
 
 type AuthStore = AuthState & {
@@ -60,6 +61,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       hasSubscribedToAuthChanges = true;
       supabase.auth.onAuthStateChange(async (_event, session) => {
         if (!session) {
+          queryClient.clear();
           set({ session: null, user: null, profile: null, loading: false, error: null });
           return;
         }
@@ -142,6 +144,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
       return { error: message };
     }
 
+    queryClient.clear();
     set({ session: null, user: null, profile: null, loading: false, error: null });
     return {};
   },
