@@ -40,7 +40,7 @@ export default function PomodoroScreen() {
   useFocusEffect(
     useCallback(() => {
       void currentPlanQ.refetch();
-    }, [currentPlanQ])
+    }, [])
   );
 
   const currentPlan = currentPlanQ.data as {

@@ -50,14 +50,14 @@ export default function WaterTrackerScreen() {
     enabled: !!user,
   });
 
-  // Focus refetches
+  // Focus refetches — empty deps array prevents infinite refetch loop
   useFocusEffect(
     useCallback(() => {
       void todayStatsQ.refetch();
       void todayLogsQ.refetch();
       void weeklyStatsQ.refetch();
       void statsHistoryQ.refetch();
-    }, [todayStatsQ, todayLogsQ, weeklyStatsQ, statsHistoryQ])
+    }, [])
   );
 
   // Mutation for logging water
@@ -81,10 +81,8 @@ export default function WaterTrackerScreen() {
   };
 
   const isLoading =
-    todayStatsQ.isLoading ||
-    todayLogsQ.isLoading ||
-    weeklyStatsQ.isLoading ||
-    statsHistoryQ.isLoading;
+    (todayStatsQ.isLoading && !todayStatsQ.data) ||
+    (todayLogsQ.isLoading && !todayLogsQ.data);
 
   if (isLoading) {
     return (

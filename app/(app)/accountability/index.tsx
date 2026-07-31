@@ -123,7 +123,7 @@ export default function AccountabilityScreen() {
     useCallback(() => {
       void currentPlanQ.refetch();
       void todayReportQ.refetch();
-    }, [currentPlanQ, todayReportQ])
+    }, [])
   );
 
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────

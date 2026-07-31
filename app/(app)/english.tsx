@@ -129,16 +129,14 @@ export default function EnglishScreen() {
     enabled: !!user,
   });
 
-  // Refetch stats when the screen is focused
+  // Refetch stats when the screen is focused — empty deps prevents infinite loop
   useFocusEffect(
     useCallback(() => {
       void vocabStatsQ.refetch();
       void grammarStatsQ.refetch();
       void grammarHistoryQ.refetch();
-      if (todayWordIds.length > 0) {
-        void learnedTodayQ.refetch();
-      }
-    }, [vocabStatsQ, grammarStatsQ, grammarHistoryQ, learnedTodayQ, todayWordIds])
+      void learnedTodayQ.refetch();
+    }, [])
   );
 
   // Mutations

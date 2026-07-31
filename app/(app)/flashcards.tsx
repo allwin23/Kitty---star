@@ -109,13 +109,13 @@ export default function FlashcardsScreen() {
     enabled: !!user,
   });
 
-  // Focus refetches
+  // Focus refetches — empty deps array prevents infinite loop
   useFocusEffect(
     useCallback(() => {
       void collectionsQ.refetch();
       void cardsQ.refetch();
       void statsQ.refetch();
-    }, [collectionsQ, cardsQ, statsQ])
+    }, [])
   );
 
   // Mutations
@@ -192,8 +192,9 @@ export default function FlashcardsScreen() {
     // 1. User-created cards due today
     const dueUser = userCards
       .filter((card) => {
-        const sched = card.flashcard_schedule;
-        if (!sched) return true; // never reviewed
+        const rawSched = card.flashcard_schedule;
+        const sched = Array.isArray(rawSched) ? rawSched[0] : rawSched;
+        if (!sched || !sched.next_review) return true; // never reviewed
         return new Date(sched.next_review) <= today;
       })
       .map((card) => ({ type: 'user' as const, card }));

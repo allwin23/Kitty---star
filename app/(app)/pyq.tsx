@@ -94,12 +94,12 @@ export default function PYQScreen() {
     enabled: !!user,
   });
 
-  // Refresh data on focus
+  // Refresh data on focus — empty deps array prevents infinite loop
   useFocusEffect(
     useCallback(() => {
       void statsQ.refetch();
       void historyQ.refetch();
-    }, [statsQ, historyQ])
+    }, [])
   );
 
   // Derive all unique subjects from the JSON dynamically
