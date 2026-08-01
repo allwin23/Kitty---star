@@ -7,7 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { ChevronRight, Sparkles } from 'lucide-react-native';
+import { ChevronRight, Heart, Sparkles, Star } from 'lucide-react-native';
 
 import { useCompanionQueueStore } from '../companion-queue-store';
 import type { CompanionTag } from '../cat-scenarios';
@@ -123,6 +123,78 @@ export function CatBulletinStage() {
 
       {/* CARD 2: DEDICATED CHERRY DIGITAL BULLETIN BOARD CARD */}
       <View style={styles.digitalBulletinCardContainer}>
+        {/* Background Watermark Layer (Hearts & Stars scattered all over) */}
+        <View style={styles.watermarkContainer} pointerEvents="none">
+          {/* Top Left Heart */}
+          <Heart
+            size={38}
+            color="rgba(255, 255, 255, 0.22)"
+            fill="rgba(255, 255, 255, 0.16)"
+            style={{ position: 'absolute', top: 6, left: 12, transform: [{ rotate: '-20deg' }] }}
+          />
+          {/* Top Center Star */}
+          <Star
+            size={28}
+            color="rgba(255, 255, 255, 0.20)"
+            fill="rgba(255, 255, 255, 0.14)"
+            style={{ position: 'absolute', top: 8, left: '42%', transform: [{ rotate: '15deg' }] }}
+          />
+          {/* Top Right Sparkles */}
+          <Sparkles
+            size={44}
+            color="rgba(255, 255, 255, 0.24)"
+            style={{ position: 'absolute', top: -6, right: 18, transform: [{ rotate: '25deg' }] }}
+          />
+
+          {/* Middle Left Sparkles */}
+          <Sparkles
+            size={32}
+            color="rgba(255, 255, 255, 0.18)"
+            style={{ position: 'absolute', top: '42%', left: 8 }}
+          />
+          {/* Middle Center Heart */}
+          <Heart
+            size={48}
+            color="rgba(255, 255, 255, 0.22)"
+            fill="rgba(255, 255, 255, 0.15)"
+            style={{ position: 'absolute', top: '35%', left: '45%', transform: [{ rotate: '12deg' }] }}
+          />
+          {/* Middle Right Star */}
+          <Star
+            size={34}
+            color="rgba(255, 255, 255, 0.20)"
+            fill="rgba(255, 255, 255, 0.14)"
+            style={{ position: 'absolute', top: '40%', right: 10, transform: [{ rotate: '-10deg' }] }}
+          />
+
+          {/* Bottom Left Heart */}
+          <Heart
+            size={52}
+            color="rgba(255, 255, 255, 0.25)"
+            fill="rgba(255, 255, 255, 0.18)"
+            style={{ position: 'absolute', bottom: -12, left: -8, transform: [{ rotate: '-15deg' }] }}
+          />
+          {/* Bottom Center Sparkles */}
+          <Sparkles
+            size={36}
+            color="rgba(255, 255, 255, 0.20)"
+            style={{ position: 'absolute', bottom: 4, left: '38%', transform: [{ rotate: '-25deg' }] }}
+          />
+          {/* Bottom Right Heart & Star */}
+          <Heart
+            size={42}
+            color="rgba(255, 255, 255, 0.22)"
+            fill="rgba(255, 255, 255, 0.16)"
+            style={{ position: 'absolute', bottom: -10, right: 28, transform: [{ rotate: '18deg' }] }}
+          />
+          <Star
+            size={30}
+            color="rgba(255, 255, 255, 0.20)"
+            fill="rgba(255, 255, 255, 0.15)"
+            style={{ position: 'absolute', bottom: 6, right: -4, transform: [{ rotate: '10deg' }] }}
+          />
+        </View>
+
         {/* Top Header Bar */}
         <View style={styles.billboardHeaderRow}>
           {/* Live LED Indicator */}
@@ -218,6 +290,32 @@ const styles = StyleSheet.create({
     height: '88%',
   },
 
+  /* WATERMARK BACKDROP STYLES */
+  watermarkContainer: {
+    ...StyleSheet.absoluteFill,
+    borderRadius: 24,
+    overflow: 'hidden',
+    zIndex: 0,
+  },
+  watermarkHeartLeft: {
+    position: 'absolute',
+    bottom: -14,
+    left: -12,
+    transform: [{ rotate: '-15deg' }],
+  },
+  watermarkStarsRight: {
+    position: 'absolute',
+    top: -8,
+    right: 20,
+    transform: [{ rotate: '20deg' }],
+  },
+  watermarkStarCenter: {
+    position: 'absolute',
+    right: 10,
+    bottom: 6,
+    transform: [{ rotate: '12deg' }],
+  },
+
   /* 2. RIGHT BULLETIN CARD — RICH CHERRY COLOR & CRISP WHITE TEXT */
   digitalBulletinCardContainer: {
     flex: 1,
@@ -233,6 +331,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.18,
     shadowRadius: 12,
     elevation: 4,
+    position: 'relative',
+    overflow: 'hidden',
   },
   billboardHeaderRow: {
     flexDirection: 'row',
