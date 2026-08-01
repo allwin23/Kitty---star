@@ -420,18 +420,18 @@ export default function PYQScreen() {
               </View>
             )}
 
-            {/* Dynamic Subjects List */}
-            <View style={{ gap: spacing.sm }}>
+            {/* Dynamic Subjects List — Compact Horizontal Cards */}
+            <View style={{ gap: spacing.xs }}>
               <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Select Subject</Text>
               
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
                 {/* All Subjects Card */}
                 <Pressable
                   onPress={() => handleSelectSubject('All')}
                   style={[styles.subjectCard, { backgroundColor: palette.cherryBloom, borderColor: palette.cherryBloom }]}
                 >
-                  <BookOpen size={30} color="#FFFFFF" strokeWidth={2.4} />
-                  <Text style={{ fontWeight: '800', color: '#FFFFFF', fontSize: 14, textAlign: 'center', marginTop: 6 }}>
+                  <BookOpen size={18} color="#FFFFFF" strokeWidth={2.4} />
+                  <Text style={{ fontWeight: '800', color: '#FFFFFF', fontSize: 13, flex: 1 }} numberOfLines={1}>
                     All Subjects
                   </Text>
                 </Pressable>
@@ -442,8 +442,8 @@ export default function PYQScreen() {
                     onPress={() => handleSelectSubject(subj)}
                     style={[styles.subjectCard, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)' }]}
                   >
-                    <Book size={28} color="#D94C61" strokeWidth={2.2} />
-                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14, textAlign: 'center', marginTop: 6 }} numberOfLines={1}>
+                    <Book size={17} color="#D94C61" strokeWidth={2.2} />
+                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13, flex: 1 }} numberOfLines={1}>
                       {subj}
                     </Text>
                   </Pressable>
@@ -1056,11 +1056,13 @@ const styles = StyleSheet.create({
   subjectCard: {
     borderRadius: radius.md,
     borderWidth: 1.5,
-    padding: spacing.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    width: '47%',
-    aspectRatio: 1.1,
+    gap: 8,
+    width: '48%',
+    minHeight: 48,
   },
   chip: {
     borderRadius: radius.md,
