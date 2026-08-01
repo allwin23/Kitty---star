@@ -1,4 +1,5 @@
 import type { CompanionEventPayload, CompanionEventType } from './types';
+import { useCompanionQueueStore } from './companion-queue-store';
 
 type CompanionEventCallback = (event: CompanionEventPayload) => void | Promise<void>;
 
@@ -80,3 +81,22 @@ class CompanionEventBus {
 }
 
 export const CompanionBus = new CompanionEventBus();
+
+// Auto-forward companion and app events into CompanionQueueStore
+CompanionBus.on('*', (event) => {
+  try {
+    const mapType: Record<string, string> = {
+      WaterBreak: 'ToolWaterLogged',
+      DailyGoalAchieved: 'ToolTaskCompleted',
+      XPEarned: 'ToolPyqCompleted',
+      MascotTap: 'IdleDefault',
+    };
+    const targetKey = mapType[event.eventType] || event.eventType;
+    useCompanionQueueStore.getState().enqueueEvent(targetKey, {
+      subtext: (event.payload as any)?.customText,
+    });
+  } catch (e) {
+    console.warn('[CompanionBus] Queue forward error:', e);
+  }
+});
+

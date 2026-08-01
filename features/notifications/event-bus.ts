@@ -1,4 +1,5 @@
 import type { AppNotificationEventPayload, NotificationEventType } from './types';
+import { useCompanionQueueStore } from '@/features/companion/companion-queue-store';
 
 type EventCallback = (event: AppNotificationEventPayload) => void | Promise<void>;
 
@@ -69,3 +70,20 @@ class CentralEventBus {
 }
 
 export const EventBus = new CentralEventBus();
+
+// Auto-forward app notification events into CompanionQueueStore
+EventBus.on('*', (event) => {
+  try {
+    const mapType: Record<string, string> = {
+      SessionStarted: 'ToolPomodoroStarted',
+      SessionEnded: 'ToolPomodoroCompleted',
+      GoalCompleted: 'ToolTaskCompleted',
+      WaterReminder: 'ToolWaterLogged',
+      AchievementUnlocked: 'PartnerSentAward',
+    };
+    const targetKey = mapType[event.type] || 'NotificationAlert';
+    useCompanionQueueStore.getState().enqueueEvent(targetKey);
+  } catch (e) {
+    console.warn('[EventBus] Forward error:', e);
+  }
+});
