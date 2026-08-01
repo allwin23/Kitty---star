@@ -29,7 +29,7 @@ import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, ProofViewerM
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
-import { colors, glassCardStyle, radius, spacing, typography } from '@/theme';
+import { colors, glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
 type PickedImage = {
   uri: string;
@@ -39,7 +39,6 @@ type PickedImage = {
 
 export default function SubmitScreen() {
   const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
   const queryClient = useQueryClient();
   const { planId } = useLocalSearchParams<{ planId: string }>();
@@ -241,7 +240,7 @@ export default function SubmitScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
-                <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800' }}>←</Text>
+                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>←</Text>
               </Pressable>
               <HeaderTitleCard title={isSubmitted ? "Submission" : "Submit Plan"} showWavingHand={false} />
             </View>
@@ -255,7 +254,7 @@ export default function SubmitScreen() {
               {/* Initial Plan Snapshot Card */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={styles.cardTitleText}>
+                  <Text style={styles.sectionTitleText}>
                     Initial Plan Snapshot
                   </Text>
                   <Text style={styles.cardSubText}>
@@ -278,7 +277,7 @@ export default function SubmitScreen() {
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={styles.cardTitleText}>
+                    <Text style={styles.sectionTitleText}>
                       {"Today's Live Tasks & Proofs"}
                     </Text>
                     <Text style={styles.badgeCountText}>
@@ -314,8 +313,8 @@ export default function SubmitScreen() {
                                 height: 20,
                                 borderRadius: 4,
                                 borderWidth: 2,
-                                borderColor: isDone ? palette.primary : 'rgba(232, 77, 114, 0.35)',
-                                backgroundColor: isDone ? palette.primary : 'transparent',
+                                borderColor: isDone ? palette.cherryBloom : 'rgba(232, 77, 114, 0.35)',
+                                backgroundColor: isDone ? palette.cherryBloom : 'transparent',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}
@@ -327,15 +326,15 @@ export default function SubmitScreen() {
                             <Text
                               style={{
                                 flex: 1,
-                                color: isDone ? palette.mutedText : '#2A1D22',
+                                color: isDone ? palette.textMuted : palette.textPrimary,
                                 fontWeight: '700',
-                                fontSize: 15,
+                                fontSize: 14,
                                 textDecorationLine: isDone ? 'line-through' : 'none',
                               }}
                             >
                               {task.title}
                             </Text>
-                            <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600' }}>
+                            <Text style={styles.cardSubText}>
                               {task.estimated_minutes}m
                             </Text>
                           </View>
@@ -359,7 +358,7 @@ export default function SubmitScreen() {
                                         />
                                       ) : (
                                         <View style={{ width: 54, height: 54, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
-                                          <ActivityIndicator size="small" color={palette.primary} />
+                                          <ActivityIndicator size="small" color={palette.cherryBloom} />
                                         </View>
                                       )}
                                     </Pressable>
@@ -411,11 +410,11 @@ export default function SubmitScreen() {
                               }}
                             >
                               {uploadingTaskId === task.id ? (
-                                <ActivityIndicator size="small" color={palette.primary} />
+                                <ActivityIndicator size="small" color={palette.cherryBloom} />
                               ) : (
                                 <>
                                   <Text style={{ fontSize: 12 }}>📷</Text>
-                                  <Text style={{ color: palette.primary, fontSize: 12, fontWeight: '700' }}>
+                                  <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '700' }}>
                                     {isSubmitted ? '+ Add Task Proof' : taskPickedImages.length > 0 ? '+ Add More' : 'Attach Proof'}
                                   </Text>
                                 </>
@@ -432,7 +431,7 @@ export default function SubmitScreen() {
               {/* General proofs */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={styles.cardTitleText}>General Proof Images</Text>
+                  <Text style={styles.sectionTitleText}>General Proof Images</Text>
                   <Text style={styles.cardSubText}>
                     Optional overall screenshots, study notes, or workspace photos.
                   </Text>
@@ -456,7 +455,7 @@ export default function SubmitScreen() {
                                 />
                               ) : (
                                 <View style={{ width: 64, height: 64, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
-                                  <ActivityIndicator size="small" color={palette.primary} />
+                                  <ActivityIndicator size="small" color={palette.cherryBloom} />
                                 </View>
                               )}
                             </Pressable>
@@ -509,7 +508,7 @@ export default function SubmitScreen() {
                     }}
                   >
                     <Text style={{ fontSize: 14 }}>📸</Text>
-                    <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700' }}>
+                    <Text style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700' }}>
                       {isSubmitted ? '+ Add General Proof' : 'Add General Proof'}
                     </Text>
                   </Pressable>
@@ -520,14 +519,14 @@ export default function SubmitScreen() {
               {!isSubmitted && (
                 <View style={[glassCardStyle, styles.pinkGlassCard]}>
                   <View style={{ gap: spacing.sm }}>
-                    <Text style={styles.cardTitleText}>Notes & Reflection</Text>
+                    <Text style={styles.sectionTitleText}>Notes & Reflection</Text>
                     <TextInput
                       style={{
                         backgroundColor: 'rgba(255, 243, 245, 0.85)',
                         borderColor: 'rgba(250, 215, 224, 0.90)',
                         borderRadius: radius.input,
                         borderWidth: 1.5,
-                        color: '#2A1D22',
+                        color: palette.textPrimary,
                         paddingHorizontal: spacing.md,
                         paddingVertical: spacing.sm,
                         fontSize: 14,
@@ -536,7 +535,7 @@ export default function SubmitScreen() {
                       value={remark}
                       onChangeText={setRemark}
                       placeholder="Optional notes or reflection for your partner..."
-                      placeholderTextColor="#A89A9F"
+                      placeholderTextColor={palette.textMuted}
                       multiline
                     />
                   </View>
@@ -548,7 +547,7 @@ export default function SubmitScreen() {
                 <View style={[glassCardStyle, styles.pinkGlassCard]}>
                   <View style={{ gap: spacing.sm, alignItems: 'center' }}>
                     <Text style={{ fontSize: 32 }}>✅</Text>
-                    <Text style={styles.cardTitleText}>Day submitted!</Text>
+                    <Text style={styles.sectionTitleText}>Day submitted!</Text>
                     <Text style={styles.cardSubText}>
                       {`${partnerName} has been notified. You can still upload extra proof images above.`}
                     </Text>
@@ -570,10 +569,10 @@ export default function SubmitScreen() {
                           padding: spacing.sm,
                         }}
                       >
-                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
+                        <Text style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
                           📸 Add at least 1 proof image above before submitting
                         </Text>
-                        <Text style={{ color: '#66545B', fontSize: 12, textAlign: 'center', marginTop: 4 }}>
+                        <Text style={[styles.cardSubText, { textAlign: 'center', marginTop: 4 }]}>
                           Attach proof to individual tasks or add general proof images to show your work.
                         </Text>
                       </View>
@@ -590,7 +589,7 @@ export default function SubmitScreen() {
                         }}
                       >
                         <Text style={{ fontSize: 16 }}>✅</Text>
-                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700' }}>
+                        <Text style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700' }}>
                           {pickedImages.length} proof{pickedImages.length > 1 ? 's' : ''} attached — ready to submit!
                         </Text>
                       </View>
@@ -629,25 +628,26 @@ const styles = {
     borderRadius: 24,
     padding: spacing.md,
   },
-  cardTitleText: {
-    color: '#2A1D22',
-    fontSize: 16,
+  sectionTitleText: {
+    fontSize: 15,
     fontWeight: '800' as const,
+    color: palette.danger,
     letterSpacing: -0.2,
   },
   cardSubText: {
-    color: '#66545B',
-    fontSize: 13,
+    fontSize: 12,
+    lineHeight: 16,
+    color: palette.textSecondary,
     fontWeight: '500' as const,
-    lineHeight: 18,
   },
   itemTitleText: {
-    color: '#2A1D22',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700' as const,
+    color: palette.textPrimary,
+    letterSpacing: -0.1,
   },
   badgeCountText: {
-    color: '#C73A57',
+    color: palette.danger,
     fontSize: 13,
     fontWeight: '800' as const,
   },

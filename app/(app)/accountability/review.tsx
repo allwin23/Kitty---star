@@ -33,7 +33,7 @@ import { supabase } from '@/lib/supabase';
 import { Card, ErrorState, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
 import { CompanionBus } from '@/features/companion/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
-import { colors, glassCardStyle, radius, spacing, typography } from '@/theme';
+import { colors, glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
 type SubmissionWithRelations = {
   id: string;
@@ -60,7 +60,6 @@ type SubmissionWithRelations = {
 
 export default function ReviewScreen() {
   const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
   const queryClient = useQueryClient();
   const { submissionId } = useLocalSearchParams<{ submissionId: string }>();
@@ -186,7 +185,7 @@ export default function ReviewScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
-                <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800' }}>←</Text>
+                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>←</Text>
               </Pressable>
               <HeaderTitleCard title="Partner Review" showWavingHand={false} />
             </View>
@@ -196,33 +195,33 @@ export default function ReviewScreen() {
           {/* Submitter info */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.xs }}>
-              <Text style={styles.cardTitleText}>
+              <Text style={styles.sectionTitleText}>
                 {submission.profiles?.full_name ?? 'Your partner'}
               </Text>
               <Text style={styles.cardSubText}>
                 Submitted {new Date(submission.submitted_at).toLocaleString()}
               </Text>
               {submission.remark ? (
-                <Text style={{ color: '#2A1D22', fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic', fontWeight: '500' }}>
+                <Text style={{ color: palette.textPrimary, fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic', fontWeight: '500' }}>
                   &quot;{submission.remark}&quot;
                 </Text>
               ) : null}
               {/* Study summary */}
               <View style={{ flexDirection: 'row', gap: spacing.lg, marginTop: spacing.sm }}>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.primary }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.cherryBloom }}>
                     {completedCount}
                   </Text>
                   <Text style={styles.cardSubText}>Completed</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '800', fontSize: 20, color: '#2A1D22' }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
                     {currentTasks.length}
                   </Text>
                   <Text style={styles.cardSubText}>Total Tasks</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '800', fontSize: 20, color: '#2A1D22' }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
                     {totalPomodoros}
                   </Text>
                   <Text style={styles.cardSubText}>🍅 Pomodoros</Text>
@@ -234,7 +233,7 @@ export default function ReviewScreen() {
           {/* Initial Plan */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <Text style={styles.cardTitleText}>
+              <Text style={styles.sectionTitleText}>
                 Initial Plan Snapshot
               </Text>
               {initialPlanQ.isLoading ? (
@@ -256,7 +255,7 @@ export default function ReviewScreen() {
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={styles.cardTitleText}>
+                <Text style={styles.sectionTitleText}>
                   Final Plan & Task Proofs
                 </Text>
                 <Text style={styles.badgeCountText}>
@@ -288,8 +287,8 @@ export default function ReviewScreen() {
                             height: 20,
                             borderRadius: 4,
                             borderWidth: 2,
-                            borderColor: isDone ? palette.primary : 'rgba(232, 77, 114, 0.35)',
-                            backgroundColor: isDone ? palette.primary : 'transparent',
+                            borderColor: isDone ? palette.cherryBloom : 'rgba(232, 77, 114, 0.35)',
+                            backgroundColor: isDone ? palette.cherryBloom : 'transparent',
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}
@@ -302,15 +301,15 @@ export default function ReviewScreen() {
                         <View style={{ flex: 1 }}>
                           <Text
                             style={{
-                              fontSize: 15,
+                              fontSize: 14,
                               fontWeight: '700',
-                              color: isDone ? palette.mutedText : '#2A1D22',
+                              color: isDone ? palette.textMuted : palette.textPrimary,
                               textDecorationLine: isDone ? 'line-through' : 'none',
                             }}
                           >
                             {task.title}
                           </Text>
-                          <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
+                          <Text style={styles.cardSubText}>
                             ⏳ {task.estimated_minutes} min • 🍅 {task.completed_pomodoros || 0} pomodoros
                           </Text>
                         </View>
@@ -319,7 +318,7 @@ export default function ReviewScreen() {
                       {/* Task proof images gallery */}
                       {taskProofs.length > 0 ? (
                         <View style={{ marginTop: 6 }}>
-                          <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '700', marginBottom: 4 }}>
+                          <Text style={[styles.cardSubText, { fontWeight: '700', marginBottom: 4 }]}>
                             TASK PROOF ({taskProofs.length})
                           </Text>
                           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
@@ -338,7 +337,7 @@ export default function ReviewScreen() {
                                     />
                                   ) : (
                                     <View style={{ width: 64, height: 64, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
-                                      <ActivityIndicator size="small" color={palette.primary} />
+                                      <ActivityIndicator size="small" color={palette.cherryBloom} />
                                     </View>
                                   )}
                                 </Pressable>
@@ -347,7 +346,7 @@ export default function ReviewScreen() {
                           </View>
                         </View>
                       ) : (
-                        <Text style={{ fontSize: 12, color: palette.mutedText, fontStyle: 'italic', marginTop: 4 }}>
+                        <Text style={[styles.cardSubText, { fontStyle: 'italic', marginTop: 4 }]}>
                           No proof attached to this task.
                         </Text>
                       )}
@@ -361,7 +360,7 @@ export default function ReviewScreen() {
           {/* General Proofs */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <Text style={styles.cardTitleText}>General Proof Images ({generalProofs.length})</Text>
+              <Text style={styles.sectionTitleText}>General Proof Images ({generalProofs.length})</Text>
 
               {generalProofs.length === 0 ? (
                 <Text style={styles.cardSubText}>No general proof images uploaded.</Text>
@@ -382,7 +381,7 @@ export default function ReviewScreen() {
                           />
                         ) : (
                           <View style={{ width: 72, height: 72, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
-                            <ActivityIndicator size="small" color={palette.primary} />
+                            <ActivityIndicator size="small" color={palette.cherryBloom} />
                           </View>
                         )}
                       </Pressable>
@@ -396,7 +395,7 @@ export default function ReviewScreen() {
           {/* Review Status & Actions */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <Text style={styles.cardTitleText}>Review Decision</Text>
+              <Text style={styles.sectionTitleText}>Review Decision</Text>
 
               {alreadyReviewed ? (
                 <View style={{ gap: spacing.xs, alignItems: 'center', paddingVertical: spacing.sm }}>
@@ -407,7 +406,7 @@ export default function ReviewScreen() {
                     style={{
                       fontSize: 16,
                       fontWeight: '800',
-                      color: submission.status === 'approved' ? palette.primary : palette.danger,
+                      color: submission.status === 'approved' ? palette.cherryBloom : palette.danger,
                     }}
                   >
                     Submission {submission.status.toUpperCase()}
@@ -419,14 +418,14 @@ export default function ReviewScreen() {
               ) : (
                 <View style={{ gap: spacing.md }}>
                   <View style={{ gap: spacing.xs }}>
-                    <Text style={{ color: '#66545B', fontSize: 13, fontWeight: '600' }}>Optional Feedback Comment</Text>
+                    <Text style={[styles.cardSubText, { fontWeight: '700' }]}>Optional Feedback Comment</Text>
                     <TextInput
                       style={{
                         backgroundColor: 'rgba(255, 243, 245, 0.85)',
                         borderColor: 'rgba(250, 215, 224, 0.90)',
                         borderRadius: radius.input,
                         borderWidth: 1.5,
-                        color: '#2A1D22',
+                        color: palette.textPrimary,
                         paddingHorizontal: spacing.md,
                         paddingVertical: spacing.sm,
                         fontSize: 14,
@@ -435,7 +434,7 @@ export default function ReviewScreen() {
                       value={reviewRemark}
                       onChangeText={setReviewRemark}
                       placeholder="Add an encouraging note or feedback..."
-                      placeholderTextColor="#A89A9F"
+                      placeholderTextColor={palette.textMuted}
                       multiline
                     />
                   </View>
@@ -446,7 +445,7 @@ export default function ReviewScreen() {
                       disabled={reviewMutation.isPending}
                       style={{
                         flex: 1,
-                        backgroundColor: palette.primary,
+                        backgroundColor: palette.cherryBloom,
                         borderRadius: radius.button,
                         paddingVertical: 12,
                         alignItems: 'center',
@@ -514,25 +513,26 @@ const styles = {
     borderRadius: 24,
     padding: spacing.md,
   },
-  cardTitleText: {
-    color: '#2A1D22',
-    fontSize: 16,
+  sectionTitleText: {
+    fontSize: 15,
     fontWeight: '800' as const,
+    color: palette.danger,
     letterSpacing: -0.2,
   },
   cardSubText: {
-    color: '#66545B',
-    fontSize: 13,
+    fontSize: 12,
+    lineHeight: 16,
+    color: palette.textSecondary,
     fontWeight: '500' as const,
-    lineHeight: 18,
   },
   itemTitleText: {
-    color: '#2A1D22',
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '700' as const,
+    color: palette.textPrimary,
+    letterSpacing: -0.1,
   },
   badgeCountText: {
-    color: '#C73A57',
+    color: palette.danger,
     fontSize: 13,
     fontWeight: '800' as const,
   },
