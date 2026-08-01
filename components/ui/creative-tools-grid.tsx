@@ -112,13 +112,18 @@ function ToolCard({ item }: { item: ToolItem }) {
       style={styles.cardPressable}
     >
       <Animated.View style={[styles.toolCard, animatedStyle]}>
-        {/* Header Row: Minimal Black Icon in Soft Pink Container */}
+        {/* Large Translucent Pink Watermark Icon on the Right */}
+        <View style={styles.watermarkContainer} pointerEvents="none">
+          <Icon size={72} color="rgba(240, 115, 146, 0.16)" strokeWidth={1.8} />
+        </View>
+
+        {/* Header Row: Minimal Black Icon in Soft Pink Container + Chevron */}
         <View style={styles.cardHeader}>
           <View style={styles.iconContainer}>
             <Icon size={20} color="#121218" strokeWidth={2.4} />
           </View>
 
-          <ChevronRight size={16} color={palette.danger} />
+          <ChevronRight size={16} color={palette.danger} style={{ zIndex: 2 }} />
         </View>
 
         {/* Body: Title (palette.danger) + Subtitle */}
@@ -155,6 +160,8 @@ const styles = StyleSheet.create({
     minWidth: 140,
   },
   toolCard: {
+    position: 'relative',
+    overflow: 'hidden',
     backgroundColor: 'rgba(255, 243, 245, 0.75)',
     borderColor: 'rgba(250, 215, 224, 0.75)',
     borderWidth: 1.5,
@@ -173,10 +180,18 @@ const styles = StyleSheet.create({
         } as any)
       : {}),
   },
+  watermarkContainer: {
+    position: 'absolute',
+    top: -8,
+    right: -12,
+    zIndex: 0,
+    transform: [{ rotate: '12deg' }],
+  },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    zIndex: 2,
   },
   iconContainer: {
     width: 38,
@@ -190,6 +205,7 @@ const styles = StyleSheet.create({
   },
   cardBody: {
     gap: 2,
+    zIndex: 2,
   },
   titleText: {
     fontSize: 15,
