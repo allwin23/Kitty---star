@@ -388,7 +388,7 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+          <View style={{ gap: spacing[24], paddingBottom: 120 }}>
             {/* Header Row with Oval Title Card */}
             <HeaderTitleCard
               title="PYQ Practice"
@@ -540,7 +540,7 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+          <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
             {/* Regular Black Title Card */}
             <HeaderTitleCard title="Configure Test" showWavingHand={false} />
 
@@ -674,7 +674,7 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
+          <View style={{ gap: spacing.md, paddingBottom: 120 }}>
             {/* Header / Timer */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
@@ -794,7 +794,7 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+          <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
             {/* Title Card Nature for Test Complete */}
             <HeaderTitleCard title="Test Complete" showWavingHand={false} />
 
@@ -910,7 +910,7 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
+          <View style={{ gap: spacing.md, paddingBottom: 120 }}>
             {/* Header navigation */}
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13 }}>

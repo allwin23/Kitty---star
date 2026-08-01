@@ -417,7 +417,7 @@ export default function AccountabilityScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
       >
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header */}
           <HeaderTitleCard
             title="Accountability 📋"

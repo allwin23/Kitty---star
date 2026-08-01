@@ -224,7 +224,7 @@ export default function JourneyScreen() {
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+        <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header Row: Compact Oval Black Card + Notification Badge */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <HeaderTitleCard title="XP Journey" showWavingHand={false} />

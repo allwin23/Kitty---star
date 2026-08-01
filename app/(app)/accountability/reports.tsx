@@ -111,7 +111,7 @@ export default function ReportsScreen() {
           />
         }
       >
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           <Text style={[typography.heading, { color: palette.text }]}>Reports</Text>
 
           {/* User Stats */}

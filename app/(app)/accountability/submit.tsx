@@ -235,7 +235,7 @@ export default function SubmitScreen() {
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header Row: Back Arrow + Dark Obsidian Glass Oval Title Card + Notification Badge */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>

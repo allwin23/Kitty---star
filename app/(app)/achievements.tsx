@@ -213,7 +213,7 @@ export default function AchievementsScreen() {
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48], position: 'relative' }}>
+        <View style={{ gap: spacing[24], paddingBottom: 120, position: 'relative' }}>
           {/* Chaotic Trophy Watermarks Background Layer */}
           <View pointerEvents="none" style={StyleSheet.absoluteFill}>
             <Trophy size={72} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: 80, right: -15, transform: [{ rotate: '24deg' }] }} />

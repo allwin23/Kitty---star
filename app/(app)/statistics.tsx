@@ -243,7 +243,7 @@ export default function StatisticsScreen() {
           <RefreshControl refreshing={isAnyRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+        <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header */}
           <HeaderTitleCard
             title="Statistics"

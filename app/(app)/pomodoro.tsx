@@ -305,7 +305,7 @@ export default function PomodoroScreen() {
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+        <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header & Mode Tabs */}
           <View style={{ gap: spacing[16] }}>
             <HeaderTitleCard

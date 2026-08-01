@@ -65,7 +65,7 @@ export default function CompanionScreen() {
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header */}
           <HeaderTitleCard
             title="Companion Engine 🐱"

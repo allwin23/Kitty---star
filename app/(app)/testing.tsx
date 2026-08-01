@@ -163,7 +163,7 @@ export default function BackendTestingScreen() {
 
   return (
     <Screen>
-      <ScrollView contentContainerStyle={{ gap: spacing.md, paddingBottom: spacing.xl }}>
+      <ScrollView contentContainerStyle={{ gap: spacing.md, paddingBottom: 120 }}>
         <View style={{ gap: spacing.xs }}>
           <Button onPress={() => router.replace('/(app)/home')} style={{ alignSelf: 'flex-start' }}>
             Return home

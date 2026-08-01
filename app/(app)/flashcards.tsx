@@ -752,7 +752,7 @@ export default function FlashcardsScreen() {
         {/* TAB 1: DUE TODAY */}
         {activeTab === 'due' && (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
+            <View style={{ gap: spacing.md, paddingBottom: 120 }}>
               <DueTodayCard
                 dueCount={dueSessionCards.length}
                 streak={userStats?.current_streak ?? 0}
@@ -810,7 +810,7 @@ export default function FlashcardsScreen() {
         {/* TAB 2: BUILT-IN REVISION NOTES */}
         {activeTab === 'builtin' && (
           <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
+            <View style={{ gap: spacing.md, paddingBottom: 120 }}>
               {!selectedBuiltInSubject ? (
                 /* 1. Subjects Selection */
                 <View style={{ gap: spacing.xs }}>
@@ -944,7 +944,7 @@ export default function FlashcardsScreen() {
             />
 
             <ScrollView showsVerticalScrollIndicator={false}>
-              <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
+              <View style={{ gap: spacing.md, paddingBottom: 120 }}>
                 {/* Render nested Subfolders */}
                 {subfolders.length > 0 && (
                   <View style={{ gap: spacing.xs }}>

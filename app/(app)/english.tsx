@@ -834,7 +834,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     gap: spacing.md,
-    paddingBottom: spacing['2xl'],
+    paddingBottom: 120,
   },
   backButtonContainer: {
     flexDirection: 'row',

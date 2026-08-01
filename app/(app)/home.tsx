@@ -71,7 +71,7 @@ export default function HomeScreen() {
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+        <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <HeaderTitleCard

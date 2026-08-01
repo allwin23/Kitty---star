@@ -226,7 +226,7 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     gap: spacing.md,
-    paddingBottom: spacing['2xl'],
+    paddingBottom: 120,
   },
   headerRow: {
     flexDirection: 'row',
