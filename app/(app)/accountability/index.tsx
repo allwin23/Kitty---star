@@ -23,6 +23,7 @@ import {
   getCurrentPlan,
   getPartnerCurrentPlan,
   getPartnerSubmission,
+  getPartnerProfile,
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
@@ -39,8 +40,8 @@ import { TodoList, type TodoTask } from '@/features/accountability/todo-list';
 import { PomodoroModal } from '@/features/accountability/pomodoro-modal';
 import { colors, radius, spacing, typography } from '@/theme';
 
-const today = new Date().toISOString().slice(0, 10);
-const tomorrow = addDays(new Date(), 1).toISOString().slice(0, 10);
+const getTodayStr = () => format(new Date(), 'yyyy-MM-dd');
+const getTomorrowStr = (dateStr: string) => format(addDays(new Date(dateStr + 'T00:00:00'), 1), 'yyyy-MM-dd');
 
 function SectionTitle({ children }: { children: string }) {
   const colorScheme = useColorScheme();
@@ -58,10 +59,42 @@ export default function AccountabilityScreen() {
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
 
+  const [today, setToday] = useState(getTodayStr);
+  const tomorrow = getTomorrowStr(today);
+
   const [pomodoroTask, setPomodoroTask] = useState<TodoTask | null>(null);
   const [savingTaskId, setSavingTaskId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const autoStartRef = useRef(false);
+
+  // Check midnight date change dynamically
+  const checkMidnightRefresh = useCallback(() => {
+    const freshToday = getTodayStr();
+    if (freshToday !== today) {
+      setToday(freshToday);
+      autoStartRef.current = false;
+      return true;
+    }
+    return false;
+  }, [today]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkMidnightRefresh();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [checkMidnightRefresh]);
+
+  // ─── Partner Profile Query ────────────────────────────────────────────────
+  const partnerProfileQ = useQuery({
+    queryKey: queryKeys.partnerProfile,
+    queryFn: getPartnerProfile,
+    enabled: !!user,
+  });
+
+  const partnerProfile = partnerProfileQ.data;
+  const partnerName = partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
+
 
   // ─── My Queries ─────────────────────────────────────────────────────────────
 
@@ -121,9 +154,10 @@ export default function AccountabilityScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      checkMidnightRefresh();
       void currentPlanQ.refetch();
       void todayReportQ.refetch();
-    }, [])
+    }, [checkMidnightRefresh, currentPlanQ, todayReportQ])
   );
 
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────
@@ -580,7 +614,7 @@ export default function AccountabilityScreen() {
           <Card>
             <View style={{ gap: spacing.md }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <SectionTitle>{"Partner\u2019s Today Tasks"}</SectionTitle>
+                <SectionTitle>{`${partnerName}'s Today Tasks`}</SectionTitle>
                 {partnerPlan ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
                     <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#34d399' }} />
@@ -592,7 +626,7 @@ export default function AccountabilityScreen() {
               </View>
 
               <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                Live view of your partner{"'"}s task progress. Updates in real-time.
+                {`Live view of ${partnerName}'s task progress. Updates in real-time.`}
               </Text>
 
               {partnerPlanQ.isLoading ? (
@@ -600,12 +634,12 @@ export default function AccountabilityScreen() {
               ) : !partnerPlan ? (
                 <EmptyState
                   title="No tasks yet"
-                  description={"Your partner hasn\u2019t started their day yet."}
+                  description={`${partnerName} hasn't started their day yet.`}
                 />
               ) : partnerTasks.length === 0 ? (
                 <EmptyState
                   title="No tasks"
-                  description="Your partner has no tasks in their plan."
+                  description={`${partnerName} has no tasks in their plan.`}
                 />
               ) : (
                 <TodoList tasks={partnerTasks} readOnly showPomodoro />
@@ -616,7 +650,7 @@ export default function AccountabilityScreen() {
           {/* ─── Section 5: Partner Submission (pending review) ─── */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <SectionTitle>Partner Submission</SectionTitle>
+              <SectionTitle>{`${partnerName}'s Submission`}</SectionTitle>
 
               {partnerQ.isLoading ? (
                 <Loading />
@@ -628,12 +662,12 @@ export default function AccountabilityScreen() {
               ) : !partnerSub ? (
                 <EmptyState
                   title="No submission"
-                  description={"Your partner hasn\u2019t submitted today\u2019s plan yet."}
+                  description={`${partnerName} hasn't submitted today's plan yet.`}
                 />
               ) : (
                 <View style={{ gap: spacing.sm }}>
                   <Text style={{ color: palette.text, fontWeight: '600' }}>
-                    {partnerSub.profiles?.full_name ?? 'Your partner'}
+                    {partnerSub.profiles?.full_name ?? partnerName}
                   </Text>
                   <Text style={{ color: palette.mutedText, fontSize: 12 }}>
                     Submitted {format(new Date(partnerSub.submitted_at), 'dd MMM HH:mm')}

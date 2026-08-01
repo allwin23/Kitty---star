@@ -5,6 +5,7 @@ export const queryKeys = {
   currentPlan: (date: string) => ['current-plan', date] as const,
   partnerPlan: (date: string) => ['partner-plan', date] as const,
   partnerSubmission: ['partner-submission'] as const,
+  partnerProfile: ['partner-profile'] as const,
   mySubmission: (date: string) => ['my-submission', date] as const,
   reports: ['reports'] as const,
   report: (id: string) => ['report', id] as const,

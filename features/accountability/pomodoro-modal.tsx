@@ -8,6 +8,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { pomodoroService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
+import { todayIso } from '@/lib/supabase-helpers';
 import { colors, radius, spacing, typography } from '@/theme';
 import { Loading } from '@/components/ui';
 import type { TodoTask } from './todo-list';
@@ -51,7 +52,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
         endedAt: vars.endedAt,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(new Date().toISOString().slice(0, 10)) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(todayIso()) });
       onClose();
     },
     onError: (e: Error) => {

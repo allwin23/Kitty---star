@@ -10,7 +10,7 @@
  *  - Approve / Reject buttons -> submissionService.review()
  *    (which calls review_submission RPC -> approve_day or reject_day)
  */
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -24,13 +24,13 @@ import {
   View,
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { submissionService } from '@/services/backend';
 import { getProofImageUrl } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
-import { Card, ErrorState, Loading, Screen } from '@/components/ui';
+import { Card, ErrorState, Loading, ProofViewerModal, Screen } from '@/components/ui';
 import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -89,12 +89,19 @@ export default function ReviewScreen() {
 
   const [comment, setComment] = useState('');
   const [proofUrls, setProofUrls] = useState<Record<string, string>>({});
+  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(null);
 
   const submissionQ = useQuery({
     queryKey: ['submission', submissionId],
     queryFn: () => fetchSubmission(submissionId),
     enabled: !!submissionId,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      void submissionQ.refetch();
+    }, [submissionQ])
+  );
 
   const submission = submissionQ.data;
   const planDate = submission?.current_plans?.date;
@@ -142,11 +149,14 @@ export default function ReviewScreen() {
     onError: (e: Error) => Alert.alert('Review failed', e.message),
   });
 
+  const submitterName = submission?.profiles?.full_name?.trim() || 'Your partner';
+
   const handleDecision = (decision: 'approved' | 'rejected') => {
     const title = decision === 'approved' ? 'Approve submission' : 'Reject submission';
     const message = decision === 'approved'
-      ? "Approve your partner's study day?"
-      : 'Reject this submission? Your partner will be notified.';
+      ? `Approve ${submitterName}'s study day?`
+      : `Reject this submission? ${submitterName} will be notified.`;
+
 
     if (Platform.OS === 'web') {
       const confirmed = window.confirm(`${title}\n\n${message}`);
@@ -357,7 +367,7 @@ export default function ReviewScreen() {
                       {taskProofs.length > 0 && (
                         <View style={{ paddingLeft: 28, marginTop: spacing.xs, gap: spacing.xs }}>
                           <Text style={{ color: palette.mutedText, fontSize: 11, fontWeight: '700' }}>
-                            Attached Proofs ({taskProofs.length})
+                            Attached Proofs ({taskProofs.length}) — tap to zoom / download
                           </Text>
                           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
                             {taskProofs.map((proof) => {
@@ -366,16 +376,18 @@ export default function ReviewScreen() {
                               return (
                                 <View key={proof.id}>
                                   {url ? (
-                                    <Image
-                                      source={{ uri: url }}
-                                      style={{
-                                        width: 80,
-                                        height: 80,
-                                        borderRadius: radius.sm,
-                                        borderWidth: 1,
-                                        borderColor: palette.border,
-                                      }}
-                                    />
+                                    <Pressable onPress={() => setViewingProof({ url, caption: task.title })}>
+                                      <Image
+                                        source={{ uri: url }}
+                                        style={{
+                                          width: 80,
+                                          height: 80,
+                                          borderRadius: radius.sm,
+                                          borderWidth: 1,
+                                          borderColor: palette.border,
+                                        }}
+                                      />
+                                    </Pressable>
                                   ) : (
                                     <View
                                       style={{
@@ -410,7 +422,7 @@ export default function ReviewScreen() {
             <Card>
               <View style={{ gap: spacing.md }}>
                 <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                  General Proofs ({generalProofs.length})
+                  General Proofs ({generalProofs.length}) — tap to zoom / download
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                   {generalProofs.map((proof) => {
@@ -419,16 +431,18 @@ export default function ReviewScreen() {
                     return (
                       <View key={proof.id}>
                         {url ? (
-                          <Image
-                            source={{ uri: url }}
-                            style={{
-                              width: 100,
-                              height: 100,
-                              borderRadius: radius.md,
-                              borderWidth: 1,
-                              borderColor: palette.border,
-                            }}
-                          />
+                          <Pressable onPress={() => setViewingProof({ url, caption: proof.caption || 'General Proof' })}>
+                            <Image
+                              source={{ uri: url }}
+                              style={{
+                                width: 100,
+                                height: 100,
+                                borderRadius: radius.md,
+                                borderWidth: 1,
+                                borderColor: palette.border,
+                              }}
+                            />
+                          </Pressable>
                         ) : (
                           <View
                             style={{
@@ -486,7 +500,7 @@ export default function ReviewScreen() {
                   }}
                   value={comment}
                   onChangeText={setComment}
-                  placeholder="Optional comment for your partner…"
+                  placeholder={`Optional comment for ${submitterName}…`}
                   placeholderTextColor={palette.mutedText}
                   multiline
                 />
@@ -540,6 +554,15 @@ export default function ReviewScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Proof Viewer Modal */}
+      <ProofViewerModal
+        visible={!!viewingProof}
+        imageUrl={viewingProof?.url ?? null}
+        caption={viewingProof?.caption}
+        onClose={() => setViewingProof(null)}
+      />
     </Screen>
   );
 }
+

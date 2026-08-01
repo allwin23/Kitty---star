@@ -120,3 +120,23 @@ export async function getPartnerInitialPlan(partnerId: string, date: string) {
     .maybeSingle();
   return throwIfError(data, error);
 }
+
+/** Get the connected partner's profile information. */
+export async function getPartnerProfile() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('partner_id')
+    .eq('id', user.id)
+    .maybeSingle();
+  if (!profile?.partner_id) return null;
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, full_name, email, avatar_url')
+    .eq('id', profile.partner_id)
+    .maybeSingle();
+  return throwIfError(data, error);
+}
+

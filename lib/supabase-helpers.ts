@@ -71,21 +71,18 @@ export function buildPageResult<T>(
   };
 }
 
-// ---------------------------------------------------------------------------
-// Date helpers
-// ---------------------------------------------------------------------------
+import { format, addDays } from 'date-fns';
 
-/** Returns a local YYYY-MM-DD string for today (UTC). */
+/** Returns a local YYYY-MM-DD string for today (Local Time / IST). */
 export function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
+  return format(new Date(), 'yyyy-MM-dd');
 }
 
-/** Returns a YYYY-MM-DD string for a date N days ago from today (UTC). */
+/** Returns a YYYY-MM-DD string for a date N days ago from today (Local Time / IST). */
 export function daysAgoIso(n: number): string {
-  const d = new Date();
-  d.setUTCDate(d.getUTCDate() - n);
-  return d.toISOString().slice(0, 10);
+  return format(addDays(new Date(), -n), 'yyyy-MM-dd');
 }
+
 
 // ---------------------------------------------------------------------------
 // Realtime channel factory

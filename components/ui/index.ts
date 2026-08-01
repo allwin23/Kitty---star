@@ -6,3 +6,5 @@ export * from './error-state';
 export * from './input';
 export * from './loading';
 export * from './screen';
+export * from './proof-viewer-modal';
+

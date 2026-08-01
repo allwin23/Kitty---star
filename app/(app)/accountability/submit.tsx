@@ -1,14 +1,3 @@
-/**
- * Submission Screen
- *
- * Flow:
- *  1. Show Initial Plan (read-only)
- *  2. Show current tasks with completion status
- *  3. Pick proofs (local state) before sending
- *  4. Add optional remark
- *  5. Submit day and upload local proofs
- *  6. After submit -> read-only view, allow uploading extra proofs
- */
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -24,6 +13,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
+import { format } from 'date-fns';
 
 import { submissionService } from '@/services/backend';
 import {
@@ -31,14 +21,13 @@ import {
   getCurrentPlan,
   getMySubmission,
   getProofImageUrl,
+  getPartnerProfile,
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
-import { Button, Card, Loading, Screen } from '@/components/ui';
+import { Button, Card, Loading, ProofViewerModal, Screen } from '@/components/ui';
 import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, radius, spacing, typography } from '@/theme';
-
-const today = new Date().toISOString().slice(0, 10);
 
 type PickedImage = {
   uri: string;
@@ -54,18 +43,31 @@ export default function SubmitScreen() {
   const { planId } = useLocalSearchParams<{ planId: string }>();
   const user = useAuthStore((s) => s.user);
 
+  const today = format(new Date(), 'yyyy-MM-dd');
+
   const [remark, setRemark] = useState('');
   const [pickedImages, setPickedImages] = useState<PickedImage[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
   const [proofUrls, setProofUrls] = useState<Record<string, string>>({});
+  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(null);
 
   // Queries
+  const partnerProfileQ = useQuery({
+    queryKey: queryKeys.partnerProfile,
+    queryFn: getPartnerProfile,
+    enabled: !!user,
+  });
+
+  const partnerProfile = partnerProfileQ.data;
+  const partnerName = partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
+
   const initialQ = useQuery({
     queryKey: queryKeys.initialPlan(today),
     queryFn: () => getInitialPlan(today),
     enabled: !!user,
   });
+
 
   const currentQ = useQuery({
     queryKey: queryKeys.currentPlan(today),
@@ -156,9 +158,14 @@ export default function SubmitScreen() {
     setUploadingTaskId(taskKey);
     try {
       const response = await fetch(asset.uri);
-      const blob = await response.blob();
-      await submissionService.uploadProof(submission.id, user.id, blob, validExt, undefined, taskId);
+      const arrayBuffer = await response.arrayBuffer();
+      await submissionService.uploadProof(submission.id, user.id, arrayBuffer, validExt, undefined, taskId);
+      
       void queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
+      void queryClient.invalidateQueries({ queryKey: ['submission'] });
     } catch (e) {
       Alert.alert('Upload failed', (e as Error).message);
     } finally {
@@ -168,25 +175,39 @@ export default function SubmitScreen() {
 
   const handleSend = async () => {
     if (!user) return;
+
+    if (proofsArray.length + pickedImages.length === 0) {
+      Alert.alert(
+        'Proof Required',
+        `Please attach at least one proof image (task proof or general proof) before submitting to ${partnerName}.`,
+      );
+      return;
+    }
+
+
     setIsSending(true);
     try {
       // 1. Submit the day
-      await submissionService.submit(planId, remark.trim() || undefined);
+      const newSub = await submissionService.submit(planId, remark.trim() || undefined);
+      const subId = newSub?.id || (submissionQ.data as any)?.id;
 
-      // 2. Fetch the newly created submission to get its ID
-      const { data: newSub } = await submissionQ.refetch();
-      if (!newSub) throw new Error('Failed to retrieve submission after creating');
-
-      // 3. Upload all picked images
-      for (const img of pickedImages) {
-        const response = await fetch(img.uri);
-        const blob = await response.blob();
-        await submissionService.uploadProof(newSub.id, user.id, blob, img.ext, undefined, img.taskId);
+      if (!subId) {
+        throw new Error('Failed to create submission record.');
       }
 
-      // 4. Invalidate queries
+      // 2. Upload all picked images using arrayBuffer
+      for (const img of pickedImages) {
+        const response = await fetch(img.uri);
+        const arrayBuffer = await response.arrayBuffer();
+        await submissionService.uploadProof(subId, user.id, arrayBuffer, img.ext, undefined, img.taskId);
+      }
+
+      // 3. Invalidate queries for submitter and partner
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
+      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
+      void queryClient.invalidateQueries({ queryKey: ['submission'] });
 
       setPickedImages([]);
     } catch (error) {
@@ -208,8 +229,9 @@ export default function SubmitScreen() {
               <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
             </Pressable>
             <Text style={[typography.title, { color: palette.text, flex: 1 }]}>
-              {isSubmitted ? 'Your Submission' : 'Submit to Partner'}
+              {isSubmitted ? 'Your Submission' : `Submit to ${partnerName}`}
             </Text>
+
           </View>
 
           {isLoading ? (
@@ -250,7 +272,7 @@ export default function SubmitScreen() {
                     </Text>
                   </View>
                   <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                    Attach proof images to each task below to show your work.
+                    Attach proof images to each task below to show your work. Tap image to zoom / view.
                   </Text>
 
                   <View style={{ gap: spacing.sm }}>
@@ -326,16 +348,18 @@ export default function SubmitScreen() {
                                   return (
                                     <View key={proof.id}>
                                       {url ? (
-                                        <Image
-                                          source={{ uri: url }}
-                                          style={{
-                                            width: 60,
-                                            height: 60,
-                                            borderRadius: radius.sm,
-                                            borderWidth: 1,
-                                            borderColor: palette.border,
-                                          }}
-                                        />
+                                        <Pressable onPress={() => setViewingProof({ url, caption: task.title })}>
+                                          <Image
+                                            source={{ uri: url }}
+                                            style={{
+                                              width: 60,
+                                              height: 60,
+                                              borderRadius: radius.sm,
+                                              borderWidth: 1,
+                                              borderColor: palette.border,
+                                            }}
+                                          />
+                                        </Pressable>
                                       ) : (
                                         <View
                                           style={{
@@ -360,23 +384,25 @@ export default function SubmitScreen() {
                               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
                                 {taskPickedImages.map((img, i) => (
                                   <View key={i}>
-                                    <Image
-                                      source={{ uri: img.uri }}
-                                      style={{
-                                        width: 60,
-                                        height: 60,
-                                        borderRadius: radius.sm,
-                                        borderWidth: 1,
-                                        borderColor: palette.border,
-                                      }}
-                                    />
+                                    <Pressable onPress={() => setViewingProof({ url: img.uri, caption: task.title })}>
+                                      <Image
+                                        source={{ uri: img.uri }}
+                                        style={{
+                                          width: 60,
+                                          height: 60,
+                                          borderRadius: radius.sm,
+                                          borderWidth: 1,
+                                          borderColor: palette.border,
+                                        }}
+                                      />
+                                    </Pressable>
                                     <Pressable
                                       onPress={() => removePickedImage(img)}
                                       style={{
                                         position: 'absolute',
                                         top: -5,
                                         right: -5,
-                                        backgroundColor: '#ef4444', // red
+                                        backgroundColor: '#ef4444',
                                         borderRadius: 10,
                                         width: 20,
                                         height: 20,
@@ -427,7 +453,7 @@ export default function SubmitScreen() {
                         Submission Note
                       </Text>
                       <Text style={{ color: palette.text, fontSize: 14 }}>
-                         &quot;{submission.remark}&quot;
+                        &quot;{submission.remark}&quot;
                       </Text>
                     </View>
                   </Card>
@@ -450,7 +476,7 @@ export default function SubmitScreen() {
                       }}
                       value={remark}
                       onChangeText={setRemark}
-                      placeholder="Add a note for your partner…"
+                      placeholder={`Add a note for ${partnerName}…`}
                       placeholderTextColor={palette.mutedText}
                       multiline
                     />
@@ -465,7 +491,7 @@ export default function SubmitScreen() {
                     General Proof Images
                   </Text>
                   <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                    General proof photos of your study day.
+                    General proof photos of your study day. Tap image to zoom / view.
                   </Text>
 
                   {/* Submitted general proofs */}
@@ -479,16 +505,18 @@ export default function SubmitScreen() {
                           return (
                             <View key={proof.id}>
                               {url ? (
-                                <Image
-                                  source={{ uri: url }}
-                                  style={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: radius.md,
-                                    borderWidth: 1,
-                                    borderColor: palette.border,
-                                  }}
-                                />
+                                <Pressable onPress={() => setViewingProof({ url, caption: proof.caption || 'General Proof' })}>
+                                  <Image
+                                    source={{ uri: url }}
+                                    style={{
+                                      width: 80,
+                                      height: 80,
+                                      borderRadius: radius.md,
+                                      borderWidth: 1,
+                                      borderColor: palette.border,
+                                    }}
+                                  />
+                                </Pressable>
                               ) : (
                                 <View
                                   style={{
@@ -516,16 +544,18 @@ export default function SubmitScreen() {
                         .filter((img) => !img.taskId)
                         .map((img, i) => (
                           <View key={i}>
-                            <Image
-                              source={{ uri: img.uri }}
-                              style={{
-                                width: 80,
-                                height: 80,
-                                borderRadius: radius.md,
-                                borderWidth: 1,
-                                borderColor: palette.border,
-                              }}
-                            />
+                            <Pressable onPress={() => setViewingProof({ url: img.uri, caption: 'General Proof' })}>
+                              <Image
+                                source={{ uri: img.uri }}
+                                style={{
+                                  width: 80,
+                                  height: 80,
+                                  borderRadius: radius.md,
+                                  borderWidth: 1,
+                                  borderColor: palette.border,
+                                }}
+                              />
+                            </Pressable>
                             <Pressable
                               onPress={() => removePickedImage(img)}
                               style={{
@@ -574,7 +604,7 @@ export default function SubmitScreen() {
                     <Text style={{ fontSize: 32 }}>✅</Text>
                     <Text style={[typography.title, { color: palette.text }]}>Day submitted!</Text>
                     <Text style={{ color: palette.mutedText, textAlign: 'center' }}>
-                      Your partner has been notified. You can still upload extra proof images above.
+                      {`${partnerName} has been notified. You can still upload extra proof images above.`}
                     </Text>
                     <Button onPress={() => router.back()}>
                       Back to Accountability
@@ -623,7 +653,7 @@ export default function SubmitScreen() {
                       disabled={isSending || currentTasks.length === 0 || pickedImages.length === 0}
                       onPress={() => void handleSend()}
                     >
-                      {isSending ? 'Sending…' : `Send to Partner (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
+                      {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
                     </Button>
                   </View>
                 </Card>
@@ -632,6 +662,15 @@ export default function SubmitScreen() {
           )}
         </View>
       </ScrollView>
+
+      {/* Proof Viewer Modal */}
+      <ProofViewerModal
+        visible={!!viewingProof}
+        imageUrl={viewingProof?.url ?? null}
+        caption={viewingProof?.caption}
+        onClose={() => setViewingProof(null)}
+      />
     </Screen>
   );
 }
+

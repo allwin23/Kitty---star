@@ -315,17 +315,26 @@ export const pyqService = {
   },
 };
 
+import { todayIso, daysAgoIso } from '@/lib/supabase-helpers';
+
 export const waterService = {
   async log(input: WaterLogInput) {
-    const values = waterLogSchema.parse(input);
-    const { data, error } = await supabase.rpc('log_water', { p_amount_ml: values.amount_ml });
+    return this.logWater(input);
+  },
+
+  async logWater(input: WaterLogInput) {
+
+    const parsed = waterLogSchema.parse(input);
+    const { data, error } = await supabase.rpc('log_water', {
+      p_amount_ml: parsed.amount_ml,
+    });
     return throwIfError(data, error);
   },
 
   async getTodayStats() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayIso();
     const { data, error } = await supabase
       .from('water_daily_stats')
       .select('*')
@@ -338,7 +347,7 @@ export const waterService = {
   async getTodayLogs() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayStr = todayIso();
     const startOfToday = `${todayStr}T00:00:00.000Z`;
     const endOfToday = `${todayStr}T23:59:59.999Z`;
     const { data, error } = await supabase
@@ -354,9 +363,7 @@ export const waterService = {
   async getWeeklyStats() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-    const sevenDaysAgoStr = sevenDaysAgo.toISOString().slice(0, 10);
+    const sevenDaysAgoStr = daysAgoIso(6);
     const { data, error } = await supabase
       .from('water_daily_stats')
       .select('*')
