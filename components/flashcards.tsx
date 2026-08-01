@@ -9,10 +9,28 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import {
+  Book,
+  BookOpen,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Edit3,
+  Eye,
+  Flame,
+  Folder,
+  FolderInput,
+  HelpCircle,
+  Home,
+  Play,
+  RotateCcw,
+  Sparkles,
+  Trash2,
+  Zap,
+} from 'lucide-react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
 
 // Types
 export interface BuiltInCard {
@@ -48,7 +66,7 @@ export interface FolderCollection {
   description: string | null;
 }
 
-// 1. Flashcard component (Preview/List mode)
+// 1. Flashcard component (Preview/List mode) — Light Rose Glass Card
 export function Flashcard({
   question,
   answer,
@@ -62,21 +80,18 @@ export function Flashcard({
   onDelete?: () => void;
   onMove?: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.cardItem, { borderColor: palette.border }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.sm }]}>
       <View style={{ gap: spacing.xs, flex: 1 }}>
-        <Text style={[styles.cardLabel, { color: palette.mutedText }]}>QUESTION</Text>
-        <Text style={{ color: palette.text, fontSize: 15, fontWeight: '600' }} numberOfLines={3}>
+        <Text style={[styles.cardLabel, { color: '#2A1D22' }]}>QUESTION</Text>
+        <Text style={{ color: '#2A1D22', fontSize: 15, fontWeight: '700' }} numberOfLines={3}>
           {question}
         </Text>
         
-        <View style={[styles.divider, { backgroundColor: palette.border, marginVertical: spacing.xs }]} />
+        <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)', marginVertical: spacing.xs }]} />
         
-        <Text style={[styles.cardLabel, { color: palette.primary }]}>ANSWER</Text>
-        <Text style={{ color: palette.mutedText, fontSize: 14 }} numberOfLines={3}>
+        <Text style={[styles.cardLabel, { color: palette.danger }]}>ANSWER</Text>
+        <Text style={{ color: '#66545B', fontSize: 14, fontWeight: '600' }} numberOfLines={3}>
           {answer}
         </Text>
       </View>
@@ -84,25 +99,28 @@ export function Flashcard({
       <View style={styles.actionRow}>
         {onEdit && (
           <Pressable style={styles.actionButton} onPress={onEdit}>
-            <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700' }}>✏️ Edit</Text>
+            <Edit3 size={14} color="#D94C61" strokeWidth={2.2} />
+            <Text style={{ color: '#D94C61', fontSize: 13, fontWeight: '800' }}>Edit</Text>
           </Pressable>
         )}
         {onMove && (
           <Pressable style={styles.actionButton} onPress={onMove}>
-            <Text style={{ color: palette.mutedText, fontSize: 13, fontWeight: '700' }}>📦 Move</Text>
+            <FolderInput size={14} color="#2A1D22" strokeWidth={2.2} />
+            <Text style={{ color: '#2A1D22', fontSize: 13, fontWeight: '800' }}>Move</Text>
           </Pressable>
         )}
         {onDelete && (
           <Pressable style={styles.actionButton} onPress={onDelete}>
-            <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '700' }}>🗑️ Delete</Text>
+            <Trash2 size={14} color={palette.danger} strokeWidth={2.2} />
+            <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '800' }}>Delete</Text>
           </Pressable>
         )}
       </View>
-    </Card>
+    </View>
   );
 }
 
-// 2. FolderCard component
+// 2. FolderCard component — Light Rose Glass Card
 export function FolderCard({
   name,
   onPress,
@@ -116,15 +134,12 @@ export function FolderCard({
   onMove?: () => void;
   onDelete?: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.folderCard, { borderColor: palette.border, backgroundColor: palette.surface }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.folderCardRow]}>
       <Pressable style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }} onPress={onPress}>
-        <Text style={{ fontSize: 24 }}>📁</Text>
+        <Folder size={22} color="#D94C61" strokeWidth={2.2} />
         <View style={{ flex: 1 }}>
-          <Text style={{ fontWeight: '700', color: palette.text, fontSize: 15 }} numberOfLines={1}>
+          <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }} numberOfLines={1}>
             {name}
           </Text>
         </View>
@@ -133,21 +148,21 @@ export function FolderCard({
       <View style={styles.folderActions}>
         {onRename && (
           <Pressable style={styles.iconButton} onPress={onRename}>
-            <Text style={{ fontSize: 12, color: palette.mutedText }}>Rename</Text>
+            <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '800' }}>Rename</Text>
           </Pressable>
         )}
         {onMove && (
           <Pressable style={styles.iconButton} onPress={onMove}>
-            <Text style={{ fontSize: 12, color: palette.primary }}>Move</Text>
+            <Text style={{ fontSize: 12, color: '#D94C61', fontWeight: '800' }}>Move</Text>
           </Pressable>
         )}
         {onDelete && (
           <Pressable style={styles.iconButton} onPress={onDelete}>
-            <Text style={{ fontSize: 12, color: palette.danger }}>Delete</Text>
+            <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '800' }}>Delete</Text>
           </Pressable>
         )}
       </View>
-    </Card>
+    </View>
   );
 }
 
@@ -159,23 +174,23 @@ export function FolderBreadcrumb({
   currentPath: string[];
   onNavigate: (path: string[]) => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <View style={styles.breadcrumbContainer}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.breadcrumbScroll}>
         <Pressable onPress={() => onNavigate([])} style={styles.breadcrumbItem}>
-          <Text style={[styles.breadcrumbText, { color: palette.primary, fontWeight: currentPath.length === 0 ? '800' : '600' }]}>
-            🏠 Root
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Home size={14} color="#D94C61" strokeWidth={2.2} />
+            <Text style={[styles.breadcrumbText, { color: '#D94C61', fontWeight: currentPath.length === 0 ? '800' : '600' }]}>
+              Root
+            </Text>
+          </View>
         </Pressable>
 
         {currentPath.map((folder, index) => {
           const isLast = index === currentPath.length - 1;
           return (
             <View key={index} style={styles.breadcrumbSegment}>
-              <Text style={{ color: palette.mutedText, marginHorizontal: 4 }}>/</Text>
+              <Text style={{ color: '#66545B', marginHorizontal: 4, fontWeight: '600' }}>/</Text>
               <Pressable
                 onPress={() => onNavigate(currentPath.slice(0, index + 1))}
                 style={styles.breadcrumbItem}
@@ -184,8 +199,8 @@ export function FolderBreadcrumb({
                   style={[
                     styles.breadcrumbText,
                     {
-                      color: isLast ? palette.text : palette.primary,
-                      fontWeight: isLast ? '700' : '600',
+                      color: isLast ? '#2A1D22' : '#D94C61',
+                      fontWeight: isLast ? '800' : '600',
                     },
                   ]}
                   numberOfLines={1}
@@ -201,7 +216,7 @@ export function FolderBreadcrumb({
   );
 }
 
-// 4. FlashcardViewer component (Inside review session)
+// 4. FlashcardViewer component (Inside review session) — Light Rose Glass Card Flip Frame
 export function FlashcardViewer({
   front,
   back,
@@ -217,29 +232,31 @@ export function FlashcardViewer({
   type: 'builtin' | 'user';
   image?: string;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.viewerCard, { borderColor: palette.border, backgroundColor: palette.surface }]}>
-      <View style={{ position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md, flexDirection: 'row', justifyContent: 'space-between' }}>
-        <Text style={[styles.badge, { backgroundColor: palette.surface, color: palette.text, borderColor: palette.border, borderWidth: 1 }]}>
-          {type === 'builtin' ? '📖 Revision Note' : '✍️ Custom Card'}
-        </Text>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.viewerCard]}>
+      <View style={{ position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md, flexDirection: 'row', justifyContent: 'space-between', zIndex: 10 }}>
+        <View style={styles.badge}>
+          <BookOpen size={12} color="#D94C61" strokeWidth={2.2} />
+          <Text style={{ color: '#D94C61', fontSize: 11, fontWeight: '800' }}>
+            {type === 'builtin' ? 'Revision Note' : 'Custom Card'}
+          </Text>
+        </View>
       </View>
 
       <View style={styles.cardContent}>
         {!revealed ? (
           <View style={styles.faceContainer}>
-            <Text style={[styles.mainText, { color: palette.text }]}>{front}</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800', textAlign: 'center', lineHeight: 28 }}>
+              {front}
+            </Text>
           </View>
         ) : (
           <View style={styles.faceContainer}>
-            <Text style={[styles.mainText, { color: palette.text, opacity: 0.6, fontSize: 16, marginBottom: spacing.md }]}>
+            <Text style={{ color: '#66545B', fontSize: 15, fontWeight: '600', textAlign: 'center', marginBottom: spacing.md }}>
               {front}
             </Text>
-            <View style={[styles.divider, { backgroundColor: palette.border, width: 120, alignSelf: 'center', marginBottom: spacing.md }]} />
-            <Text style={[styles.mainText, { color: palette.primary, fontWeight: '700' }]}>
+            <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)', width: 140, alignSelf: 'center', marginBottom: spacing.md }]} />
+            <Text style={{ color: palette.danger, fontSize: 20, fontWeight: '800', textAlign: 'center', lineHeight: 28 }}>
               {back}
             </Text>
           </View>
@@ -247,15 +264,18 @@ export function FlashcardViewer({
       </View>
 
       {!revealed && (
-        <Button style={styles.revealButton} onPress={onReveal}>
-          👁️ Reveal Answer
-        </Button>
+        <Pressable style={styles.revealBtn} onPress={onReveal}>
+          <Eye size={18} color="#FFFFFF" strokeWidth={2.4} />
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
+            Reveal Answer
+          </Text>
+        </Pressable>
       )}
-    </Card>
+    </View>
   );
 }
 
-// 5. ReviewButtons component
+// 5. ReviewButtons component (Rating controls with vector icons)
 export function ReviewButtons({
   onRate,
 }: {
@@ -264,22 +284,26 @@ export function ReviewButtons({
   return (
     <View style={styles.reviewButtonsRow}>
       <Pressable style={[styles.rateButton, { backgroundColor: '#EF4444' }]} onPress={() => onRate('again')}>
-        <Text style={styles.rateButtonText}>😫 Again</Text>
+        <RotateCcw size={14} color="#FFFFFF" strokeWidth={2.4} />
+        <Text style={styles.rateButtonText}>Again</Text>
       </Pressable>
       <Pressable style={[styles.rateButton, { backgroundColor: '#F59E0B' }]} onPress={() => onRate('hard')}>
-        <Text style={styles.rateButtonText}>😕 Hard</Text>
+        <HelpCircle size={14} color="#FFFFFF" strokeWidth={2.4} />
+        <Text style={styles.rateButtonText}>Hard</Text>
       </Pressable>
       <Pressable style={[styles.rateButton, { backgroundColor: '#3B82F6' }]} onPress={() => onRate('good')}>
-        <Text style={styles.rateButtonText}>🙂 Good</Text>
+        <CheckCircle2 size={14} color="#FFFFFF" strokeWidth={2.4} />
+        <Text style={styles.rateButtonText}>Good</Text>
       </Pressable>
       <Pressable style={[styles.rateButton, { backgroundColor: '#10B981' }]} onPress={() => onRate('easy')}>
-        <Text style={styles.rateButtonText}>🤩 Easy</Text>
+        <Sparkles size={14} color="#FFFFFF" strokeWidth={2.4} />
+        <Text style={styles.rateButtonText}>Easy</Text>
       </Pressable>
     </View>
   );
 }
 
-// 6. ReviewProgress component
+// 6. ReviewProgress component — Light Rose Glass Pink Carded
 export function ReviewProgress({
   current,
   total,
@@ -287,28 +311,26 @@ export function ReviewProgress({
   current: number;
   total: number;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const percent = total > 0 ? (current / total) * 100 : 0;
 
   return (
-    <View style={styles.progressContainer}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-        <Text style={{ fontSize: 12, color: palette.mutedText, fontWeight: '600' }}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.progressContainer]}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
+        <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '800' }}>
           Session Progress
         </Text>
-        <Text style={{ fontSize: 12, color: palette.primary, fontWeight: '700' }}>
+        <Text style={{ fontSize: 13, color: palette.danger, fontWeight: '800' }}>
           {current} / {total} Cards
         </Text>
       </View>
-      <View style={[styles.progressBarBg, { backgroundColor: palette.border }]}>
-        <View style={[styles.progressBarFill, { backgroundColor: palette.primary, width: `${percent}%` }]} />
+      <View style={[styles.progressBarBg, { backgroundColor: 'rgba(250, 215, 224, 0.60)' }]}>
+        <View style={[styles.progressBarFill, { backgroundColor: palette.cherryBloom, width: `${percent}%` }]} />
       </View>
     </View>
   );
 }
 
-// 7. DueTodayCard component
+// 7. DueTodayCard component — Light Rose Frosted Glass
 export function DueTodayCard({
   dueCount,
   streak,
@@ -318,39 +340,43 @@ export function DueTodayCard({
   streak: number;
   onStartReview: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.dueCard, { borderColor: palette.border }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.dueCard]}>
       <View style={{ alignItems: 'center', gap: spacing.sm }}>
-        <Text style={{ fontSize: 44 }}>🧠</Text>
-        <Text style={{ fontSize: 22, fontWeight: '800', color: palette.text }}>
+        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(232, 77, 114, 0.14)', alignItems: 'center', justifyContent: 'center' }}>
+          <Sparkles size={28} color="#D94C61" strokeWidth={2.2} />
+        </View>
+
+        <Text style={{ fontSize: 22, fontWeight: '800', color: '#2A1D22' }}>
           {dueCount} Cards Due Today
         </Text>
-        <Text style={{ fontSize: 13, color: palette.mutedText, textAlign: 'center', paddingHorizontal: spacing.sm }}>
+        <Text style={{ fontSize: 13, color: '#66545B', fontWeight: '600', textAlign: 'center', paddingHorizontal: spacing.sm }}>
           Revising daily items guarantees memory retention. Only due items require your focus today.
         </Text>
 
         <View style={styles.statsStreakContainer}>
-          <Text style={{ fontSize: 13, color: palette.text, fontWeight: '700' }}>
-            🔥 Revision Streak: <Text style={{ color: palette.primary }}>{streak} Days</Text>
+          <Flame size={15} color="#FF9F1C" strokeWidth={2.4} />
+          <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '800' }}>
+            Revision Streak: <Text style={{ color: palette.danger }}>{streak} Days</Text>
           </Text>
         </View>
 
-        <Button
+        <Pressable
           disabled={dueCount === 0}
-          style={{ width: '100%', height: 50, marginTop: spacing.xs }}
+          style={[styles.primaryBtn, { width: '100%', opacity: dueCount === 0 ? 0.5 : 1 }]}
           onPress={onStartReview}
         >
-          🚀 Start Review
-        </Button>
+          <Play size={18} color="#FFFFFF" strokeWidth={2.4} />
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
+            Start Review
+          </Text>
+        </Pressable>
       </View>
-    </Card>
+    </View>
   );
 }
 
-// 8. SubjectCard component
+// 8. SubjectCard component — Light Rose Frosted Glass
 export function SubjectCard({
   subject,
   cardCount,
@@ -360,25 +386,25 @@ export function SubjectCard({
   cardCount: number;
   onPress: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.topicItem, { borderColor: palette.border, backgroundColor: palette.surface }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.xs }]}>
       <Pressable onPress={onPress} style={styles.pressableItem}>
-        <View>
-          <Text style={{ fontWeight: '700', color: palette.text, fontSize: 16 }}>{subject}</Text>
-          <Text style={{ color: palette.mutedText, fontSize: 12, marginTop: 2 }}>
-            {cardCount} flashcards available
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>
+          <BookOpen size={20} color="#D94C61" strokeWidth={2.2} />
+          <View>
+            <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }}>{subject}</Text>
+            <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
+              {cardCount} flashcards available
+            </Text>
+          </View>
         </View>
-        <Text style={{ fontSize: 16, color: palette.mutedText }}>➡️</Text>
+        <ChevronRight size={18} color="#2A1D22" strokeWidth={2.2} />
       </Pressable>
-    </Card>
+    </View>
   );
 }
 
-// 9. TopicCard component
+// 9. TopicCard component — Light Rose Frosted Glass
 export function TopicCard({
   topic,
   cardCount,
@@ -388,21 +414,21 @@ export function TopicCard({
   cardCount: number;
   onPress: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.topicItem, { borderColor: palette.border, backgroundColor: palette.surface }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.xs }]}>
       <Pressable onPress={onPress} style={styles.pressableItem}>
-        <View>
-          <Text style={{ fontWeight: '700', color: palette.text, fontSize: 16 }}>{topic}</Text>
-          <Text style={{ color: palette.mutedText, fontSize: 12, marginTop: 2 }}>
-            {cardCount} cards in topic
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 }}>
+          <Book size={18} color="#D94C61" strokeWidth={2.2} />
+          <View>
+            <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }}>{topic}</Text>
+            <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
+              {cardCount} cards in topic
+            </Text>
+          </View>
         </View>
-        <Text style={{ fontSize: 16, color: palette.mutedText }}>➡️</Text>
+        <ChevronRight size={18} color="#2A1D22" strokeWidth={2.2} />
       </Pressable>
-    </Card>
+    </View>
   );
 }
 
@@ -426,51 +452,50 @@ export function FlashcardEditor({
   onSave: () => void;
   onCancel: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
-        <Card style={{ width: '90%', gap: spacing.md }}>
-          <Text style={{ fontWeight: '700', fontSize: 16, color: palette.text }}>
+        <View style={[glassCardStyle, styles.pinkGlassCard, { width: '90%', gap: spacing.md }]}>
+          <Text style={{ fontWeight: '800', fontSize: 18, color: '#2A1D22' }}>
             {mode === 'create' ? 'Add Flashcard' : 'Edit Flashcard'}
           </Text>
 
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: palette.mutedText }}>FRONT SIDE (Question)</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>FRONT SIDE (Question)</Text>
             <TextInput
               value={front}
               onChangeText={onChangeFront}
               placeholder="Enter Question (Front side)..."
               multiline
-              style={[styles.modalInput, { height: 90, borderColor: palette.border, color: palette.text, backgroundColor: palette.background }]}
-              placeholderTextColor={palette.mutedText}
+              style={[styles.modalInput, { height: 90, borderColor: 'rgba(250, 215, 224, 0.90)', color: '#2A1D22', backgroundColor: 'rgba(255, 255, 255, 0.85)' }]}
+              placeholderTextColor="#66545B"
             />
           </View>
 
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, fontWeight: '700', color: palette.mutedText }}>BACK SIDE (Answer)</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>BACK SIDE (Answer)</Text>
             <TextInput
               value={back}
               onChangeText={onChangeBack}
               placeholder="Enter Answer (Back side)..."
               multiline
-              style={[styles.modalInput, { height: 90, borderColor: palette.border, color: palette.text, backgroundColor: palette.background }]}
-              placeholderTextColor={palette.mutedText}
+              style={[styles.modalInput, { height: 90, borderColor: 'rgba(250, 215, 224, 0.90)', color: '#2A1D22', backgroundColor: 'rgba(255, 255, 255, 0.85)' }]}
+              placeholderTextColor="#66545B"
             />
           </View>
 
           <View style={{ flexDirection: 'row', gap: spacing.sm, justifyContent: 'flex-end', marginTop: spacing.xs }}>
-            <Button
-              style={{ backgroundColor: 'transparent', borderWidth: 1, borderColor: palette.border }}
+            <Pressable
+              style={styles.outlineBtn}
               onPress={onCancel}
             >
-              <Text style={{ color: palette.text }}>Cancel</Text>
-            </Button>
-            <Button onPress={onSave}>Save</Button>
+              <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
+            </Pressable>
+            <Pressable style={styles.primaryBtn} onPress={onSave}>
+              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Save</Text>
+            </Pressable>
           </View>
-        </Card>
+        </View>
       </View>
     </Modal>
   );
@@ -492,17 +517,14 @@ export function FolderSelectorModal({
   onCancel: () => void;
   targetType: 'card' | 'folder';
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
-        <Card style={{ width: '85%', maxHeight: '70%', gap: spacing.md }}>
-          <Text style={{ fontWeight: '700', fontSize: 16, color: palette.text }}>
+        <View style={[glassCardStyle, styles.pinkGlassCard, { width: '85%', maxHeight: '70%', gap: spacing.md }]}>
+          <Text style={{ fontWeight: '800', fontSize: 18, color: '#2A1D22' }}>
             Move {targetType === 'card' ? 'Flashcard' : 'Folder'}
           </Text>
-          <Text style={{ fontSize: 13, color: palette.mutedText }}>
+          <Text style={{ fontSize: 13, color: '#66545B', fontWeight: '600' }}>
             Select the destination folder:
           </Text>
 
@@ -514,12 +536,15 @@ export function FolderSelectorModal({
                 style={[
                   styles.selectFolderItem,
                   {
-                    borderColor: palette.border,
-                    backgroundColor: currentFolderId === 'root' ? palette.border : 'transparent',
+                    borderColor: 'rgba(250, 215, 224, 0.90)',
+                    backgroundColor: currentFolderId === 'root' ? 'rgba(232, 77, 114, 0.14)' : 'rgba(255, 255, 255, 0.85)',
                   },
                 ]}
               >
-                <Text style={{ fontWeight: '700', color: palette.text }}>🏠 Root Directory</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Home size={16} color="#D94C61" strokeWidth={2.2} />
+                  <Text style={{ fontWeight: '800', color: '#2A1D22' }}>Root Directory</Text>
+                </View>
               </Pressable>
 
               {folders.map((folder) => {
@@ -531,12 +556,15 @@ export function FolderSelectorModal({
                     style={[
                       styles.selectFolderItem,
                       {
-                        borderColor: palette.border,
-                        backgroundColor: currentFolderId === folder.id ? palette.border : 'transparent',
+                        borderColor: 'rgba(250, 215, 224, 0.90)',
+                        backgroundColor: currentFolderId === folder.id ? 'rgba(232, 77, 114, 0.14)' : 'rgba(255, 255, 255, 0.85)',
                       },
                     ]}
                   >
-                    <Text style={{ color: palette.text }}>📁 {folder.title}</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Folder size={16} color="#D94C61" strokeWidth={2.2} />
+                      <Text style={{ color: '#2A1D22', fontWeight: '700' }}>{folder.title}</Text>
+                    </View>
                   </Pressable>
                 );
               })}
@@ -544,23 +572,25 @@ export function FolderSelectorModal({
           </ScrollView>
 
           <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, marginTop: spacing.xs }}>
-            <Button
-              style={{ backgroundColor: 'transparent', borderWidth: 1, borderColor: palette.border }}
+            <Pressable
+              style={styles.outlineBtn}
               onPress={onCancel}
             >
-              <Text style={{ color: palette.text }}>Cancel</Text>
-            </Button>
+              <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
+            </Pressable>
           </View>
-        </Card>
+        </View>
       </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  cardItem: {
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
     padding: spacing.md,
-    marginBottom: spacing.sm,
   },
   cardLabel: {
     fontSize: 10,
@@ -579,14 +609,16 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xs,
   },
   actionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingVertical: 4,
     paddingHorizontal: 8,
   },
-  folderCard: {
+  folderCardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.md,
     marginBottom: spacing.sm,
   },
   folderActions: {
@@ -615,48 +647,49 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   viewerCard: {
-    flex: 1,
+    width: '100%',
     minHeight: 250,
+    maxHeight: 320,
+    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
+    padding: spacing.lg,
     position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
+    marginVertical: spacing.md,
   },
   badge: {
-    fontSize: 11,
-    fontWeight: '800',
-    paddingHorizontal: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: radius.sm,
-    overflow: 'hidden',
-    alignSelf: 'flex-start',
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(232, 77, 114, 0.14)',
+    borderWidth: 1,
+    borderColor: 'rgba(232, 77, 114, 0.30)',
   },
   cardContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    marginVertical: spacing.lg,
+    marginVertical: spacing.md,
   },
   faceContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    paddingHorizontal: spacing.sm,
   },
-  mainText: {
-    fontSize: 20,
-    fontWeight: '600',
-    textAlign: 'center',
-    lineHeight: 28,
-  },
-  revealButton: {
+  revealBtn: {
+    backgroundColor: palette.cherryBloom,
     width: '100%',
-    height: 48,
+    paddingVertical: 12,
+    borderRadius: radius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
   },
   reviewButtonsRow: {
     flexDirection: 'row',
@@ -665,20 +698,17 @@ const styles = StyleSheet.create({
   },
   rateButton: {
     flex: 1,
-    height: 46,
+    height: 48,
     borderRadius: radius.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 1,
+    gap: 4,
   },
   rateButtonText: {
     color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 12,
+    fontWeight: '800',
+    fontSize: 13,
   },
   progressContainer: {
     width: '100%',
@@ -698,41 +728,59 @@ const styles = StyleSheet.create({
     padding: spacing.lg,
   },
   statsStreakContainer: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: radius.full,
-    backgroundColor: 'rgba(79, 70, 229, 0.08)',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    borderWidth: 1,
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     marginTop: spacing.xs,
     marginBottom: spacing.md,
-  },
-  topicItem: {
-    marginBottom: spacing.sm,
-    padding: 0,
-    overflow: 'hidden',
   },
   pressableItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.md,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalInput: {
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     padding: spacing.md,
     fontSize: 14,
-    textAlignVertical: 'top',
   },
   selectFolderItem: {
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
-    marginBottom: 4,
+    borderWidth: 1.5,
+    marginBottom: 6,
+  },
+  primaryBtn: {
+    backgroundColor: palette.cherryBloom,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: radius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  outlineBtn: {
+    backgroundColor: 'rgba(255, 255, 255, 0.90)',
+    borderWidth: 1.5,
+    borderColor: '#E5D8DC',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -12,10 +12,25 @@ import {
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
+import {
+  Book,
+  BookOpen,
+  CheckCircle2,
+  Edit3,
+  Flame,
+  FolderPlus,
+  HelpCircle,
+  Plus,
+  RotateCcw,
+  Search,
+  Sparkles,
+  Star,
+  Zap,
+} from 'lucide-react-native';
 
 import { Button, Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { useAuthStore, useFlashcardStore } from '@/stores';
-import { palette, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 import { flashcardService, reportService } from '@/services/backend';
 
@@ -45,7 +60,6 @@ type TabType = 'due' | 'builtin' | 'user';
 
 export default function FlashcardsScreen() {
   const user = useAuthStore((s) => s.user);
-
 
   // Zustand local store for built-in card schedules
   const { localSchedules, reviewCardLocally } = useFlashcardStore();
@@ -118,6 +132,15 @@ export default function FlashcardsScreen() {
       void statsQ.refetch();
     }, [])
   );
+
+  // Quit Session Handler
+  const handleQuitSession = () => {
+    setReviewMode(false);
+    setShowSummary(false);
+    setCurrentReviewIndex(0);
+    setRevealed(false);
+    setReviewSessionCards([]);
+  };
 
   // Mutations
   const createCollectionMutation = useMutation({
@@ -254,12 +277,10 @@ export default function FlashcardsScreen() {
 
     collections.forEach((col) => {
       const parts = col.title.split('/');
-      // Matches path prefix
       const isSub = parts.slice(0, currentPath.length).join('/') === currentPrefix;
       if (isSub && parts.length > currentPath.length) {
         const nextFolder = parts[currentPath.length];
         folderSet.add(nextFolder);
-        // Map collection id to direct folder match if any
         if (parts.length === currentPath.length + 1) {
           folderMap[nextFolder] = col.id;
         }
@@ -316,7 +337,6 @@ export default function FlashcardsScreen() {
         const oldPrefix = [...currentPath, folderInputName].join('/');
         const newPrefix = [...currentPath, folderInputName.trim()].join('/');
 
-        // Find all collections that need prefix renaming
         const targetCollections = collections.filter(
           (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/')
         );
@@ -345,7 +365,6 @@ export default function FlashcardsScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            // Find all collections under this folder
             const targetCols = collections.filter(
               (c) => c.title === fullFolderPath || c.title.startsWith(fullFolderPath + '/')
             );
@@ -462,13 +481,11 @@ export default function FlashcardsScreen() {
 
       const newPrefix = destPrefix ? `${destPrefix}/${movingFolderName}` : movingFolderName;
 
-      // Ensure we aren't moving a folder into its own subdirectory
       if (newPrefix === oldPrefix || newPrefix.startsWith(oldPrefix + '/')) {
         Alert.alert('Invalid Move', 'Cannot move a folder into itself or its own subfolder.');
         return;
       }
 
-      // Rename collection and all sub-collections
       const targetCollections = collections.filter(
         (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/')
       );
@@ -576,70 +593,69 @@ export default function FlashcardsScreen() {
       <Screen>
         <ScrollView contentContainerStyle={{ paddingVertical: spacing.lg }}>
           <View style={styles.summaryHeader}>
-            <Text style={styles.summaryTitle}>✨ Review Completed!</Text>
-            <Text style={{ color: palette.mutedText, fontSize: 14 }}>
+            <HeaderTitleCard title="Review Complete" showWavingHand={false} />
+            <Text style={{ color: '#66545B', fontSize: 14, fontWeight: '600', textAlign: 'center', marginTop: 4 }}>
               Fantastic job. Spaced repetition works best when practiced daily.
             </Text>
           </View>
 
-          <Card style={{ marginBottom: spacing.md, gap: spacing.md }}>
-            <Text style={{ fontWeight: '700', fontSize: 16, color: palette.text }}>
-              {"Today's Session Stats"}
+          <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.md, gap: spacing.md }]}>
+            <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
+              Today&apos;s Session Stats
             </Text>
 
             <View style={styles.summaryStatsRow}>
               <View style={styles.summaryStatItem}>
-                <Text style={[styles.statValue, { color: palette.primary }]}>{totalSessionCards}</Text>
-                <Text style={{ fontSize: 12, color: palette.mutedText }}>Cards Revised</Text>
+                <Text style={[styles.statValue, { color: palette.danger }]}>{totalSessionCards}</Text>
+                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>Cards Revised</Text>
               </View>
               <View style={styles.summaryStatItem}>
-                <Text style={[styles.statValue, { color: '#10B981' }]}>{sessionAccuracy}%</Text>
-                <Text style={{ fontSize: 12, color: palette.mutedText }}>Accuracy</Text>
+                <Text style={[styles.statValue, { color: '#16a34a' }]}>{sessionAccuracy}%</Text>
+                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>Accuracy</Text>
               </View>
               <View style={styles.summaryStatItem}>
-                <Text style={[styles.statValue, { color: palette.text }]}>
+                <Text style={[styles.statValue, { color: '#FF9F1C' }]}>
                   {userStats?.current_streak ?? 0}
                 </Text>
-                <Text style={{ fontSize: 12, color: palette.mutedText }}>Day Streak</Text>
+                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>Day Streak</Text>
               </View>
             </View>
 
-            <View style={[styles.divider, { backgroundColor: palette.border }]} />
+            <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)' }]} />
 
-            <Text style={{ fontWeight: '600', fontSize: 14, color: palette.text }}>Rating Breakdowns</Text>
+            <Text style={{ fontWeight: '800', fontSize: 14, color: '#2A1D22' }}>Rating Breakdowns</Text>
 
             <View style={{ gap: spacing.xs }}>
               {[
-                { label: '🤩 Easy (Immediate retention)', count: reviewStats.easy, color: '#10B981' },
-                { label: '🙂 Good (Normal revision)', count: reviewStats.good, color: '#3B82F6' },
-                { label: '😕 Hard (Requires early retry)', count: reviewStats.hard, color: '#F59E0B' },
-                { label: '😫 Again (Failed retention)', count: reviewStats.again, color: '#EF4444' },
+                { label: 'Easy (Immediate retention)', count: reviewStats.easy, color: '#16a34a' },
+                { label: 'Good (Normal revision)', count: reviewStats.good, color: '#3B82F6' },
+                { label: 'Hard (Requires early retry)', count: reviewStats.hard, color: '#F59E0B' },
+                { label: 'Again (Failed retention)', count: reviewStats.again, color: '#EF4444' },
               ].map((item) => (
                 <View key={item.label} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: palette.text, fontSize: 13 }}>{item.label}</Text>
-                  <Text style={{ fontWeight: '700', color: item.color }}>{item.count}</Text>
+                  <Text style={{ color: '#2A1D22', fontSize: 13, fontWeight: '700' }}>{item.label}</Text>
+                  <Text style={{ fontWeight: '800', color: item.color }}>{item.count}</Text>
                 </View>
               ))}
             </View>
-          </Card>
+          </View>
 
           <View style={{ gap: spacing.sm }}>
-            <Button
-              onPress={() => {
-                setShowSummary(false);
-                setReviewMode(false);
-                setActiveTab('due');
-              }}
+            <Pressable
+              onPress={handleQuitSession}
+              style={styles.primaryBtn}
             >
-              🎉 Finish Session
-            </Button>
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
+                Finish Session
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </Screen>
     );
   }
 
-  // REVIEW SESSION SCREEN
+  // REVIEW SESSION SCREEN — Obsidian Black Title Card & Frosted Pink Session Card
   if (reviewMode) {
     const item = reviewSessionCards[currentReviewIndex];
     const cardData = item.card;
@@ -650,45 +666,36 @@ export default function FlashcardsScreen() {
 
     return (
       <Screen>
-        <View style={{ flex: 1, gap: spacing.lg, paddingBottom: spacing.lg }}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text style={{ fontWeight: '700', color: palette.mutedText }}>
-              Review Session
-            </Text>
+        <View style={{ flex: 1, justifyContent: 'space-between', paddingBottom: spacing.lg }}>
+          {/* Top Bar: Black Component Card */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs }}>
+            <HeaderTitleCard title="Review Session" showWavingHand={false} />
             <Pressable
-              style={{
-                paddingVertical: 6,
-                paddingHorizontal: 12,
-                borderRadius: radius.sm,
-                borderWidth: 1,
-                borderColor: palette.border,
-              }}
-              onPress={() =>
-                Alert.alert('Quit Session?', 'Your current session progress will be saved, but the session will end.', [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Quit', onPress: () => setReviewMode(false) },
-                ])
-              }
+              style={styles.quitBtn}
+              onPress={handleQuitSession}
             >
-              <Text style={{ color: palette.text, fontSize: 12, fontWeight: '600' }}>Quit</Text>
+              <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>Quit</Text>
             </Pressable>
           </View>
 
+          {/* Frosted Pink Glass Progress Card */}
           <ReviewProgress current={currentReviewIndex + 1} total={reviewSessionCards.length} />
 
-          {/* Flashcard Frame */}
-          <FlashcardViewer
-            front={frontText}
-            back={backText}
-            revealed={revealed}
-            onReveal={() => setRevealed(true)}
-            type={item.type}
-          />
+          {/* Centered Flashcard Frame */}
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingVertical: spacing.sm }}>
+            <FlashcardViewer
+              front={frontText}
+              back={backText}
+              revealed={revealed}
+              onReveal={() => setRevealed(true)}
+              type={item.type}
+            />
+          </View>
 
           {/* Rate Controls */}
           {revealed && (
-            <View style={{ gap: spacing.xs }}>
-              <Text style={{ textAlign: 'center', color: palette.mutedText, fontSize: 13, fontWeight: '700', marginBottom: 4 }}>
+            <View style={{ gap: spacing.xs, marginTop: 'auto' }}>
+              <Text style={{ textAlign: 'center', color: '#2A1D22', fontSize: 13, fontWeight: '800', marginBottom: 4 }}>
                 How well did you remember?
               </Text>
               <ReviewButtons onRate={handleRateCard} />
@@ -704,18 +711,17 @@ export default function FlashcardsScreen() {
       <View style={{ flex: 1 }}>
         {/* Header navigation */}
         <HeaderTitleCard
-          title="Smart Flashcards ⚡"
-          subtitle="Spaced repetition schedules designed specifically for maximum long-term memory retention"
+          title="Smart Flashcards"
+          showWavingHand={false}
           style={{ marginBottom: spacing[16] }}
         />
 
-
         {/* Navigation Tabs */}
-        <View style={[styles.tabBar, { borderBottomColor: palette.border }]}>
+        <View style={{ flexDirection: 'row', gap: 6, marginBottom: spacing.md }}>
           {[
-            { key: 'due' as const, label: `⭐ Due Today (${dueSessionCards.length})` },
-            { key: 'builtin' as const, label: '📖 Revision Notes' },
-            { key: 'user' as const, label: '✍️ My Flashcards' },
+            { key: 'due' as const, label: `Due Today (${dueSessionCards.length})` },
+            { key: 'builtin' as const, label: 'Revision Notes' },
+            { key: 'user' as const, label: 'My Flashcards' },
           ].map((t) => {
             const isAct = activeTab === t.key;
             return (
@@ -725,12 +731,17 @@ export default function FlashcardsScreen() {
                   setActiveTab(t.key);
                   setCurrentPath([]);
                 }}
-                style={[
-                  styles.tabButton,
-                  isAct && { borderBottomColor: palette.primary, borderBottomWidth: 3 },
-                ]}
+                style={{
+                  flex: 1,
+                  paddingVertical: 10,
+                  borderRadius: radius.md,
+                  alignItems: 'center',
+                  backgroundColor: isAct ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
+                  borderWidth: 1.5,
+                  borderColor: isAct ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
+                }}
               >
-                <Text style={{ fontWeight: '700', color: isAct ? palette.primary : palette.mutedText, fontSize: 13 }}>
+                <Text style={{ fontWeight: '800', color: isAct ? '#FFFFFF' : '#2A1D22', fontSize: 12 }}>
                   {t.label}
                 </Text>
               </Pressable>
@@ -749,47 +760,49 @@ export default function FlashcardsScreen() {
               />
 
               {/* Statistics Card */}
-              <Card style={{ gap: spacing.md }}>
-                <Text style={{ fontWeight: '700', fontSize: 15, color: palette.text }}>Your Retention Stats</Text>
-                
-                <View style={styles.statsGrid}>
-                  <View style={styles.statsCardCol}>
-                    <Text style={[styles.statsValueMain, { color: palette.primary }]}>
-                      {userCards.length + builtInCards.length}
-                    </Text>
-                    <Text style={styles.statsLabel}>Total Cards</Text>
+              <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                <View style={{ gap: spacing.md }}>
+                  <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Your Retention Stats</Text>
+                  
+                  <View style={styles.statsGrid}>
+                    <View style={styles.statsCardCol}>
+                      <Text style={[styles.statsValueMain, { color: palette.danger }]}>
+                        {userCards.length + builtInCards.length}
+                      </Text>
+                      <Text style={styles.statsLabel}>Total Cards</Text>
+                    </View>
+                    <View style={styles.statsCardCol}>
+                      <Text style={[styles.statsValueMain, { color: '#16a34a' }]}>
+                        {totalReviewedToday}
+                      </Text>
+                      <Text style={styles.statsLabel}>Reviewed Today</Text>
+                    </View>
+                    <View style={styles.statsCardCol}>
+                      <Text style={[styles.statsValueMain, { color: '#3B82F6' }]}>
+                        {averageRetention()}%
+                      </Text>
+                      <Text style={styles.statsLabel}>Average Retention</Text>
+                    </View>
+                    <View style={styles.statsCardCol}>
+                      <Text style={[styles.statsValueMain, { color: '#FF9F1C' }]}>
+                        {longestInterval} d
+                      </Text>
+                      <Text style={styles.statsLabel}>Max Interval</Text>
+                    </View>
                   </View>
-                  <View style={styles.statsCardCol}>
-                    <Text style={[styles.statsValueMain, { color: '#10B981' }]}>
-                      {totalReviewedToday}
+
+                  <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)' }]} />
+
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '700' }}>
+                      XP Level: <Text style={{ color: palette.danger, fontWeight: '800' }}>Level {userStats?.level ?? 1}</Text>
                     </Text>
-                    <Text style={styles.statsLabel}>Reviewed Today</Text>
-                  </View>
-                  <View style={styles.statsCardCol}>
-                    <Text style={[styles.statsValueMain, { color: '#3B82F6' }]}>
-                      {averageRetention()}%
+                    <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '700' }}>
+                      Total XP: <Text style={{ color: palette.danger, fontWeight: '800' }}>{userStats?.xp ?? 0} XP</Text>
                     </Text>
-                    <Text style={styles.statsLabel}>Average Retention</Text>
-                  </View>
-                  <View style={styles.statsCardCol}>
-                    <Text style={[styles.statsValueMain, { color: '#F59E0B' }]}>
-                      {longestInterval} d
-                    </Text>
-                    <Text style={styles.statsLabel}>Max Interval</Text>
                   </View>
                 </View>
-
-                <View style={[styles.divider, { backgroundColor: palette.border }]} />
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ fontSize: 13, color: palette.mutedText }}>
-                    XP Level: <Text style={{ color: palette.text, fontWeight: '700' }}>Level {userStats?.level ?? 1}</Text>
-                  </Text>
-                  <Text style={{ fontSize: 13, color: palette.mutedText }}>
-                    Total XP: <Text style={{ color: palette.primary, fontWeight: '700' }}>{userStats?.xp ?? 0} XP</Text>
-                  </Text>
-                </View>
-              </Card>
+              </View>
             </View>
           </ScrollView>
         )}
@@ -801,7 +814,7 @@ export default function FlashcardsScreen() {
               {!selectedBuiltInSubject ? (
                 /* 1. Subjects Selection */
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '700', color: palette.text, marginBottom: spacing.xs }}>Subjects</Text>
+                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16, marginBottom: spacing.xs }}>Subjects</Text>
                   {builtInSubjects.map((subject) => {
                     const count = builtInCards.filter((c) => c.subject === subject).length;
                     return (
@@ -818,12 +831,12 @@ export default function FlashcardsScreen() {
                 /* 2. Topics Selection */
                 <View style={{ gap: spacing.md }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ fontWeight: '700', color: palette.text }}>{selectedBuiltInSubject} topics</Text>
+                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>{selectedBuiltInSubject} topics</Text>
                     <Pressable
                       onPress={() => setSelectedBuiltInSubject(null)}
-                      style={[styles.smallBtn, { borderColor: palette.border }]}
+                      style={styles.outlineBtn}
                     >
-                      <Text style={{ color: palette.text, fontSize: 12, fontWeight: '600' }}>Back</Text>
+                      <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Back</Text>
                     </Pressable>
                   </View>
 
@@ -848,17 +861,17 @@ export default function FlashcardsScreen() {
                 <View style={{ gap: spacing.md }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={{ flex: 1, marginRight: spacing.sm }}>
-                      <Text style={{ fontWeight: '700', color: palette.text, fontSize: 16 }}>{selectedBuiltInTopic}</Text>
-                      <Text style={{ color: palette.mutedText, fontSize: 12, marginTop: 2 }}>
+                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>{selectedBuiltInTopic}</Text>
+                      <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
                         {getBuiltInActiveCards().length} flashcards in this topic
                       </Text>
                     </View>
                     <View style={{ flexDirection: 'row', gap: spacing.xs }}>
                       <Pressable
                         onPress={() => setSelectedBuiltInTopic(null)}
-                        style={[styles.smallBtn, { borderColor: palette.border }]}
+                        style={styles.outlineBtn}
                       >
-                        <Text style={{ color: palette.text, fontSize: 12, fontWeight: '600' }}>Back</Text>
+                        <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Back</Text>
                       </Pressable>
                       <Pressable
                         onPress={() =>
@@ -866,25 +879,26 @@ export default function FlashcardsScreen() {
                             getBuiltInActiveCards().map((card) => ({ type: 'builtin', card }))
                           )
                         }
-                        style={styles.reviewTopicBtn}
+                        style={styles.primaryBtn}
                       >
-                        <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>⚡ Review</Text>
+                        <Zap size={14} color="#FFFFFF" strokeWidth={2.4} />
+                        <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '800' }}>Review</Text>
                       </Pressable>
                     </View>
                   </View>
 
                   <View style={{ gap: spacing.xs }}>
                     {getBuiltInActiveCards().map((card) => (
-                      <Card key={card.id}>
+                      <View key={card.id} style={[glassCardStyle, styles.pinkGlassCard]}>
                         <View style={{ gap: 4 }}>
-                          <Text style={{ fontWeight: '700', color: palette.text, fontSize: 14 }}>
+                          <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
                             Q: {card.front}
                           </Text>
-                          <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '600' }}>
+                          <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '700' }}>
                             A: {card.back}
                           </Text>
                         </View>
-                      </Card>
+                      </View>
                     ))}
                   </View>
                 </View>
@@ -903,19 +917,20 @@ export default function FlashcardsScreen() {
             <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.sm }}>
               <Pressable
                 onPress={handleOpenCreateFolder}
-                style={[styles.outlineBtn, { borderColor: palette.primary }]}
+                style={styles.outlineBtn}
               >
-                <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 13 }}>📁 Create Folder</Text>
+                <FolderPlus size={15} color="#2A1D22" strokeWidth={2.2} />
+                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>Create Folder</Text>
               </Pressable>
               <Pressable
                 onPress={handleOpenCreateCard}
                 style={[
-                  styles.solidBtn,
-                  { backgroundColor: palette.primary },
+                  styles.primaryBtn,
                   currentPath.length === 0 && { opacity: 0.5 },
                 ]}
               >
-                <Text style={{ color: '#fff', fontWeight: '700', fontSize: 13 }}>📝 Add Card</Text>
+                <Plus size={15} color="#FFFFFF" strokeWidth={2.4} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>Add Card</Text>
               </Pressable>
             </View>
 
@@ -924,11 +939,8 @@ export default function FlashcardsScreen() {
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search cards in this folder..."
-              style={[
-                styles.searchInput,
-                { borderColor: palette.border, color: palette.text, backgroundColor: palette.surface },
-              ]}
-              placeholderTextColor={palette.mutedText}
+              style={styles.searchInput}
+              placeholderTextColor="#66545B"
             />
 
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -936,7 +948,7 @@ export default function FlashcardsScreen() {
                 {/* Render nested Subfolders */}
                 {subfolders.length > 0 && (
                   <View style={{ gap: spacing.xs }}>
-                    <Text style={{ fontWeight: '800', fontSize: 11, color: palette.mutedText, letterSpacing: 0.5 }}>
+                    <Text style={{ fontWeight: '800', fontSize: 12, color: '#2A1D22', letterSpacing: 0.5 }}>
                       FOLDERS
                     </Text>
                     {subfolders.map((sub) => (
@@ -961,7 +973,7 @@ export default function FlashcardsScreen() {
 
                 {/* Render Flashcards at current depth */}
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', fontSize: 11, color: palette.mutedText, letterSpacing: 0.5 }}>
+                  <Text style={{ fontWeight: '800', fontSize: 12, color: '#2A1D22', letterSpacing: 0.5 }}>
                     FLASHCARDS ({cards.length})
                   </Text>
 
@@ -998,8 +1010,8 @@ export default function FlashcardsScreen() {
       {/* Folder Create/Rename Modal */}
       <Modal visible={folderModalVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <Card style={{ width: '85%', gap: spacing.md }}>
-            <Text style={{ fontWeight: '700', fontSize: 16, color: palette.text }}>
+          <View style={[glassCardStyle, styles.pinkGlassCard, { width: '85%', gap: spacing.md }]}>
+            <Text style={{ fontWeight: '800', fontSize: 18, color: '#2A1D22' }}>
               {folderMode === 'create' ? 'Create Folder' : 'Rename Folder'}
             </Text>
 
@@ -1007,23 +1019,23 @@ export default function FlashcardsScreen() {
               value={folderInputName}
               onChangeText={setFolderInputName}
               placeholder="Enter folder name..."
-              style={[styles.modalInput, { borderColor: palette.border, color: palette.text, backgroundColor: palette.background }]}
-              placeholderTextColor={palette.mutedText}
+              style={styles.modalInput}
+              placeholderTextColor="#66545B"
               autoFocus
             />
 
             <View style={{ flexDirection: 'row', gap: spacing.sm, justifyContent: 'flex-end' }}>
               <Pressable
-                style={[styles.smallBtn, { borderColor: palette.border }]}
+                style={styles.outlineBtn}
                 onPress={() => setFolderModalVisible(false)}
               >
-                <Text style={{ color: palette.text }}>Cancel</Text>
+                <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
               </Pressable>
-              <Pressable style={styles.modalSaveBtn} onPress={handleSubmitFolder}>
-                <Text style={{ color: '#fff', fontWeight: '700' }}>Save</Text>
+              <Pressable style={styles.primaryBtn} onPress={handleSubmitFolder}>
+                <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>Save</Text>
               </Pressable>
             </View>
-          </Card>
+          </View>
         </View>
       </Modal>
 
@@ -1053,15 +1065,11 @@ export default function FlashcardsScreen() {
 }
 
 const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    marginBottom: spacing.md,
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: spacing.md,
-    alignItems: 'center',
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
   },
   divider: {
     height: 1,
@@ -1069,60 +1077,59 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     fontSize: 14,
+    color: '#2A1D22',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
     marginBottom: spacing.md,
+    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalInput: {
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     padding: spacing.md,
     fontSize: 14,
+    color: '#2A1D22',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    fontWeight: '600',
   },
-  smallBtn: {
+  primaryBtn: {
+    backgroundColor: palette.cherryBloom,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: radius.md,
-    borderWidth: 1,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  modalSaveBtn: {
-    borderRadius: radius.md,
-    backgroundColor: '#3F3F46',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  reviewTopicBtn: {
-    borderRadius: radius.md,
-    backgroundColor: '#3F3F46',
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: 8,
   },
   outlineBtn: {
-    flex: 1,
-    borderRadius: radius.md,
-    borderWidth: 1,
+    backgroundColor: 'rgba(255, 255, 255, 0.90)',
+    borderWidth: 1.5,
+    borderColor: '#E5D8DC',
     paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: radius.md,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
   },
-  solidBtn: {
-    flex: 1,
+  quitBtn: {
+    backgroundColor: palette.danger,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
     borderRadius: radius.md,
-    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1141,17 +1148,14 @@ const styles = StyleSheet.create({
   },
   statsLabel: {
     fontSize: 11,
-    color: '#71717A',
+    color: '#2A1D22',
+    fontWeight: '700',
     textAlign: 'center',
   },
   summaryHeader: {
     alignItems: 'center',
     gap: spacing.xs,
     marginBottom: spacing.lg,
-  },
-  summaryTitle: {
-    fontSize: 26,
-    fontWeight: '800',
   },
   summaryStatsRow: {
     flexDirection: 'row',
