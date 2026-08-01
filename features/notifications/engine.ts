@@ -240,9 +240,34 @@ export class NotificationEngine {
     event: AppNotificationEventPayload,
     delaySeconds: number,
   ) {
-    setTimeout(async () => {
-      await this.processEvent(event);
-    }, delaySeconds * 1000);
+    if (Platform.OS === 'web') {
+      setTimeout(async () => {
+        await this.processEvent(event);
+      }, delaySeconds * 1000);
+      return;
+    }
+
+    try {
+      const content = generateNotificationContent(event.type, event.data || {});
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: content.title,
+          body: content.body,
+          data: { ...event.data, type: event.type },
+          sound: true,
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: Math.max(1, Math.floor(delaySeconds)),
+          repeats: false,
+        },
+      });
+    } catch (err) {
+      console.warn('[NotificationEngine] Schedule delayed reminder fallback:', err);
+      setTimeout(async () => {
+        await this.processEvent(event);
+      }, delaySeconds * 1000);
+    }
   }
 
   /** Check if category is enabled in user preferences */

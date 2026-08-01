@@ -69,7 +69,7 @@ export function CompanionMascot({
         Animated.timing(scaleAnim, { toValue: 1.0, duration: 600, useNativeDriver: true }),
       ]).start();
     }
-  }, [pose, bounceAnim, scaleAnim, rotateAnim]);
+  }, [pose]);
 
   // Skin Theme Map
   const getSkinTheme = (skinId: string) => {
@@ -116,11 +116,6 @@ export function CompanionMascot({
     }
   };
 
-  const spin = rotateAnim.interpolate({
-    inputRange: [-1, 0, 1],
-    outputRange: ['-12deg', '0deg', '12deg'],
-  });
-
   return (
     <View style={styles.container}>
       <Animated.View
@@ -135,7 +130,12 @@ export function CompanionMascot({
             transform: [
               { translateY: bounceAnim },
               { scale: scaleAnim },
-              { rotate: spin },
+              {
+                rotate: rotateAnim.interpolate({
+                  inputRange: [-1, 0, 1],
+                  outputRange: ['-12deg', '0deg', '12deg'],
+                }),
+              },
             ],
           },
         ]}

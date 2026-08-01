@@ -22,30 +22,29 @@ export interface NotificationCardProps {
   onDelete?: (id: string) => void;
 }
 
+function renderCategoryIcon(category: string, size: number) {
+  switch (category) {
+    case 'partner':
+      return <Users size={size} color="#121218" strokeWidth={2.4} />;
+    case 'water':
+      return <Droplets size={size} color="#121218" strokeWidth={2.4} />;
+    case 'achievements':
+      return <Trophy size={size} color="#121218" strokeWidth={2.4} />;
+    case 'ai_coach':
+      return <Bot size={size} color="#121218" strokeWidth={2.4} />;
+    case 'reports':
+      return <BarChart2 size={size} color="#121218" strokeWidth={2.4} />;
+    case 'social':
+      return <Flame size={size} color="#121218" strokeWidth={2.4} />;
+    case 'study':
+    default:
+      return <BookOpen size={size} color="#121218" strokeWidth={2.4} />;
+  }
+}
+
 export function NotificationCard({ notification, onMarkRead, onDelete }: NotificationCardProps) {
   const router = useRouter();
   const isUnread = !notification.read_at;
-
-  // Get icon for category
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'partner':
-        return Users;
-      case 'water':
-        return Droplets;
-      case 'achievements':
-        return Trophy;
-      case 'ai_coach':
-        return Bot;
-      case 'reports':
-        return BarChart2;
-      case 'social':
-        return Flame;
-      case 'study':
-      default:
-        return BookOpen;
-    }
-  };
 
   // Get color badge for priority
   const getPriorityBadge = (priority: string) => {
@@ -62,13 +61,12 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
     }
   };
 
-  const IconComponent = getCategoryIcon(notification.category);
   const priorityBadge = getPriorityBadge(notification.priority);
 
   const formatTime = (isoString: string) => {
     try {
       return formatDistanceToNow(parseISO(isoString), { addSuffix: true });
-    } catch (e) {
+    } catch {
       return 'just now';
     }
   };
@@ -81,7 +79,7 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
     if (notification.action_url) {
       try {
         router.push(notification.action_url as any);
-      } catch (err) {
+      } catch {
         console.warn('Failed to navigate notification action url:', notification.action_url);
       }
     }
@@ -103,7 +101,7 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
       <View style={styles.headerRow}>
         {/* Category Icon Badge */}
         <View style={styles.iconContainer}>
-          <IconComponent size={20} color="#121218" strokeWidth={2.4} />
+          {renderCategoryIcon(notification.category, 20)}
         </View>
 
         {/* Title and metadata */}

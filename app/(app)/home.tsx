@@ -117,53 +117,55 @@ export default function HomeScreen() {
 
 
           {/* Developer testing tools */}
-          <Card>
-            <View style={{ gap: spacing[12] }}>
-              <Text style={{ fontSize: 13, fontWeight: '700', color: palette.danger, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                Developer Testing Tools
-              </Text>
-              <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
-                Reset all daily plans, submissions, reports, and notification histories.
-              </Text>
-              <Button
-                variant="tertiary"
-                size="sm"
-                onPress={async () => {
-                  const title = 'Reset all data?';
-                  const msg = 'This will delete all daily plans, tasks, submissions, reports, notifications and reset stats to 0.';
-                  const confirmed =
-                    Platform.OS === 'web'
-                      ? window.confirm(`${title}\n\n${msg}`)
-                      : await new Promise((resolve) => {
-                          Alert.alert(title, msg, [
-                            { text: 'Cancel', onPress: () => resolve(false), style: 'cancel' },
-                            { text: 'Reset', onPress: () => resolve(true), style: 'destructive' },
-                          ]);
-                        });
+          {__DEV__ && (
+            <Card>
+              <View style={{ gap: spacing[12] }}>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: palette.danger, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                  Developer Testing Tools
+                </Text>
+                <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
+                  Reset all daily plans, submissions, reports, and notification histories.
+                </Text>
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  onPress={async () => {
+                    const title = 'Reset all data?';
+                    const msg = 'This will delete all daily plans, tasks, submissions, reports, notifications and reset stats to 0.';
+                    const confirmed =
+                      Platform.OS === 'web'
+                        ? window.confirm(`${title}\n\n${msg}`)
+                        : await new Promise((resolve) => {
+                            Alert.alert(title, msg, [
+                              { text: 'Cancel', onPress: () => resolve(false), style: 'cancel' },
+                              { text: 'Reset', onPress: () => resolve(true), style: 'destructive' },
+                            ]);
+                          });
 
-                  if (confirmed) {
-                    try {
-                      await testingService.resetAllData();
-                      queryClient.clear();
-                      if (Platform.OS === 'web') {
-                        window.alert('Database successfully reset to clean state!');
-                      } else {
-                        Alert.alert('Success', 'Database successfully reset to clean state!');
-                      }
-                    } catch (e: any) {
-                      if (Platform.OS === 'web') {
-                        window.alert(`Failed to reset: ${e.message}`);
-                      } else {
-                        Alert.alert('Error', e.message);
+                    if (confirmed) {
+                      try {
+                        await testingService.resetAllData();
+                        queryClient.clear();
+                        if (Platform.OS === 'web') {
+                          window.alert('Database successfully reset to clean state!');
+                        } else {
+                          Alert.alert('Success', 'Database successfully reset to clean state!');
+                        }
+                      } catch (e: any) {
+                        if (Platform.OS === 'web') {
+                          window.alert(`Failed to reset: ${e.message}`);
+                        } else {
+                          Alert.alert('Error', e.message);
+                        }
                       }
                     }
-                  }
-                }}
-              >
-                Reset Database (Unseed)
-              </Button>
-            </View>
-          </Card>
+                  }}
+                >
+                  Reset Database (Unseed)
+                </Button>
+              </View>
+            </Card>
+          )}
 
           {/* Logout */}
           <Button variant="tertiary" onPress={() => void logout()}>

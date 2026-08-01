@@ -33,7 +33,7 @@ import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
 
-const today = new Date().toISOString().slice(0, 10);
+import { todayIso } from '@/lib/supabase-helpers';
 
 export default function PomodoroScreen() {
   const router = useRouter();
@@ -41,6 +41,7 @@ export default function PomodoroScreen() {
   const user = useAuthStore((s) => s.user);
 
   const [completing, setCompleting] = useState(false);
+  const today = todayIso();
 
   // Load today's live plan
   const currentPlanQ = useQuery({
