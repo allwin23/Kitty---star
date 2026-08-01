@@ -1,4 +1,4 @@
-Are you-- Migration: 20260801100000_intelligent_notification_system.sql
+Are you sorry-- Migration: 20260801100000_intelligent_notification_system.sql
 -- Description: Comprehensive database support for the Intelligent Event-Driven Notification Engine & AI Brain
 
 -- 1. Upgrade public.notifications table to support rich event-driven notifications
