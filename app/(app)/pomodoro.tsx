@@ -10,13 +10,26 @@ import {
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
+import {
+  CheckCircle2,
+  CheckSquare,
+  Clock,
+  Coffee,
+  Flame,
+  Pause,
+  Play,
+  RotateCcw,
+  Sun,
+  Target,
+  Timer,
+} from 'lucide-react-native';
 
 import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService } from '@/services/backend';
 import { useAuthStore, usePomodoroStore, type PomodoroSessionType } from '@/stores';
-import { glassCardStyle, palette, radius, spacing } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
 
 const today = new Date().toISOString().slice(0, 10);
 
@@ -37,7 +50,7 @@ export default function PomodoroScreen() {
   useFocusEffect(
     useCallback(() => {
       void currentPlanQ.refetch();
-    }, [])
+    }, [currentPlanQ])
   );
 
   const currentPlan = currentPlanQ.data as {
@@ -136,7 +149,7 @@ export default function PomodoroScreen() {
       if (Platform.OS === 'web') {
         window.alert(`Nice job! ${typeLabel}`);
       } else {
-        Alert.alert('Session Complete! 🎉', typeLabel);
+        Alert.alert('Session Complete!', typeLabel);
       }
     },
     onError: (e: Error) => {
@@ -296,19 +309,26 @@ export default function PomodoroScreen() {
           {/* Header & Mode Tabs */}
           <View style={{ gap: spacing[16] }}>
             <HeaderTitleCard
-              title="Study Timer 🍅"
+              title="Study Timer"
               subtitle="Stay focused and track your study sessions"
             />
 
             <View style={styles.tabsContainer}>
               {(['focus', 'short_break', 'long_break'] as PomodoroSessionType[]).map((type) => {
                 const isActive = sessionType === type;
-                const label =
+                const IconComponent =
                   type === 'focus'
-                    ? '🍅 Focus'
+                    ? Timer
                     : type === 'short_break'
-                    ? '☕ Short Break'
-                    : '🌴 Long Break';
+                    ? Coffee
+                    : Sun;
+
+                const labelText =
+                  type === 'focus'
+                    ? 'Focus'
+                    : type === 'short_break'
+                    ? 'Short Break'
+                    : 'Long Break';
 
                 return (
                   <Pressable
@@ -321,15 +341,22 @@ export default function PomodoroScreen() {
                       isRunning && { opacity: 0.5 },
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontSize: 13,
-                        fontWeight: '700',
-                        color: isActive ? palette.cherryBloom : palette.textSecondary,
-                      }}
-                    >
-                      {label}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <IconComponent
+                        size={15}
+                        color={isActive ? palette.danger : palette.textSecondary}
+                        strokeWidth={2.2}
+                      />
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontWeight: '800',
+                          color: isActive ? palette.danger : palette.textSecondary,
+                        }}
+                      >
+                        {labelText}
+                      </Text>
+                    </View>
                   </Pressable>
                 );
               })}
@@ -340,11 +367,14 @@ export default function PomodoroScreen() {
           <Card>
             <View style={{ alignItems: 'center', gap: spacing[16], paddingVertical: spacing[12] }}>
               {sessionType === 'focus' && (
-                <Text style={{ color: palette.textSecondary, fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
-                  {activeTask
-                    ? `Focusing on: "${activeTask.title}"`
-                    : 'Select a task below to start focusing'}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Target size={16} color={palette.danger} strokeWidth={2.4} />
+                  <Text style={{ color: palette.textSecondary, fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
+                    {activeTask
+                      ? `Focusing on: "${activeTask.title}"`
+                      : 'Select a task below to start focusing'}
+                  </Text>
+                </View>
               )}
 
               {/* Huge Timer */}
@@ -352,7 +382,7 @@ export default function PomodoroScreen() {
                 style={{
                   fontSize: 72,
                   fontWeight: '800',
-                  color: isRunning && !isPaused ? palette.cherryBloom : palette.textPrimary,
+                  color: isRunning && !isPaused ? palette.danger : palette.textPrimary,
                   fontFamily: "'Martian Mono', monospace",
                   letterSpacing: -1,
                 }}
@@ -370,22 +400,34 @@ export default function PomodoroScreen() {
                     disabled={sessionType === 'focus' && !selectedTaskId}
                     style={{ flex: 1 }}
                   >
-                    Start Session
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+                    </View>
                   </Button>
                 ) : (
                   <>
                     {isPaused ? (
                       <Button variant="primary" size="lg" onPress={resumeTimer} style={{ flex: 1 }}>
-                        Resume
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
+                        </View>
                       </Button>
                     ) : (
                       <Button variant="secondary" size="lg" onPress={pauseTimer} style={{ flex: 1 }}>
-                        Pause
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                          <Pause size={18} color={palette.danger} strokeWidth={2.4} />
+                          <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                        </View>
                       </Button>
                     )}
 
                     <Button variant="destructive" size="lg" onPress={handleReset} style={{ flex: 1 }}>
-                      Reset
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
+                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
+                      </View>
                     </Button>
                   </>
                 )}
@@ -396,9 +438,13 @@ export default function PomodoroScreen() {
           {/* Duration Chips Settings */}
           <Card>
             <View style={{ gap: spacing[12] }}>
-              <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 14, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                Select Session Duration
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Clock size={16} color={palette.danger} strokeWidth={2.4} />
+                <Text style={styles.sectionHeaderTitle}>
+                  SELECT SESSION DURATION
+                </Text>
+              </View>
+
               <View style={{ flexDirection: 'row', gap: spacing[8], flexWrap: 'wrap' }}>
                 {[1, 25, 30, 45, 50, 60].map((mins) => {
                   const isSel = durationMinutes === mins;
@@ -415,8 +461,8 @@ export default function PomodoroScreen() {
                     >
                       <Text
                         style={{
-                          fontWeight: '700',
-                          color: isSel ? palette.warmWhite : palette.textPrimary,
+                          fontWeight: '800',
+                          color: isSel ? '#FFFFFF' : palette.textPrimary,
                           fontSize: 14,
                         }}
                       >
@@ -429,118 +475,142 @@ export default function PomodoroScreen() {
             </View>
           </Card>
 
-          {/* Today's Live Task List */}
+          {/* Glass Card for Today's Focus Tasks Header & Description */}
+          <Card>
+            <View style={{ gap: spacing[8] }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <CheckSquare size={18} color={palette.danger} strokeWidth={2.4} />
+                <Text style={styles.sectionHeaderTitle}>
+                  TODAY'S FOCUS TASKS
+                </Text>
+              </View>
+              <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
+                Select a task to allocate your focus session. Tasks update automatically when study time is logged.
+              </Text>
+            </View>
+          </Card>
+
+          {/* Today's Live Task List Items */}
           <View style={{ gap: spacing[12] }}>
-            <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 16 }}>
-              Today{"'"}s Focus Tasks
-            </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
-              Select a task to allocate your focus session. Tasks update automatically when study time is logged.
-            </Text>
+            {currentPlan.status === 'submitted' ? (
+              <EmptyState
+                title="Day Submitted"
+                description="You have already submitted today's plan to your partner."
+              />
+            ) : (
+              currentTasks.map((task) => {
+                const isCompleted = task.status === 'completed';
+                const isSelected = selectedTaskId === task.id;
 
-            <View style={{ gap: spacing[12] }}>
-              {currentPlan.status === 'submitted' ? (
-                <EmptyState
-                  title="Day Submitted"
-                  description="You have already submitted today's plan to your partner."
-                />
-              ) : (
-                currentTasks.map((task) => {
-                  const isCompleted = task.status === 'completed';
-                  const isSelected = selectedTaskId === task.id;
+                const estMins = task.estimated_minutes;
+                const compMins = task.completed_minutes;
+                const remainingMins = Math.max(0, estMins - compMins);
+                const completedPomodoros = task.completed_pomodoros;
 
-                  const estMins = task.estimated_minutes;
-                  const compMins = task.completed_minutes;
-                  const remainingMins = Math.max(0, estMins - compMins);
-                  const completedPomodoros = task.completed_pomodoros;
+                const progressPct = Math.min(100, Math.round((compMins / estMins) * 100));
 
-                  const progressPct = Math.min(100, Math.round((compMins / estMins) * 100));
+                let stateLabel = 'Not Started';
+                let badgeColor: string = palette.textSecondary;
+                let badgeBg: string = 'rgba(255, 243, 245, 0.85)';
 
-                  let stateLabel = 'Not Started';
-                  let badgeColor: string = palette.textSecondary;
-                  let badgeBg: string = 'rgba(255, 255, 255, 0.5)';
+                if (isCompleted || compMins >= estMins) {
+                  stateLabel = 'Completed';
+                  badgeColor = '#047857';
+                  badgeBg = '#D1FAE5';
+                } else if (compMins > 0) {
+                  stateLabel = 'In Progress';
+                  badgeColor = palette.danger;
+                  badgeBg = 'rgba(240, 115, 146, 0.15)';
+                }
 
-                  if (isCompleted || compMins >= estMins) {
-                    stateLabel = 'Completed';
-                    badgeColor = palette.success;
-                    badgeBg = 'rgba(99, 197, 139, 0.15)';
-                  } else if (compMins > 0) {
-                    stateLabel = 'In Progress';
-                    badgeColor = palette.cherryBloom;
-                    badgeBg = palette.blush;
-                  }
+                const handleSelectTask = () => {
+                  if (isCompleted || compMins >= estMins) return;
+                  if (isRunning && sessionType === 'focus') return;
+                  setSelectedTaskId(isSelected ? null : task.id);
+                };
 
-                  const handleSelectTask = () => {
-                    if (isCompleted || compMins >= estMins) return;
-                    if (isRunning && sessionType === 'focus') return;
-                    setSelectedTaskId(isSelected ? null : task.id);
-                  };
+                return (
+                  <Pressable
+                    key={task.id}
+                    disabled={isCompleted || compMins >= estMins || (isRunning && sessionType === 'focus')}
+                    onPress={handleSelectTask}
+                    style={[
+                      styles.taskCard,
+                      isSelected && styles.selectedTaskCard,
+                      (isCompleted || compMins >= estMins) && { opacity: 0.65 },
+                    ]}
+                  >
+                    <View style={{ gap: spacing[8] }}>
+                      {/* Title & Badge */}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Text
+                          style={[
+                            styles.taskTitle,
+                            (isCompleted || compMins >= estMins) && { textDecorationLine: 'line-through', color: palette.textSecondary },
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {task.title}
+                        </Text>
 
-                  return (
-                    <Pressable
-                      key={task.id}
-                      disabled={isCompleted || compMins >= estMins || (isRunning && sessionType === 'focus')}
-                      onPress={handleSelectTask}
-                      style={[
-                        styles.taskCard,
-                        isSelected && styles.selectedTaskCard,
-                        (isCompleted || compMins >= estMins) && { opacity: 0.65 },
-                      ]}
-                    >
-                      <View style={{ gap: spacing[8] }}>
-                        {/* Title & Badge */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Text
-                            style={[
-                              styles.taskTitle,
-                              { color: palette.textPrimary },
-                              (isCompleted || compMins >= estMins) && { textDecorationLine: 'line-through', color: palette.textMuted },
-                            ]}
-                            numberOfLines={1}
-                          >
-                            {task.title}
-                          </Text>
-
-                          <View style={[styles.badge, { backgroundColor: badgeBg }]}>
+                        <View style={[styles.badge, { backgroundColor: badgeBg }]}>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            {stateLabel === 'Completed' ? (
+                              <CheckCircle2 size={11} color={badgeColor} strokeWidth={2.4} />
+                            ) : stateLabel === 'In Progress' ? (
+                              <Flame size={11} color={badgeColor} strokeWidth={2.4} />
+                            ) : (
+                              <Clock size={11} color={badgeColor} strokeWidth={2} />
+                            )}
                             <Text style={{ fontSize: 11, fontWeight: '800', color: badgeColor }}>
                               {stateLabel}
                             </Text>
                           </View>
                         </View>
-
-                        {/* Pomodoro stats details */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 2 }}>
-                          <Text style={{ fontSize: 13, color: palette.textSecondary }}>
-                            🍅 {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}m / {estMins}m)
-                          </Text>
-                          {!isCompleted && remainingMins > 0 ? (
-                            <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
-                              ⏳ {remainingMins} min remaining
-                            </Text>
-                          ) : (
-                            <Text style={{ fontSize: 13, color: palette.success, fontWeight: '700' }}>
-                              ✓ Goal Met
-                            </Text>
-                          )}
-                        </View>
-
-                        {/* Progress Bar */}
-                        <View style={{ height: 6, backgroundColor: 'rgba(250, 215, 224, 0.5)', borderRadius: radius.full, marginTop: 2, overflow: 'hidden' }}>
-                          <View
-                            style={{
-                              width: `${progressPct}%`,
-                              height: '100%',
-                              backgroundColor: isCompleted ? palette.success : palette.cherryBloom,
-                              borderRadius: radius.full,
-                            }}
-                          />
-                        </View>
                       </View>
-                    </Pressable>
-                  );
-                })
-              )}
-            </View>
+
+                      {/* Pomodoro stats details */}
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <Timer size={14} color={palette.danger} strokeWidth={2.2} />
+                          <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '500' }}>
+                            {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}m / {estMins}m)
+                          </Text>
+                        </View>
+
+                        {!isCompleted && remainingMins > 0 ? (
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Clock size={13} color={palette.textSecondary} strokeWidth={2} />
+                            <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
+                              {remainingMins} min remaining
+                            </Text>
+                          </View>
+                        ) : (
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <CheckCircle2 size={13} color="#047857" strokeWidth={2.4} />
+                            <Text style={{ fontSize: 13, color: '#047857', fontWeight: '800' }}>
+                              Goal Met
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+
+                      {/* Progress Bar */}
+                      <View style={{ height: 6, backgroundColor: 'rgba(250, 215, 224, 0.7)', borderRadius: radius.full, marginTop: 4, overflow: 'hidden' }}>
+                        <View
+                          style={{
+                            width: `${progressPct}%`,
+                            height: '100%',
+                            backgroundColor: isCompleted ? '#10B981' : palette.danger,
+                            borderRadius: radius.full,
+                          }}
+                        />
+                      </View>
+                    </View>
+                  </Pressable>
+                );
+              })
+            )}
           </View>
         </View>
       </ScrollView>
@@ -549,12 +619,19 @@ export default function PomodoroScreen() {
 }
 
 const styles = StyleSheet.create({
+  sectionHeaderTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: palette.danger,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+  },
   tabsContainer: {
     flexDirection: 'row',
     borderRadius: radius.button,
-    backgroundColor: 'rgba(255, 245, 247, 0.45)',
-    borderColor: 'rgba(255, 255, 255, 0.75)',
-    borderWidth: 1,
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
     padding: 4,
   },
   tabButton: {
@@ -564,8 +641,8 @@ const styles = StyleSheet.create({
     borderRadius: radius.button,
   },
   activeTabButton: {
-    backgroundColor: palette.warmWhite,
-    shadowColor: palette.cherryBloom,
+    backgroundColor: '#FFFFFF',
+    shadowColor: palette.danger,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 6,
@@ -573,33 +650,41 @@ const styles = StyleSheet.create({
   },
   durationChip: {
     borderRadius: radius.input,
-    borderWidth: 1,
-    borderColor: 'rgba(250, 215, 224, 0.75)',
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
     paddingHorizontal: spacing[16],
     paddingVertical: spacing[8],
     alignItems: 'center',
     justifyContent: 'center',
   },
   activeDurationChip: {
-    backgroundColor: palette.cherryBloom,
-    borderColor: palette.cherryBloom,
+    backgroundColor: palette.danger,
+    borderColor: palette.danger,
   },
   taskCard: {
-    ...glassCardStyle,
-    borderRadius: radius.card,
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    borderRadius: 24,
     padding: spacing[16],
+    shadowColor: palette.danger,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   selectedTaskCard: {
-    borderColor: palette.cherryBloom,
+    borderColor: palette.danger,
     borderWidth: 2,
-    backgroundColor: 'rgba(255, 245, 247, 0.7)',
+    backgroundColor: 'rgba(255, 245, 247, 0.95)',
   },
   taskTitle: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     flex: 1,
     marginRight: spacing[8],
+    color: palette.textPrimary,
   },
   badge: {
     paddingHorizontal: 8,
@@ -607,4 +692,3 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
   },
 });
-
