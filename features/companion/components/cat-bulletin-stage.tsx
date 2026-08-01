@@ -10,7 +10,6 @@ import Animated, {
 import { ChevronRight, Heart, Sparkles, Star } from 'lucide-react-native';
 
 import { useCompanionQueueStore } from '../companion-queue-store';
-import type { CompanionTag } from '../cat-scenarios';
 import { palette, radius, spacing } from '@/theme';
 
 // Fallback asset image for cat stage
@@ -159,14 +158,7 @@ export function CatBulletinStage() {
             {/* Live LED Indicator */}
             <View style={styles.liveLedWrapper}>
               <Animated.View style={[styles.liveLedDot, animatedLedStyle]} />
-              <Text style={styles.liveText}>LIVE TICKER</Text>
-            </View>
-
-            {/* Digital Tag Pill */}
-            <View style={styles.digitalTagPill}>
-              <Text style={styles.digitalTagText}>
-                {activeScenario.tag}
-              </Text>
+              <Text style={styles.liveText}>Thangoooooo</Text>
             </View>
           </View>
 
