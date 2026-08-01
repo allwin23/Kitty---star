@@ -26,16 +26,12 @@ export async function finishGrammarQuiz(input: GrammarQuizInput): Promise<Gramma
   return throwIfErrorOrNull(data, error, 'Failed to record grammar quiz.');
 }
 
-/** Get current user's aggregated grammar statistics. */
+/** Get current user's aggregated grammar statistics (refreshed for current_date). */
 export async function getStats(): Promise<GrammarStatsRow | null> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data, error } = await supabase
-    .from('grammar_stats')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  return throwIfError(data, error);
+  const { data, error } = await supabase.rpc('refresh_grammar_stats' as any, { p_user_id: user.id });
+  return (throwIfError(data, error) ?? null) as GrammarStatsRow | null;
 }
 
 /** Paginated grammar attempt history for the current user, newest first. */

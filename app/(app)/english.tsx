@@ -19,6 +19,7 @@ import { Screen, Card, Button, Loading } from '@/components/ui';
 // Theme tokens
 import { colors, radius, spacing, typography } from '@/theme';
 import { CompanionBus } from '@/features/companion/event-bus';
+import { todayIso } from '@/lib/supabase-helpers';
 
 // Store
 import { useEnglishStore, type Word } from '@/stores/english-store';
@@ -130,14 +131,33 @@ export default function EnglishScreen() {
     enabled: !!user,
   });
 
+  const [today, setToday] = useState(todayIso());
+
+  // Midnight Auto-Refresh: Check for date rollover every 10 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const currentToday = todayIso();
+      if (currentToday !== today) {
+        setToday(currentToday);
+        initializeDailyWords();
+        void vocabStatsQ.refetch();
+        void grammarStatsQ.refetch();
+        void grammarHistoryQ.refetch();
+        void learnedTodayQ.refetch();
+      }
+    }, 10000);
+    return () => clearInterval(timer);
+  }, [today, initializeDailyWords, vocabStatsQ, grammarStatsQ, grammarHistoryQ, learnedTodayQ]);
+
   // Refetch stats when the screen is focused — empty deps prevents infinite loop
   useFocusEffect(
     useCallback(() => {
+      initializeDailyWords();
       void vocabStatsQ.refetch();
       void grammarStatsQ.refetch();
       void grammarHistoryQ.refetch();
       void learnedTodayQ.refetch();
-    }, [])
+    }, [initializeDailyWords, vocabStatsQ, grammarStatsQ, grammarHistoryQ, learnedTodayQ])
   );
 
   // Mutations

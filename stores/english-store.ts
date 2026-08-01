@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { format } from 'date-fns';
 import vocabularyData from '@/assets/data/vocabulary.json';
 import { useAuthStore } from './auth-store';
 
@@ -76,7 +77,7 @@ export const useEnglishStore = create<EnglishState>()(
 
       initializeDailyWords: () => {
         const userId = useAuthStore.getState().user?.id || 'anonymous';
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
         const { lastGeneratedDate, currentWords, usedWordIds, userStates = {} } = get();
 
         // Already have 5 words for today — no change needed

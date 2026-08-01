@@ -20,16 +20,12 @@ export async function markLearned(input: WordLearnedInput): Promise<VocabularyPr
   return throwIfErrorOrNull(data, error, 'Failed to mark word as learned.');
 }
 
-/** Get current user's vocabulary statistics. */
+/** Get current user's vocabulary statistics (refreshed for current_date). */
 export async function getStats(): Promise<VocabularyStatsRow | null> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data, error } = await supabase
-    .from('vocabulary_stats')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  return throwIfError(data, error);
+  const { data, error } = await supabase.rpc('refresh_vocabulary_stats' as any, { p_user_id: user.id });
+  return (throwIfError(data, error) ?? null) as VocabularyStatsRow | null;
 }
 
 /**

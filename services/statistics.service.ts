@@ -10,7 +10,7 @@
  */
 
 import { supabase } from '@/lib/supabase';
-import { throwIfError } from '@/lib/supabase-helpers';
+import { daysAgoIso, throwIfError, todayIso } from '@/lib/supabase-helpers';
 import type { TableRow } from '@/types/database';
 
 // ─── Type aliases ─────────────────────────────────────────────────────────────
@@ -38,19 +38,14 @@ export type TimeFilter = 'day' | 'week' | 'month' | 'all';
 
 /** Returns the ISO date string for the start boundary of the given filter. */
 export function filterStartDate(filter: TimeFilter): string | null {
-  const now = new Date();
   if (filter === 'day') {
-    return now.toISOString().slice(0, 10);
+    return todayIso();
   }
   if (filter === 'week') {
-    const d = new Date(now);
-    d.setUTCDate(d.getUTCDate() - 6);
-    return d.toISOString().slice(0, 10);
+    return daysAgoIso(6);
   }
   if (filter === 'month') {
-    const d = new Date(now);
-    d.setUTCDate(d.getUTCDate() - 29);
-    return d.toISOString().slice(0, 10);
+    return daysAgoIso(29);
   }
   return null; // 'all'
 }
