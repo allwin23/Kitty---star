@@ -22,6 +22,8 @@ import { colors, radius, spacing, typography } from '@/theme';
 import { journeyService, type MilestoneWithChallenge } from '@/services/journey.service';
 import { reportService } from '@/services/backend';
 import * as statsService from '@/services/statistics.service';
+import { CompanionBus } from '@/features/companion/event-bus';
+import { EventBus } from '@/features/notifications/event-bus';
 
 import {
   JourneyHeader,
@@ -157,11 +159,25 @@ export default function JourneyScreen() {
         void queryClient.invalidateQueries({ queryKey: queryKeys.journeyMilestones(journeyId!) });
         void queryClient.invalidateQueries({ queryKey: queryKeys.journeyEvents(journeyId!) });
         setShowRevealModal(false);
+
+        CompanionBus.emit({
+          eventType: 'GiftUnlocked',
+          priority: 'high',
+          payload: { customText: 'Claimed milestone reward! Gift unlocked.' },
+        });
+
+        if (user?.id) {
+          EventBus.emit({
+            type: 'AchievementUnlocked',
+            userId: user.id,
+            data: { reward: 'Milestone Reward Claimed' },
+          });
+        }
       } finally {
         setIsClaiming(false);
       }
     },
-    [journeyId, queryClient],
+    [journeyId, queryClient, user?.id],
   );
 
   const handleSaveMilestoneReward = useCallback(

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
 import { Button, Card, Loading, NotificationBadge, Screen } from '@/components/ui';
+import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
@@ -71,7 +72,6 @@ export default function HomeScreen() {
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
-          {/* Header with Notification Badge */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ gap: spacing.xs }}>
               <Text style={[typography.heading, { color: colors.light.text }]}>
@@ -81,6 +81,9 @@ export default function HomeScreen() {
             </View>
             <NotificationBadge />
           </View>
+
+          {/* Synchronized Companion Stage */}
+          <CompanionStage />
 
           {/* Stats */}
           {statsQ.isLoading ? (
@@ -113,12 +116,16 @@ export default function HomeScreen() {
           <Card>
             <View style={{ gap: spacing.sm }}>
               <Text style={{ fontWeight: '700', color: colors.light.text }}>Quick Actions</Text>
+              <Button onPress={() => router.push('/(app)/companion')}>
+                🐱 Companion Engine & Mascot Sandbox
+              </Button>
               <Button onPress={() => router.push('/(app)/notifications')}>
                 🔔 Notification Center
               </Button>
               <Button onPress={() => router.push('/(app)/accountability')}>
                 ✅ Accountability
               </Button>
+
               <Button onPress={() => router.push('/(app)/journey')}>
                 🗺️ XP Journey & Rewards Path
               </Button>

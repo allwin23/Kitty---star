@@ -20,6 +20,9 @@ import {
 } from 'react-native';
 
 import { colors, radius, spacing, typography } from '@/theme';
+import { CompanionBus } from '@/features/companion/event-bus';
+import { EventBus } from '@/features/notifications/event-bus';
+import { useAuthStore } from '@/stores';
 
 export type TodoTask = {
   id: string;
@@ -61,6 +64,26 @@ export function TodoList({
 }: TodoListProps) {
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
+  const user = useAuthStore((s) => s.user);
+
+  const handleToggle = async (task: TodoTask) => {
+    const isNowDone = task.status !== 'completed';
+    await onToggle?.(task);
+    if (isNowDone) {
+      CompanionBus.emit({
+        eventType: 'DailyGoalAchieved',
+        priority: 'high',
+        payload: { taskTitle: task.title },
+      });
+      if (user?.id) {
+        EventBus.emit({
+          type: 'GoalCompleted',
+          userId: user.id,
+          data: { taskTitle: task.title },
+        });
+      }
+    }
+  };
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
@@ -202,7 +225,7 @@ export function TodoList({
                 {/* Checkbox */}
                 {onToggle ? (
                   <Pressable
-                    onPress={() => void onToggle(task)}
+                    onPress={() => void handleToggle(task)}
                     style={{
                       width: 22,
                       height: 22,

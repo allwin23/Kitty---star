@@ -17,6 +17,8 @@ import { useFocusEffect } from 'expo-router';
 import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
 import { useAuthStore, usePyqStore } from '@/stores';
 import { colors, radius, spacing, typography } from '@/theme';
+import { CompanionBus } from '@/features/companion/event-bus';
+import { EventBus } from '@/features/notifications/event-bus';
 import {
   finishAttempt,
   getAttempt,
@@ -152,6 +154,30 @@ export default function PYQScreen() {
       // Track completed questions for study cycle
       const questionIds = testQuestions.map((q) => q.id);
       addUsedQuestionIds(questionIds);
+
+      // Emit Companion Presentation & Notification Engine events
+      const score = Math.round(data.accuracy || data.score || 80);
+      const xpEarned = 50;
+      CompanionBus.emit({
+        eventType: 'XPEarned',
+        priority: 'high',
+        payload: {
+          xpAmount: xpEarned,
+          customText: `Scored ${score}% on ${selectedSubject} PYQ Practice! Earned +${xpEarned} XP.`,
+        },
+      });
+
+      if (user?.id) {
+        EventBus.emit({
+          type: 'SessionEnded',
+          userId: user.id,
+          data: {
+            taskTitle: `${selectedSubject} PYQ Practice`,
+            scorePercent: score,
+            xpEarned,
+          },
+        });
+      }
     },
     onError: (e: Error) => {
       Alert.alert('Error submitting test', e.message);

@@ -7,6 +7,8 @@ import { Loading, Screen } from '@/components/ui';
 import { useAuthStore } from '@/stores';
 import { colors, spacing, typography } from '@/theme';
 import { waterService } from '@/services/backend';
+import { CompanionBus } from '@/features/companion/event-bus';
+import { EventBus } from '@/features/notifications/event-bus';
 
 // Import our modular water tracker components
 import {
@@ -63,7 +65,7 @@ export default function WaterTrackerScreen() {
   // Mutation for logging water
   const logWaterMutation = useMutation({
     mutationFn: (amount: number) => waterService.log({ amount_ml: amount }),
-    onSuccess: () => {
+    onSuccess: (_, amount) => {
       // Invalidate queries to refresh UI immediately
       void queryClient.invalidateQueries({ queryKey: ['water-today-stats'] });
       void queryClient.invalidateQueries({ queryKey: ['water-today-logs'] });
@@ -72,6 +74,21 @@ export default function WaterTrackerScreen() {
       void queryClient.invalidateQueries({ queryKey: ['stats'] });
       void queryClient.invalidateQueries({ queryKey: ['journey'] });
       void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
+
+      // Emit Companion Presentation & Notification Engine events
+      CompanionBus.emit({
+        eventType: 'WaterBreak',
+        priority: 'normal',
+        payload: { customText: `Logged ${amount} ml of water! Hydration level up.` },
+      });
+
+      if (user?.id) {
+        EventBus.emit({
+          type: 'WaterReminder',
+          userId: user.id,
+          data: { amount },
+        });
+      }
     },
     onError: (err: any) => {
       Alert.alert('Error Logging Water', err?.message || 'Failed to log water intake.');

@@ -18,6 +18,7 @@ import { Screen, Card, Button, Loading } from '@/components/ui';
 
 // Theme tokens
 import { colors, radius, spacing, typography } from '@/theme';
+import { CompanionBus } from '@/features/companion/event-bus';
 
 // Store
 import { useEnglishStore, type Word } from '@/stores/english-store';
@@ -150,6 +151,12 @@ export default function EnglishScreen() {
       void queryClient.invalidateQueries({ queryKey: ['stats'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-feed'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-unread'] });
+
+      CompanionBus.emit({
+        eventType: 'XPEarned',
+        priority: 'normal',
+        payload: { xpAmount: 10, customText: 'Learned a new English vocabulary word! +10 XP.' },
+      });
     },
     onError: (err: any) => {
       Alert.alert('Action Failed', err?.message || 'Could not mark word as learned.');
@@ -159,7 +166,7 @@ export default function EnglishScreen() {
   const finishGrammarQuizMutation = useMutation({
     mutationFn: (input: { topic: string; correct: number; wrong: number; score: number; set_name: string }) =>
       grammarService.finishGrammarQuiz(input),
-    onSuccess: () => {
+    onSuccess: (_, input) => {
       void queryClient.invalidateQueries({ queryKey: ['grammar-stats'] });
       void queryClient.invalidateQueries({ queryKey: ['grammar-history'] });
       void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
@@ -167,6 +174,12 @@ export default function EnglishScreen() {
       void queryClient.invalidateQueries({ queryKey: ['stats'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-feed'] });
       void queryClient.invalidateQueries({ queryKey: ['mascot-unread'] });
+
+      CompanionBus.emit({
+        eventType: 'XPEarned',
+        priority: 'high',
+        payload: { xpAmount: 30, customText: `Completed ${input.topic} Grammar Quiz! Scored ${Math.round(input.score)}%. +30 XP.` },
+      });
     },
     onError: (err: any) => {
       Alert.alert('Quiz Submission Failed', err?.message || 'Could not submit quiz results.');
@@ -178,7 +191,12 @@ export default function EnglishScreen() {
       writingService.evaluateWriting(input.words, input.paragraph),
     onSuccess: (data) => {
       setEvaluation(data);
-      // Invalidate user activity feed to refresh user-stats, mascot-feed, etc.
+
+      CompanionBus.emit({
+        eventType: 'XPEarned',
+        priority: 'high',
+        payload: { xpAmount: 50, customText: `Daily English writing evaluated! Earned +50 XP.` },
+      });
       void queryClient.invalidateQueries({ queryKey: ['user-stats'] });
     },
     onError: (err: any) => {

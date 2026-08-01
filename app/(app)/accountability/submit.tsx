@@ -26,6 +26,8 @@ import {
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { Button, Card, Loading, ProofViewerModal, Screen } from '@/components/ui';
+import { CompanionBus } from '@/features/companion/event-bus';
+import { EventBus } from '@/features/notifications/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -208,6 +210,19 @@ export default function SubmitScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
       void queryClient.invalidateQueries({ queryKey: ['submission'] });
+
+      // 4. Emit Companion presentation & Notification Engine events
+      CompanionBus.emit({
+        eventType: 'DailyGoalAchieved',
+        priority: 'high',
+        payload: { partnerName, taskTitle: 'Daily Study Plan' },
+      });
+
+      EventBus.emit({
+        type: 'GoalCompleted',
+        userId: user.id,
+        data: { taskTitle: 'Daily Plan Submitted' },
+      });
 
       setPickedImages([]);
     } catch (error) {

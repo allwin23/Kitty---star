@@ -31,6 +31,7 @@ import { getProofImageUrl } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { Card, ErrorState, Loading, ProofViewerModal, Screen } from '@/components/ui';
+import { CompanionBus } from '@/features/companion/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -124,7 +125,7 @@ export default function ReviewScreen() {
   const reviewMutation = useMutation({
     mutationFn: (decision: 'approved' | 'rejected') =>
       submissionService.review(submissionId, decision, comment.trim() || undefined),
-    onSuccess: () => {
+    onSuccess: (_, decision) => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
       void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
       void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
@@ -135,13 +136,26 @@ export default function ReviewScreen() {
       void queryClient.invalidateQueries({ queryKey: ['my-submission'] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
-      
+
+      if (decision === 'approved') {
+        CompanionBus.emit({
+          eventType: 'DailyGoalAchieved',
+          priority: 'high',
+          payload: { xpAmount: 100 },
+        });
+      } else {
+        CompanionBus.emit({
+          eventType: 'MissionFailed',
+          priority: 'high',
+        });
+      }
+
       if (Platform.OS === 'web') {
         window.alert('Review submitted. The report has been finalised.');
         router.replace('/(app)/accountability');
         return;
       }
-      
+
       Alert.alert('Done', 'Review submitted. The report has been finalised.', [
         { text: 'OK', onPress: () => router.replace('/(app)/accountability') },
       ]);

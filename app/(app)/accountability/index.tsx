@@ -28,6 +28,7 @@ import {
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { supabase } from '@/lib/supabase';
+import { CompanionBus } from '@/features/companion/event-bus';
 import {
   Button,
   Card,
@@ -245,6 +246,12 @@ export default function AccountabilityScreen() {
     partnerChannelRef.current = plannerService.subscribeToPartnerChanges(partnerId, () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
+
+      CompanionBus.emit({
+        eventType: 'PartnerCompletedTask',
+        priority: 'high',
+        payload: { partnerName, subject: 'Daily Plan' },
+      });
     });
     return () => {
       if (partnerChannelRef.current) {
