@@ -16,10 +16,27 @@ import { palette, radius, spacing } from '@/theme';
 // Fallback asset image for cat stage
 const FALLBACK_CAT_IMAGE = require('../../../assets/icon.png');
 
-// Image assets mapping for cat picture display
+/**
+ * 🐱 CAT SCENARIO IMAGE MAPPING
+ * You can replace any of the images below with local assets (e.g. require('../../../assets/cat_sleeping.png'))
+ * or remote image URIs (e.g. { uri: 'https://example.com/cat.png' }).
+ */
 const IMAGE_ASSET_MAP: Record<string, any> = {
   cat_studying_pomodoro: FALLBACK_CAT_IMAGE,
   cat_drinking_water: FALLBACK_CAT_IMAGE,
+  cat_writing_english: FALLBACK_CAT_IMAGE,
+  cat_practicing_pyq: FALLBACK_CAT_IMAGE,
+  cat_flashcard_revision: FALLBACK_CAT_IMAGE,
+  cat_goal_achieved: FALLBACK_CAT_IMAGE,
+  cat_trophy_award: FALLBACK_CAT_IMAGE,
+  cat_lunch_time: FALLBACK_CAT_IMAGE,
+  cat_evening_snack: FALLBACK_CAT_IMAGE,
+  cat_sleeping_night: FALLBACK_CAT_IMAGE,
+  cat_morning_wake: FALLBACK_CAT_IMAGE,
+  cat_notification_alert: FALLBACK_CAT_IMAGE,
+  cat_partner_wave: FALLBACK_CAT_IMAGE,
+  cat_idle_reading: FALLBACK_CAT_IMAGE,
+  cat_late_night_study: FALLBACK_CAT_IMAGE,
   cat_hero: FALLBACK_CAT_IMAGE,
 };
 

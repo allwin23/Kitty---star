@@ -196,8 +196,8 @@ export const DYNAMIC_IDLE_POOL: CatScenario[] = [
     id: 'idle-5',
     eventType: 'IdleTip5',
     tag: '[IDLE]',
-    headline: 'Consistency Wins',
-    subtext: 'Showing up every day builds compounding study mastery 🐾',
+    headline: 'Thangooooooooo',
+    subtext: 'i love u kuttty maaa',
     imageKey: 'cat_studying_pomodoro',
   },
 ];
