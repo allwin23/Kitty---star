@@ -4,8 +4,8 @@ import Svg, { Defs, Pattern, Path, Rect } from 'react-native-svg';
 
 export function CherryBackground() {
   const { width } = useWindowDimensions();
-  // 15% of screen width (ensures each grid square consumes at least 15% of screen size)
-  const gridSize = Math.max(120, Math.round((width || 390) * 0.15));
+  // ~9% of screen width (~72px grid squares to add more grids across the screen)
+  const gridSize = Math.max(64, Math.round((width || 390) * 0.09));
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
