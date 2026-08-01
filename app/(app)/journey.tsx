@@ -13,12 +13,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Button, Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
+import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
-import { palette, spacing } from '@/theme';
-
+import { glassCardStyle, palette, spacing } from '@/theme';
 
 import { journeyService, type MilestoneWithChallenge } from '@/services/journey.service';
 import { reportService } from '@/services/backend';
@@ -42,7 +41,6 @@ export default function JourneyScreen() {
 
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
-
 
   const [viewingPartner, setViewingPartner] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<MilestoneWithChallenge | null>(null);
@@ -131,7 +129,6 @@ export default function JourneyScreen() {
 
   const currentXP = userStats?.xp ?? 0;
   const level = userStats?.level ?? 1;
-  const streak = userStats?.current_streak ?? 0;
   const todayXP = todayActivity.reduce((s, r) => s + r.xp_earned, 0);
 
   // Find next locked target milestone
@@ -168,9 +165,9 @@ export default function JourneyScreen() {
 
         if (user?.id) {
           EventBus.emit({
-            type: 'AchievementUnlocked',
+            type: 'GoalCompleted',
             userId: user.id,
-            data: { reward: 'Milestone Reward Claimed' },
+            data: { taskTitle: 'Milestone Reward Claimed' },
           });
         }
       } finally {
@@ -227,31 +224,26 @@ export default function JourneyScreen() {
         }
       >
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
-          {/* Title Header */}
-          <HeaderTitleCard
-            title="XP Journey 🗺️"
-            subtitle={
-              viewingPartner
-                ? "Managing partner's surprise milestone rewards"
-                : 'Continuous lifetime XP progress & surprise partner rewards'
-            }
-          />
-
+          {/* Header Row: Compact Oval Black Card + Notification Badge */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <HeaderTitleCard title="XP Journey" showWavingHand={false} />
+            <NotificationBadge />
+          </View>
 
           {/* Mode Toggle Button */}
           {hasPartner ? (
-            <View style={{ flexDirection: 'row', gap: spacing.xs }}>
+            <View style={{ flexDirection: 'row', gap: spacing[12] }}>
               <Button
                 onPress={() => setViewingPartner(false)}
                 style={{
                   flex: 1,
-                  backgroundColor: !viewingPartner ? palette.primary : palette.surface,
+                  backgroundColor: !viewingPartner ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
                 }}
               >
                 <Text
                   style={{
-                    color: !viewingPartner ? palette.primaryText : palette.text,
-                    fontWeight: '600',
+                    color: !viewingPartner ? '#FFFFFF' : palette.textPrimary,
+                    fontWeight: '700',
                   }}
                 >
                   {"My Journey Path"}
@@ -261,16 +253,16 @@ export default function JourneyScreen() {
                 onPress={() => setViewingPartner(true)}
                 style={{
                   flex: 1,
-                  backgroundColor: viewingPartner ? palette.primary : palette.surface,
+                  backgroundColor: viewingPartner ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
                 }}
               >
                 <Text
                   style={{
-                    color: viewingPartner ? palette.primaryText : palette.text,
-                    fontWeight: '600',
+                    color: viewingPartner ? '#FFFFFF' : palette.textPrimary,
+                    fontWeight: '700',
                   }}
                 >
-                  {"Manage Partner's Rewards ✏️"}
+                  {"Manage Partner's Rewards"}
                 </Text>
               </Button>
             </View>
@@ -303,19 +295,17 @@ export default function JourneyScreen() {
               />
 
               {/* Duolingo-style Vertical Timeline Path */}
-              <Card style={{ backgroundColor: palette.surface }}>
-                <View style={{ gap: spacing.md, alignItems: 'center' }}>
-                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>
-                    {"🗺️ Milestone Checkpoints Path"}
+              <View style={[glassCardStyle, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)', borderRadius: 24, padding: spacing[16] }]}>
+                <View style={{ gap: spacing[16], alignItems: 'center' }}>
+                  <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>
+                    Milestone Checkpoints Path
                   </Text>
 
-                    {viewingPartner ? (
-                      <Text
-                        style={{ color: palette.mutedText, fontSize: 12, textAlign: 'center' }}
-                      >
-                        {`Tap "✏️ Edit Reward" on any node below to customize your partner's secret surprise for that milestone!`}
-                      </Text>
-                    ) : null}
+                  {viewingPartner ? (
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, textAlign: 'center', fontWeight: '500' }}>
+                      {`Tap "Edit Reward" on any node below to customize your partner's secret surprise for that milestone!`}
+                    </Text>
+                  ) : null}
 
                   {milestonesQ.isLoading ? (
                     <Loading />
@@ -334,7 +324,7 @@ export default function JourneyScreen() {
                               style={{
                                 width: 4,
                                 height: 28,
-                                backgroundColor: m.is_unlocked ? palette.primary : palette.border,
+                                backgroundColor: m.is_unlocked ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
                               }}
                             />
                           ) : null}
@@ -357,12 +347,12 @@ export default function JourneyScreen() {
                   )}
 
                   {viewingPartner ? (
-                    <Button onPress={handleExpandCheckpoints} style={{ marginTop: spacing.sm }}>
+                    <Button onPress={handleExpandCheckpoints} style={{ marginTop: spacing[12] }}>
                       + Add 5 More Checkpoints
                     </Button>
                   ) : null}
                 </View>
-              </Card>
+              </View>
 
               {/* Selected Milestone Detail Preview */}
               {selectedMilestone ? (
