@@ -3,7 +3,7 @@ import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
-import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import { Button, Card, CreativeToolsGrid, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
@@ -91,7 +91,7 @@ export default function HomeScreen() {
           ) : stats ? (
             <Card>
               <View style={{ gap: spacing[16] }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.textSecondary, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
                   Your Growth & Stats
                 </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', gap: spacing[16] }}>
@@ -114,38 +114,13 @@ export default function HomeScreen() {
             </Card>
           ) : null}
 
-          {/* Quick Companion Features */}
+          {/* Quick Companion Features & Tools */}
           <Card>
             <View style={{ gap: spacing[12] }}>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: palette.textSecondary, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                Study Space & Tools
+              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                STUDY SPACE & TOOLS
               </Text>
-              <View style={{ gap: spacing[8] }}>
-                <Button variant="primary" onPress={() => router.push('/(app)/companion')}>
-                  🐱 Companion Engine & Mascot Sandbox
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/accountability')}>
-                  ✅ Daily Accountability Plan
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/journey')}>
-                  🗺️ XP Journey & Rewards Path
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/achievements')}>
-                  🏆 Achievements & Badges
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/pyq')}>
-                  📚 PYQ Practice
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/flashcards')}>
-                  ⚡ Smart Flashcards
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/water')}>
-                  💧 Hydration Companion
-                </Button>
-                <Button variant="secondary" onPress={() => router.push('/(app)/english')}>
-                  📖 Daily English Practice
-                </Button>
-              </View>
+              <CreativeToolsGrid />
             </View>
           </Card>
 

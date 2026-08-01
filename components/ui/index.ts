@@ -3,6 +3,7 @@ export * from './avatar';
 export * from './button';
 export * from './card';
 export * from './cherry-background';
+export * from './creative-tools-grid';
 export * from './empty-state';
 export * from './error-state';
 export * from './header-title-card';
