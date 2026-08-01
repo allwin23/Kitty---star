@@ -30,10 +30,10 @@ import { submissionService } from '@/services/backend';
 import { getProofImageUrl } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
-import { Card, ErrorState, Loading, ProofViewerModal, Screen } from '@/components/ui';
+import { Card, ErrorState, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
 import { CompanionBus } from '@/features/companion/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, glassCardStyle, radius, spacing, typography } from '@/theme';
 
 type SubmissionWithRelations = {
   id: string;
@@ -58,29 +58,6 @@ type SubmissionWithRelations = {
   profiles?: { full_name: string | null } | null;
 };
 
-async function fetchSubmission(submissionId: string): Promise<SubmissionWithRelations> {
-  const { data, error } = await supabase
-    .from('daily_submissions')
-    .select(
-      '*, submission_proofs(*), current_plans(*, current_tasks(*)), profiles!daily_submissions_user_id_fkey(full_name)',
-    )
-    .eq('id', submissionId)
-    .single();
-  if (error) throw new Error(error.message);
-  return data as unknown as SubmissionWithRelations;
-}
-
-async function fetchInitialPlan(userId: string, date: string) {
-  const { data, error } = await supabase
-    .from('initial_plans')
-    .select('*, initial_tasks(*)')
-    .eq('user_id', userId)
-    .eq('date', date)
-    .maybeSingle();
-  if (error) throw new Error(error.message);
-  return data;
-}
-
 export default function ReviewScreen() {
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
@@ -88,14 +65,48 @@ export default function ReviewScreen() {
   const queryClient = useQueryClient();
   const { submissionId } = useLocalSearchParams<{ submissionId: string }>();
 
-  const [comment, setComment] = useState('');
+  const [reviewRemark, setReviewRemark] = useState('');
   const [proofUrls, setProofUrls] = useState<Record<string, string>>({});
   const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(null);
 
+  // Fetch submission details with proofs and plan tasks
   const submissionQ = useQuery({
-    queryKey: ['submission', submissionId],
-    queryFn: () => fetchSubmission(submissionId),
+    queryKey: ['submission-review-details', submissionId],
+    queryFn: async () => {
+      if (!submissionId) return null;
+      const { data, error } = await supabase
+        .from('daily_submissions')
+        .select(`
+          *,
+          submission_proofs(*),
+          current_plans(*),
+          profiles:user_id(full_name)
+        `)
+        .eq('id', submissionId)
+        .single();
+      if (error) throw error;
+      return data as SubmissionWithRelations;
+    },
     enabled: !!submissionId,
+  });
+
+  const submission = submissionQ.data;
+
+  // Initial plan snapshot query
+  const initialPlanQ = useQuery({
+    queryKey: ['submission-initial-plan', submission?.user_id, submission?.current_plans?.date],
+    queryFn: async () => {
+      if (!submission?.user_id || !submission?.current_plans?.date) return null;
+      const { data, error } = await supabase
+        .from('initial_plans')
+        .select('*, initial_tasks(*)')
+        .eq('user_id', submission.user_id)
+        .eq('date', submission.current_plans.date)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!submission?.user_id && !!submission?.current_plans?.date,
   });
 
   useFocusEffect(
@@ -104,224 +115,151 @@ export default function ReviewScreen() {
     }, [submissionQ])
   );
 
-  const submission = submissionQ.data;
-  const planDate = submission?.current_plans?.date;
-  const submitterId = submission?.user_id;
+  // Review mutation
+  const reviewMutation = useMutation({
+    mutationFn: async ({ status, comment }: { status: 'approved' | 'rejected'; comment?: string }) => {
+      if (!submissionId) throw new Error('No submission ID');
+      await submissionService.review(submissionId, status, comment);
+    },
+    onSuccess: (_, variables) => {
+      void queryClient.invalidateQueries({ queryKey: ['submission-review-details', submissionId] });
+      void queryClient.invalidateQueries({ queryKey: ['partner-submission'] });
+      void queryClient.invalidateQueries({ queryKey: ['partner-current-plan'] });
 
-  const initialPlanQ = useQuery({
-    queryKey: ['partner-initial-plan', submitterId, planDate],
-    queryFn: () => fetchInitialPlan(submitterId!, planDate!),
-    enabled: !!planDate && !!submitterId,
+      CompanionBus.emit({
+        eventType: 'DailyGoalAchieved',
+        priority: 'high',
+        payload: { submissionId },
+      });
+
+      Alert.alert(
+        variables.status === 'approved' ? 'Day Approved!' : 'Day Rejected',
+        variables.status === 'approved'
+          ? 'You approved your partner\'s day. Stats updated!'
+          : 'Submission marked as rejected.',
+        [{ text: 'OK', onPress: () => router.back() }]
+      );
+    },
+    onError: (e: Error) => Alert.alert('Review error', e.message),
   });
 
-  // Load signed URLs for proof images
   const loadProofUrl = async (path: string) => {
     if (proofUrls[path]) return;
     const url = await getProofImageUrl(path);
     if (url) setProofUrls((prev) => ({ ...prev, [path]: url }));
   };
 
-  // Review mutation
-  const reviewMutation = useMutation({
-    mutationFn: (decision: 'approved' | 'rejected') =>
-      submissionService.review(submissionId, decision, comment.trim() || undefined),
-    onSuccess: (_, decision) => {
-      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
-      void queryClient.invalidateQueries({ queryKey: ['current-plan'] });
-      void queryClient.invalidateQueries({ queryKey: ['initial-plan'] });
-      void queryClient.invalidateQueries({ queryKey: ['my-submission'] });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
-
-      if (decision === 'approved') {
-        CompanionBus.emit({
-          eventType: 'DailyGoalAchieved',
-          priority: 'high',
-          payload: { xpAmount: 100 },
-        });
-      } else {
-        CompanionBus.emit({
-          eventType: 'MissionFailed',
-          priority: 'high',
-        });
-      }
-
-      if (Platform.OS === 'web') {
-        window.alert('Review submitted. The report has been finalised.');
-        router.replace('/(app)/accountability');
-        return;
-      }
-
-      Alert.alert('Done', 'Review submitted. The report has been finalised.', [
-        { text: 'OK', onPress: () => router.replace('/(app)/accountability') },
-      ]);
-    },
-    onError: (e: Error) => Alert.alert('Review failed', e.message),
-  });
-
-  const submitterName = submission?.profiles?.full_name?.trim() || 'Your partner';
-
-  const handleDecision = (decision: 'approved' | 'rejected') => {
-    const title = decision === 'approved' ? 'Approve submission' : 'Reject submission';
-    const message = decision === 'approved'
-      ? `Approve ${submitterName}'s study day?`
-      : `Reject this submission? ${submitterName} will be notified.`;
-
-
-    if (Platform.OS === 'web') {
-      const confirmed = window.confirm(`${title}\n\n${message}`);
-      if (confirmed) {
-        reviewMutation.mutate(decision);
-      }
-      return;
-    }
-
-    Alert.alert(
-      title,
-      message,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: decision === 'approved' ? 'Approve' : 'Reject',
-          style: decision === 'rejected' ? 'destructive' : 'default',
-          onPress: () => reviewMutation.mutate(decision),
-        },
-      ],
-    );
-  };
-
-  const initialTasks: TodoTask[] = (
-    (initialPlanQ.data as { initial_tasks?: { id: string; title: string; estimated_minutes: number; order: number }[] } | null)?.initial_tasks ?? []
-  )
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .map((t) => ({ ...t, status: 'pending' as const }));
-
-  const currentTasks: TodoTask[] = (submission?.current_plans?.current_tasks ?? [])
-    .slice()
-    .sort((a, b) => a.order - b.order)
-    .map((t) => ({
-      id: t.id,
-      title: t.title,
-      estimated_minutes: t.estimated_minutes,
-      status: t.status,
-      completed_pomodoros: t.completed_pomodoros,
-      order: t.order,
-    }));
-
-  const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
-  const totalPomodoros = currentTasks.reduce((sum, t) => sum + (t.completed_pomodoros ?? 0), 0);
-
   if (submissionQ.isLoading) {
     return (
-      <Screen centered>
+      <Screen>
         <Loading />
       </Screen>
     );
   }
 
-  if (submissionQ.error) {
+  if (submissionQ.isError || !submission) {
     return (
-      <Screen centered>
+      <Screen>
         <ErrorState
-          error={(submissionQ.error as Error).message}
+          error="Could not load partner submission details."
           onRetry={() => void submissionQ.refetch()}
         />
       </Screen>
     );
   }
 
-  if (!submission) return null;
+  const initialTasks = Array.isArray((initialPlanQ.data as any)?.initial_tasks)
+    ? ((initialPlanQ.data as any).initial_tasks as any[]).slice().sort((a, b) => a.order - b.order)
+    : [];
+  const currentTasks = (submission.current_plans?.current_tasks ?? []).slice().sort((a, b) => a.order - b.order);
+  const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
+  const totalPomodoros = currentTasks.reduce((acc, t) => acc + (t.completed_pomodoros || 0), 0);
 
   const alreadyReviewed = submission.status !== 'pending';
   const generalProofs = submission.submission_proofs.filter((p) => !p.task_id);
-  const totalProofsUploaded = submission.submission_proofs.length;
 
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
-          {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Pressable onPress={() => router.back()}>
-              <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
-            </Pressable>
-            <Text style={[typography.title, { color: palette.text, flex: 1 }]}>
-              Partner Review
-            </Text>
+          {/* Header Row: Back Arrow + Dark Obsidian Glass Oval Title Card + Notification Badge */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
+                <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800' }}>←</Text>
+              </Pressable>
+              <HeaderTitleCard title="Partner Review" showWavingHand={false} />
+            </View>
+            <NotificationBadge />
           </View>
 
           {/* Submitter info */}
-          <Card>
+          <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.xs }}>
-              <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>
+              <Text style={styles.cardTitleText}>
                 {submission.profiles?.full_name ?? 'Your partner'}
               </Text>
-              <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+              <Text style={styles.cardSubText}>
                 Submitted {new Date(submission.submitted_at).toLocaleString()}
               </Text>
               {submission.remark ? (
-                <Text style={{ color: palette.text, fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic' }}>
+                <Text style={{ color: '#2A1D22', fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic', fontWeight: '500' }}>
                   &quot;{submission.remark}&quot;
                 </Text>
               ) : null}
               {/* Study summary */}
               <View style={{ flexDirection: 'row', gap: spacing.lg, marginTop: spacing.sm }}>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '700', fontSize: 20, color: palette.primary }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.primary }}>
                     {completedCount}
                   </Text>
-                  <Text style={{ color: palette.mutedText, fontSize: 11 }}>Completed</Text>
+                  <Text style={styles.cardSubText}>Completed</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '700', fontSize: 20, color: palette.text }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: '#2A1D22' }}>
                     {currentTasks.length}
                   </Text>
-                  <Text style={{ color: palette.mutedText, fontSize: 11 }}>Total Tasks</Text>
+                  <Text style={styles.cardSubText}>Total Tasks</Text>
                 </View>
                 <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontWeight: '700', fontSize: 20, color: palette.text }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: '#2A1D22' }}>
                     {totalPomodoros}
                   </Text>
-                  <Text style={{ color: palette.mutedText, fontSize: 11 }}>🍅 Pomodoros</Text>
+                  <Text style={styles.cardSubText}>🍅 Pomodoros</Text>
                 </View>
               </View>
             </View>
-          </Card>
+          </View>
 
           {/* Initial Plan */}
-          <Card>
+          <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                Initial Plan snapshot
+              <Text style={styles.cardTitleText}>
+                Initial Plan Snapshot
               </Text>
               {initialPlanQ.isLoading ? (
                 <Loading />
               ) : initialTasks.length === 0 ? (
-                <Text style={{ color: palette.mutedText }}>No initial plan snapshot available.</Text>
+                <Text style={styles.cardSubText}>No initial plan snapshot available.</Text>
               ) : (
-                initialTasks.map((t) => (
-                  <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: palette.border, paddingVertical: 4 }}>
-                    <Text style={{ color: palette.text }}>{t.title}</Text>
-                    <Text style={{ color: palette.mutedText, fontSize: 12 }}>{t.estimated_minutes} min</Text>
+                initialTasks.map((t: any) => (
+                  <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(250, 215, 224, 0.60)', paddingVertical: 6 }}>
+                    <Text style={styles.itemTitleText}>{t.title}</Text>
+                    <Text style={styles.cardSubText}>{t.estimated_minutes} min</Text>
                   </View>
                 ))
               )}
             </View>
-          </Card>
+          </View>
 
           {/* Final Todo & Proofs Grouped */}
-          <Card>
+          <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
+                <Text style={styles.cardTitleText}>
                   Final Plan & Task Proofs
                 </Text>
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                <Text style={styles.badgeCountText}>
                   {completedCount}/{currentTasks.length} done
                 </Text>
               </View>
@@ -335,10 +273,10 @@ export default function ReviewScreen() {
                     <View
                       key={task.id}
                       style={{
-                        backgroundColor: palette.surface,
-                        borderColor: palette.border,
+                        backgroundColor: 'rgba(255, 255, 255, 0.70)',
+                        borderColor: 'rgba(250, 215, 224, 0.90)',
                         borderRadius: radius.md,
-                        borderWidth: 1,
+                        borderWidth: 1.5,
                         padding: spacing.sm,
                         gap: spacing.xs,
                       }}
@@ -350,233 +288,252 @@ export default function ReviewScreen() {
                             height: 20,
                             borderRadius: 4,
                             borderWidth: 2,
-                            borderColor: isDone ? palette.primary : palette.border,
+                            borderColor: isDone ? palette.primary : 'rgba(232, 77, 114, 0.35)',
                             backgroundColor: isDone ? palette.primary : 'transparent',
                             alignItems: 'center',
                             justifyContent: 'center',
                           }}
                         >
                           {isDone ? (
-                            <Text style={{ color: palette.primaryText, fontSize: 11, fontWeight: '700' }}>✓</Text>
+                            <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>✓</Text>
                           ) : null}
                         </View>
+
                         <View style={{ flex: 1 }}>
                           <Text
                             style={{
-                              color: palette.text,
+                              fontSize: 15,
+                              fontWeight: '700',
+                              color: isDone ? palette.mutedText : '#2A1D22',
                               textDecorationLine: isDone ? 'line-through' : 'none',
-                              opacity: isDone ? 0.6 : 1,
-                              fontWeight: '600',
                             }}
                           >
                             {task.title}
                           </Text>
-                          <Text style={{ color: palette.mutedText, fontSize: 12 }}>
-                            {task.estimated_minutes} min · 🍅 {task.completed_pomodoros ?? 0} focus sessions
+                          <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
+                            ⏳ {task.estimated_minutes} min • 🍅 {task.completed_pomodoros || 0} pomodoros
                           </Text>
                         </View>
                       </View>
 
-                      {/* Display task-specific proofs */}
-                      {taskProofs.length > 0 && (
-                        <View style={{ paddingLeft: 28, marginTop: spacing.xs, gap: spacing.xs }}>
-                          <Text style={{ color: palette.mutedText, fontSize: 11, fontWeight: '700' }}>
-                            Attached Proofs ({taskProofs.length}) — tap to zoom / download
+                      {/* Task proof images gallery */}
+                      {taskProofs.length > 0 ? (
+                        <View style={{ marginTop: 6 }}>
+                          <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '700', marginBottom: 4 }}>
+                            TASK PROOF ({taskProofs.length})
                           </Text>
-                          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
+                          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
                             {taskProofs.map((proof) => {
                               void loadProofUrl(proof.image_url);
-                              const url = proofUrls[proof.image_url];
+                              const signedUrl = proofUrls[proof.image_url];
                               return (
-                                <View key={proof.id}>
-                                  {url ? (
-                                    <Pressable onPress={() => setViewingProof({ url, caption: task.title })}>
-                                      <Image
-                                        source={{ uri: url }}
-                                        style={{
-                                          width: 80,
-                                          height: 80,
-                                          borderRadius: radius.sm,
-                                          borderWidth: 1,
-                                          borderColor: palette.border,
-                                        }}
-                                      />
-                                    </Pressable>
+                                <Pressable
+                                  key={proof.id}
+                                  onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: task.title })}
+                                >
+                                  {signedUrl ? (
+                                    <Image
+                                      source={{ uri: signedUrl }}
+                                      style={{ width: 64, height: 64, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.90)' }}
+                                    />
                                   ) : (
-                                    <View
-                                      style={{
-                                        width: 80,
-                                        height: 80,
-                                        borderRadius: radius.sm,
-                                        borderWidth: 1,
-                                        borderColor: palette.border,
-                                        backgroundColor: palette.surface,
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                      }}
-                                    >
-                                      <ActivityIndicator size="small" />
+                                    <View style={{ width: 64, height: 64, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
+                                      <ActivityIndicator size="small" color={palette.primary} />
                                     </View>
                                   )}
-                                </View>
+                                </Pressable>
                               );
                             })}
                           </View>
                         </View>
+                      ) : (
+                        <Text style={{ fontSize: 12, color: palette.mutedText, fontStyle: 'italic', marginTop: 4 }}>
+                          No proof attached to this task.
+                        </Text>
                       )}
                     </View>
                   );
                 })}
               </View>
             </View>
-          </Card>
+          </View>
 
           {/* General Proofs */}
-          {generalProofs.length > 0 && (
-            <Card>
-              <View style={{ gap: spacing.md }}>
-                <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                  General Proofs ({generalProofs.length}) — tap to zoom / download
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          <View style={[glassCardStyle, styles.pinkGlassCard]}>
+            <View style={{ gap: spacing.md }}>
+              <Text style={styles.cardTitleText}>General Proof Images ({generalProofs.length})</Text>
+
+              {generalProofs.length === 0 ? (
+                <Text style={styles.cardSubText}>No general proof images uploaded.</Text>
+              ) : (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {generalProofs.map((proof) => {
                     void loadProofUrl(proof.image_url);
-                    const url = proofUrls[proof.image_url];
+                    const signedUrl = proofUrls[proof.image_url];
                     return (
-                      <View key={proof.id}>
-                        {url ? (
-                          <Pressable onPress={() => setViewingProof({ url, caption: proof.caption || 'General Proof' })}>
-                            <Image
-                              source={{ uri: url }}
-                              style={{
-                                width: 100,
-                                height: 100,
-                                borderRadius: radius.md,
-                                borderWidth: 1,
-                                borderColor: palette.border,
-                              }}
-                            />
-                          </Pressable>
+                      <Pressable
+                        key={proof.id}
+                        onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: 'General Proof' })}
+                      >
+                        {signedUrl ? (
+                          <Image
+                            source={{ uri: signedUrl }}
+                            style={{ width: 72, height: 72, borderRadius: 8 }}
+                          />
                         ) : (
-                          <View
-                            style={{
-                              width: 100,
-                              height: 100,
-                              borderRadius: radius.md,
-                              borderWidth: 1,
-                              borderColor: palette.border,
-                              backgroundColor: palette.surface,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <ActivityIndicator size="small" />
+                          <View style={{ width: 72, height: 72, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator size="small" color={palette.primary} />
                           </View>
                         )}
-                      </View>
+                      </Pressable>
                     );
                   })}
                 </View>
-              </View>
-            </Card>
-          )}
+              )}
+            </View>
+          </View>
 
-          {/* Review status and comments */}
-          {alreadyReviewed ? (
-            <Card>
-              <Text
-                style={{
-                  color: submission.status === 'approved' ? 'green' : palette.danger,
-                  fontWeight: '700',
-                  textAlign: 'center',
-                  textTransform: 'capitalize',
-                  fontSize: 16,
-                }}
-              >
-                Reviewed: {submission.status}
-              </Text>
-            </Card>
-          ) : (
-            <Card>
-              <View style={{ gap: spacing.md }}>
-                <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                  Your Decision
-                </Text>
-                <TextInput
-                  style={{
-                    borderColor: palette.border,
-                    borderRadius: radius.md,
-                    borderWidth: 1,
-                    color: palette.text,
-                    minHeight: 70,
-                    padding: spacing.sm,
-                    textAlignVertical: 'top',
-                  }}
-                  value={comment}
-                  onChangeText={setComment}
-                  placeholder={`Optional comment for ${submitterName}…`}
-                  placeholderTextColor={palette.mutedText}
-                  multiline
-                />
+          {/* Review Status & Actions */}
+          <View style={[glassCardStyle, styles.pinkGlassCard]}>
+            <View style={{ gap: spacing.md }}>
+              <Text style={styles.cardTitleText}>Review Decision</Text>
 
-                {reviewMutation.isPending ? (
-                  <Loading />
-                ) : (
-                  <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              {alreadyReviewed ? (
+                <View style={{ gap: spacing.xs, alignItems: 'center', paddingVertical: spacing.sm }}>
+                  <Text style={{ fontSize: 32 }}>
+                    {submission.status === 'approved' ? '✅' : '❌'}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '800',
+                      color: submission.status === 'approved' ? palette.primary : palette.danger,
+                    }}
+                  >
+                    Submission {submission.status.toUpperCase()}
+                  </Text>
+                  <Text style={styles.cardSubText}>
+                    You have already reviewed this day.
+                  </Text>
+                </View>
+              ) : (
+                <View style={{ gap: spacing.md }}>
+                  <View style={{ gap: spacing.xs }}>
+                    <Text style={{ color: '#66545B', fontSize: 13, fontWeight: '600' }}>Optional Feedback Comment</Text>
+                    <TextInput
+                      style={{
+                        backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                        borderColor: 'rgba(250, 215, 224, 0.90)',
+                        borderRadius: radius.input,
+                        borderWidth: 1.5,
+                        color: '#2A1D22',
+                        paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.sm,
+                        fontSize: 14,
+                        minHeight: 60,
+                      }}
+                      value={reviewRemark}
+                      onChangeText={setReviewRemark}
+                      placeholder="Add an encouraging note or feedback..."
+                      placeholderTextColor="#A89A9F"
+                      multiline
+                    />
+                  </View>
+
+                  <View style={{ flexDirection: 'row', gap: spacing.md }}>
                     <Pressable
-                      onPress={() => handleDecision('approved')}
-                      disabled={totalProofsUploaded === 0}
+                      onPress={() => void reviewMutation.mutate({ status: 'approved', comment: reviewRemark })}
+                      disabled={reviewMutation.isPending}
                       style={{
                         flex: 1,
-                        backgroundColor: totalProofsUploaded === 0 ? palette.surface : '#16a34a',
-                        borderRadius: radius.md,
-                        padding: spacing.sm,
+                        backgroundColor: palette.primary,
+                        borderRadius: radius.button,
+                        paddingVertical: 12,
                         alignItems: 'center',
-                        opacity: totalProofsUploaded === 0 ? 0.5 : 1,
+                        justifyContent: 'center',
+                        opacity: reviewMutation.isPending ? 0.6 : 1,
                       }}
                     >
-                      <Text style={{ color: '#fff', fontWeight: '700' }}>✓ Approve</Text>
+                      {reviewMutation.isPending ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                      ) : (
+                        <Text style={{ color: '#FFFFFF', fontSize: 15, fontWeight: '800' }}>
+                          Approve Day ✓
+                        </Text>
+                      )}
                     </Pressable>
+
                     <Pressable
-                      onPress={() => handleDecision('rejected')}
-                      disabled={totalProofsUploaded === 0}
+                      onPress={() => void reviewMutation.mutate({ status: 'rejected', comment: reviewRemark })}
+                      disabled={reviewMutation.isPending}
                       style={{
                         flex: 1,
-                        backgroundColor: totalProofsUploaded === 0 ? palette.surface : palette.danger,
-                        borderRadius: radius.md,
-                        padding: spacing.sm,
+                        backgroundColor: 'rgba(217, 76, 97, 0.15)',
+                        borderColor: palette.danger,
+                        borderWidth: 1,
+                        borderRadius: radius.button,
+                        paddingVertical: 12,
                         alignItems: 'center',
-                        opacity: totalProofsUploaded === 0 ? 0.5 : 1,
+                        justifyContent: 'center',
+                        opacity: reviewMutation.isPending ? 0.6 : 1,
                       }}
                     >
-                      <Text style={{ color: '#fff', fontWeight: '700' }}>✗ Reject</Text>
+                      {reviewMutation.isPending ? (
+                        <ActivityIndicator color={palette.danger} />
+                      ) : (
+                        <Text style={{ color: palette.danger, fontSize: 15, fontWeight: '800' }}>
+                          Reject ✕
+                        </Text>
+                      )}
                     </Pressable>
                   </View>
-                )}
-
-                {totalProofsUploaded === 0 ? (
-                  <Text style={{ color: palette.danger, fontSize: 12, textAlign: 'center' }}>
-                    The backend requires at least one proof image before you can review.
-                  </Text>
-                ) : null}
-
-                {reviewMutation.isError ? (
-                  <ErrorState error={(reviewMutation.error as Error).message} />
-                ) : null}
-              </View>
-            </Card>
-          )}
+                </View>
+              )}
+            </View>
+          </View>
         </View>
       </ScrollView>
 
-      {/* Proof Viewer Modal */}
-      <ProofViewerModal
-        visible={!!viewingProof}
-        imageUrl={viewingProof?.url ?? null}
-        caption={viewingProof?.caption}
-        onClose={() => setViewingProof(null)}
-      />
+      {/* Proof Image Fullscreen Viewer */}
+      {viewingProof ? (
+        <ProofViewerModal
+          visible={!!viewingProof}
+          imageUrl={viewingProof.url}
+          caption={viewingProof.caption}
+          onClose={() => setViewingProof(null)}
+        />
+      ) : null}
     </Screen>
   );
 }
 
+const styles = {
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
+  },
+  cardTitleText: {
+    color: '#2A1D22',
+    fontSize: 16,
+    fontWeight: '800' as const,
+    letterSpacing: -0.2,
+  },
+  cardSubText: {
+    color: '#66545B',
+    fontSize: 13,
+    fontWeight: '500' as const,
+    lineHeight: 18,
+  },
+  itemTitleText: {
+    color: '#2A1D22',
+    fontSize: 15,
+    fontWeight: '700' as const,
+  },
+  badgeCountText: {
+    color: '#C73A57',
+    fontSize: 13,
+    fontWeight: '800' as const,
+  },
+};

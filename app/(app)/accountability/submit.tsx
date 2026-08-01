@@ -25,11 +25,11 @@ import {
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
-import { Button, Card, Loading, ProofViewerModal, Screen } from '@/components/ui';
+import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, glassCardStyle, radius, spacing, typography } from '@/theme';
 
 type PickedImage = {
   uri: string;
@@ -70,7 +70,6 @@ export default function SubmitScreen() {
     enabled: !!user,
   });
 
-
   const currentQ = useQuery({
     queryKey: queryKeys.currentPlan(today),
     queryFn: () => getCurrentPlan(today),
@@ -108,10 +107,8 @@ export default function SubmitScreen() {
   const isSubmitted = !!submission;
   const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
 
-  // Safe cast proofs to array to handle database types mapping
   const proofsArray = (submission?.submission_proofs ? (Array.isArray(submission.submission_proofs) ? submission.submission_proofs : [submission.submission_proofs]) : []) as any[];
 
-  // Load signed URLs for proof images
   const loadProofUrl = async (path: string) => {
     if (proofUrls[path]) return;
     const url = await getProofImageUrl(path);
@@ -145,77 +142,68 @@ export default function SubmitScreen() {
       allowsEditing: false,
     });
 
-    if (result.canceled || !result.assets[0]) return;
+    if (result.canceled || !result.assets[0] || !user?.id || !submission?.id) return;
 
     const asset = result.assets[0];
     const ext = asset.uri.split('.').pop()?.toLowerCase() ?? 'jpg';
     const validExt = (['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg') as 'jpg' | 'png' | 'webp';
 
-    if (!submission || !user) {
-      Alert.alert('Submit first', 'Submit your day before uploading proofs.');
-      return;
-    }
-
-    const taskKey = taskId ?? 'general';
-    setUploadingTaskId(taskKey);
+    if (taskId) setUploadingTaskId(taskId);
     try {
       const response = await fetch(asset.uri);
-      const arrayBuffer = await response.arrayBuffer();
-      await submissionService.uploadProof(submission.id, user.id, arrayBuffer, validExt, undefined, taskId);
-      
+      const blob = await response.blob();
+
+      await submissionService.uploadProof(
+        submission.id,
+        user.id,
+        blob,
+        validExt,
+        undefined,
+        taskId
+      );
+
       void queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
-      void queryClient.invalidateQueries({ queryKey: ['submission'] });
-    } catch (e) {
-      Alert.alert('Upload failed', (e as Error).message);
+      Alert.alert('Proof uploaded', 'Proof image uploaded successfully!');
+    } catch (e: any) {
+      Alert.alert('Upload failed', e.message || 'Could not upload proof image.');
     } finally {
       setUploadingTaskId(null);
     }
   };
 
   const handleSend = async () => {
-    if (!user) return;
-
-    if (proofsArray.length + pickedImages.length === 0) {
-      Alert.alert(
-        'Proof Required',
-        `Please attach at least one proof image (task proof or general proof) before submitting to ${partnerName}.`,
-      );
+    const effectivePlanId = planId || currentQ.data?.id;
+    if (!effectivePlanId || !user?.id) {
+      Alert.alert('No active plan', 'Please start a daily plan before submitting.');
       return;
     }
 
+    if (pickedImages.length === 0) {
+      Alert.alert('Proof required', 'Please add at least 1 proof image before submitting.');
+      return;
+    }
 
     setIsSending(true);
+
     try {
-      // 1. Submit the day
-      const newSub = await submissionService.submit(planId, remark.trim() || undefined);
-      const subId = newSub?.id || (submissionQ.data as any)?.id;
+      const subResult = await submissionService.submit(effectivePlanId, remark.trim() || undefined);
 
-      if (!subId) {
-        throw new Error('Failed to create submission record.');
+      if (subResult?.id) {
+        for (const img of pickedImages) {
+          try {
+            const response = await fetch(img.uri);
+            const blob = await response.blob();
+            await submissionService.uploadProof(subResult.id, user.id, blob, img.ext, undefined, img.taskId);
+          } catch (e) {
+            console.warn('Failed uploading image during submit:', e);
+          }
+        }
       }
 
-      // 2. Upload all picked images using arrayBuffer
-      for (const img of pickedImages) {
-        const response = await fetch(img.uri);
-        const arrayBuffer = await response.arrayBuffer();
-        await submissionService.uploadProof(subId, user.id, arrayBuffer, img.ext, undefined, img.taskId);
-      }
-
-      // 3. Invalidate queries for submitter and partner
-      void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerSubmission });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
-      void queryClient.invalidateQueries({ queryKey: ['submission'] });
-
-      // 4. Emit Companion presentation & Notification Engine events
       CompanionBus.emit({
         eventType: 'DailyGoalAchieved',
         priority: 'high',
-        payload: { partnerName, taskTitle: 'Daily Study Plan' },
+        payload: { date: today },
       });
 
       EventBus.emit({
@@ -224,9 +212,20 @@ export default function SubmitScreen() {
         data: { taskTitle: 'Daily Plan Submitted' },
       });
 
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
+      await queryClient.invalidateQueries({ queryKey: ['today-report', today] });
+
       setPickedImages([]);
-    } catch (error) {
-      Alert.alert('Error', (error as Error).message);
+      setRemark('');
+
+      Alert.alert(
+        'Day Submitted!',
+        `Your daily report has been sent to ${partnerName} for review.`,
+        [{ text: 'OK', onPress: () => router.back() }]
+      );
+    } catch (e: any) {
+      Alert.alert('Submission Failed', e.message || 'An error occurred while submitting.');
     } finally {
       setIsSending(false);
     }
@@ -238,56 +237,56 @@ export default function SubmitScreen() {
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
-          {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Pressable onPress={() => router.back()}>
-              <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
-            </Pressable>
-            <Text style={[typography.title, { color: palette.text, flex: 1 }]}>
-              {isSubmitted ? 'Your Submission' : `Submit to ${partnerName}`}
-            </Text>
-
+          {/* Header Row: Back Arrow + Dark Obsidian Glass Oval Title Card + Notification Badge */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
+                <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800' }}>←</Text>
+              </Pressable>
+              <HeaderTitleCard title={isSubmitted ? "Submission" : "Submit Plan"} showWavingHand={false} />
+            </View>
+            <NotificationBadge />
           </View>
 
           {isLoading ? (
             <Loading />
           ) : (
             <>
-              {/* Initial Plan vs Final */}
-              <Card>
+              {/* Initial Plan Snapshot Card */}
+              <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                    Initial Plan
+                  <Text style={styles.cardTitleText}>
+                    Initial Plan Snapshot
                   </Text>
-                  <Text style={{ color: palette.mutedText, fontSize: 13 }}>
+                  <Text style={styles.cardSubText}>
                     Snapshot created at the start of the day.
                   </Text>
                   {initialTasks.length === 0 ? (
-                    <Text style={{ color: palette.mutedText }}>No initial plan tasks.</Text>
+                    <Text style={styles.cardSubText}>No initial plan tasks recorded.</Text>
                   ) : (
                     initialTasks.map((t) => (
-                      <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: palette.border, paddingVertical: 4 }}>
-                        <Text style={{ color: palette.text }}>{t.title}</Text>
-                        <Text style={{ color: palette.mutedText, fontSize: 12 }}>{t.estimated_minutes} min</Text>
+                      <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(250, 215, 224, 0.60)', paddingVertical: 6 }}>
+                        <Text style={styles.itemTitleText}>{t.title}</Text>
+                        <Text style={styles.cardSubText}>{t.estimated_minutes} min estimated</Text>
                       </View>
                     ))
                   )}
                 </View>
-              </Card>
+              </View>
 
               {/* Tasks Checklist with Individual Proof Attachment */}
-              <Card>
+              <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
+                    <Text style={styles.cardTitleText}>
                       {"Today's Live Tasks & Proofs"}
                     </Text>
-                    <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                      {completedCount}/{currentTasks.length} completed
+                    <Text style={styles.badgeCountText}>
+                      {completedCount}/{currentTasks.length} done
                     </Text>
                   </View>
-                  <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                    Attach proof images to each task below to show your work. Tap image to zoom / view.
+                  <Text style={styles.cardSubText}>
+                    Attach proof images to each task below to show your work. Tap image to zoom.
                   </Text>
 
                   <View style={{ gap: spacing.sm }}>
@@ -300,132 +299,95 @@ export default function SubmitScreen() {
                         <View
                           key={task.id}
                           style={{
-                            backgroundColor: palette.surface,
-                            borderColor: palette.border,
+                            backgroundColor: 'rgba(255, 255, 255, 0.70)',
+                            borderColor: 'rgba(250, 215, 224, 0.90)',
                             borderRadius: radius.md,
-                            borderWidth: 1,
+                            borderWidth: 1.5,
                             padding: spacing.sm,
                             gap: spacing.xs,
                           }}
                         >
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                            {/* Read-only status checkbox */}
                             <View
                               style={{
                                 width: 20,
                                 height: 20,
                                 borderRadius: 4,
                                 borderWidth: 2,
-                                borderColor: isDone ? palette.primary : palette.border,
+                                borderColor: isDone ? palette.primary : 'rgba(232, 77, 114, 0.35)',
                                 backgroundColor: isDone ? palette.primary : 'transparent',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}
                             >
                               {isDone ? (
-                                <Text style={{ color: palette.primaryText, fontSize: 11, fontWeight: '700' }}>✓</Text>
+                                <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>✓</Text>
                               ) : null}
                             </View>
-
-                            <View style={{ flex: 1 }}>
-                              <Text
-                                style={[
-                                  typography.body,
-                                  {
-                                    color: palette.text,
-                                    textDecorationLine: isDone ? 'line-through' : 'none',
-                                    opacity: isDone ? 0.6 : 1,
-                                    fontWeight: '600',
-                                  },
-                                ]}
-                              >
-                                {task.title}
-                              </Text>
-                              <Text style={{ color: palette.mutedText, fontSize: 12 }}>
-                                {task.estimated_minutes} min · 🍅 {task.completed_pomodoros ?? 0} focus sessions
-                              </Text>
-                            </View>
+                            <Text
+                              style={{
+                                flex: 1,
+                                color: isDone ? palette.mutedText : '#2A1D22',
+                                fontWeight: '700',
+                                fontSize: 15,
+                                textDecorationLine: isDone ? 'line-through' : 'none',
+                              }}
+                            >
+                              {task.title}
+                            </Text>
+                            <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600' }}>
+                              {task.estimated_minutes}m
+                            </Text>
                           </View>
 
-                          {/* Task-specific proof list */}
-                          <View style={{ marginTop: spacing.xs, paddingLeft: 28, gap: spacing.xs }}>
-                            {(taskProofs.length > 0 || taskPickedImages.length > 0) && (
-                              <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '700' }}>
-                                Task Proofs ({isSubmitted ? taskProofs.length : taskPickedImages.length})
-                              </Text>
-                            )}
-
+                          {/* Task proofs container */}
+                          <View style={{ marginTop: 4 }}>
                             {isSubmitted && taskProofs.length > 0 && (
-                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
+                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
                                 {taskProofs.map((proof: any) => {
                                   void loadProofUrl(proof.image_url);
-                                  const url = proofUrls[proof.image_url];
+                                  const signedUrl = proofUrls[proof.image_url];
                                   return (
-                                    <View key={proof.id}>
-                                      {url ? (
-                                        <Pressable onPress={() => setViewingProof({ url, caption: task.title })}>
-                                          <Image
-                                            source={{ uri: url }}
-                                            style={{
-                                              width: 60,
-                                              height: 60,
-                                              borderRadius: radius.sm,
-                                              borderWidth: 1,
-                                              borderColor: palette.border,
-                                            }}
-                                          />
-                                        </Pressable>
+                                    <Pressable
+                                      key={proof.id}
+                                      onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: task.title })}
+                                    >
+                                      {signedUrl ? (
+                                        <Image
+                                          source={{ uri: signedUrl }}
+                                          style={{ width: 54, height: 54, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.90)' }}
+                                        />
                                       ) : (
-                                        <View
-                                          style={{
-                                            width: 60,
-                                            height: 60,
-                                            borderRadius: radius.sm,
-                                            backgroundColor: palette.surface,
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                          }}
-                                        >
+                                        <View style={{ width: 54, height: 54, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
                                           <ActivityIndicator size="small" color={palette.primary} />
                                         </View>
                                       )}
-                                    </View>
+                                    </Pressable>
                                   );
                                 })}
                               </View>
                             )}
 
                             {!isSubmitted && taskPickedImages.length > 0 && (
-                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
-                                {taskPickedImages.map((img, i) => (
-                                  <View key={i}>
-                                    <Pressable onPress={() => setViewingProof({ url: img.uri, caption: task.title })}>
-                                      <Image
-                                        source={{ uri: img.uri }}
-                                        style={{
-                                          width: 60,
-                                          height: 60,
-                                          borderRadius: radius.sm,
-                                          borderWidth: 1,
-                                          borderColor: palette.border,
-                                        }}
-                                      />
-                                    </Pressable>
+                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+                                {taskPickedImages.map((img) => (
+                                  <View key={img.uri} style={{ position: 'relative' }}>
+                                    <Image source={{ uri: img.uri }} style={{ width: 54, height: 54, borderRadius: 8 }} />
                                     <Pressable
                                       onPress={() => removePickedImage(img)}
                                       style={{
                                         position: 'absolute',
-                                        top: -5,
-                                        right: -5,
-                                        backgroundColor: '#ef4444',
+                                        top: -4,
+                                        right: -4,
+                                        backgroundColor: 'rgba(0,0,0,0.7)',
                                         borderRadius: 10,
-                                        width: 20,
-                                        height: 20,
+                                        width: 18,
+                                        height: 18,
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                       }}
                                     >
-                                      <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>×</Text>
+                                      <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>✕</Text>
                                     </Pressable>
                                   </View>
                                 ))}
@@ -434,22 +396,30 @@ export default function SubmitScreen() {
 
                             <Pressable
                               onPress={() => void (isSubmitted ? pickAndUploadProof(task.id) : pickLocalProof(task.id))}
-                              disabled={uploadingTaskId !== null}
+                              disabled={uploadingTaskId === task.id}
                               style={{
-                                borderColor: palette.primary,
-                                borderRadius: radius.sm,
-                                borderWidth: 1,
-                                borderStyle: 'dashed',
-                                paddingVertical: 6,
-                                paddingHorizontal: spacing.sm,
-                                alignItems: 'center',
                                 alignSelf: 'flex-start',
-                                opacity: uploadingTaskId !== null ? 0.5 : 1,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 4,
+                                backgroundColor: 'rgba(232, 77, 114, 0.10)',
+                                borderColor: 'rgba(232, 77, 114, 0.25)',
+                                borderWidth: 1,
+                                borderRadius: radius.pill,
+                                paddingHorizontal: 10,
+                                paddingVertical: 4,
                               }}
                             >
-                              <Text style={{ color: palette.primary, fontSize: 12, fontWeight: '600' }}>
-                                {uploadingTaskId === task.id ? 'Uploading…' : '+ Attach Proof'}
-                              </Text>
+                              {uploadingTaskId === task.id ? (
+                                <ActivityIndicator size="small" color={palette.primary} />
+                              ) : (
+                                <>
+                                  <Text style={{ fontSize: 12 }}>📷</Text>
+                                  <Text style={{ color: palette.primary, fontSize: 12, fontWeight: '700' }}>
+                                    {isSubmitted ? '+ Add Task Proof' : taskPickedImages.length > 0 ? '+ Add More' : 'Attach Proof'}
+                                  </Text>
+                                </>
+                              )}
                             </Pressable>
                           </View>
                         </View>
@@ -457,135 +427,66 @@ export default function SubmitScreen() {
                     })}
                   </View>
                 </View>
-              </Card>
+              </View>
 
-              {/* Remark */}
-              {isSubmitted ? (
-                submission.remark ? (
-                  <Card>
-                    <View style={{ gap: spacing.xs }}>
-                      <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                        Submission Note
-                      </Text>
-                      <Text style={{ color: palette.text, fontSize: 14 }}>
-                        &quot;{submission.remark}&quot;
-                      </Text>
-                    </View>
-                  </Card>
-                ) : null
-              ) : (
-                <Card>
-                  <View style={{ gap: spacing.sm }}>
-                    <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                      Remark (optional)
-                    </Text>
-                    <TextInput
-                      style={{
-                        borderColor: palette.border,
-                        borderRadius: radius.md,
-                        borderWidth: 1,
-                        color: palette.text,
-                        minHeight: 80,
-                        padding: spacing.sm,
-                        textAlignVertical: 'top',
-                      }}
-                      value={remark}
-                      onChangeText={setRemark}
-                      placeholder={`Add a note for ${partnerName}…`}
-                      placeholderTextColor={palette.mutedText}
-                      multiline
-                    />
-                  </View>
-                </Card>
-              )}
-
-              {/* General Proofs */}
-              <Card>
+              {/* General proofs */}
+              <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                    General Proof Images
-                  </Text>
-                  <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                    General proof photos of your study day. Tap image to zoom / view.
+                  <Text style={styles.cardTitleText}>General Proof Images</Text>
+                  <Text style={styles.cardSubText}>
+                    Optional overall screenshots, study notes, or workspace photos.
                   </Text>
 
-                  {/* Submitted general proofs */}
                   {isSubmitted && proofsArray.filter((p: any) => !p.task_id).length > 0 && (
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                       {proofsArray
                         .filter((p: any) => !p.task_id)
                         .map((proof: any) => {
                           void loadProofUrl(proof.image_url);
-                          const url = proofUrls[proof.image_url];
+                          const signedUrl = proofUrls[proof.image_url];
                           return (
-                            <View key={proof.id}>
-                              {url ? (
-                                <Pressable onPress={() => setViewingProof({ url, caption: proof.caption || 'General Proof' })}>
-                                  <Image
-                                    source={{ uri: url }}
-                                    style={{
-                                      width: 80,
-                                      height: 80,
-                                      borderRadius: radius.md,
-                                      borderWidth: 1,
-                                      borderColor: palette.border,
-                                    }}
-                                  />
-                                </Pressable>
+                            <Pressable
+                              key={proof.id}
+                              onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: 'General Proof' })}
+                            >
+                              {signedUrl ? (
+                                <Image
+                                  source={{ uri: signedUrl }}
+                                  style={{ width: 64, height: 64, borderRadius: 8 }}
+                                />
                               ) : (
-                                <View
-                                  style={{
-                                    width: 80,
-                                    height: 80,
-                                    borderRadius: radius.md,
-                                    backgroundColor: palette.surface,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                  }}
-                                >
+                                <View style={{ width: 64, height: 64, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
                                   <ActivityIndicator size="small" color={palette.primary} />
                                 </View>
                               )}
-                            </View>
+                            </Pressable>
                           );
                         })}
                     </View>
                   )}
 
-                  {/* Local general proofs (before submit) */}
                   {!isSubmitted && pickedImages.filter((img) => !img.taskId).length > 0 && (
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                       {pickedImages
                         .filter((img) => !img.taskId)
-                        .map((img, i) => (
-                          <View key={i}>
-                            <Pressable onPress={() => setViewingProof({ url: img.uri, caption: 'General Proof' })}>
-                              <Image
-                                source={{ uri: img.uri }}
-                                style={{
-                                  width: 80,
-                                  height: 80,
-                                  borderRadius: radius.md,
-                                  borderWidth: 1,
-                                  borderColor: palette.border,
-                                }}
-                              />
-                            </Pressable>
+                        .map((img) => (
+                          <View key={img.uri} style={{ position: 'relative' }}>
+                            <Image source={{ uri: img.uri }} style={{ width: 64, height: 64, borderRadius: 8 }} />
                             <Pressable
                               onPress={() => removePickedImage(img)}
                               style={{
                                 position: 'absolute',
-                                top: -5,
-                                right: -5,
-                                backgroundColor: '#ef4444',
+                                top: -4,
+                                right: -4,
+                                backgroundColor: 'rgba(0,0,0,0.7)',
                                 borderRadius: 10,
-                                width: 20,
-                                height: 20,
+                                width: 18,
+                                height: 18,
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}
                             >
-                              <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>×</Text>
+                              <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>✕</Text>
                             </Pressable>
                           </View>
                         ))}
@@ -594,62 +495,92 @@ export default function SubmitScreen() {
 
                   <Pressable
                     onPress={() => void (isSubmitted ? pickAndUploadProof() : pickLocalProof())}
-                    disabled={uploadingTaskId !== null}
                     style={{
-                      borderColor: palette.primary,
-                      borderRadius: radius.md,
-                      borderWidth: 1,
-                      borderStyle: 'dashed',
-                      padding: spacing.sm,
+                      alignSelf: 'flex-start',
+                      flexDirection: 'row',
                       alignItems: 'center',
-                      opacity: uploadingTaskId !== null ? 0.5 : 1,
+                      gap: 6,
+                      backgroundColor: 'rgba(232, 77, 114, 0.10)',
+                      borderColor: 'rgba(232, 77, 114, 0.25)',
+                      borderWidth: 1,
+                      borderRadius: radius.pill,
+                      paddingHorizontal: 12,
+                      paddingVertical: 6,
                     }}
                   >
-                    <Text style={{ color: palette.primary, fontWeight: '600' }}>
-                      {uploadingTaskId === 'general' ? 'Uploading…' : '+ Add General Proof Image'}
+                    <Text style={{ fontSize: 14 }}>📸</Text>
+                    <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700' }}>
+                      {isSubmitted ? '+ Add General Proof' : 'Add General Proof'}
                     </Text>
                   </Pressable>
                 </View>
-              </Card>
+              </View>
 
-              {/* Submit / Done */}
+              {/* Remark */}
+              {!isSubmitted && (
+                <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                  <View style={{ gap: spacing.sm }}>
+                    <Text style={styles.cardTitleText}>Notes & Reflection</Text>
+                    <TextInput
+                      style={{
+                        backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                        borderColor: 'rgba(250, 215, 224, 0.90)',
+                        borderRadius: radius.input,
+                        borderWidth: 1.5,
+                        color: '#2A1D22',
+                        paddingHorizontal: spacing.md,
+                        paddingVertical: spacing.sm,
+                        fontSize: 14,
+                        minHeight: 60,
+                      }}
+                      value={remark}
+                      onChangeText={setRemark}
+                      placeholder="Optional notes or reflection for your partner..."
+                      placeholderTextColor="#A89A9F"
+                      multiline
+                    />
+                  </View>
+                </View>
+              )}
+
+              {/* Submit / Done Action */}
               {isSubmitted ? (
-                <Card>
+                <View style={[glassCardStyle, styles.pinkGlassCard]}>
                   <View style={{ gap: spacing.sm, alignItems: 'center' }}>
                     <Text style={{ fontSize: 32 }}>✅</Text>
-                    <Text style={[typography.title, { color: palette.text }]}>Day submitted!</Text>
-                    <Text style={{ color: palette.mutedText, textAlign: 'center' }}>
+                    <Text style={styles.cardTitleText}>Day submitted!</Text>
+                    <Text style={styles.cardSubText}>
                       {`${partnerName} has been notified. You can still upload extra proof images above.`}
                     </Text>
                     <Button onPress={() => router.back()}>
                       Back to Accountability
                     </Button>
                   </View>
-                </Card>
+                </View>
               ) : (
-                <Card>
+                <View style={[glassCardStyle, styles.pinkGlassCard]}>
                   <View style={{ gap: spacing.sm }}>
                     {pickedImages.length === 0 ? (
                       <View
                         style={{
-                          backgroundColor: `${palette.primary}15`,
-                          borderColor: palette.primary,
+                          backgroundColor: 'rgba(232, 77, 114, 0.10)',
+                          borderColor: 'rgba(232, 77, 114, 0.30)',
                           borderRadius: radius.md,
                           borderWidth: 1,
                           padding: spacing.sm,
                         }}
                       >
-                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '600', textAlign: 'center' }}>
+                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
                           📸 Add at least 1 proof image above before submitting
                         </Text>
-                        <Text style={{ color: palette.mutedText, fontSize: 12, textAlign: 'center', marginTop: 4 }}>
+                        <Text style={{ color: '#66545B', fontSize: 12, textAlign: 'center', marginTop: 4 }}>
                           Attach proof to individual tasks or add general proof images to show your work.
                         </Text>
                       </View>
                     ) : (
                       <View
                         style={{
-                          backgroundColor: `${palette.primary}15`,
+                          backgroundColor: 'rgba(232, 77, 114, 0.10)',
                           borderRadius: radius.md,
                           padding: spacing.sm,
                           flexDirection: 'row',
@@ -659,7 +590,7 @@ export default function SubmitScreen() {
                         }}
                       >
                         <Text style={{ fontSize: 16 }}>✅</Text>
-                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '600' }}>
+                        <Text style={{ color: palette.primary, fontSize: 13, fontWeight: '700' }}>
                           {pickedImages.length} proof{pickedImages.length > 1 ? 's' : ''} attached — ready to submit!
                         </Text>
                       </View>
@@ -671,21 +602,53 @@ export default function SubmitScreen() {
                       {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
                     </Button>
                   </View>
-                </Card>
+                </View>
               )}
             </>
           )}
         </View>
       </ScrollView>
 
-      {/* Proof Viewer Modal */}
-      <ProofViewerModal
-        visible={!!viewingProof}
-        imageUrl={viewingProof?.url ?? null}
-        caption={viewingProof?.caption}
-        onClose={() => setViewingProof(null)}
-      />
+      {/* Proof Image Fullscreen Viewer */}
+      {viewingProof ? (
+        <ProofViewerModal
+          visible={!!viewingProof}
+          imageUrl={viewingProof.url}
+          caption={viewingProof.caption}
+          onClose={() => setViewingProof(null)}
+        />
+      ) : null}
     </Screen>
   );
 }
 
+const styles = {
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
+  },
+  cardTitleText: {
+    color: '#2A1D22',
+    fontSize: 16,
+    fontWeight: '800' as const,
+    letterSpacing: -0.2,
+  },
+  cardSubText: {
+    color: '#66545B',
+    fontSize: 13,
+    fontWeight: '500' as const,
+    lineHeight: 18,
+  },
+  itemTitleText: {
+    color: '#2A1D22',
+    fontSize: 15,
+    fontWeight: '700' as const,
+  },
+  badgeCountText: {
+    color: '#C73A57',
+    fontSize: 13,
+    fontWeight: '800' as const,
+  },
+};
