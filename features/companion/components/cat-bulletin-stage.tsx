@@ -54,7 +54,7 @@ export function CatBulletinStage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Typewriter Typing Effect for Sentence Text
+  // Constant & Continuous Typewriter Typing Loop
   useEffect(() => {
     setDisplayedSubtext('');
     let charIdx = 0;
@@ -64,10 +64,15 @@ export function CatBulletinStage() {
       if (charIdx <= fullText.length) {
         setDisplayedSubtext(fullText.slice(0, charIdx));
         charIdx++;
+      } else if (charIdx > fullText.length + 28) {
+        // Reset and re-type sentence constantly
+        charIdx = 0;
+        setDisplayedSubtext('');
       } else {
-        clearInterval(timer);
+        // Short pause at full sentence before looping
+        charIdx++;
       }
-    }, 32);
+    }, 38);
 
     return () => clearInterval(timer);
   }, [activeScenario]);
