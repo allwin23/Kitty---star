@@ -123,122 +123,82 @@ export function CatBulletinStage() {
 
       {/* CARD 2: DEDICATED CHERRY DIGITAL BULLETIN BOARD CARD */}
       <View style={styles.digitalBulletinCardContainer}>
-        {/* Background Watermark Layer (Hearts & Stars scattered all over) */}
+        {/* Background Watermark Layer (Ultra Dense Hearts & Stars) */}
         <View style={styles.watermarkContainer} pointerEvents="none">
-          {/* Top Left Heart */}
-          <Heart
-            size={38}
-            color="rgba(255, 255, 255, 0.22)"
-            fill="rgba(255, 255, 255, 0.16)"
-            style={{ position: 'absolute', top: 6, left: 12, transform: [{ rotate: '-20deg' }] }}
-          />
-          {/* Top Center Star */}
-          <Star
-            size={28}
-            color="rgba(255, 255, 255, 0.20)"
-            fill="rgba(255, 255, 255, 0.14)"
-            style={{ position: 'absolute', top: 8, left: '42%', transform: [{ rotate: '15deg' }] }}
-          />
-          {/* Top Right Sparkles */}
-          <Sparkles
-            size={44}
-            color="rgba(255, 255, 255, 0.24)"
-            style={{ position: 'absolute', top: -6, right: 18, transform: [{ rotate: '25deg' }] }}
-          />
+          {/* Row 1: Top Scatter */}
+          <Heart size={38} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: 2, left: 6, transform: [{ rotate: '-20deg' }] }} />
+          <Star size={24} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: 4, left: '22%', transform: [{ rotate: '10deg' }] }} />
+          <Sparkles size={30} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', top: 2, left: '42%' }} />
+          <Heart size={30} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: 6, left: '64%', transform: [{ rotate: '15deg' }] }} />
+          <Sparkles size={44} color="rgba(255, 255, 255, 0.25)" style={{ position: 'absolute', top: -6, right: 14, transform: [{ rotate: '25deg' }] }} />
 
-          {/* Middle Left Sparkles */}
-          <Sparkles
-            size={32}
-            color="rgba(255, 255, 255, 0.18)"
-            style={{ position: 'absolute', top: '42%', left: 8 }}
-          />
-          {/* Middle Center Heart */}
-          <Heart
-            size={48}
-            color="rgba(255, 255, 255, 0.22)"
-            fill="rgba(255, 255, 255, 0.15)"
-            style={{ position: 'absolute', top: '35%', left: '45%', transform: [{ rotate: '12deg' }] }}
-          />
-          {/* Middle Right Star */}
-          <Star
-            size={34}
-            color="rgba(255, 255, 255, 0.20)"
-            fill="rgba(255, 255, 255, 0.14)"
-            style={{ position: 'absolute', top: '40%', right: 10, transform: [{ rotate: '-10deg' }] }}
-          />
+          {/* Row 2: Upper Middle Scatter */}
+          <Star size={26} color="rgba(255, 255, 255, 0.20)" fill="rgba(255, 255, 255, 0.14)" style={{ position: 'absolute', top: '24%', left: 16, transform: [{ rotate: '-12deg' }] }} />
+          <Heart size={44} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '22%', left: '32%', transform: [{ rotate: '-8deg' }] }} />
+          <Star size={32} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: '26%', right: '28%', transform: [{ rotate: '18deg' }] }} />
+          <Sparkles size={28} color="rgba(255, 255, 255, 0.20)" style={{ position: 'absolute', top: '25%', right: 10 }} />
 
-          {/* Bottom Left Heart */}
-          <Heart
-            size={52}
-            color="rgba(255, 255, 255, 0.25)"
-            fill="rgba(255, 255, 255, 0.18)"
-            style={{ position: 'absolute', bottom: -12, left: -8, transform: [{ rotate: '-15deg' }] }}
-          />
-          {/* Bottom Center Sparkles */}
-          <Sparkles
-            size={36}
-            color="rgba(255, 255, 255, 0.20)"
-            style={{ position: 'absolute', bottom: 4, left: '38%', transform: [{ rotate: '-25deg' }] }}
-          />
-          {/* Bottom Right Heart & Star */}
-          <Heart
-            size={42}
-            color="rgba(255, 255, 255, 0.22)"
-            fill="rgba(255, 255, 255, 0.16)"
-            style={{ position: 'absolute', bottom: -10, right: 28, transform: [{ rotate: '18deg' }] }}
-          />
-          <Star
-            size={30}
-            color="rgba(255, 255, 255, 0.20)"
-            fill="rgba(255, 255, 255, 0.15)"
-            style={{ position: 'absolute', bottom: 6, right: -4, transform: [{ rotate: '10deg' }] }}
-          />
+          {/* Row 3: Center & Lower Middle Scatter */}
+          <Sparkles size={34} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', top: '48%', left: 4 }} />
+          <Heart size={48} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '42%', left: '46%', transform: [{ rotate: '14deg' }] }} />
+          <Star size={36} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: '45%', right: 8, transform: [{ rotate: '-10deg' }] }} />
+          <Heart size={28} color="rgba(255, 255, 255, 0.20)" fill="rgba(255, 255, 255, 0.14)" style={{ position: 'absolute', top: '50%', right: '35%', transform: [{ rotate: '-18deg' }] }} />
+
+          {/* Row 4: Bottom Scatter */}
+          <Heart size={54} color="rgba(255, 255, 255, 0.26)" fill="rgba(255, 255, 255, 0.18)" style={{ position: 'absolute', bottom: -14, left: -6, transform: [{ rotate: '-15deg' }] }} />
+          <Star size={26} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', bottom: 6, left: '26%', transform: [{ rotate: '12deg' }] }} />
+          <Sparkles size={36} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', bottom: 2, left: '42%', transform: [{ rotate: '-25deg' }] }} />
+          <Heart size={42} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', bottom: -10, right: 30, transform: [{ rotate: '18deg' }] }} />
+          <Star size={32} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', bottom: 4, right: -6, transform: [{ rotate: '10deg' }] }} />
         </View>
 
-        {/* Top Header Bar */}
-        <View style={styles.billboardHeaderRow}>
-          {/* Live LED Indicator */}
-          <View style={styles.liveLedWrapper}>
-            <Animated.View style={[styles.liveLedDot, animatedLedStyle]} />
-            <Text style={styles.liveText}>LIVE TICKER</Text>
+        {/* Foreground Content Layer (Isolated on Top - zIndex: 10) */}
+        <View style={styles.foregroundLayer}>
+          {/* Top Header Bar */}
+          <View style={styles.billboardHeaderRow}>
+            {/* Live LED Indicator */}
+            <View style={styles.liveLedWrapper}>
+              <Animated.View style={[styles.liveLedDot, animatedLedStyle]} />
+              <Text style={styles.liveText}>LIVE TICKER</Text>
+            </View>
+
+            {/* Digital Tag Pill */}
+            <View style={styles.digitalTagPill}>
+              <Text style={styles.digitalTagText}>
+                {activeScenario.tag}
+              </Text>
+            </View>
           </View>
 
-          {/* Digital Tag Pill */}
-          <View style={styles.digitalTagPill}>
-            <Text style={styles.digitalTagText}>
-              {activeScenario.tag}
-            </Text>
-          </View>
-        </View>
+          {/* Headline & Typewriter Subtext */}
+          <View style={styles.textContainer}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+              <Sparkles size={14} color="#FFFFFF" strokeWidth={2.4} />
+              <Text style={styles.cherryHeadlineText} numberOfLines={1}>
+                {activeScenario.headline}
+              </Text>
+            </View>
 
-        {/* Headline & Typewriter Subtext */}
-        <View style={styles.textContainer}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-            <Sparkles size={14} color="#FFFFFF" strokeWidth={2.4} />
-            <Text style={styles.cherryHeadlineText} numberOfLines={1}>
-              {activeScenario.headline}
+            <Text style={styles.cherrySubtextText} numberOfLines={2}>
+              {displayedSubtext}
+              <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
+                {showCursor ? '|' : ' '}
+              </Text>
             </Text>
           </View>
 
-          <Text style={styles.cherrySubtextText} numberOfLines={2}>
-            {displayedSubtext}
-            <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
-              {showCursor ? '|' : ' '}
-            </Text>
-          </Text>
+          {/* Bottom Queue Indicator */}
+          {queue.length > 0 ? (
+            <Pressable onPress={nextScenario} style={styles.nextQueueBtn}>
+              <Text style={styles.nextQueueText}>
+                +{queue.length} Queued
+              </Text>
+              <ChevronRight size={12} color="#FFFFFF" strokeWidth={2.4} />
+            </Pressable>
+          ) : (
+            <View style={{ height: 16 }} />
+          )}
         </View>
-
-        {/* Bottom Queue Indicator */}
-        {queue.length > 0 ? (
-          <Pressable onPress={nextScenario} style={styles.nextQueueBtn}>
-            <Text style={styles.nextQueueText}>
-              +{queue.length} Queued
-            </Text>
-            <ChevronRight size={12} color="#FFFFFF" strokeWidth={2.4} />
-          </Pressable>
-        ) : (
-          <View style={{ height: 16 }} />
-        )}
       </View>
     </View>
   );
@@ -334,6 +294,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
+  foregroundLayer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    zIndex: 10,
+  },
   billboardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -373,6 +338,7 @@ const styles = StyleSheet.create({
   textContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'flex-start',
     gap: 4,
   },
   cherryHeadlineText: {
@@ -380,12 +346,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     letterSpacing: -0.2,
+    textAlign: 'left',
   },
   cherrySubtextText: {
     color: 'rgba(255, 255, 255, 0.95)', // Pale Cream White Subtext
     fontSize: 12,
     lineHeight: 17,
     fontWeight: '600',
+    textAlign: 'left',
   },
   nextQueueBtn: {
     flexDirection: 'row',

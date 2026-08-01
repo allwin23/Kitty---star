@@ -27,7 +27,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'Pomodoro Session Completed',
     subtext: 'Great work finishing your study session! Focus logged to stats.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 174940',
   },
   ToolWaterLogged: {
     id: 'water-logged',
@@ -35,7 +35,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'Hydration Logged',
     subtext: 'Refreshing water intake recorded! Keeping your body & brain sharp.',
-    imageKey: 'cat_drinking_water',
+    imageKey: 'Screenshot 2026-08-01 174946',
   },
   ToolEnglishCompleted: {
     id: 'english-completed',
@@ -43,7 +43,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'English Writing Evaluated',
     subtext: 'AI writing feedback ready! Vocabulary level and grammar updated.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 174956',
   },
   ToolPyqCompleted: {
     id: 'pyq-completed',
@@ -51,7 +51,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'PYQ Practice Complete',
     subtext: 'Previous year question test finished! Practice makes perfect.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175001',
   },
   ToolFlashcardRevised: {
     id: 'flashcard-revised',
@@ -59,7 +59,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'Flashcards Revised',
     subtext: 'Spaced repetition revision finished! Memory retention boosted.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175012',
   },
   ToolTaskCompleted: {
     id: 'task-completed',
@@ -67,7 +67,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[TOOL]',
     headline: 'Task Checked Off',
     subtext: 'Daily goal completed! Progression added to your growth score.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175017',
   },
   NotificationAlert: {
     id: 'notif-alert',
@@ -75,7 +75,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[NOTIFICATION]',
     headline: 'New Notification Received',
     subtext: 'You have a new update! Tap notifications to view details.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175024',
   },
   PartnerStartedFocus: {
     id: 'partner-start',
@@ -83,7 +83,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[PARTNER]',
     headline: 'Partner Focus Session',
     subtext: 'Your study partner just started focusing! Join them in study mode.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175031',
   },
   PartnerCompletedTask: {
     id: 'partner-task',
@@ -91,7 +91,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[PARTNER]',
     headline: 'Partner Task Completed',
     subtext: 'Your study partner completed a task! Keep up the team momentum.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175038',
   },
   PartnerSentAward: {
     id: 'partner-award',
@@ -99,7 +99,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[PARTNER]',
     headline: 'Partner Award Received',
     subtext: 'Your study partner sent you an award badge! Trophy added to gallery.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175038',
   },
   PartnerSubmittedProof: {
     id: 'partner-proof',
@@ -107,7 +107,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[PARTNER]',
     headline: 'Daily Proof Submitted',
     subtext: 'Your study partner submitted daily proof for your review.',
-    imageKey: 'cat_studying_pomodoro',
+    imageKey: 'Screenshot 2026-08-01 175038',
   },
   RoutineMorning: {
     id: 'routine-morning',
