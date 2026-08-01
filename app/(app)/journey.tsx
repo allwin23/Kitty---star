@@ -10,8 +10,9 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Gift } from 'lucide-react-native';
 
 import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
@@ -294,8 +295,17 @@ export default function JourneyScreen() {
                 nextXP={nextMilestoneXP}
               />
 
-              {/* Duolingo-style Vertical Timeline Path */}
-              <View style={[glassCardStyle, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)', borderRadius: 24, padding: spacing[16] }]}>
+              {/* Duolingo-style Vertical Timeline Path with Chaotic Gift Watermarks */}
+              <View style={[glassCardStyle, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)', borderRadius: 24, padding: spacing[16], position: 'relative', overflow: 'hidden' }]}>
+                {/* Chaotic Gift Watermarks Layer */}
+                <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+                  <Gift size={68} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: -12, left: -16, transform: [{ rotate: '-24deg' }] }} />
+                  <Gift size={84} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: '22%', right: -22, transform: [{ rotate: '32deg' }] }} />
+                  <Gift size={58} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: '48%', left: -18, transform: [{ rotate: '-36deg' }] }} />
+                  <Gift size={76} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: '70%', right: -14, transform: [{ rotate: '20deg' }] }} />
+                  <Gift size={62} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', bottom: -12, left: 20, transform: [{ rotate: '-16deg' }] }} />
+                </View>
+
                 <View style={{ gap: spacing[16], alignItems: 'center' }}>
                   <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>
                     Milestone Checkpoints Path

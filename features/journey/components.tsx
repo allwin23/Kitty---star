@@ -5,7 +5,9 @@
  * Features vertical path timeline, mystery rewards, partner reward editor,
  * challenge cards, reveal animations, and XP breakdown.
  *
- * Updated with minimal vector icons, contextual color touches, and 3-pattern micro-animations!
+ * Updated with:
+ * 1. Chaotic gift box watermarks scattered across the milestone path container.
+ * 2. Icon-specific contextual micro-animations (Thunder Flash for Zap, Radar Lock for Target, Ticking Clock for Clock, Winner Triumph for Trophy, Mystery Shake for Gift, Star Sparkle for Star/CheckCircle).
  */
 
 import React, { useEffect, useState } from 'react';
@@ -59,71 +61,242 @@ function usePalette() {
   return palette;
 }
 
-// ─── Continuous Animated Vector Icon ─────────────────────────────────────────
+// ─── Contextual Unique Micro-Animated Icon Component ──────────────────────────
 
-export function AnimatedJourneyIcon({
+export type JourneyIconType =
+  | 'zap'       // Thunder Electric Flash & Surge
+  | 'target'    // Radar Aim & Target Lock Pulse
+  | 'clock'     // Ticking Pendulum Clock Rhythm
+  | 'trophy'    // Champion Victory Lift & Winner Wobble
+  | 'gift'      // Mystery Box Rattle & Lid Wiggle
+  | 'star'      // Twinkling Star Sparkle Spin
+  | 'history';  // Compass Navigation Sway
+
+export function ContextualJourneyIcon({
   icon: Icon,
+  type,
   size = 20,
   color = '#121218',
 }: {
   icon: LucideIcon;
+  type: JourneyIconType;
   size?: number;
   color?: string;
 }) {
   const rotation = useSharedValue(0);
   const scale = useSharedValue(1);
+  const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
 
   useEffect(() => {
-    // Pattern 1: Pendulum Wiggle & Swing
-    rotation.value = withRepeat(
-      withSequence(
-        withTiming(-14, { duration: 350, easing: Easing.inOut(Easing.quad) }),
-        withTiming(14, { duration: 450, easing: Easing.inOut(Easing.quad) }),
-        withTiming(-8, { duration: 350, easing: Easing.inOut(Easing.quad) }),
-        withTiming(8, { duration: 350, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 1500 })
-      ),
-      -1,
-      false
-    );
+    switch (type) {
+      case 'zap': {
+        // ⚡ Thunder & Lightning Electric Flash & Jitter
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-16, { duration: 100, easing: Easing.linear }),
+            withTiming(20, { duration: 90, easing: Easing.linear }),
+            withTiming(-8, { duration: 80, easing: Easing.linear }),
+            withTiming(0, { duration: 100 }),
+            withTiming(0, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.35, { duration: 90, easing: Easing.bounce }),
+            withTiming(0.85, { duration: 70 }),
+            withTiming(1.2, { duration: 90 }),
+            withTiming(1, { duration: 150 }),
+            withTiming(1, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        opacity.value = withRepeat(
+          withSequence(
+            withTiming(0.4, { duration: 60 }),
+            withTiming(1, { duration: 60 }),
+            withTiming(0.6, { duration: 60 }),
+            withTiming(1, { duration: 120 }),
+            withTiming(1, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
 
-    // Pattern 2: Pulse Scale Breathing
-    scale.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1200 }),
-        withTiming(1.22, { duration: 400, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0.95, { duration: 350, easing: Easing.inOut(Easing.quad) }),
-        withTiming(1.15, { duration: 350, easing: Easing.inOut(Easing.quad) }),
-        withTiming(1, { duration: 500 }),
-        withTiming(1, { duration: 1200 })
-      ),
-      -1,
-      false
-    );
+      case 'target': {
+        // 🎯 Radar Scanning & Bullseye Reticle Aim Lock
+        rotation.value = withRepeat(
+          withTiming(360, { duration: 6000, easing: Easing.linear }),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
+            withTiming(0.95, { duration: 900, easing: Easing.inOut(Easing.ease) }),
+            withTiming(1.1, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+            withTiming(1, { duration: 700, easing: Easing.inOut(Easing.ease) })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
 
-    // Pattern 3: Floating Vertical Bounce
-    translateY.value = withRepeat(
-      withSequence(
-        withTiming(0, { duration: 700 }),
-        withTiming(-5, { duration: 400, easing: Easing.inOut(Easing.quad) }),
-        withTiming(2, { duration: 300, easing: Easing.inOut(Easing.quad) }),
-        withTiming(-3, { duration: 300, easing: Easing.inOut(Easing.quad) }),
-        withTiming(0, { duration: 450 }),
-        withTiming(0, { duration: 1350 })
-      ),
-      -1,
-      false
-    );
-  }, [rotation, scale, translateY]);
+      case 'clock': {
+        // ⏳ Ticking Pendulum Clock Rhythmic Tick-Tock
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-22, { duration: 400, easing: Easing.out(Easing.quad) }),
+            withTiming(22, { duration: 400, easing: Easing.out(Easing.quad) }),
+            withTiming(-16, { duration: 350, easing: Easing.out(Easing.quad) }),
+            withTiming(16, { duration: 350, easing: Easing.out(Easing.quad) }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-3, { duration: 400 }),
+            withTiming(2, { duration: 400 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1300 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'trophy': {
+        // 🏆 Champion Victory Triumph Lift & Winner Celebration Wobble
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-8, { duration: 450, easing: Easing.out(Easing.back(2)) }),
+            withTiming(2, { duration: 350, easing: Easing.inOut(Easing.quad) }),
+            withTiming(-4, { duration: 300 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1200 })
+          ),
+          -1,
+          false
+        );
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-12, { duration: 250 }),
+            withTiming(12, { duration: 250 }),
+            withTiming(-6, { duration: 200 }),
+            withTiming(6, { duration: 200 }),
+            withTiming(0, { duration: 300 }),
+            withTiming(0, { duration: 1500 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.25, { duration: 450 }),
+            withTiming(0.98, { duration: 350 }),
+            withTiming(1, { duration: 400 }),
+            withTiming(1, { duration: 1500 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'gift': {
+        // 🎁 Mystery Surprise Box Shake & Rattle
+        translateX.value = withRepeat(
+          withSequence(
+            withTiming(-4, { duration: 60 }),
+            withTiming(4, { duration: 60 }),
+            withTiming(-4, { duration: 60 }),
+            withTiming(4, { duration: 60 }),
+            withTiming(-2, { duration: 60 }),
+            withTiming(2, { duration: 60 }),
+            withTiming(0, { duration: 100 }),
+            withTiming(0, { duration: 1400 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-4, { duration: 300, easing: Easing.out(Easing.quad) }),
+            withTiming(0, { duration: 200 }),
+            withTiming(0, { duration: 1900 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'star': {
+        // ⭐ Twinkling Star Sparkle & Diamond Rotation
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(45, { duration: 500, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
+            withTiming(-45, { duration: 500, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.3, { duration: 500 }),
+            withTiming(0.9, { duration: 400 }),
+            withTiming(1.15, { duration: 400 }),
+            withTiming(1, { duration: 500 }),
+            withTiming(1, { duration: 700 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'history':
+      default: {
+        // 🗺️ Compass Navigation Sway & Discovery Drift
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-25, { duration: 700, easing: Easing.inOut(Easing.quad) }),
+            withTiming(25, { duration: 800, easing: Easing.inOut(Easing.quad) }),
+            withTiming(-10, { duration: 600, easing: Easing.inOut(Easing.quad) }),
+            withTiming(10, { duration: 600, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 600 }),
+            withTiming(0, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+    }
+  }, [type, rotation, scale, translateX, translateY, opacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
       { rotate: `${rotation.value}deg` },
       { scale: scale.value },
+      { translateX: translateX.value },
       { translateY: translateY.value },
     ],
+    opacity: opacity.value,
   }));
 
   return (
@@ -183,7 +356,7 @@ export function JourneyHeader({
           </View>
         </View>
 
-        {/* Quick Stat Badges with Contextual Colors + Animated Vector Icons */}
+        {/* Quick Stat Badges with Contextual Colors & Unique Micro-Animations */}
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
           <View
             style={{
@@ -198,7 +371,7 @@ export function JourneyHeader({
             }}
           >
             <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(255, 190, 92, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
-              <AnimatedJourneyIcon icon={Zap} size={16} color="#FF9F1C" />
+              <ContextualJourneyIcon icon={Zap} type="zap" size={16} color="#FF9F1C" />
             </View>
             <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>+{todayXP}</Text>
             <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Today</Text>
@@ -217,7 +390,7 @@ export function JourneyHeader({
             }}
           >
             <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(96, 165, 250, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
-              <AnimatedJourneyIcon icon={Target} size={16} color="#3B82F6" />
+              <ContextualJourneyIcon icon={Target} type="target" size={16} color="#3B82F6" />
             </View>
             <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>{nextMilestoneXP}</Text>
             <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Next Target</Text>
@@ -236,7 +409,7 @@ export function JourneyHeader({
             }}
           >
             <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(167, 139, 250, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
-              <AnimatedJourneyIcon icon={Clock} size={16} color="#8B5CF6" />
+              <ContextualJourneyIcon icon={Clock} type="clock" size={16} color="#8B5CF6" />
             </View>
             <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>{remainingXP}</Text>
             <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Remaining</Text>
@@ -330,6 +503,12 @@ export function JourneyNode({
       ? Trophy
       : Gift;
 
+  const iconType: JourneyIconType = isClaimed
+    ? 'star'
+    : isUnlocked
+      ? 'trophy'
+      : 'gift';
+
   const iconColor = isClaimed
     ? '#16a34a'
     : isUnlocked
@@ -355,7 +534,7 @@ export function JourneyNode({
         </View>
       ) : null}
 
-      {/* Circle Node Button with Contextual Color Animated Vector Icon */}
+      {/* Circle Node Button with Contextual Unique Animated Vector Icon */}
       <Pressable onPress={onPress}>
         <View
           style={{
@@ -382,7 +561,7 @@ export function JourneyNode({
             elevation: 4,
           }}
         >
-          <AnimatedJourneyIcon icon={NodeIcon} size={26} color={iconColor} />
+          <ContextualJourneyIcon icon={NodeIcon} type={iconType} size={26} color={iconColor} />
         </View>
       </Pressable>
 
@@ -465,7 +644,7 @@ export function LockedRewardCard({ milestone, currentXP }: LockedRewardCardProps
             justifyContent: 'center',
           }}
         >
-          <AnimatedJourneyIcon icon={Gift} size={24} color={palette.danger} />
+          <ContextualJourneyIcon icon={Gift} type="gift" size={24} color={palette.danger} />
         </View>
 
         <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>
@@ -522,7 +701,7 @@ export function UnlockedRewardCard({ milestone, onClaim, isClaiming }: UnlockedR
             justifyContent: 'center',
           }}
         >
-          <AnimatedJourneyIcon icon={Trophy} size={28} color={palette.danger} />
+          <ContextualJourneyIcon icon={Trophy} type="trophy" size={28} color={palette.danger} />
         </View>
 
         <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
@@ -626,7 +805,7 @@ export function RewardRevealModal({
               borderColor: palette.cherryBloom,
             }}
           >
-            <AnimatedJourneyIcon icon={Trophy} size={40} color={palette.danger} />
+            <ContextualJourneyIcon icon={Trophy} type="trophy" size={40} color={palette.danger} />
           </View>
 
           <View style={{ alignItems: 'center', gap: 4 }}>
@@ -795,7 +974,7 @@ export function JourneyHistoryCard({ events }: JourneyHistoryCardProps) {
     <View style={[glassCardStyle, styles.pinkGlassCard]}>
       <View style={{ gap: spacing.sm }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <AnimatedJourneyIcon icon={History} size={18} color={palette.danger} />
+          <ContextualJourneyIcon icon={History} type="history" size={18} color={palette.danger} />
           <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 15 }}>
             Journey Timeline History
           </Text>
@@ -810,6 +989,15 @@ export function JourneyHistoryCard({ events }: JourneyHistoryCardProps) {
                 : evt.event_type === 'challenge_completed'
                   ? Trophy
                   : Compass;
+
+          const iconType: JourneyIconType =
+            evt.event_type === 'milestone_unlocked'
+              ? 'trophy'
+              : evt.event_type === 'reward_claimed'
+                ? 'star'
+                : evt.event_type === 'challenge_completed'
+                  ? 'trophy'
+                  : 'history';
 
           const iconColor =
             evt.event_type === 'milestone_unlocked'
@@ -853,7 +1041,7 @@ export function JourneyHistoryCard({ events }: JourneyHistoryCardProps) {
                   justifyContent: 'center',
                 }}
               >
-                <AnimatedJourneyIcon icon={EvtIcon} size={16} color={iconColor} />
+                <ContextualJourneyIcon icon={EvtIcon} type={iconType} size={16} color={iconColor} />
               </View>
 
               <View style={{ flex: 1 }}>
