@@ -5,6 +5,13 @@ module.exports = {
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
+      fontFamily: {
+        heading: ["'Fraunces'", 'Georgia', 'serif'],
+        body: ["'General Sans'", '-apple-system', 'sans-serif'],
+        accent: ["'Cormorant Garamond'", 'Georgia', 'serif'],
+        mascot: ["'Shantell Sans'", 'cursive', 'sans-serif'],
+        mono: ["'Martian Mono'", 'monospace'],
+      },
       colors: {
         cherry: {
           bloom: '#C73A57',

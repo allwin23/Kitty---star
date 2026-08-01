@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import type { AnnouncementItem } from '../types';
-import { glassCardStyle, palette, radius, spacing } from '@/theme';
+import { fonts, glassCardStyle, palette, radius, spacing } from '@/theme';
 
 export interface CompanionBulletinBoardProps {
   announcement: AnnouncementItem | null;
@@ -53,7 +53,7 @@ export function CompanionBulletinBoard({
   if (!announcement) {
     return (
       <View style={[styles.board, styles.emptyBoard]}>
-        <Text style={{ color: palette.textSecondary, fontSize: 13, textAlign: 'center', fontWeight: '500' }}>
+        <Text style={{ fontFamily: fonts.mascot, color: palette.textSecondary, fontSize: 13, textAlign: 'center', fontWeight: '500' }}>
           ✨ Companion Bulletin Board — All caught up!
         </Text>
       </View>
@@ -98,7 +98,7 @@ export function CompanionBulletinBoard({
 
         {/* Priority Badge */}
         <View style={[styles.badge, { backgroundColor: priorityStyle.bg }]}>
-          <Text style={{ color: priorityStyle.color, fontSize: 10, fontWeight: '800' }}>
+          <Text style={{ fontFamily: fonts.mono, color: priorityStyle.color, fontSize: 10, fontWeight: '800' }}>
             {priorityStyle.label}
           </Text>
         </View>
@@ -106,7 +106,7 @@ export function CompanionBulletinBoard({
         {/* Queue Counter Indicator */}
         {queueCount > 0 ? (
           <View style={[styles.queueBadge, { backgroundColor: palette.cherryBloom }]}>
-            <Text style={{ color: '#fff', fontSize: 10, fontWeight: '800' }}>+{queueCount}</Text>
+            <Text style={{ fontFamily: fonts.mono, color: '#fff', fontSize: 10, fontWeight: '800' }}>+{queueCount}</Text>
           </View>
         ) : null}
 
@@ -118,7 +118,7 @@ export function CompanionBulletinBoard({
       </View>
 
       {/* Typing Announcement Text */}
-      <Text style={{ color: palette.textSecondary, fontSize: 13, marginTop: spacing[4], lineHeight: 18 }}>
+      <Text style={{ fontFamily: fonts.mascot, color: palette.textSecondary, fontSize: 13, marginTop: spacing[4], lineHeight: 18 }}>
         {typingText}
         {isTyping ? <Text style={{ color: palette.cherryBloom, fontWeight: '900' }}>|</Text> : ''}
       </Text>
@@ -126,7 +126,7 @@ export function CompanionBulletinBoard({
       {/* XP Floater Tag if present */}
       {announcement.xpBonus ? (
         <View style={styles.xpFloater}>
-          <Text style={{ color: palette.cherryBloom, fontWeight: '800', fontSize: 12 }}>
+          <Text style={{ fontFamily: fonts.mono, color: palette.cherryBloom, fontWeight: '800', fontSize: 12 }}>
             ⭐ +{announcement.xpBonus} XP
           </Text>
         </View>

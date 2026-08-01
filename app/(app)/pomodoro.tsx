@@ -352,7 +352,7 @@ export default function PomodoroScreen() {
                   fontSize: 72,
                   fontWeight: '800',
                   color: isRunning && !isPaused ? palette.cherryBloom : palette.textPrimary,
-                  fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+                  fontFamily: "'Martian Mono', monospace",
                   letterSpacing: -1,
                 }}
               >

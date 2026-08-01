@@ -113,18 +113,31 @@ export const spacing = {
   20: 20,
 } as const;
 
+export const fonts = {
+  heading: "'Fraunces', Georgia, serif",
+  body: "'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+  accent: "'Cormorant Garamond', Georgia, serif",
+  mascot: "'Shantell Sans', 'Comic Sans MS', cursive, sans-serif",
+  mono: "'Martian Mono', monospace",
+} as const;
+
+export const fontFamilies = fonts;
+
 export const typography = {
   // Hand-picked scale: 12, 14, 16, 18, 20, 24, 28, 36, 48
-  xs: { fontSize: 12, lineHeight: 16 },
-  sm: { fontSize: 14, lineHeight: 20 },
-  body: { fontSize: 16, lineHeight: 24 },
-  md: { fontSize: 18, lineHeight: 26 },
-  title: { fontSize: 20, lineHeight: 26, fontWeight: '700' as const },
-  heading: { fontSize: 24, lineHeight: 30, fontWeight: '700' as const },
-  h2: { fontSize: 28, lineHeight: 34, fontWeight: '700' as const },
-  h1: { fontSize: 36, lineHeight: 42, fontWeight: '800' as const },
-  hero: { fontSize: 48, lineHeight: 52, fontWeight: '800' as const },
-  caption: { fontSize: 12, lineHeight: 16 },
+  xs: { fontFamily: fonts.body, fontSize: 12, lineHeight: 16 },
+  sm: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20 },
+  body: { fontFamily: fonts.body, fontSize: 16, lineHeight: 24 },
+  md: { fontFamily: fonts.body, fontSize: 18, lineHeight: 26 },
+  title: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 20, lineHeight: 26, fontWeight: '500' as const },
+  heading: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 24, lineHeight: 30, fontWeight: '500' as const },
+  h2: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 28, lineHeight: 34, fontWeight: '500' as const },
+  h1: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 36, lineHeight: 42, fontWeight: '500' as const },
+  hero: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 48, lineHeight: 52, fontWeight: '500' as const },
+  caption: { fontFamily: fonts.body, fontSize: 12, lineHeight: 16 },
+  accent: { fontFamily: fonts.accent, fontStyle: 'italic' as const },
+  mascot: { fontFamily: fonts.mascot },
+  mono: { fontFamily: fonts.mono },
 } as const;
 
 export const radius = {

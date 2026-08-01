@@ -93,7 +93,7 @@ export default function PartnerLinkingScreen() {
             </Text>
             {createdCode ? (
               <View style={{ backgroundColor: palette.blush, padding: spacing[12], borderRadius: 16, alignItems: 'center' }}>
-                <Text style={{ fontSize: 28, fontWeight: '800', color: palette.cherryBloom, letterSpacing: 4, fontFamily: 'monospace' }}>
+                <Text style={{ fontSize: 28, fontWeight: '800', color: palette.cherryBloom, letterSpacing: 4, fontFamily: "'Martian Mono', monospace" }}>
                   {createdCode}
                 </Text>
               </View>

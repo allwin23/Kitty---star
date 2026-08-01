@@ -6,7 +6,7 @@ import { companionMascotService } from '../mascot.service';
 import type { CompanionMascotState } from '../types';
 import { CompanionBulletinBoard } from './bulletin-board';
 import { CompanionMascot } from './companion-mascot';
-import { glassCardStyle, palette, radius, spacing } from '@/theme';
+import { fonts, glassCardStyle, palette, radius, spacing } from '@/theme';
 
 export function CompanionStage() {
   const [syncState, setSyncState] = useState<SynchronizationState>(
@@ -31,11 +31,11 @@ export function CompanionStage() {
       {/* Header Level & Personality bar */}
       <View style={styles.headerBar}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[8] }}>
-          <Text style={{ fontWeight: '800', color: palette.textPrimary, fontSize: 14 }}>
+          <Text style={{ fontFamily: fonts.accent, fontStyle: 'italic', fontWeight: '700', color: palette.textPrimary, fontSize: 16 }}>
             🐱 {mascotState.name}
           </Text>
           <View style={styles.levelBadge}>
-            <Text style={{ color: palette.cherryBloom, fontSize: 11, fontWeight: '800' }}>
+            <Text style={{ fontFamily: fonts.mono, color: palette.cherryBloom, fontSize: 11, fontWeight: '800' }}>
               LVL {mascotState.level}
             </Text>
           </View>

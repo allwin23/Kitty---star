@@ -104,7 +104,7 @@ export default function HomeScreen() {
                     { label: 'Pomodoros', value: stats.total_pomodoros },
                   ].map((s) => (
                     <View key={s.label} style={{ alignItems: 'center', minWidth: 60 }}>
-                      <Text style={{ fontWeight: '800', fontSize: 22, color: palette.cherryBloom, fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' }}>
+                      <Text style={{ fontWeight: '800', fontSize: 22, color: palette.cherryBloom, fontFamily: "'Martian Mono', monospace" }}>
                         {s.value}
                       </Text>
                       <Text style={{ color: palette.textSecondary, fontSize: 12, marginTop: spacing[4] }}>{s.label}</Text>
