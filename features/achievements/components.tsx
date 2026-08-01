@@ -2,9 +2,10 @@
  * Achievement feature components.
  *
  * Presentational components for achievements, gallery, history, and details.
+ * All titles, category pills, and section headers use crisp black (#2A1D22) for maximum legibility!
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -12,16 +13,42 @@ import {
   Text,
   useColorScheme,
   View,
-  type StyleProp,
-  type ViewStyle,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { format } from 'date-fns';
+import {
+  Award,
+  BookOpen,
+  CheckCircle2,
+  Clock,
+  Crown,
+  Droplets,
+  Flame,
+  Gem,
+  Gift,
+  Heart,
+  HelpCircle,
+  History,
+  Lock,
+  Sparkles,
+  Star,
+  Target,
+  Trophy,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react-native';
 
 import { Card, Loading, EmptyState, Button, Input } from '@/components/ui';
 import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import {
   getAchievementCategory,
-  getBadgeIcon,
   getAchievementXPReward,
   type AchievementRow,
   type UserAchievementWithDetails,
@@ -32,28 +59,499 @@ function usePalette() {
   return palette;
 }
 
+// ─── 12 Icon-Specific Bespoke Micro-Animations ───────────────────────────────
 
+export type AchievementAnimType =
+  | 'flame'       // 🔥 Rapid Ignition & Rising Heat Flickers
+  | 'trophy'      // 🏆 Triumph Golden Lift & Victory Sway
+  | 'target'      // 🎯 Radar Sweep & Lock-in Reticle Snap
+  | 'star'        // ⭐ Twinkling Starburst Spin & Pop
+  | 'award'       // 💝 Double Heartbeat Thump & Gentle Float
+  | 'check'       // ✅ Seal Stamp Elastic Bounce & Checkmark Spin
+  | 'clock'       // ⏱️ Step Ticking Pendulum Swing
+  | 'droplets'    // 💧 Liquid Drop Fall, Splash & Squish
+  | 'book'        // 📖 Book Page Flip & Open Flutter
+  | 'zap'         // ⚡ Electric Thunder Bolt Tremor & Flash
+  | 'crown'       // 👑 Royal Majesty Levitation
+  | 'secret';     // ❓ Mystery Curiosity Hover
+
+export function ContextualAchievementIcon({
+  code = '',
+  size = 22,
+  customIcon,
+  customColor,
+}: {
+  code?: string;
+  size?: number;
+  customIcon?: LucideIcon;
+  customColor?: string;
+}) {
+  let Icon: LucideIcon = Trophy;
+  let type: AchievementAnimType = 'trophy';
+  let color = '#D94C61';
+
+  const c = code.toLowerCase();
+
+  if (c.includes('streak') || c === 'seven_day_streak') {
+    Icon = Flame;
+    type = 'flame';
+    color = '#FF9F1C';
+  } else if (c.includes('pomodoro') || c === 'first_pomodoro') {
+    Icon = Clock;
+    type = 'clock';
+    color = '#3B82F6';
+  } else if (c.includes('hundred') || c.includes('target') || c.includes('goal')) {
+    Icon = Target;
+    type = 'target';
+    color = '#8B5CF6';
+  } else if (c.includes('approved') || c === 'first_approved_day') {
+    Icon = CheckCircle2;
+    type = 'check';
+    color = '#16a34a';
+  } else if (c.includes('water') || c.includes('hydration')) {
+    Icon = Droplets;
+    type = 'droplets';
+    color = '#06B6D4';
+  } else if (c.includes('pyq') || c.includes('test') || c.includes('vocab') || c.includes('book')) {
+    Icon = BookOpen;
+    type = 'book';
+    color = '#EC4899';
+  } else if (c.includes('flashcard') || c.includes('speed')) {
+    Icon = Zap;
+    type = 'zap';
+    color = '#F59E0B';
+  } else if (c.includes('partner') || c.includes('award')) {
+    Icon = Heart;
+    type = 'award';
+    color = '#EC4899';
+  } else if (c.includes('level') || c.includes('xp') || c.includes('star')) {
+    Icon = Star;
+    type = 'star';
+    color = '#F59E0B';
+  } else if (c.includes('master') || c.includes('king') || c.includes('crown')) {
+    Icon = Crown;
+    type = 'crown';
+    color = '#FFBE5C';
+  } else if (c.startsWith('secret_')) {
+    Icon = HelpCircle;
+    type = 'secret';
+    color = '#2A1D22';
+  }
+
+  if (customIcon) Icon = customIcon;
+  if (customColor) color = customColor;
+
+  const rotation = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const scaleX = useSharedValue(1);
+  const scaleY = useSharedValue(1);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
+  useEffect(() => {
+    switch (type) {
+      case 'flame': {
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-7, { duration: 180, easing: Easing.out(Easing.quad) }),
+            withTiming(2, { duration: 140, easing: Easing.in(Easing.quad) }),
+            withTiming(-4, { duration: 160 }),
+            withTiming(1, { duration: 140 }),
+            withTiming(0, { duration: 200 }),
+            withTiming(0, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        translateX.value = withRepeat(
+          withSequence(
+            withTiming(-2, { duration: 120 }),
+            withTiming(2, { duration: 120 }),
+            withTiming(-1, { duration: 100 }),
+            withTiming(1, { duration: 100 }),
+            withTiming(0, { duration: 150 }),
+            withTiming(0, { duration: 1250 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.32, { duration: 220 }),
+            withTiming(0.9, { duration: 180 }),
+            withTiming(1.18, { duration: 180 }),
+            withTiming(1, { duration: 250 }),
+            withTiming(1, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'target': {
+        rotation.value = withRepeat(
+          withTiming(360, { duration: 5500, easing: Easing.linear }),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.35, { duration: 400, easing: Easing.out(Easing.back(2)) }),
+            withTiming(0.92, { duration: 300 }),
+            withTiming(1.15, { duration: 350 }),
+            withTiming(1.0, { duration: 400 }),
+            withTiming(1.0, { duration: 2000 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'award': {
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.35, { duration: 180, easing: Easing.out(Easing.quad) }),
+            withTiming(1.08, { duration: 140 }),
+            withTiming(1.28, { duration: 160 }),
+            withTiming(1.0, { duration: 300 }),
+            withTiming(1.0, { duration: 1400 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-5, { duration: 400, easing: Easing.out(Easing.quad) }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1380 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'check': {
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(4, { duration: 140 }),
+            withTiming(-6, { duration: 280, easing: Easing.out(Easing.back(3)) }),
+            withTiming(0, { duration: 200 }),
+            withTiming(0, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(20, { duration: 200 }),
+            withTiming(-10, { duration: 200 }),
+            withTiming(0, { duration: 200 }),
+            withTiming(0, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.3, { duration: 220 }),
+            withTiming(0.95, { duration: 200 }),
+            withTiming(1, { duration: 200 }),
+            withTiming(1, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'clock': {
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-26, { duration: 350, easing: Easing.out(Easing.exp) }),
+            withTiming(26, { duration: 350, easing: Easing.out(Easing.exp) }),
+            withTiming(-14, { duration: 300, easing: Easing.out(Easing.exp) }),
+            withTiming(14, { duration: 300, easing: Easing.out(Easing.exp) }),
+            withTiming(0, { duration: 300 }),
+            withTiming(0, { duration: 900 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(3, { duration: 200 }),
+            withTiming(0, { duration: 200 }),
+            withTiming(0, { duration: 1900 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'droplets': {
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(7, { duration: 300, easing: Easing.in(Easing.quad) }),
+            withTiming(-8, { duration: 350, easing: Easing.out(Easing.quad) }),
+            withTiming(0, { duration: 250 }),
+            withTiming(0, { duration: 1300 })
+          ),
+          -1,
+          false
+        );
+        scaleX.value = withRepeat(
+          withSequence(
+            withTiming(1.35, { duration: 280 }),
+            withTiming(0.85, { duration: 250 }),
+            withTiming(1, { duration: 250 }),
+            withTiming(1, { duration: 1420 })
+          ),
+          -1,
+          false
+        );
+        scaleY.value = withRepeat(
+          withSequence(
+            withTiming(0.8, { duration: 280 }),
+            withTiming(1.25, { duration: 250 }),
+            withTiming(1, { duration: 250 }),
+            withTiming(1, { duration: 1420 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'book': {
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-22, { duration: 400, easing: Easing.inOut(Easing.quad) }),
+            withTiming(22, { duration: 450, easing: Easing.inOut(Easing.quad) }),
+            withTiming(-10, { duration: 350 }),
+            withTiming(10, { duration: 350 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1100 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-5, { duration: 450 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1200 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'zap': {
+        translateX.value = withRepeat(
+          withSequence(
+            withTiming(-6, { duration: 50 }),
+            withTiming(6, { duration: 50 }),
+            withTiming(-4, { duration: 50 }),
+            withTiming(4, { duration: 50 }),
+            withTiming(0, { duration: 80 }),
+            withTiming(0, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.4, { duration: 100 }),
+            withTiming(0.85, { duration: 80 }),
+            withTiming(1.2, { duration: 100 }),
+            withTiming(1, { duration: 120 }),
+            withTiming(1, { duration: 1600 })
+          ),
+          -1,
+          false
+        );
+        opacity.value = withRepeat(
+          withSequence(
+            withTiming(0.3, { duration: 50 }),
+            withTiming(1.0, { duration: 50 }),
+            withTiming(0.5, { duration: 50 }),
+            withTiming(1.0, { duration: 100 }),
+            withTiming(1.0, { duration: 1650 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'star': {
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(45, { duration: 400, easing: Easing.inOut(Easing.back(1.5)) }),
+            withTiming(-45, { duration: 450, easing: Easing.inOut(Easing.back(1.5)) }),
+            withTiming(0, { duration: 350 }),
+            withTiming(0, { duration: 1000 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.4, { duration: 400 }),
+            withTiming(0.9, { duration: 350 }),
+            withTiming(1.2, { duration: 350 }),
+            withTiming(1, { duration: 400 }),
+            withTiming(1, { duration: 700 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'crown': {
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-9, { duration: 900, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 900, easing: Easing.inOut(Easing.quad) })
+          ),
+          -1,
+          false
+        );
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-12, { duration: 600, easing: Easing.inOut(Easing.quad) }),
+            withTiming(12, { duration: 600, easing: Easing.inOut(Easing.quad) }),
+            withTiming(0, { duration: 600 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.18, { duration: 900 }),
+            withTiming(1.0, { duration: 900 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'secret': {
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-18, { duration: 350 }),
+            withTiming(18, { duration: 350 }),
+            withTiming(-8, { duration: 250 }),
+            withTiming(8, { duration: 250 }),
+            withTiming(0, { duration: 300 }),
+            withTiming(0, { duration: 1200 })
+          ),
+          -1,
+          false
+        );
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-5, { duration: 500 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1300 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+
+      case 'trophy':
+      default: {
+        translateY.value = withRepeat(
+          withSequence(
+            withTiming(-10, { duration: 450, easing: Easing.out(Easing.back(2.5)) }),
+            withTiming(2, { duration: 350 }),
+            withTiming(0, { duration: 400 }),
+            withTiming(0, { duration: 1200 })
+          ),
+          -1,
+          false
+        );
+        rotation.value = withRepeat(
+          withSequence(
+            withTiming(-18, { duration: 280 }),
+            withTiming(18, { duration: 280 }),
+            withTiming(-9, { duration: 220 }),
+            withTiming(9, { duration: 220 }),
+            withTiming(0, { duration: 300 }),
+            withTiming(0, { duration: 1400 })
+          ),
+          -1,
+          false
+        );
+        scale.value = withRepeat(
+          withSequence(
+            withTiming(1.3, { duration: 450 }),
+            withTiming(0.95, { duration: 350 }),
+            withTiming(1, { duration: 400 }),
+            withTiming(1, { duration: 1400 })
+          ),
+          -1,
+          false
+        );
+        break;
+      }
+    }
+  }, [type, rotation, scale, scaleX, scaleY, translateX, translateY, opacity]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      { rotate: `${rotation.value}deg` },
+      { scale: scale.value },
+      { scaleX: scaleX.value },
+      { scaleY: scaleY.value },
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+    opacity: opacity.value,
+  }));
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Icon size={size} color={color} strokeWidth={2.4} />
+    </Animated.View>
+  );
+}
 
 // ─── Category Badge Pill ───────────────────────────────────────────────────────
 
 export function CategoryPill({ category }: { category: AchievementCategory }) {
-  const palette = usePalette();
   const isAward = category === 'partner_award';
-  const label = isAward ? '💝 Partner Award' : '🏅 System Badge';
-  const bg = isAward ? 'rgba(236, 72, 153, 0.15)' : 'rgba(79, 70, 229, 0.15)';
-  const color = isAward ? '#ec4899' : palette.primary;
+  const label = isAward ? 'Partner Award' : 'System Badge';
+  const bg = isAward ? 'rgba(236, 72, 153, 0.15)' : 'rgba(232, 77, 114, 0.15)';
+  const iconColor = isAward ? '#EC4899' : '#D94C61';
 
   return (
     <View
       style={{
         backgroundColor: bg,
+        borderColor: isAward ? 'rgba(236, 72, 153, 0.30)' : 'rgba(232, 77, 114, 0.30)',
+        borderWidth: 1.5,
         borderRadius: radius.sm,
         paddingHorizontal: 8,
-        paddingVertical: 2,
+        paddingVertical: 3,
         alignSelf: 'flex-start',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
       }}
     >
-      <Text style={{ fontSize: 11, fontWeight: '600', color }}>{label}</Text>
+      <ContextualAchievementIcon customIcon={isAward ? Heart : Award} customColor={iconColor} size={12} />
+      <Text style={{ fontSize: 11, fontWeight: '800', color: '#2A1D22' }}>{label}</Text>
     </View>
   );
 }
@@ -80,58 +578,59 @@ export function AchievementSummaryCard({
     totalBadges > 0 ? Math.round((unlockedCount / totalBadges) * 100) : 0;
 
   return (
-    <Card style={{ backgroundColor: palette.surface }}>
+    <View style={[glassCardStyle, styles.pinkGlassCard]}>
       <View style={{ gap: spacing.md }}>
-        <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>
+        <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
           Achievement Progress
         </Text>
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '700', fontSize: 22, color: palette.primary }}>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: palette.danger }}>
               {unlockedCount}/{totalBadges}
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>Unlocked</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Unlocked</Text>
           </View>
 
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '700', fontSize: 22, color: '#16a34a' }}>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: '#16a34a' }}>
               {completionPct}%
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>Completion</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Completion</Text>
           </View>
 
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '700', fontSize: 22, color: '#d97706' }}>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: '#FF9F1C' }}>
               Lvl {level}
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>Level</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Level</Text>
           </View>
 
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '700', fontSize: 22, color: '#ec4899' }}>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: '#EC4899' }}>
               {xp}
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>Total XP</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Total XP</Text>
           </View>
         </View>
 
         {/* Progress bar */}
         <View
           style={{
-            height: 6,
-            backgroundColor: palette.background,
+            height: 8,
+            backgroundColor: 'rgba(255, 255, 255, 0.70)',
             borderRadius: radius.full,
             overflow: 'hidden',
             borderWidth: 1,
-            borderColor: palette.border,
+            borderColor: 'rgba(250, 215, 224, 0.90)',
           }}
         >
           <View
             style={{
               height: '100%',
               width: `${completionPct}%`,
-              backgroundColor: palette.primary,
+              backgroundColor: palette.cherryBloom,
+              borderRadius: radius.full,
             }}
           />
         </View>
@@ -142,31 +641,31 @@ export function AchievementSummaryCard({
               flexDirection: 'row',
               alignItems: 'center',
               gap: spacing.xs,
-              backgroundColor: palette.background,
+              backgroundColor: 'rgba(255, 255, 255, 0.75)',
               padding: spacing.xs,
               borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: palette.border,
+              borderWidth: 1.5,
+              borderColor: 'rgba(250, 215, 224, 0.90)',
             }}
           >
-            <Text style={{ fontSize: 20 }}>
-              {getBadgeIcon(latestAchievement.achievements.code)}
-            </Text>
+            <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(232, 77, 114, 0.12)', alignItems: 'center', justifyContent: 'center' }}>
+              <ContextualAchievementIcon code={latestAchievement.achievements.code} size={20} />
+            </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: palette.mutedText, fontSize: 10 }}>
+              <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>
                 Latest Unlock
               </Text>
-              <Text style={{ color: palette.text, fontWeight: '600', fontSize: 12 }}>
+              <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
                 {latestAchievement.achievements.name}
               </Text>
             </View>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>
               {format(new Date(latestAchievement.unlocked_at), 'dd MMM')}
             </Text>
           </View>
         ) : null}
       </View>
-    </Card>
+    </View>
   );
 }
 
@@ -183,52 +682,51 @@ export function AchievementCard({ item, onPress }: AchievementCardProps) {
   if (!ach) return null;
 
   const category = getAchievementCategory(ach.code);
-  const icon = getBadgeIcon(ach.code);
   const xpReward = getAchievementXPReward(ach.code);
 
   return (
     <Pressable onPress={onPress}>
-      <Card style={{ backgroundColor: palette.surface }}>
+      <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.xs }]}>
         <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
           <View
             style={{
-              width: 44,
-              height: 44,
-              borderRadius: 22,
-              backgroundColor: palette.background,
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: 'rgba(232, 77, 114, 0.14)',
+              borderColor: 'rgba(232, 77, 114, 0.30)',
+              borderWidth: 1.5,
               alignItems: 'center',
               justifyContent: 'center',
-              borderWidth: 1,
-              borderColor: palette.border,
             }}
           >
-            <Text style={{ fontSize: 24 }}>{icon}</Text>
+            <ContextualAchievementIcon code={ach.code} size={24} />
           </View>
 
           <View style={{ flex: 1, gap: 2 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+              <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>
                 {ach.name}
               </Text>
               <CategoryPill category={category} />
             </View>
 
-            <Text style={{ color: palette.mutedText, fontSize: 12 }} numberOfLines={2}>
+            <Text style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }} numberOfLines={2}>
               {ach.description}
             </Text>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 2 }}>
-              <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 11 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 3 }}>
+              <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
                 +{xpReward} XP
               </Text>
-              <Text style={{ color: palette.mutedText, fontSize: 11 }}>•</Text>
-              <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+              <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>•</Text>
+              <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>
                 Unlocked {format(new Date(item.unlocked_at), 'dd MMM yyyy')}
               </Text>
             </View>
           </View>
         </View>
-      </Card>
+      </View>
     </Pressable>
   );
 }
@@ -245,47 +743,59 @@ export interface BadgeCardProps {
 export function BadgeCard({ badge, unlocked, unlockedAt, onPress }: BadgeCardProps) {
   const palette = usePalette();
   const category = getAchievementCategory(badge.code);
-  const icon = getBadgeIcon(badge.code);
   const isSecret = badge.code.startsWith('secret_');
 
   return (
-    <Pressable onPress={onPress} style={{ width: '48%' }}>
+    <Pressable onPress={onPress} style={{ width: '48%', marginBottom: 12 }}>
       <View
         style={{
-          backgroundColor: palette.surface,
+          backgroundColor: 'rgba(255, 243, 245, 0.85)',
           borderRadius: radius.md,
-          borderWidth: 1,
-          borderColor: unlocked ? palette.primary : palette.border,
+          borderWidth: 1.5,
+          borderColor: unlocked ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
           padding: spacing.sm,
           gap: spacing.xs,
-          opacity: unlocked ? 1 : 0.6,
+          opacity: unlocked ? 1 : 0.75,
           minHeight: 130,
         }}
       >
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 28, filter: unlocked ? undefined : 'grayscale(100%)' }}>
-            {unlocked ? icon : isSecret ? '❓' : icon}
-          </Text>
+          <View
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: unlocked ? 'rgba(232, 77, 114, 0.14)' : 'rgba(0, 0, 0, 0.05)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {isSecret && !unlocked ? (
+              <ContextualAchievementIcon code="secret_badge" customIcon={HelpCircle} customColor="#2A1D22" size={22} />
+            ) : (
+              <ContextualAchievementIcon code={badge.code} size={22} />
+            )}
+          </View>
           <CategoryPill category={category} />
         </View>
 
-        <Text style={{ color: palette.text, fontWeight: '700', fontSize: 13 }} numberOfLines={1}>
+        <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }} numberOfLines={1}>
           {isSecret && !unlocked ? 'Secret Badge' : badge.name}
         </Text>
 
-        <Text style={{ color: palette.mutedText, fontSize: 11 }} numberOfLines={2}>
+        <Text style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }} numberOfLines={2}>
           {isSecret && !unlocked ? 'Keep exploring to discover how to unlock.' : badge.description}
         </Text>
 
         <View style={{ marginTop: 'auto', paddingTop: 4 }}>
           <Text
             style={{
-              fontSize: 10,
-              fontWeight: '600',
-              color: unlocked ? '#16a34a' : palette.mutedText,
+              fontSize: 11,
+              fontWeight: '800',
+              color: unlocked ? '#16a34a' : '#2A1D22',
             }}
           >
-            {unlocked ? `Unlocked ${unlockedAt ? format(new Date(unlockedAt), 'dd MMM') : ''}` : '🔒 Locked'}
+            {unlocked ? `Unlocked ${unlockedAt ? format(new Date(unlockedAt), 'dd MMM') : ''}` : 'Locked'}
           </Text>
         </View>
       </View>
@@ -306,7 +816,6 @@ export function AchievementHistoryItem({ item, onPress }: AchievementHistoryItem
   if (!ach) return null;
 
   const category = getAchievementCategory(ach.code);
-  const icon = getBadgeIcon(ach.code);
 
   return (
     <Pressable onPress={onPress}>
@@ -315,26 +824,28 @@ export function AchievementHistoryItem({ item, onPress }: AchievementHistoryItem
           flexDirection: 'row',
           gap: spacing.sm,
           alignItems: 'center',
-          borderBottomColor: palette.border,
+          borderBottomColor: 'rgba(250, 215, 224, 0.60)',
           borderBottomWidth: 1,
           paddingVertical: spacing.xs,
         }}
       >
-        <Text style={{ fontSize: 24 }}>{icon}</Text>
+        <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(232, 77, 114, 0.12)', alignItems: 'center', justifyContent: 'center' }}>
+          <ContextualAchievementIcon code={ach.code} size={20} />
+        </View>
         <View style={{ flex: 1, gap: 2 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ color: palette.text, fontWeight: '600', fontSize: 13 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
               {ach.name}
             </Text>
             <CategoryPill category={category} />
           </View>
-          <Text style={{ color: palette.mutedText, fontSize: 11 }}>{ach.description}</Text>
+          <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '600' }}>{ach.description}</Text>
         </View>
         <View style={{ alignItems: 'flex-end', gap: 2 }}>
-          <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 11 }}>
+          <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
             +{getAchievementXPReward(ach.code)} XP
           </Text>
-          <Text style={{ color: palette.mutedText, fontSize: 10 }}>
+          <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>
             {format(new Date(item.unlocked_at), 'dd MMM yyyy')}
           </Text>
         </View>
@@ -355,7 +866,6 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
   const palette = usePalette();
   if (!item) return null;
 
-  // Resolve object shape whether UserAchievementWithDetails or AchievementRow
   const ach: AchievementRow | null =
     'achievements' in item ? item.achievements : (item as AchievementRow);
 
@@ -365,7 +875,6 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
   const unlockedAt = 'unlocked_at' in item ? item.unlocked_at : (item as any).unlockedAt;
 
   const category = getAchievementCategory(ach.code);
-  const icon = getBadgeIcon(ach.code);
   const xpReward = getAchievementXPReward(ach.code);
 
   return (
@@ -373,7 +882,7 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
       <View
         style={{
           flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.6)',
+          backgroundColor: 'rgba(0,0,0,0.7)',
           justifyContent: 'center',
           alignItems: 'center',
           padding: spacing.md,
@@ -383,10 +892,10 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
           style={{
             width: '100%',
             maxWidth: 360,
-            backgroundColor: palette.surface,
+            backgroundColor: 'rgba(255, 243, 245, 0.95)',
             borderRadius: radius.lg,
-            borderWidth: 1,
-            borderColor: palette.border,
+            borderWidth: 2,
+            borderColor: palette.cherryBloom,
             padding: spacing.lg,
             gap: spacing.md,
             alignItems: 'center',
@@ -398,26 +907,26 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
               width: 80,
               height: 80,
               borderRadius: 40,
-              backgroundColor: palette.background,
+              backgroundColor: 'rgba(232, 77, 114, 0.14)',
               alignItems: 'center',
               justifyContent: 'center',
               borderWidth: 2,
-              borderColor: unlocked ? palette.primary : palette.border,
+              borderColor: unlocked ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
             }}
           >
-            <Text style={{ fontSize: 44 }}>{icon}</Text>
+            <ContextualAchievementIcon code={ach.code} size={42} />
           </View>
 
           {/* Badge Title & Category */}
           <View style={{ alignItems: 'center', gap: 4 }}>
-            <Text style={{ color: palette.text, fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
+            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
               {ach.name}
             </Text>
             <CategoryPill category={category} />
           </View>
 
           {/* Description */}
-          <Text style={{ color: palette.mutedText, textAlign: 'center', fontSize: 13 }}>
+          <Text style={{ color: '#2A1D22', textAlign: 'center', fontSize: 13, lineHeight: 18, fontWeight: '600' }}>
             {ach.description}
           </Text>
 
@@ -425,47 +934,40 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
           <View
             style={{
               width: '100%',
-              backgroundColor: palette.background,
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
               borderRadius: radius.md,
-              borderWidth: 1,
-              borderColor: palette.border,
+              borderWidth: 1.5,
+              borderColor: 'rgba(250, 215, 224, 0.90)',
               padding: spacing.sm,
               gap: spacing.xs,
             }}
           >
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: palette.mutedText, fontSize: 12 }}>Status</Text>
+              <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Status</Text>
               <Text
                 style={{
-                  fontWeight: '700',
+                  fontWeight: '800',
                   fontSize: 12,
-                  color: unlocked ? '#16a34a' : palette.mutedText,
+                  color: unlocked ? '#16a34a' : '#2A1D22',
                 }}
               >
-                {unlocked ? 'Unlocked ✅' : 'Locked 🔒'}
+                {unlocked ? 'Unlocked' : 'Locked'}
               </Text>
             </View>
 
             {unlocked && unlockedAt ? (
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>Unlocked Date</Text>
-                <Text style={{ color: palette.text, fontSize: 12 }}>
+                <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Unlocked Date</Text>
+                <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>
                   {format(new Date(unlockedAt), 'dd MMMM yyyy')}
                 </Text>
               </View>
             ) : null}
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: palette.mutedText, fontSize: 12 }}>XP Reward</Text>
-              <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 12 }}>
+              <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>XP Reward</Text>
+              <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
                 +{xpReward} XP
-              </Text>
-            </View>
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Text style={{ color: palette.mutedText, fontSize: 12 }}>Unlock Rule</Text>
-              <Text style={{ color: palette.text, fontSize: 12 }}>
-                Evaluated automatically by backend engine
               </Text>
             </View>
           </View>
@@ -490,194 +992,49 @@ export function PartnerAwardCard({ award, isSent }: PartnerAwardCardProps) {
   const palette = usePalette();
 
   return (
-    <Card style={{ backgroundColor: palette.surface }}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.xs }]}>
       <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
         <View
           style={{
             width: 48,
             height: 48,
             borderRadius: 24,
-            backgroundColor: award.color ? `${award.color}22` : 'rgba(79,70,229,0.15)',
+            backgroundColor: 'rgba(236, 72, 153, 0.14)',
+            borderColor: 'rgba(236, 72, 153, 0.30)',
+            borderWidth: 1.5,
             alignItems: 'center',
             justifyContent: 'center',
-            borderWidth: 1,
-            borderColor: award.color ?? palette.primary,
           }}
         >
-          <Text style={{ fontSize: 26 }}>{award.icon ?? '🌟'}</Text>
+          <ContextualAchievementIcon customIcon={Heart} customColor="#EC4899" size={24} />
         </View>
 
         <View style={{ flex: 1, gap: 2 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>
               {award.title}
             </Text>
             <CategoryPill category="partner_award" />
           </View>
 
           {award.message ? (
-            <Text style={{ color: palette.mutedText, fontSize: 12 }} numberOfLines={2}>
-              {`"${award.message}"`}
+            <Text style={{ color: '#2A1D22', fontSize: 13, fontStyle: 'italic', fontWeight: '600', marginTop: 2 }}>
+              &quot;{award.message}&quot;
             </Text>
           ) : null}
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 2 }}>
-            <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 11 }}>
-              +{award.xp_bonus} XP Bonus
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 4 }}>
+            <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
+              +{award.xp_bonus || 50} XP Bonus
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>•</Text>
-            <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>•</Text>
+            <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>
               {isSent ? 'Sent' : 'Received'} {format(new Date(award.created_at), 'dd MMM yyyy')}
             </Text>
           </View>
         </View>
       </View>
-    </Card>
-  );
-}
-
-// ─── CreatePartnerAwardModal ───────────────────────────────────────────────────
-
-export interface CreatePartnerAwardModalProps {
-  visible: boolean;
-  onClose: () => void;
-  onSend: (data: { title: string; message: string; icon: string; xp_bonus: number }) => Promise<void>;
-  isSending: boolean;
-}
-
-const ICONS = ['🌟', '❤️', '👑', '🔥', '🏆', '💎', '⚡', '🎯', '🥇', '🎉'];
-const XP_OPTIONS = [25, 50, 100];
-
-export function CreatePartnerAwardModal({
-  visible,
-  onClose,
-  onSend,
-  isSending,
-}: CreatePartnerAwardModalProps) {
-  const palette = usePalette();
-  const [title, setTitle] = useState('');
-  const [message, setMessage] = useState('');
-  const [icon, setIcon] = useState('🌟');
-  const [xpBonus, setXpBonus] = useState(50);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  const handleSend = async () => {
-    if (!title.trim()) {
-      setErrorMsg('Please enter an award title.');
-      return;
-    }
-    setErrorMsg(null);
-    try {
-      await onSend({
-        title: title.trim(),
-        message: message.trim(),
-        icon,
-        xp_bonus: xpBonus,
-      });
-      setTitle('');
-      setMessage('');
-      onClose();
-    } catch (err: any) {
-      setErrorMsg(err.message ?? 'Failed to send award.');
-    }
-  };
-
-  return (
-    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: 'rgba(0,0,0,0.6)',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: spacing.md,
-        }}
-      >
-        <ScrollView
-          style={{ width: '100%', maxWidth: 360 }}
-          contentContainerStyle={{
-            backgroundColor: palette.surface,
-            borderRadius: radius.lg,
-            borderWidth: 1,
-            borderColor: palette.border,
-            padding: spacing.lg,
-            gap: spacing.md,
-          }}
-        >
-          <Text style={{ color: palette.text, fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
-            💝 Award Your Partner
-          </Text>
-
-          {/* Icon Selector */}
-          <View style={{ gap: 4 }}>
-            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
-              Choose Icon
-            </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
-              {ICONS.map((i) => (
-                <Pressable
-                  key={i}
-                  onPress={() => setIcon(i)}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                    backgroundColor: icon === i ? palette.primary : palette.background,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderWidth: 1,
-                    borderColor: palette.border,
-                  }}
-                >
-                  <Text style={{ fontSize: 20 }}>{i}</Text>
-                </Pressable>
-              ))}
-            </View>
-          </View>
-
-          {/* Title Input */}
-          <View style={{ gap: 4 }}>
-            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
-              Award Title
-            </Text>
-            <Input
-              value={title}
-              onChangeText={setTitle}
-              placeholder="e.g. Best Study Partner"
-            />
-          </View>
-
-          {/* Message Input */}
-          <View style={{ gap: 4 }}>
-            <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
-              Message (Optional)
-            </Text>
-            <Input
-              value={message}
-              onChangeText={setMessage}
-              placeholder="e.g. Thanks for motivating me every day!"
-            />
-          </View>
-
-          {/* Error Message */}
-          {errorMsg ? (
-            <Text style={{ color: palette.danger, fontSize: 12, textAlign: 'center' }}>
-              {errorMsg}
-            </Text>
-          ) : null}
-
-          {/* Action Buttons */}
-          <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-            <Button onPress={onClose} style={{ flex: 1, backgroundColor: palette.background }}>
-              Cancel
-            </Button>
-            <Button onPress={handleSend} disabled={isSending} style={{ flex: 1 }}>
-              {isSending ? 'Sending...' : 'Send Award 🎁'}
-            </Button>
-          </View>
-        </ScrollView>
-      </View>
-    </Modal>
+    </View>
   );
 }
 
@@ -694,37 +1051,139 @@ export function PartnerAwardSection({
   awards,
   onOpenCreate,
 }: PartnerAwardSectionProps) {
-  const palette = usePalette();
-
   return (
-    <Card style={{ backgroundColor: palette.surface }}>
-      <View style={{ gap: spacing.sm }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-            💝 Partner Awards ({awards.length})
-          </Text>
-          {hasPartner ? (
-            <Button onPress={onOpenCreate} style={{ paddingHorizontal: 12, paddingVertical: 6 }}>
-              + Award Partner
-            </Button>
-          ) : null}
-        </View>
+    <View style={{ gap: spacing.sm }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
+          Partner Awards ({awards.length})
+        </Text>
+        {hasPartner ? (
+          <Button onPress={onOpenCreate} size="sm">
+            + Award Partner
+          </Button>
+        ) : null}
+      </View>
 
-        {!hasPartner ? (
+      {!hasPartner ? (
+        <View style={[glassCardStyle, styles.pinkGlassCard]}>
           <EmptyState
             title="No Partner Connected"
-            description="Connect with a study partner in Accountability to exchange appreciation awards."
+            description="Connect with a study partner to send and receive custom award badges."
           />
-        ) : awards.length === 0 ? (
+        </View>
+      ) : awards.length === 0 ? (
+        <View style={[glassCardStyle, styles.pinkGlassCard]}>
           <EmptyState
-            title="No Partner Awards Yet"
-            description="Tap '+ Award Partner' above to send a custom award badge to your study partner!"
+            title="No Partner Awards Received"
+            description="Ask your partner to award you for study milestones or send them one first!"
           />
-        ) : (
-          awards.map((award) => <PartnerAwardCard key={award.id} award={award} />)
-        )}
-      </View>
-    </Card>
+        </View>
+      ) : (
+        awards.map((a) => <PartnerAwardCard key={a.id} award={a} />)
+      )}
+    </View>
   );
 }
 
+// ─── CreatePartnerAwardModal ───────────────────────────────────────────────────
+
+export interface CreatePartnerAwardModalProps {
+  visible: boolean;
+  onClose: () => void;
+  onSend: (data: { title: string; message: string; icon: string; xp_bonus: number }) => Promise<void>;
+  isSending?: boolean;
+}
+
+export function CreatePartnerAwardModal({
+  visible,
+  onClose,
+  onSend,
+  isSending,
+}: CreatePartnerAwardModalProps) {
+  const palette = usePalette();
+  const [title, setTitle] = useState('');
+  const [message, setMessage] = useState('');
+
+  const handleSend = async () => {
+    if (!title.trim()) return;
+    await onSend({
+      title: title.trim(),
+      message: message.trim(),
+      icon: '💝',
+      xp_bonus: 50,
+    });
+    setTitle('');
+    setMessage('');
+    onClose();
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: 'rgba(0,0,0,0.6)',
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: spacing.md,
+        }}
+      >
+        <ScrollView
+          style={{ width: '100%', maxWidth: 360 }}
+          contentContainerStyle={{
+            backgroundColor: 'rgba(255, 243, 245, 0.95)',
+            borderRadius: radius.lg,
+            borderWidth: 1.5,
+            borderColor: 'rgba(250, 215, 224, 0.90)',
+            padding: spacing.lg,
+            gap: spacing.md,
+          }}
+        >
+          <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
+            Award Your Partner
+          </Text>
+
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>
+              Award Title
+            </Text>
+            <Input
+              value={title}
+              onChangeText={setTitle}
+              placeholder="e.g. Focus Champ of the Week"
+            />
+          </View>
+
+          <View style={{ gap: 4 }}>
+            <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>
+              Encouraging Note
+            </Text>
+            <Input
+              value={message}
+              onChangeText={setMessage}
+              placeholder="e.g. Incredible work studying 4 hours today!"
+            />
+          </View>
+
+          <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm }}>
+            <Button onPress={onClose} variant="secondary" style={{ flex: 1 }}>
+              Cancel
+            </Button>
+            <Button onPress={handleSend} disabled={isSending || !title.trim()} style={{ flex: 1 }}>
+              {isSending ? 'Sending...' : 'Send Award'}
+            </Button>
+          </View>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+}
+
+const styles = {
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
+  },
+};

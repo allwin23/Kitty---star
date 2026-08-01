@@ -7,7 +7,7 @@
  * - Badge Gallery (Unlocked, Locked, Secret)
  * - Achievement History Timeline
  *
- * Reuses existing Supabase backend services, RPCs, and TanStack Query.
+ * Updated with crisp black (#2A1D22) section titles, partner award headers, and pills!
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -15,17 +15,19 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
   useColorScheme,
   View,
 } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Award, Trophy } from 'lucide-react-native';
 
-import { Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
+import { Card, EmptyState, ErrorState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
-import { palette, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 import {
   achievementService,
@@ -55,7 +57,6 @@ export default function AchievementsScreen() {
 
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
-
 
   const [activeTab, setActiveTab] = useState<TopTab>('my_achievements');
   const [galleryFilter, setGalleryFilter] = useState<GalleryFilter>('all');
@@ -212,13 +213,20 @@ export default function AchievementsScreen() {
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
-          {/* Header */}
-          <HeaderTitleCard
-            title="Achievements 🏆"
-            subtitle="Your central recognition & companion milestone hub"
-          />
+        <View style={{ gap: spacing[24], paddingBottom: spacing[48], position: 'relative' }}>
+          {/* Chaotic Trophy Watermarks Background Layer */}
+          <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+            <Trophy size={72} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: 80, right: -15, transform: [{ rotate: '24deg' }] }} />
+            <Award size={64} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: 320, left: -20, transform: [{ rotate: '-32deg' }] }} />
+            <Trophy size={80} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: 620, right: -18, transform: [{ rotate: '-20deg' }] }} />
+            <Award size={68} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', bottom: 40, left: -14, transform: [{ rotate: '18deg' }] }} />
+          </View>
 
+          {/* Header Row: Compact Oval Black Card + Notification Badge */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <HeaderTitleCard title="Achievements" showWavingHand={false} />
+            <NotificationBadge />
+          </View>
 
           {/* Top Summary Card */}
           <AchievementSummaryCard
@@ -230,7 +238,7 @@ export default function AchievementsScreen() {
           />
 
           {/* Navigation Tabs */}
-          <View style={{ flexDirection: 'row', gap: 4 }}>
+          <View style={{ flexDirection: 'row', gap: 6 }}>
             {[
               { id: 'my_achievements', label: 'Mine' },
               { id: 'partner_achievements', label: 'Partner' },
@@ -244,19 +252,19 @@ export default function AchievementsScreen() {
                   onPress={() => setActiveTab(t.id as TopTab)}
                   style={{
                     flex: 1,
-                    paddingVertical: 8,
+                    paddingVertical: 10,
                     borderRadius: radius.md,
                     alignItems: 'center',
-                    backgroundColor: active ? palette.primary : palette.surface,
-                    borderWidth: 1,
-                    borderColor: active ? palette.primary : palette.border,
+                    backgroundColor: active ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
+                    borderWidth: 1.5,
+                    borderColor: active ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
                   }}
                 >
                   <Text
                     style={{
-                      fontSize: 12,
-                      fontWeight: active ? '700' : '500',
-                      color: active ? palette.primaryText : palette.mutedText,
+                      fontSize: 13,
+                      fontWeight: '800',
+                      color: active ? '#FFFFFF' : '#2A1D22',
                     }}
                   >
                     {t.label}
@@ -273,16 +281,18 @@ export default function AchievementsScreen() {
             <View style={{ gap: spacing.lg }}>
               {/* System Achievements */}
               <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-                  🏅 Unlocked Badges ({myUnlocked.length})
+                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
+                  Unlocked Badges ({myUnlocked.length})
                 </Text>
                 {myUnlockedQ.isLoading ? (
                   <Loading />
                 ) : myUnlocked.length === 0 ? (
-                  <EmptyState
-                    title="No system achievements yet"
-                    description="Complete daily plans and pomodoro sessions to unlock badges."
-                  />
+                  <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                    <EmptyState
+                      title="No system achievements yet"
+                      description="Complete daily plans and pomodoro sessions to unlock badges."
+                    />
+                  </View>
                 ) : (
                   myUnlocked.map((item) => (
                     <AchievementCard
@@ -307,33 +317,37 @@ export default function AchievementsScreen() {
           {activeTab === 'partner_achievements' ? (
             <View style={{ gap: spacing.md }}>
               {!hasPartner ? (
-                <EmptyState
-                  title="No Partner Connected"
-                  description="Connect with a study partner in Accountability to view their achievements."
-                />
+                <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                  <EmptyState
+                    title="No Partner Connected"
+                    description="Connect with a study partner in Accountability to view their achievements."
+                  />
+                </View>
               ) : partnerUnlockedQ.isLoading ? (
                 <Loading />
               ) : (
                 <>
-                  <Card>
+                  <View style={[glassCardStyle, styles.pinkGlassCard]}>
                     <View style={{ gap: spacing.xs }}>
-                      <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
+                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
                         Partner Summary
                       </Text>
-                      <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                      <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>
                         Level {partnerStats?.level ?? 1} · {partnerStats?.xp ?? 0} XP · {partnerUnlocked.length} Unlocked Badges
                       </Text>
                     </View>
-                  </Card>
+                  </View>
 
-                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-                    🏅 Partner Badges ({partnerUnlocked.length})
+                  <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
+                    Partner Badges ({partnerUnlocked.length})
                   </Text>
                   {partnerUnlocked.length === 0 ? (
-                    <EmptyState
-                      title="No partner achievements"
-                      description="Your partner hasn't unlocked any badges yet."
-                    />
+                    <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                      <EmptyState
+                        title="No partner achievements"
+                        description="Your partner hasn't unlocked any badges yet."
+                      />
+                    </View>
                   ) : (
                     partnerUnlocked.map((item) => (
                       <AchievementCard
@@ -344,14 +358,16 @@ export default function AchievementsScreen() {
                     ))
                   )}
 
-                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
-                    💝 Awards Given to Partner ({partnerReceivedAwards.length})
+                  <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
+                    Awards Given to Partner ({partnerReceivedAwards.length})
                   </Text>
                   {partnerReceivedAwards.length === 0 ? (
-                    <EmptyState
-                      title="No Partner Awards Given Yet"
-                      description="Tap '+ Award Partner' in My Achievements to gift your partner an award badge!"
-                    />
+                    <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                      <EmptyState
+                        title="No Partner Awards Given Yet"
+                        description="Tap '+ Award Partner' in My Achievements to gift your partner an award badge!"
+                      />
+                    </View>
                   ) : (
                     partnerReceivedAwards.map((award) => (
                       <PartnerAwardCard key={award.id} award={award} isSent />
@@ -379,18 +395,18 @@ export default function AchievementsScreen() {
                       onPress={() => setGalleryFilter(f.id as GalleryFilter)}
                       style={{
                         paddingHorizontal: 12,
-                        paddingVertical: 4,
+                        paddingVertical: 5,
                         borderRadius: radius.full,
-                        backgroundColor: active ? palette.primary : palette.surface,
-                        borderWidth: 1,
-                        borderColor: active ? palette.primary : palette.border,
+                        backgroundColor: active ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
+                        borderWidth: 1.5,
+                        borderColor: active ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
                       }}
                     >
                       <Text
                         style={{
-                          fontSize: 11,
-                          fontWeight: '600',
-                          color: active ? palette.primaryText : palette.mutedText,
+                          fontSize: 12,
+                          fontWeight: '800',
+                          color: active ? '#FFFFFF' : '#2A1D22',
                         }}
                       >
                         {f.label}
@@ -403,7 +419,7 @@ export default function AchievementsScreen() {
               {allBadgesQ.isLoading ? (
                 <Loading />
               ) : (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: '4%' }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
                   {allBadges
                     .filter((badge) => {
                       const isUnlocked = unlockedBadgeIds.has(badge.id);
@@ -435,9 +451,9 @@ export default function AchievementsScreen() {
 
           {/* TAB 4: HISTORY */}
           {activeTab === 'history' ? (
-            <Card>
+            <View style={[glassCardStyle, styles.pinkGlassCard]}>
               <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: palette.text, fontWeight: '700', fontSize: 15 }}>
+                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16 }}>
                   Achievement Timeline
                 </Text>
 
@@ -458,7 +474,7 @@ export default function AchievementsScreen() {
                   ))
                 )}
               </View>
-            </Card>
+            </View>
           ) : null}
         </View>
       </ScrollView>
@@ -480,3 +496,12 @@ export default function AchievementsScreen() {
     </Screen>
   );
 }
+
+const styles = {
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
+  },
+};
