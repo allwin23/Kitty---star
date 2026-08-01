@@ -48,10 +48,33 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
       if (error) throw error;
 
-      const list = (data ?? []) as unknown as NotificationRecord[];
-      const unread = list.filter((n) => !n.read_at).length;
+      const fetchedList = (data ?? []).map((n: any) => ({
+        id: n.id,
+        user_id: n.user_id,
+        type: n.type,
+        title: n.title,
+        body: n.body,
+        priority: n.priority || n.data?.priority || 'medium',
+        category: n.category || n.data?.category || 'study',
+        channel: n.channel || n.data?.channel || 'in_app',
+        relevance_score: n.relevance_score ?? n.data?.relevance_score ?? 1,
+        data: n.data || {},
+        action_url: n.action_url || n.data?.action_url || undefined,
+        created_at: n.created_at,
+        read_at: n.read_at,
+      })) as NotificationRecord[];
+      const existingList = get().notifications;
 
-      set({ notifications: list, unreadCount: unread, loading: false });
+      const mergedMap = new Map<string, NotificationRecord>();
+      existingList.forEach((n) => mergedMap.set(n.id, n));
+      fetchedList.forEach((n) => mergedMap.set(n.id, n));
+
+      const mergedList = Array.from(mergedMap.values()).sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      const unread = mergedList.filter((n) => !n.read_at).length;
+      set({ notifications: mergedList, unreadCount: unread, loading: false });
     } catch (err) {
       console.error('[NotificationStore] Fetch failed:', err);
       set({ loading: false });

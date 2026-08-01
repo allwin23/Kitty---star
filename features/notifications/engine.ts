@@ -381,24 +381,44 @@ export class NotificationEngine {
     };
 
     try {
+      const payloadData = {
+        ...(notif.data || {}),
+        priority: notif.priority,
+        category: notif.category,
+        channel: notif.channel,
+        relevance_score: notif.relevance_score,
+        action_url: notif.action_url,
+      };
+
       const { data, error } = await (supabase.from('notifications') as any)
         .insert({
           user_id: notif.user_id,
           type: notif.type,
           title: notif.title,
           body: notif.body,
-          priority: notif.priority,
-          category: notif.category,
-          channel: notif.channel,
-          relevance_score: notif.relevance_score,
-          data: notif.data,
-          action_url: notif.action_url,
+          data: payloadData,
         })
         .select()
         .single();
 
       if (!error && data) {
-        return data as NotificationRecord;
+        return {
+          id: data.id,
+          user_id: data.user_id,
+          type: data.type,
+          title: data.title,
+          body: data.body,
+          priority: notif.priority,
+          category: notif.category,
+          channel: notif.channel,
+          relevance_score: notif.relevance_score,
+          data: data.data || payloadData,
+          action_url: notif.action_url,
+          created_at: data.created_at || fallbackRecord.created_at,
+          read_at: data.read_at || null,
+        };
+      } else if (error) {
+        console.warn('[NotificationEngine] DB insert error, using local fallback:', error.message);
       }
     } catch (err) {
       console.warn('[NotificationEngine] DB insert fallback to local record:', err);
