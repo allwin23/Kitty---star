@@ -12,16 +12,18 @@ import {
   CheckSquare,
   Timer,
   Compass,
+  BarChart2,
   type LucideIcon,
 } from 'lucide-react-native';
 
-type TabType = 'home' | 'accountability' | 'pomodoro' | 'journey' | string;
+type TabType = 'home' | 'accountability' | 'pomodoro' | 'journey' | 'statistics' | string;
 
 const iconMap: Record<string, LucideIcon> = {
   home: Home,
   accountability: CheckSquare,
   pomodoro: Timer,
   journey: Compass,
+  statistics: BarChart2,
 };
 
 export function AnimatedTabIcon({

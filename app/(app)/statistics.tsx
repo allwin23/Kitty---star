@@ -246,7 +246,8 @@ export default function StatisticsScreen() {
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
           <HeaderTitleCard
-            title="Statistics 📊"
+            title="Statistics"
+            showWavingHand={false}
             subtitle={viewingPartner ? "Viewing partner's statistics" : 'Your overall study progress & growth'}
           />
 

@@ -58,7 +58,7 @@ export default function AppLayout() {
         ),
       }}
     >
-      {/* 4 Main Visible Tabs */}
+      {/* Main Visible Tabs */}
       <Tabs.Screen
         name="home"
         options={{
@@ -95,10 +95,18 @@ export default function AppLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="statistics"
+        options={{
+          title: 'Stats',
+          tabBarIcon: ({ focused }) => (
+            <AnimatedTabIcon name="statistics" focused={focused} />
+          ),
+        }}
+      />
 
       {/* Hidden tabs */}
       <Tabs.Screen name="planner" options={{ href: null }} />
-      <Tabs.Screen name="statistics" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
       <Tabs.Screen name="achievements" options={{ href: null }} />
       <Tabs.Screen name="testing" options={{ href: null }} />
