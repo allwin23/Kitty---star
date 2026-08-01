@@ -79,7 +79,10 @@ export default function AppLayout() {
       <Tabs.Screen name="flashcards" options={{ href: null }} />
       <Tabs.Screen name="water" options={{ href: null }} />
       <Tabs.Screen name="english" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="notifications-settings" options={{ href: null }} />
     </Tabs>
+
 
   );
 }

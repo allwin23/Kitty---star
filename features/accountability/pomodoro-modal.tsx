@@ -12,6 +12,8 @@ import { todayIso } from '@/lib/supabase-helpers';
 import { colors, radius, spacing, typography } from '@/theme';
 import { Loading } from '@/components/ui';
 import type { TodoTask } from './todo-list';
+import { EventBus } from '@/features/notifications/event-bus';
+import { useAuthStore } from '@/stores';
 
 const FOCUS_DURATION = 25; // minutes default
 
@@ -26,6 +28,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const queryClient = useQueryClient();
+  const user = useAuthStore((s) => s.user);
 
   const [secondsLeft, setSecondsLeft] = useState(FOCUS_DURATION * 60);
   const [running, setRunning] = useState(false);
@@ -40,7 +43,6 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
   }, []);
 
 
-
   const completeMutation = useMutation({
     mutationFn: (vars: { endedAt: string }) =>
       pomodoroService.complete({
@@ -53,8 +55,31 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
       }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(todayIso()) });
+
+      if (user?.id) {
+        // Emit SessionEnded Event
+        EventBus.emit({
+          type: 'SessionEnded',
+          userId: user.id,
+          targetId: task?.id,
+          data: {
+            taskTitle: task?.title || 'Study Session',
+            duration: FOCUS_DURATION,
+            xpEarned: 20,
+          },
+        });
+
+        // Emit BreakReminder Event
+        EventBus.emit({
+          type: 'BreakReminder',
+          userId: user.id,
+          data: { taskTitle: task?.title || 'Study Session' },
+        });
+      }
+
       onClose();
     },
+
     onError: (e: Error) => {
       Alert.alert('Error', e.message);
     },
@@ -63,6 +88,14 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
   const startTimer = () => {
     if (!startedAt) {
       setStartedAt(new Date().toISOString());
+      if (user?.id) {
+        EventBus.emit({
+          type: 'SessionStarted',
+          userId: user.id,
+          targetId: task?.id,
+          data: { taskTitle: task?.title || 'Study Session' },
+        });
+      }
     }
     setRunning(true);
     intervalRef.current = setInterval(() => {

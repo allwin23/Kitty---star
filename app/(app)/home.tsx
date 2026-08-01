@@ -3,7 +3,7 @@ import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
-import { Button, Card, Loading, Screen } from '@/components/ui';
+import { Button, Card, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
@@ -71,12 +71,15 @@ export default function HomeScreen() {
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
-          {/* Greeting */}
-          <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.heading, { color: colors.light.text }]}>
-              Hello, {profile?.full_name?.split(' ')[0] ?? 'there'} 👋
-            </Text>
-            <Text style={{ color: colors.light.mutedText }}>{user?.email}</Text>
+          {/* Header with Notification Badge */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ gap: spacing.xs }}>
+              <Text style={[typography.heading, { color: colors.light.text }]}>
+                Hello, {profile?.full_name?.split(' ')[0] ?? 'there'} 👋
+              </Text>
+              <Text style={{ color: colors.light.mutedText }}>{user?.email}</Text>
+            </View>
+            <NotificationBadge />
           </View>
 
           {/* Stats */}
@@ -110,6 +113,9 @@ export default function HomeScreen() {
           <Card>
             <View style={{ gap: spacing.sm }}>
               <Text style={{ fontWeight: '700', color: colors.light.text }}>Quick Actions</Text>
+              <Button onPress={() => router.push('/(app)/notifications')}>
+                🔔 Notification Center
+              </Button>
               <Button onPress={() => router.push('/(app)/accountability')}>
                 ✅ Accountability
               </Button>
@@ -132,7 +138,6 @@ export default function HomeScreen() {
                 📖 Daily English Practice
               </Button>
             </View>
-
           </Card>
 
           {/* Notifications */}

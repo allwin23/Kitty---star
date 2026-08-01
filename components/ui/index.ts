@@ -7,4 +7,6 @@ export * from './input';
 export * from './loading';
 export * from './screen';
 export * from './proof-viewer-modal';
+export * from './notification-badge';
+
 
