@@ -3,7 +3,7 @@ import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
-import { Button, Card, Loading, NotificationBadge, Screen } from '@/components/ui';
+import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
@@ -74,12 +74,11 @@ export default function HomeScreen() {
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ gap: spacing[4] }}>
-              <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-                Hello, {profile?.full_name?.split(' ')[0] ?? 'there'} 👋
-              </Text>
-              <Text style={{ color: palette.textSecondary, fontSize: 13 }}>{user?.email}</Text>
-            </View>
+            <HeaderTitleCard
+              title={`Hello, ${profile?.full_name?.split(' ')[0] ?? 'there'}`}
+              subtitle={user?.email ?? undefined}
+              showWavingHand
+            />
             <NotificationBadge />
           </View>
 
