@@ -21,22 +21,26 @@ const FALLBACK_CAT_IMAGE = require('../../../assets/icon.png');
  * or remote image URIs (e.g. { uri: 'https://example.com/cat.png' }).
  */
 const IMAGE_ASSET_MAP: Record<string, any> = {
-  cat_studying_pomodoro: FALLBACK_CAT_IMAGE,
-  cat_drinking_water: FALLBACK_CAT_IMAGE,
-  cat_writing_english: FALLBACK_CAT_IMAGE,
-  cat_practicing_pyq: FALLBACK_CAT_IMAGE,
-  cat_flashcard_revision: FALLBACK_CAT_IMAGE,
-  cat_goal_achieved: FALLBACK_CAT_IMAGE,
-  cat_trophy_award: FALLBACK_CAT_IMAGE,
-  cat_lunch_time: FALLBACK_CAT_IMAGE,
-  cat_evening_snack: FALLBACK_CAT_IMAGE,
-  cat_sleeping_night: FALLBACK_CAT_IMAGE,
-  cat_morning_wake: FALLBACK_CAT_IMAGE,
-  cat_notification_alert: FALLBACK_CAT_IMAGE,
-  cat_partner_wave: FALLBACK_CAT_IMAGE,
-  cat_idle_reading: FALLBACK_CAT_IMAGE,
-  cat_late_night_study: FALLBACK_CAT_IMAGE,
-  cat_hero: FALLBACK_CAT_IMAGE,
+  cat_studying_pomodoro: require('../../../assets/images/companion/cat_studying_pomodoro.png'),
+  'Screenshot 2026-08-01 174940': require('../../../assets/images/companion/Screenshot 2026-08-01 174940.png'),
+  'Screenshot 2026-08-01 174946': require('../../../assets/images/companion/Screenshot 2026-08-01 174946.png'),
+  'Screenshot 2026-08-01 174956': require('../../../assets/images/companion/Screenshot 2026-08-01 174956.png'),
+  'Screenshot 2026-08-01 175001': require('../../../assets/images/companion/Screenshot 2026-08-01 175001.png'),
+  'Screenshot 2026-08-01 175007': require('../../../assets/images/companion/Screenshot 2026-08-01 175007.png'),
+  'Screenshot 2026-08-01 175012': require('../../../assets/images/companion/Screenshot 2026-08-01 175012.png'),
+  'Screenshot 2026-08-01 175017': require('../../../assets/images/companion/Screenshot 2026-08-01 175017.png'),
+  'Screenshot 2026-08-01 175024': require('../../../assets/images/companion/Screenshot 2026-08-01 175024.png'),
+  'Screenshot 2026-08-01 175031': require('../../../assets/images/companion/Screenshot 2026-08-01 175031.png'),
+  'Screenshot 2026-08-01 175038': require('../../../assets/images/companion/Screenshot 2026-08-01 175038.png'),
+  'Screenshot 2026-08-01 175043': require('../../../assets/images/companion/Screenshot 2026-08-01 175043.png'),
+  'Screenshot 2026-08-01 180441': require('../../../assets/images/companion/Screenshot 2026-08-01 180441.png'),
+  'Screenshot 2026-08-01 180447': require('../../../assets/images/companion/Screenshot 2026-08-01 180447.png'),
+  'Screenshot 2026-08-01 180453': require('../../../assets/images/companion/Screenshot 2026-08-01 180453.png'),
+  'Screenshot 2026-08-01 180458': require('../../../assets/images/companion/Screenshot 2026-08-01 180458.png'),
+  'Screenshot 2026-08-01 180504': require('../../../assets/images/companion/Screenshot 2026-08-01 180504.png'),
+  'Screenshot 2026-08-01 180510': require('../../../assets/images/companion/Screenshot 2026-08-01 180510.png'),
+  'Screenshot 2026-08-01 180514': require('../../../assets/images/companion/Screenshot 2026-08-01 180514.png'),
+  'ChatGPT Image Aug 1, 2026, 06_05_38 PM': require('../../../assets/images/companion/ChatGPT Image Aug 1, 2026, 06_05_38 PM.png'),
 };
 
 export function CatBulletinStage() {
@@ -105,7 +109,10 @@ export function CatBulletinStage() {
     opacity: ledOpacity.value,
   }));
 
-  const imageSource = IMAGE_ASSET_MAP[activeScenario.imageKey] || IMAGE_ASSET_MAP.cat_hero;
+  const imageSource =
+    IMAGE_ASSET_MAP[activeScenario.imageKey] ||
+    IMAGE_ASSET_MAP.cat_studying_pomodoro ||
+    FALLBACK_CAT_IMAGE;
 
   return (
     <View style={styles.stageParentRow}>
@@ -238,8 +245,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   catImageFixed: {
-    width: '88%',
-    height: '88%',
+    width: '92%',
+    height: '92%',
   },
 
   /* WATERMARK BACKDROP STYLES */

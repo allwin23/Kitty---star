@@ -174,7 +174,7 @@ export const DYNAMIC_IDLE_POOL: CatScenario[] = [
     tag: '[IDLE]',
     headline: 'love u kuttyyy maaa',
     subtext: '😘😘😘😘😘😘😘😘',
-    imageKey: 'cat_drinking_water',
+    imageKey: 'Screenshot 2026-08-01 180510',
   },
   {
     id: 'idle-3',
