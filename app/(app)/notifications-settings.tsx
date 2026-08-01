@@ -6,26 +6,38 @@ import {
   Switch,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import {
+  BarChart2,
+  Bell,
+  BookOpen,
+  Bot,
+  Droplets,
+  Flame,
+  Moon,
+  Smartphone,
+  TrendingUp,
+  Trophy,
+  Users,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react-native';
 
 import { Card, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { NotificationEngine } from '@/features/notifications/engine';
 import type { NotificationPreferences } from '@/features/notifications/types';
 import { useAuthStore } from '@/stores';
 import { useNotificationStore } from '@/stores/notification-store';
-import { palette, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
 
 export default function NotificationSettingsScreen() {
   const router = useRouter();
 
-
   const user = useAuthStore((s) => s.user);
   const { preferences, fetchPreferences, updatePreferences } = useNotificationStore();
 
-  const [saving, setSaving] = useState(false);
   const [testingPush, setTestingPush] = useState(false);
 
   useEffect(() => {
@@ -59,7 +71,7 @@ export default function NotificationSettingsScreen() {
     }
 
     await NotificationEngine.dispatchPushNotification({
-      title: '🔔 Test Notification',
+      title: 'Test Notification',
       body: 'Your Intelligent Notification Engine is working perfectly!',
       data: { type: 'Test' },
       priority: 'high',
@@ -73,7 +85,7 @@ export default function NotificationSettingsScreen() {
     title: string,
     description: string,
     key: keyof NotificationPreferences,
-    emoji: string,
+    Icon: LucideIcon,
   ) => {
     const isEnabled = Boolean(preferences[key]);
     return (
@@ -86,18 +98,34 @@ export default function NotificationSettingsScreen() {
           paddingVertical: spacing.xs,
         }}
       >
-        <View style={{ flex: 1, paddingRight: spacing.md }}>
-          <Text style={{ color: palette.text, fontWeight: '600', fontSize: 15 }}>
-            {emoji} {title}
-          </Text>
-          <Text style={{ color: palette.mutedText, fontSize: 12, marginTop: 2 }}>
-            {description}
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingRight: spacing.md, gap: spacing.sm }}>
+          <View
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: 12,
+              backgroundColor: 'rgba(232, 77, 114, 0.12)',
+              borderColor: 'rgba(232, 77, 114, 0.25)',
+              borderWidth: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Icon size={18} color={palette.danger} strokeWidth={2.2} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 15 }}>
+              {title}
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 12, marginTop: 2 }}>
+              {description}
+            </Text>
+          </View>
         </View>
         <Switch
           value={isEnabled}
           onValueChange={(val) => toggle(key, val)}
-          trackColor={{ false: palette.border, true: palette.primary }}
+          trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
           thumbColor="#ffffff"
         />
       </View>
@@ -110,29 +138,29 @@ export default function NotificationSettingsScreen() {
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
           {/* Header */}
           <HeaderTitleCard
-            title="Notification Preferences ⚙️"
+            title="Notification Preferences"
             subtitle="Manage your alert delivery channels & notification rules"
           />
 
           {/* Section 1: Main Channels */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                Delivery Channels
+              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                DELIVERY CHANNELS
               </Text>
 
               {renderToggleItem(
                 'Push Notifications',
                 'Lock screen & device alerts via Expo Notifications',
                 'push_enabled',
-                '📲',
+                Smartphone,
               )}
 
               {renderToggleItem(
                 'In-App Notification Feed',
                 'Persistent in-app notification center history',
                 'in_app_enabled',
-                '🔔',
+                Bell,
               )}
 
               <Pressable
@@ -140,18 +168,21 @@ export default function NotificationSettingsScreen() {
                 disabled={testingPush}
                 style={{
                   marginTop: spacing.xs,
-                  backgroundColor: `${palette.primary}15`,
-                  borderColor: palette.primary,
-                  borderWidth: 1,
+                  backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                  borderColor: palette.danger,
+                  borderWidth: 1.5,
                   borderRadius: radius.md,
                   padding: spacing.sm,
                   alignItems: 'center',
                   opacity: testingPush ? 0.6 : 1,
                 }}
               >
-                <Text style={{ color: palette.primary, fontWeight: '700', fontSize: 13 }}>
-                  {testingPush ? 'Sending Test…' : '⚡ Send Test Push Notification'}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Zap size={16} color={palette.danger} strokeWidth={2.4} />
+                  <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 13 }}>
+                    {testingPush ? 'Sending Test…' : 'Send Test Push Notification'}
+                  </Text>
+                </View>
               </Pressable>
             </View>
           </Card>
@@ -159,64 +190,64 @@ export default function NotificationSettingsScreen() {
           {/* Section 2: Categories */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                Notification Categories
+              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                NOTIFICATION CATEGORIES
               </Text>
 
               {renderToggleItem(
                 'Partner Activity',
                 'Alerts when partner starts studying or completes tasks',
                 'partner_enabled',
-                '👥',
+                Users,
               )}
 
               {renderToggleItem(
                 'Study & Focus Reminders',
                 'Session completions, goal missed alerts, and break suggestions',
                 'study_reminders_enabled',
-                '📚',
+                BookOpen,
               )}
 
               {renderToggleItem(
                 'Water & Hydration',
                 'Reminders to drink water and log daily hydration',
                 'water_reminders_enabled',
-                '💧',
+                Droplets,
               )}
 
               {renderToggleItem(
                 'AI Study Coaching',
                 'Personalized recommendations from AI Notification Brain',
                 'ai_coaching_enabled',
-                '🤖',
+                Bot,
               )}
 
               {renderToggleItem(
                 'Daily Summary Reports',
                 'End-of-day reports and study day review notices',
                 'daily_reports_enabled',
-                '📊',
+                BarChart2,
               )}
 
               {renderToggleItem(
                 'Weekly Reports',
                 '7-day performance analytics and weekly summaries',
                 'weekly_reports_enabled',
-                '📈',
+                TrendingUp,
               )}
 
               {renderToggleItem(
                 'Achievements & Awards',
                 'Badges unlocked, partner awards, and XP rewards',
                 'achievement_enabled',
-                '🏆',
+                Trophy,
               )}
 
               {renderToggleItem(
                 'Social & Streaks',
                 'Streak milestones and comeback alerts',
                 'social_activity_enabled',
-                '🔥',
+                Flame,
               )}
             </View>
           </Card>
@@ -224,15 +255,15 @@ export default function NotificationSettingsScreen() {
           {/* Section 3: Quiet Hours & AI Threshold */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={[typography.title, { color: palette.text, fontSize: 16 }]}>
-                Quiet Hours & AI Intelligence
+              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                QUIET HOURS & AI INTELLIGENCE
               </Text>
 
               {renderToggleItem(
                 'Quiet Hours',
                 'Suppress non-urgent notifications during scheduled rest hours',
                 'quiet_hours_enabled',
-                '🌙',
+                Moon,
               )}
 
               {preferences.quiet_hours_enabled && (
@@ -240,52 +271,54 @@ export default function NotificationSettingsScreen() {
                   style={{
                     flexDirection: 'row',
                     gap: spacing.md,
-                    backgroundColor: palette.surface,
-                    borderColor: palette.border,
-                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 243, 245, 0.75)',
+                    borderColor: 'rgba(250, 215, 224, 0.85)',
+                    borderWidth: 1.5,
                     borderRadius: radius.md,
                     padding: spacing.sm,
                   }}
                 >
                   <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ color: palette.mutedText, fontSize: 12 }}>Quiet Hours Start</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>Quiet Hours Start</Text>
                     <TextInput
                       style={{
-                        borderColor: palette.border,
-                        borderWidth: 1,
+                        borderColor: 'rgba(250, 215, 224, 0.85)',
+                        borderWidth: 1.5,
                         borderRadius: radius.sm,
-                        color: palette.text,
+                        color: palette.textPrimary,
                         paddingHorizontal: spacing.sm,
                         paddingVertical: 4,
                         textAlign: 'center',
                         fontSize: 14,
-                        fontWeight: '700',
+                        fontWeight: '800',
+                        backgroundColor: '#FFFFFF',
                       }}
                       value={preferences.quiet_hours_start}
                       onChangeText={(text) => toggle('quiet_hours_start', text)}
                       placeholder="22:00"
-                      placeholderTextColor={palette.mutedText}
+                      placeholderTextColor={palette.textSecondary}
                     />
                   </View>
 
                   <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ color: palette.mutedText, fontSize: 12 }}>Quiet Hours End</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>Quiet Hours End</Text>
                     <TextInput
                       style={{
-                        borderColor: palette.border,
-                        borderWidth: 1,
+                        borderColor: 'rgba(250, 215, 224, 0.85)',
+                        borderWidth: 1.5,
                         borderRadius: radius.sm,
-                        color: palette.text,
+                        color: palette.textPrimary,
                         paddingHorizontal: spacing.sm,
                         paddingVertical: 4,
                         textAlign: 'center',
                         fontSize: 14,
-                        fontWeight: '700',
+                        fontWeight: '800',
+                        backgroundColor: '#FFFFFF',
                       }}
                       value={preferences.quiet_hours_end}
                       onChangeText={(text) => toggle('quiet_hours_end', text)}
                       placeholder="07:00"
-                      placeholderTextColor={palette.mutedText}
+                      placeholderTextColor={palette.textSecondary}
                     />
                   </View>
                 </View>
@@ -293,10 +326,13 @@ export default function NotificationSettingsScreen() {
 
               {/* AI Relevance Sensitivity Control */}
               <View style={{ gap: spacing.xs, marginTop: spacing.xs }}>
-                <Text style={{ color: palette.text, fontWeight: '600', fontSize: 15 }}>
-                  🤖 AI Relevance Sensitivity
-                </Text>
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Bot size={16} color={palette.danger} strokeWidth={2.2} />
+                  <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 15 }}>
+                    AI Relevance Sensitivity
+                  </Text>
+                </View>
+                <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '500' }}>
                   Current Threshold: {Math.round(preferences.relevance_threshold * 100)}% (Higher = Only important alerts)
                 </Text>
 
@@ -310,15 +346,15 @@ export default function NotificationSettingsScreen() {
                         onPress={() => toggle('relevance_threshold', th)}
                         style={{
                           flex: 1,
-                          backgroundColor: selected ? palette.primary : palette.surface,
-                          borderColor: selected ? palette.primary : palette.border,
-                          borderWidth: 1,
+                          backgroundColor: selected ? palette.danger : 'rgba(255, 243, 245, 0.85)',
+                          borderColor: selected ? palette.danger : 'rgba(250, 215, 224, 0.85)',
+                          borderWidth: 1.5,
                           borderRadius: radius.md,
                           paddingVertical: spacing.sm,
                           alignItems: 'center',
                         }}
                       >
-                        <Text style={{ color: selected ? palette.primaryText : palette.text, fontSize: 11, fontWeight: '700', textAlign: 'center' }}>
+                        <Text style={{ color: selected ? '#FFFFFF' : palette.textPrimary, fontSize: 11, fontWeight: '800', textAlign: 'center' }}>
                           {label}
                         </Text>
                       </Pressable>
