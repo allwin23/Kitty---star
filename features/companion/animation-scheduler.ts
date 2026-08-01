@@ -169,8 +169,8 @@ export class AnimationScheduler {
 
     // 2. Typing Effect Animation
     this.startTypingEffect(item.message, () => {
-      // 3. Post-Typing Display Hold Phase
-      const holdTimeMs = Math.max(3500, item.message.length * 50);
+      // 3. Post-Typing Display Hold Phase (hold for at least 10 seconds)
+      const holdTimeMs = Math.max(10000, item.message.length * 80);
 
       this.timerRef = setTimeout(() => {
         // Dismiss current & transition to next

@@ -137,7 +137,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     subtext: 'Take a short breather, grab tea, and stretch a bit ☕',
     imageKey: 'Screenshot 2026-08-01 180453',
     validFromHour: 17,
-    validToHour: 19,
+    validToHour: 18,
   },
   RoutineNight: {
     id: 'routine-night',

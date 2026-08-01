@@ -154,20 +154,20 @@ export const radius = {
 import { Platform } from 'react-native';
 
 export const glassCardStyle = {
-  backgroundColor: 'rgba(255, 255, 255, 0.45)',
-  borderColor: 'rgba(255, 255, 255, 0.55)',
-  borderWidth: 1,
-  borderRadius: 32,
+  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+  borderColor: 'rgba(250, 215, 224, 0.90)',
+  borderWidth: 1.5,
+  borderRadius: 24,
   overflow: 'hidden' as const,
-  shadowColor: '#000000',
-  shadowOffset: { width: 0, height: 20 },
-  shadowOpacity: 0.10,
-  shadowRadius: 30,
-  elevation: 6,
+  shadowColor: '#8A1535',
+  shadowOffset: { width: 0, height: 6 },
+  shadowOpacity: 0.08,
+  shadowRadius: 14,
+  elevation: 4,
   ...(Platform.OS === 'web'
     ? ({
-        backdropFilter: 'blur(4px) saturate(120%)',
-        WebkitBackdropFilter: 'blur(4px) saturate(120%)',
+        backdropFilter: 'blur(16px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(160%)',
       } as any)
     : {}),
 } as const;

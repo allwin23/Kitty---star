@@ -19,9 +19,9 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
         isGlass
           ? glassCardStyle
           : {
-              backgroundColor: 'rgba(255, 255, 255, 0.72)',
-              borderColor: 'rgba(255, 255, 255, 0.65)',
-              borderWidth: 1,
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              borderColor: 'rgba(250, 215, 224, 0.90)',
+              borderWidth: 1.5,
               borderRadius: radius.card,
               overflow: 'hidden',
             },
@@ -31,18 +31,17 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
         style,
       ]}
     >
-      {/* Frosted Grid Diffuser & Gradient Focus Zone (blurs & diffuses sharp background grid behind card) */}
+      {/* Frosted Focus Zone */}
       {isGlass ? (
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          {/* Frosted backdrop diffuser layer (minimal opacity so grid lines show clearly) */}
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 255, 255, 0.10)' }]} />
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 255, 255, 0.50)' }]} />
 
           {/* Top-left focus gradient zone */}
           <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
             <Defs>
               <LinearGradient id="cardFocusGradient" x1="0" y1="0" x2="1" y2="1">
-                <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.30" />
-                <Stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.08" />
+                <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.40" />
+                <Stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.10" />
                 <Stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
               </LinearGradient>
             </Defs>
