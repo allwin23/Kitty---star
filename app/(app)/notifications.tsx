@@ -12,7 +12,7 @@ import {
 import { useFocusEffect, useRouter } from 'expo-router';
 import { isToday, isYesterday, parseISO } from 'date-fns';
 
-import { Card, EmptyState, Loading, Screen } from '@/components/ui';
+import { Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { NotificationCard } from '@/features/notifications/components/notification-card';
 import type { NotificationRecord } from '@/features/notifications/types';
 import { useAuthStore } from '@/stores';
@@ -123,19 +123,10 @@ export default function NotificationsScreen() {
         <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
           {/* Header */}
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-              <Pressable onPress={() => router.back()}>
-                <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
-              </Pressable>
-              <Text style={[typography.title, { color: palette.text, fontSize: 20 }]}>
-                Notifications
-              </Text>
-              {unreadCount > 0 ? (
-                <View style={{ backgroundColor: '#ef4444', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 1 }}>
-                  <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>{unreadCount}</Text>
-                </View>
-              ) : null}
-            </View>
+            <HeaderTitleCard
+              title="Notifications 🔔"
+              subtitle="Stay up to date with partner activity & study reminders"
+            />
 
             {/* Quick Settings Icon */}
             <Pressable
@@ -146,7 +137,7 @@ export default function NotificationsScreen() {
                 borderWidth: 1,
                 borderRadius: radius.md,
                 paddingHorizontal: spacing.sm,
-                paddingVertical: 6,
+                paddingVertical: 8,
               }}
             >
               <Text style={{ color: palette.text, fontSize: 13, fontWeight: '600' }}>⚙️ Settings</Text>

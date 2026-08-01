@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
+import { Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
@@ -214,14 +214,10 @@ export default function AchievementsScreen() {
       >
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
-          <View style={{ gap: spacing[4] }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-              Achievements 🏆
-            </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-              Your central recognition & companion milestone hub
-            </Text>
-          </View>
+          <HeaderTitleCard
+            title="Achievements 🏆"
+            subtitle="Your central recognition & companion milestone hub"
+          />
 
 
           {/* Top Summary Card */}

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Card, Loading, Screen } from '@/components/ui';
+import { Card, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { NotificationEngine } from '@/features/notifications/engine';
 import type { NotificationPreferences } from '@/features/notifications/types';
 import { useAuthStore } from '@/stores';
@@ -109,14 +109,10 @@ export default function NotificationSettingsScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
           {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Pressable onPress={() => router.back()}>
-              <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
-            </Pressable>
-            <Text style={[typography.title, { color: palette.text, flex: 1 }]}>
-              Notification Preferences
-            </Text>
-          </View>
+          <HeaderTitleCard
+            title="Notification Preferences ⚙️"
+            subtitle="Manage your alert delivery channels & notification rules"
+          />
 
           {/* Section 1: Main Channels */}
           <Card>

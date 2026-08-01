@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { Button, Card, Screen } from '@/components/ui';
+import { Button, Card, HeaderTitleCard, Screen } from '@/components/ui';
 import { bulletinService } from '@/features/companion/bulletin.service';
 import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { CompanionBus } from '@/features/companion/event-bus';
@@ -67,14 +67,10 @@ export default function CompanionScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
           {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Pressable onPress={() => router.back()}>
-              <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
-            </Pressable>
-            <Text style={[typography.title, { color: palette.text, flex: 1, fontSize: 20 }]}>
-              Companion Presentation Engine
-            </Text>
-          </View>
+          <HeaderTitleCard
+            title="Companion Engine 🐱"
+            subtitle="Live Event Simulator & Companion Mascot Sandbox"
+          />
 
           {/* Synchronized Companion Stage */}
           <CompanionStage />

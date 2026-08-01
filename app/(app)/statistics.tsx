@@ -14,7 +14,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Screen } from '@/components/ui';
+import { HeaderTitleCard, Screen } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
@@ -245,14 +245,10 @@ export default function StatisticsScreen() {
       >
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
-          <View style={{ gap: spacing[4] }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-              Statistics 📊
-            </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-              {viewingPartner ? "Viewing partner's statistics" : 'Your overall study progress & growth'}
-            </Text>
-          </View>
+          <HeaderTitleCard
+            title="Statistics 📊"
+            subtitle={viewingPartner ? "Viewing partner's statistics" : 'Your overall study progress & growth'}
+          />
 
 
           {/* Partner Toggle */}

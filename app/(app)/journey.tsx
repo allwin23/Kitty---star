@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Card, EmptyState, Loading, Screen, Button } from '@/components/ui';
+import { Button, Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
@@ -228,16 +228,14 @@ export default function JourneyScreen() {
       >
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Title Header */}
-          <View style={{ gap: spacing[4] }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-              XP Journey 🗺️
-            </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-              {viewingPartner
+          <HeaderTitleCard
+            title="XP Journey 🗺️"
+            subtitle={
+              viewingPartner
                 ? "Managing partner's surprise milestone rewards"
-                : 'Continuous lifetime XP progress & surprise partner rewards'}
-            </Text>
-          </View>
+                : 'Continuous lifetime XP progress & surprise partner rewards'
+            }
+          />
 
 
           {/* Mode Toggle Button */}

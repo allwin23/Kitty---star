@@ -13,7 +13,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
-import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
+import { Button, Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { useAuthStore, useFlashcardStore } from '@/stores';
 import { palette, radius, spacing } from '@/theme';
 
@@ -703,14 +703,11 @@ export default function FlashcardsScreen() {
     <Screen>
       <View style={{ flex: 1 }}>
         {/* Header navigation */}
-        <View style={{ marginBottom: spacing[16], gap: spacing[4] }}>
-          <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-            Smart Flashcards ⚡
-          </Text>
-          <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-            Spaced repetition schedules designed specifically for maximum long-term memory retention.
-          </Text>
-        </View>
+        <HeaderTitleCard
+          title="Smart Flashcards ⚡"
+          subtitle="Spaced repetition schedules designed specifically for maximum long-term memory retention"
+          style={{ marginBottom: spacing[16] }}
+        />
 
 
         {/* Navigation Tabs */}

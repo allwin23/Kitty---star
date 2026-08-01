@@ -34,6 +34,7 @@ import {
   Card,
   EmptyState,
   ErrorState,
+  HeaderTitleCard,
   Loading,
   Screen,
 } from '@/components/ui';
@@ -418,10 +419,10 @@ export default function AccountabilityScreen() {
       >
         <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
           {/* Header */}
-          <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.heading, { color: palette.text }]}>Accountability</Text>
-            <Text style={{ color: palette.mutedText }}>{format(new Date(), 'EEEE, d MMMM yyyy')}</Text>
-          </View>
+          <HeaderTitleCard
+            title="Accountability 📋"
+            subtitle={format(new Date(), 'EEEE, d MMMM yyyy')}
+          />
 
           {/* ─── Section 1: Prior Planning (ALWAYS Tomorrow) ─── */}
           <Card>

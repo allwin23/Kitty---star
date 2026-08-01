@@ -3,7 +3,7 @@ import { Alert, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
-import { Loading, Screen } from '@/components/ui';
+import { HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { useAuthStore } from '@/stores';
 import { palette, spacing } from '@/theme';
 import { CompanionBus } from '@/features/companion/event-bus';
@@ -122,14 +122,10 @@ export default function WaterTrackerScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {/* Header */}
-          <View style={{ gap: spacing[4] }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-              Water Tracker 💧
-            </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-              Stay hydrated to maintain peak mental focus and study stamina.
-            </Text>
-          </View>
+          <HeaderTitleCard
+            title="Water Tracker 💧"
+            subtitle="Stay hydrated to maintain peak mental focus and study stamina"
+          />
 
 
           {/* Progress Card */}

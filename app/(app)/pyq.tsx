@@ -14,7 +14,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
-import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
+import { Button, Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { useAuthStore, usePyqStore } from '@/stores';
 import { palette, radius, spacing, typography } from '@/theme';
 
@@ -377,14 +377,10 @@ export default function PYQScreen() {
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
-            <View style={{ gap: spacing[4] }}>
-              <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-                PYQ Practice 📚
-              </Text>
-              <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-                Practice Previous Year Questions sorted by subject. Non-repeating question bank ensures comprehensive coverage.
-              </Text>
-            </View>
+            <HeaderTitleCard
+              title="PYQ Practice 📚"
+              subtitle="Practice previous year exam questions with smart cycle tracking & instant explanations"
+            />
 
 
             {/* Aggregated stats */}

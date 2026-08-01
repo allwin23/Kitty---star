@@ -14,7 +14,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
 
 // UI components
-import { Screen, Card, Button, Loading } from '@/components/ui';
+import { Button, Card, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 
 // Theme tokens
 import { colors, palette, radius, spacing } from '@/theme';
@@ -359,28 +359,21 @@ export default function EnglishScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {/* Header */}
-          <View style={styles.header}>
-            <View style={{ gap: spacing[4] }}>
-              <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-                Daily English 💬
-              </Text>
-              <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
-                Complete the daily pillars to master vocabulary and communication.
-              </Text>
-            </View>
-
-            {activeTab !== 'home' && (
-              <Button
-                onPress={() => {
-                  setActiveTab('home');
-                  setQuizState('idle');
-                }}
-                style={styles.backButton}
-              >
-                ◀ Home
-              </Button>
-            )}
-          </View>
+          <HeaderTitleCard
+            title="Daily English 💬"
+            subtitle="Complete the daily pillars to master vocabulary and communication"
+          />
+          {activeTab !== 'home' && (
+            <Button
+              onPress={() => {
+                setActiveTab('home');
+                setQuizState('idle');
+              }}
+              style={styles.backButton}
+            >
+              ◀ Home
+            </Button>
+          )}
 
           {/* HOME VIEW */}
           {activeTab === 'home' && (

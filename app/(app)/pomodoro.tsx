@@ -11,7 +11,7 @@ import {
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 
-import { Button, Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
+import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService } from '@/services/backend';
@@ -295,9 +295,10 @@ export default function PomodoroScreen() {
         <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header & Mode Tabs */}
           <View style={{ gap: spacing[16] }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
-              Study Timer 🍅
-            </Text>
+            <HeaderTitleCard
+              title="Study Timer 🍅"
+              subtitle="Stay focused and track your study sessions"
+            />
 
             <View style={styles.tabsContainer}>
               {(['focus', 'short_break', 'long_break'] as PomodoroSessionType[]).map((type) => {
