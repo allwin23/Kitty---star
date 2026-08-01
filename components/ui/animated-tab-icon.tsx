@@ -16,6 +16,8 @@ import {
   type LucideIcon,
 } from 'lucide-react-native';
 
+import { palette } from '@/theme';
+
 type TabType = 'home' | 'accountability' | 'pomodoro' | 'journey' | 'statistics' | string;
 
 const iconMap: Record<string, LucideIcon> = {
@@ -40,14 +42,11 @@ export function AnimatedTabIcon({
 
   useEffect(() => {
     if (focused) {
-      scale.value = withSequence(
-        withSpring(1.25, { damping: 8, stiffness: 300 }),
-        withSpring(1.08, { damping: 10, stiffness: 200 })
-      );
-      glowOpacity.value = withTiming(1, { duration: 200 });
+      scale.value = withTiming(1.12, { duration: 180 });
+      glowOpacity.value = withTiming(1, { duration: 180 });
     } else {
-      scale.value = withSpring(1, { damping: 12, stiffness: 200 });
-      glowOpacity.value = withTiming(0, { duration: 180 });
+      scale.value = withTiming(1, { duration: 160 });
+      glowOpacity.value = withTiming(0, { duration: 160 });
     }
   }, [focused, scale, glowOpacity]);
 
@@ -57,7 +56,6 @@ export function AnimatedTabIcon({
 
   const animatedGlowStyle = useAnimatedStyle(() => ({
     opacity: glowOpacity.value,
-    transform: [{ scale: glowOpacity.value }],
   }));
 
   return (
@@ -65,12 +63,12 @@ export function AnimatedTabIcon({
       {/* Active Light Glass Highlight Circle */}
       <Animated.View style={[styles.glowRing, animatedGlowStyle]} />
 
-      {/* Animated Black Icon */}
+      {/* Animated Icon */}
       <Animated.View style={[styles.iconWrapper, animatedIconStyle]}>
         <IconComponent
-          size={23}
-          color={focused ? '#000000' : 'rgba(0, 0, 0, 0.40)'}
-          strokeWidth={focused ? 2.6 : 1.9}
+          size={22}
+          color={focused ? palette.danger : 'rgba(30, 20, 25, 0.50)'}
+          strokeWidth={focused ? 2.5 : 2.0}
         />
       </Animated.View>
     </View>
@@ -81,16 +79,18 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     position: 'relative',
   },
   glowRing: {
     position: 'absolute',
-    width: 38,
-    height: 38,
-    borderRadius: 999,
-    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: 'rgba(232, 77, 114, 0.12)',
+    borderColor: 'rgba(232, 77, 114, 0.25)',
+    borderWidth: 1,
   },
   iconWrapper: {
     alignItems: 'center',

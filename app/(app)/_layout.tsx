@@ -17,43 +17,33 @@ export default function AppLayout() {
         },
         tabBarStyle: {
           position: 'absolute',
-          bottom: Platform.OS === 'ios' ? 24 : 14,
+          bottom: Platform.OS === 'ios' ? 20 : 12,
           left: 16,
           right: 16,
-          height: 60,
-          borderRadius: 999,
-          overflow: 'hidden',
-          backgroundColor: 'rgba(255, 255, 255, 0.88)',
-          borderWidth: 0,
-          paddingHorizontal: 8,
+          height: 62,
+          borderRadius: 31,
+          backgroundColor: 'rgba(255, 255, 255, 0.96)',
+          borderWidth: 1.5,
+          borderColor: 'rgba(232, 77, 114, 0.30)',
+          paddingHorizontal: 6,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',
           shadowColor: '#8A1535',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.28,
-          shadowRadius: 18,
-          elevation: 10,
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.14,
+          shadowRadius: 14,
+          elevation: 8,
           ...(Platform.OS === 'web'
             ? ({
-                backdropFilter: 'blur(18px) saturate(160%)',
-                WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+                backdropFilter: 'blur(16px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(16px) saturate(160%)',
               } as any)
             : {}),
         },
         tabBarBackground: () => (
-          <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%', borderRadius: 999, overflow: 'hidden' }}>
+          <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%', borderRadius: 31, overflow: 'hidden' }}>
             <NavBouquetBackdrop />
-            {/* Inside Inset Deep Cherry Outline Overlay */}
-            <View
-              pointerEvents="none"
-              style={{
-                ...StyleSheet.absoluteFill,
-                borderRadius: 999,
-                borderWidth: 2.2,
-                borderColor: 'rgba(166, 31, 69, 0.75)',
-              }}
-            />
           </View>
         ),
       }}
