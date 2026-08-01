@@ -8,19 +8,34 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
-  useColorScheme,
 } from 'react-native';
+import {
+  AlertTriangle,
+  BarChart2,
+  BookOpen,
+  Check,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  FileText,
+  HelpCircle,
+  PenTool,
+  Play,
+  Search,
+  Sparkles,
+  SquarePen,
+  Target,
+  Trophy,
+  X,
+  XCircle,
+} from 'lucide-react-native';
+
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { colors, radius, spacing } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
 import type { Word } from '@/stores/english-store';
 import type { WritingEvaluation } from '@/services/writing.service';
-
-// Helper to get color palette based on scheme
-const usePalette = () => {
-  const scheme = useColorScheme();
-  return colors[scheme === 'dark' ? 'dark' : 'light'];
-};
 
 // 1. VocabularyCard: List of today's words with quick view and learned state
 interface VocabularyCardProps {
@@ -38,12 +53,13 @@ export function VocabularyCard({
   onMarkLearned,
   isMarking,
 }: VocabularyCardProps) {
-  const palette = usePalette();
-
   return (
     <Card style={styles.cardContainer}>
-      <Text style={[styles.cardTitle, { color: palette.text }]}>📖 {"Today's Vocabulary"}</Text>
-      <Text style={[styles.cardSubtitle, { color: palette.mutedText }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <BookOpen size={18} color={palette.danger} strokeWidth={2.4} />
+        <Text style={styles.sectionHeaderTitle}>TODAY'S VOCABULARY</Text>
+      </View>
+      <Text style={styles.cardSubtitle}>
         {"Learn these 5 words to unlock today's Writing Practice."}
       </Text>
       <View style={styles.listContainer}>
@@ -55,8 +71,12 @@ export function VocabularyCard({
               style={({ pressed }) => [
                 styles.wordListItem,
                 {
-                  borderColor: isLearned ? '#10B981' : palette.border,
-                  backgroundColor: pressed ? palette.border : palette.surface,
+                  borderColor: isLearned ? '#10B981' : 'rgba(250, 215, 224, 0.85)',
+                  backgroundColor: isLearned
+                    ? 'rgba(209, 250, 229, 0.4)'
+                    : pressed
+                    ? 'rgba(250, 215, 224, 0.5)'
+                    : 'rgba(255, 243, 245, 0.75)',
                 },
               ]}
               onPress={() => onSelectWord(w)}
@@ -65,13 +85,13 @@ export function VocabularyCard({
                 <View
                   style={[
                     styles.indexBadge,
-                    { backgroundColor: isLearned ? '#D1FAE5' : palette.border },
+                    { backgroundColor: isLearned ? '#D1FAE5' : 'rgba(232, 77, 114, 0.12)' },
                   ]}
                 >
                   <Text
                     style={{
-                      fontWeight: '700',
-                      color: isLearned ? '#047857' : palette.mutedText,
+                      fontWeight: '800',
+                      color: isLearned ? '#047857' : palette.danger,
                       fontSize: 12,
                     }}
                   >
@@ -79,11 +99,8 @@ export function VocabularyCard({
                   </Text>
                 </View>
                 <View style={{ flexShrink: 1 }}>
-                  <Text style={[styles.wordText, { color: palette.text }]}>{w.word}</Text>
-                  <Text
-                    style={[styles.wordPart, { color: palette.mutedText }]}
-                    numberOfLines={1}
-                  >
+                  <Text style={styles.wordText}>{w.word}</Text>
+                  <Text style={styles.wordPart} numberOfLines={1}>
                     {w.partOfSpeech} • {w.meaning}
                   </Text>
                 </View>
@@ -92,7 +109,8 @@ export function VocabularyCard({
               <View style={styles.wordListRight}>
                 {isLearned ? (
                   <View style={styles.learnedBadge}>
-                    <Text style={styles.learnedText}>✓ Learned</Text>
+                    <CheckCircle2 size={13} color="#047857" strokeWidth={2.4} />
+                    <Text style={styles.learnedText}>Learned</Text>
                   </View>
                 ) : (
                   <Pressable
@@ -101,7 +119,7 @@ export function VocabularyCard({
                     style={({ pressed }) => [
                       styles.learnBtn,
                       {
-                        backgroundColor: pressed ? '#4338CA' : palette.primary,
+                        backgroundColor: pressed ? palette.deepCherry : palette.danger,
                       },
                     ]}
                   >
@@ -127,36 +145,35 @@ interface WordDetailProps {
 }
 
 export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking }: WordDetailProps) {
-  const palette = usePalette();
   if (!word) return null;
 
   return (
     <Modal visible={!!word} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.modalOverlay}>
-        <View style={[styles.modalContent, { backgroundColor: palette.background }]}>
+        <View style={styles.modalContent}>
           {/* Header */}
-          <View style={[styles.modalHeader, { borderBottomColor: palette.border }]}>
+          <View style={styles.modalHeader}>
             <View>
-              <Text style={[styles.modalWord, { color: palette.text }]}>{word.word}</Text>
-              <Text style={[styles.modalPart, { color: palette.mutedText }]}>{word.partOfSpeech}</Text>
+              <Text style={styles.modalWord}>{word.word}</Text>
+              <Text style={styles.modalPart}>{word.partOfSpeech}</Text>
             </View>
             <Pressable style={styles.closeBtn} onPress={onClose}>
-              <Text style={{ fontSize: 20, color: palette.mutedText }}>✕</Text>
+              <X size={20} color={palette.textSecondary} strokeWidth={2.4} />
             </Pressable>
           </View>
 
           <ScrollView contentContainerStyle={styles.modalScroll}>
             {/* Meaning */}
             <View style={styles.detailSection}>
-              <Text style={[styles.sectionHeading, { color: palette.text }]}>Meaning</Text>
-              <Text style={[styles.detailBody, { color: palette.text }]}>{word.meaning}</Text>
+              <Text style={styles.sectionHeading}>Meaning</Text>
+              <Text style={styles.detailBody}>{word.meaning}</Text>
             </View>
 
             {/* Example */}
             <View style={styles.detailSection}>
-              <Text style={[styles.sectionHeading, { color: palette.text }]}>Example Sentence</Text>
-              <View style={[styles.quoteBox, { backgroundColor: palette.surface, borderColor: palette.border }]}>
-                <Text style={[styles.detailBody, { color: palette.text, fontStyle: 'italic' }]}>
+              <Text style={styles.sectionHeading}>Example Sentence</Text>
+              <View style={styles.quoteBox}>
+                <Text style={[styles.detailBody, { fontStyle: 'italic', color: palette.textPrimary }]}>
                   {"\""}{word.example}{"\""}
                 </Text>
               </View>
@@ -166,11 +183,11 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
             <View style={styles.rowSection}>
               {word.synonyms && word.synonyms.length > 0 && (
                 <View style={[styles.halfSection, { marginRight: spacing.sm }]}>
-                  <Text style={[styles.sectionHeading, { color: palette.text }]}>Synonyms</Text>
+                  <Text style={styles.sectionHeading}>Synonyms</Text>
                   <View style={styles.tagsContainer}>
                     {word.synonyms.map((s) => (
-                      <View key={s} style={[styles.tag, { backgroundColor: '#EEF2F6', borderColor: '#D2D6DC' }]}>
-                        <Text style={{ fontSize: 13, color: '#374151' }}>{s}</Text>
+                      <View key={s} style={[styles.tag, { backgroundColor: 'rgba(232, 77, 114, 0.08)', borderColor: 'rgba(232, 77, 114, 0.25)' }]}>
+                        <Text style={{ fontSize: 13, color: palette.textPrimary, fontWeight: '600' }}>{s}</Text>
                       </View>
                     ))}
                   </View>
@@ -179,11 +196,11 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
 
               {word.antonyms && word.antonyms.length > 0 && (
                 <View style={styles.halfSection}>
-                  <Text style={[styles.sectionHeading, { color: palette.text }]}>Antonyms</Text>
+                  <Text style={styles.sectionHeading}>Antonyms</Text>
                   <View style={styles.tagsContainer}>
                     {word.antonyms.map((a) => (
-                      <View key={a} style={[styles.tag, { backgroundColor: '#FEF2F2', borderColor: '#FEE2E2' }]}>
-                        <Text style={{ fontSize: 13, color: '#991B1B' }}>{a}</Text>
+                      <View key={a} style={[styles.tag, { backgroundColor: 'rgba(217, 76, 97, 0.10)', borderColor: 'rgba(217, 76, 97, 0.30)' }]}>
+                        <Text style={{ fontSize: 13, color: '#B91C1C', fontWeight: '600' }}>{a}</Text>
                       </View>
                     ))}
                   </View>
@@ -193,11 +210,12 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
           </ScrollView>
 
           {/* Footer Action */}
-          <View style={[styles.modalFooter, { borderTopColor: palette.border }]}>
+          <View style={styles.modalFooter}>
             {isLearned ? (
-              <View style={[styles.learnedStatusFull, { backgroundColor: '#D1FAE5' }]}>
-                <Text style={{ color: '#047857', fontWeight: '700', fontSize: 15 }}>
-                  ✓ Marked as Learned
+              <View style={styles.learnedStatusFull}>
+                <CheckCircle2 size={18} color="#047857" strokeWidth={2.4} />
+                <Text style={{ color: '#047857', fontWeight: '800', fontSize: 15 }}>
+                  Marked as Learned
                 </Text>
               </View>
             ) : (
@@ -230,7 +248,7 @@ interface GrammarQuestionProps {
   };
   questionNumber: number;
   totalQuestions: number;
-  selectedOptionIndex: number | null; // 0-indexed locally, answer is 1-indexed (answer - 1)
+  selectedOptionIndex: number | null;
   onSelectOption: (index: number) => void;
   onNext: () => void;
   onPrev: () => void;
@@ -245,36 +263,30 @@ export function GrammarQuestion({
   onNext,
   onPrev,
 }: GrammarQuestionProps) {
-  const palette = usePalette();
-  const colorScheme = useColorScheme();
-
   return (
     <Card style={styles.quizCard}>
       {/* Header Info */}
       <View style={styles.quizHeader}>
-        <Text style={[styles.topicBadge, { color: palette.primary, borderColor: palette.primary }]}>
+        <Text style={styles.topicBadge}>
           {question.topic}
         </Text>
-        <Text style={[styles.progressText, { color: palette.mutedText }]}>
+        <Text style={styles.progressText}>
           {questionNumber} of {totalQuestions}
         </Text>
       </View>
 
       {/* Progress Bar */}
-      <View style={[styles.progressBarBg, { backgroundColor: palette.border }]}>
+      <View style={styles.progressBarBg}>
         <View
           style={[
             styles.progressBarFill,
-            {
-              backgroundColor: palette.primary,
-              width: `${(questionNumber / totalQuestions) * 100}%`,
-            },
+            { width: `${(questionNumber / totalQuestions) * 100}%` },
           ]}
         />
       </View>
 
       {/* Question Text */}
-      <Text style={[styles.questionText, { color: palette.text }]}>{question.question}</Text>
+      <Text style={styles.questionText}>{question.question}</Text>
 
       {/* Options */}
       <View style={styles.optionsList}>
@@ -286,14 +298,12 @@ export function GrammarQuestion({
               style={({ pressed }) => [
                 styles.optionItem,
                 {
-                  borderColor: isSelected ? palette.primary : palette.border,
+                  borderColor: isSelected ? palette.danger : 'rgba(250, 215, 224, 0.85)',
                   backgroundColor: isSelected
-                    ? colorScheme === 'dark'
-                      ? '#312E81'
-                      : '#EEF2F6'
+                    ? 'rgba(240, 115, 146, 0.15)'
                     : pressed
-                    ? palette.border
-                    : palette.surface,
+                    ? 'rgba(250, 215, 224, 0.5)'
+                    : 'rgba(255, 243, 245, 0.75)',
                 },
               ]}
               onPress={() => onSelectOption(idx)}
@@ -302,14 +312,14 @@ export function GrammarQuestion({
                 style={[
                   styles.optionBullet,
                   {
-                    borderColor: isSelected ? palette.primary : palette.mutedText,
-                    backgroundColor: isSelected ? palette.primary : 'transparent',
+                    borderColor: isSelected ? palette.danger : palette.textSecondary,
+                    backgroundColor: isSelected ? palette.danger : 'transparent',
                   },
                 ]}
               >
                 {isSelected && <View style={styles.optionBulletInner} />}
               </View>
-              <Text style={[styles.optionText, { color: palette.text, fontWeight: isSelected ? '700' : '400' }]}>
+              <Text style={[styles.optionText, { fontWeight: isSelected ? '800' : '500' }]}>
                 {option}
               </Text>
             </Pressable>
@@ -320,10 +330,20 @@ export function GrammarQuestion({
       {/* Navigation Buttons */}
       <View style={styles.quizNav}>
         <Button style={styles.navBtn} disabled={questionNumber === 1} onPress={onPrev}>
-          ◀ Previous
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <ChevronLeft size={16} color="#FFFFFF" strokeWidth={2.4} />
+            <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Previous</Text>
+          </View>
         </Button>
         <Button style={styles.navBtn} onPress={onNext}>
-          {questionNumber === totalQuestions ? 'Finish Quiz' : 'Next ▶'}
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>
+              {questionNumber === totalQuestions ? 'Finish Quiz' : 'Next'}
+            </Text>
+            {questionNumber !== totalQuestions && (
+              <ChevronRight size={16} color="#FFFFFF" strokeWidth={2.4} />
+            )}
+          </View>
         </Button>
       </View>
     </Card>
@@ -336,7 +356,7 @@ interface QuizResultProps {
   wrongCount: number;
   score: number;
   questions: any[];
-  userAnswers: Record<string, number | null>; // id -> optionIndex (0-indexed)
+  userAnswers: Record<string, number | null>;
   onClose: () => void;
 }
 
@@ -348,33 +368,32 @@ export function QuizResult({
   userAnswers,
   onClose,
 }: QuizResultProps) {
-  const palette = usePalette();
   const total = correctCount + wrongCount;
   const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
 
   return (
     <ScrollView style={styles.resultContainer} showsVerticalScrollIndicator={false}>
       <Card style={styles.resultSummaryCard}>
-        <Text style={[styles.resultEmoji, { textAlign: 'center' }]}>
-          {accuracy >= 80 ? '🎉 Great Job!' : accuracy >= 50 ? '👍 Keep it up!' : '📚 Practice makes perfect!'}
-        </Text>
-        <Text style={[styles.resultTitle, { color: palette.text, textAlign: 'center' }]}>Quiz Completed</Text>
-        <Text style={[styles.resultScoreText, { color: palette.primary, textAlign: 'center' }]}>
+        <View style={{ alignItems: 'center', marginVertical: spacing.xs }}>
+          <Trophy size={48} color={palette.danger} strokeWidth={2} />
+        </View>
+        <Text style={styles.resultTitle}>Quiz Completed</Text>
+        <Text style={styles.resultScoreText}>
           Accuracy: {accuracy}%
         </Text>
 
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
             <Text style={[styles.statValue, { color: '#10B981' }]}>{correctCount}</Text>
-            <Text style={[styles.statLabel, { color: palette.mutedText }]}>Correct</Text>
+            <Text style={styles.statLabel}>Correct</Text>
           </View>
           <View style={styles.statBox}>
             <Text style={[styles.statValue, { color: '#EF4444' }]}>{wrongCount}</Text>
-            <Text style={[styles.statLabel, { color: palette.mutedText }]}>Wrong</Text>
+            <Text style={styles.statLabel}>Wrong</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={[styles.statValue, { color: palette.primary }]}>{score}</Text>
-            <Text style={[styles.statLabel, { color: palette.mutedText }]}>XP Gained</Text>
+            <Text style={[styles.statValue, { color: palette.danger }]}>{score}</Text>
+            <Text style={styles.statLabel}>XP Gained</Text>
           </View>
         </View>
 
@@ -383,27 +402,27 @@ export function QuizResult({
         </Button>
       </Card>
 
-      <Text style={[styles.reviewTitle, { color: palette.text }]}>Review Answers</Text>
+      <Text style={styles.reviewTitle}>Review Answers</Text>
 
       {questions.map((q, idx) => {
         const selected = userAnswers[q.id];
-        const correctIndex = q.answer - 1; // Convert 1-indexed DB schema to 0-indexed locally
+        const correctIndex = q.answer - 1;
         const isUserCorrect = selected === correctIndex;
 
         return (
           <Card key={q.id} style={[styles.reviewQuestionCard, { borderColor: isUserCorrect ? '#10B981' : '#EF4444' }]}>
-            <Text style={[styles.reviewHeader, { color: palette.text }]}>
+            <Text style={styles.reviewHeader}>
               Question {idx + 1} ({q.topic})
             </Text>
-            <Text style={[styles.reviewQuestionText, { color: palette.text }]}>{q.question}</Text>
+            <Text style={styles.reviewQuestionText}>{q.question}</Text>
 
             <View style={styles.reviewOptionsList}>
               {q.options.map((option: string, oIdx: number) => {
                 const isCorrectOption = oIdx === correctIndex;
                 const isUserSelected = oIdx === selected;
 
-                let borderC: string = palette.border;
-                let bgC: string = palette.surface;
+                let borderC: string = 'rgba(250, 215, 224, 0.85)';
+                let bgC: string = 'rgba(255, 243, 245, 0.75)';
                 if (isCorrectOption) {
                   borderC = '#10B981';
                   bgC = '#D1FAE5';
@@ -414,19 +433,26 @@ export function QuizResult({
 
                 return (
                   <View key={oIdx} style={[styles.reviewOptionItem, { borderColor: borderC, backgroundColor: bgC }]}>
-                    <Text style={[styles.reviewOptionText, { color: '#0F172A' }]}>
-                      {option} {isCorrectOption ? '✓' : isUserSelected ? '✗' : ''}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Text style={[styles.reviewOptionText, { flex: 1 }]}>
+                        {option}
+                      </Text>
+                      {isCorrectOption ? (
+                        <CheckCircle2 size={16} color="#10B981" strokeWidth={2.4} />
+                      ) : isUserSelected ? (
+                        <XCircle size={16} color="#EF4444" strokeWidth={2.4} />
+                      ) : null}
+                    </View>
                   </View>
                 );
               })}
             </View>
 
-            <View style={[styles.explanationBox, { backgroundColor: '#F8FAFC' }]}>
-              <Text style={{ fontWeight: '700', fontSize: 13, color: '#475569', marginBottom: 2 }}>
+            <View style={styles.explanationBox}>
+              <Text style={{ fontWeight: '800', fontSize: 13, color: palette.textPrimary, marginBottom: 2 }}>
                 Explanation:
               </Text>
-              <Text style={{ fontSize: 13, color: '#64748B', lineHeight: 18 }}>{q.explanation}</Text>
+              <Text style={{ fontSize: 13, color: palette.textSecondary, lineHeight: 18 }}>{q.explanation}</Text>
             </View>
           </Card>
         );
@@ -437,7 +463,7 @@ export function QuizResult({
   );
 }
 
-// 5. WritingEditor & 6. VocabularyChecklist
+// 5. WritingEditor
 interface WritingEditorProps {
   words: Word[];
   paragraph: string;
@@ -453,12 +479,8 @@ export function WritingEditor({
   onSubmit,
   isLoading,
 }: WritingEditorProps) {
-  const palette = usePalette();
-
-  // Validate which words are used in the text
   const checkWordUsed = (word: string) => {
     if (!paragraph) return false;
-    // Simple regex boundary check or case-insensitive search
     const cleanWord = word.trim().toLowerCase();
     const cleanPara = paragraph.toLowerCase();
     return cleanPara.includes(cleanWord);
@@ -469,8 +491,11 @@ export function WritingEditor({
 
   return (
     <Card style={styles.cardContainer}>
-      <Text style={[styles.cardTitle, { color: palette.text }]}>✍️ AI Writing Practice</Text>
-      <Text style={[styles.cardSubtitle, { color: palette.mutedText }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <SquarePen size={18} color={palette.danger} strokeWidth={2.4} />
+        <Text style={styles.sectionHeaderTitle}>AI WRITING PRACTICE</Text>
+      </View>
+      <Text style={styles.cardSubtitle}>
         Write a paragraph incorporating ALL 5 vocabulary words.
       </Text>
 
@@ -484,14 +509,21 @@ export function WritingEditor({
               style={[
                 styles.checkItem,
                 {
-                  backgroundColor: used ? '#E6F4EA' : palette.surface,
-                  borderColor: used ? '#10B981' : palette.border,
+                  backgroundColor: used ? 'rgba(209, 250, 229, 0.6)' : 'rgba(255, 243, 245, 0.85)',
+                  borderColor: used ? '#10B981' : 'rgba(250, 215, 224, 0.85)',
                 },
               ]}
             >
-              <Text style={[styles.checkText, { color: used ? '#137333' : palette.mutedText }]}>
-                {used ? '✓' : '•'} {w.word}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                {used ? (
+                  <Check size={13} color="#047857" strokeWidth={2.4} />
+                ) : (
+                  <Clock size={13} color={palette.textSecondary} strokeWidth={2} />
+                )}
+                <Text style={[styles.checkText, { color: used ? '#047857' : palette.textSecondary }]}>
+                  {w.word}
+                </Text>
+              </View>
             </View>
           );
         })}
@@ -499,42 +531,45 @@ export function WritingEditor({
 
       {/* Editor Box */}
       <TextInput
-        style={[
-          styles.textEditor,
-          {
-            color: palette.text,
-            backgroundColor: palette.surface,
-            borderColor: palette.border,
-          },
-        ]}
+        style={styles.textEditor}
         multiline
         numberOfLines={6}
         placeholder="Once upon a time, an assiduous student used persuasion to..."
-        placeholderTextColor={palette.mutedText}
+        placeholderTextColor={palette.textSecondary}
         value={paragraph}
         onChangeText={onChangeParagraph}
         editable={!isLoading}
       />
 
       <View style={styles.editorInfo}>
-        <Text style={{ fontSize: 12, color: palette.mutedText }}>
+        <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '600' }}>
           Required Words: {usedCount}/{words.length} Used
         </Text>
-        <Text style={{ fontSize: 12, color: palette.mutedText }}>
+        <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '600' }}>
           {paragraph.length} chars
         </Text>
       </View>
 
       {!canSubmit && paragraph.trim().length > 0 && (
         <View style={styles.warningBox}>
-          <Text style={styles.warningText}>
-            ⚠️ You must include all 5 words in your paragraph before submitting.
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AlertTriangle size={15} color="#B45309" strokeWidth={2.2} />
+            <Text style={styles.warningText}>
+              You must include all 5 words in your paragraph before submitting.
+            </Text>
+          </View>
         </View>
       )}
 
       <Button disabled={!canSubmit || isLoading} onPress={onSubmit} style={{ marginTop: spacing.md }}>
-        {isLoading ? <ActivityIndicator size="small" color="#FFF" /> : 'Submit for Gemini Review'}
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#FFF" />
+        ) : (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Sparkles size={16} color="#FFFFFF" strokeWidth={2.2} />
+            <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Submit for Gemini Review</Text>
+          </View>
+        )}
       </Button>
     </Card>
   );
@@ -548,42 +583,48 @@ interface GeminiFeedbackCardProps {
 }
 
 export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: GeminiFeedbackCardProps) {
-  const palette = usePalette();
   if (!evaluation) return null;
 
   return (
     <ScrollView style={styles.feedbackContainer} showsVerticalScrollIndicator={false}>
       {/* 1. Overall Feedback */}
       <Card style={styles.feedbackSectionCard}>
-        <Text style={[styles.feedbackSectionTitle, { color: palette.primary }]}>💡 Gemini Evaluation</Text>
-        <Text style={[styles.feedbackBody, { color: palette.text }]}>{evaluation.overallFeedback}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={18} color={palette.danger} strokeWidth={2.4} />
+          <Text style={styles.sectionHeaderTitle}>GEMINI EVALUATION</Text>
+        </View>
+        <Text style={styles.feedbackBody}>{evaluation.overallFeedback}</Text>
 
         <View style={styles.usageGrid}>
           <View style={styles.usageBox}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: '#047857', marginBottom: spacing.xs }}>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: '#047857', marginBottom: spacing.xs }}>
               Words Used Correctly
             </Text>
             {evaluation.wordsUsedCorrectly?.map((w) => (
-              <Text key={w} style={styles.usedOkText}>
-                ✓ {w}
-              </Text>
+              <View key={w} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                <Check size={13} color="#047857" strokeWidth={2.4} />
+                <Text style={styles.usedOkText}>{w}</Text>
+              </View>
             ))}
             {(!evaluation.wordsUsedCorrectly || evaluation.wordsUsedCorrectly.length === 0) && (
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>None</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary }}>None</Text>
             )}
           </View>
 
           <View style={styles.usageBox}>
-            <Text style={{ fontSize: 13, fontWeight: '700', color: '#B91C1C', marginBottom: spacing.xs }}>
+            <Text style={{ fontSize: 13, fontWeight: '800', color: '#B91C1C', marginBottom: spacing.xs }}>
               Words Used Incorrectly
             </Text>
             {evaluation.wordsUsedIncorrectly?.map((w) => (
-              <Text key={w} style={styles.usedBadText}>
-                ✗ {w}
-              </Text>
+              <View key={w} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                <X size={13} color="#B91C1C" strokeWidth={2.4} />
+                <Text style={styles.usedBadText}>{w}</Text>
+              </View>
             ))}
             {(!evaluation.wordsUsedIncorrectly || evaluation.wordsUsedIncorrectly.length === 0) && (
-              <Text style={{ fontSize: 12, color: '#10B981', fontStyle: 'italic' }}>None! All 5 correctly used.</Text>
+              <Text style={{ fontSize: 12, color: '#10B981', fontStyle: 'italic', fontWeight: '600' }}>
+                None! All 5 correctly used.
+              </Text>
             )}
           </View>
         </View>
@@ -591,21 +632,30 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
 
       {/* 2. Original vs Improved Paragraphs */}
       <Card style={styles.feedbackSectionCard}>
-        <Text style={[styles.feedbackSectionTitle, { color: palette.text }]}>✍️ original Paragraph</Text>
-        <Text style={[styles.originalParaText, { color: palette.mutedText }]}>{originalParagraph}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <FileText size={18} color={palette.textPrimary} strokeWidth={2.4} />
+          <Text style={[styles.sectionHeaderTitle, { color: palette.textPrimary }]}>ORIGINAL PARAGRAPH</Text>
+        </View>
+        <Text style={styles.originalParaText}>{originalParagraph}</Text>
 
-        <View style={[styles.divider, { backgroundColor: palette.border }]} />
+        <View style={styles.divider} />
 
-        <Text style={[styles.feedbackSectionTitle, { color: '#047857' }]}>🌟 Improved Paragraph (By Gemini)</Text>
-        <Text style={[styles.improvedParaText, { color: palette.text }]}>{evaluation.improvedParagraph}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Sparkles size={18} color="#047857" strokeWidth={2.4} />
+          <Text style={[styles.sectionHeaderTitle, { color: '#047857' }]}>IMPROVED PARAGRAPH (BY GEMINI)</Text>
+        </View>
+        <Text style={styles.improvedParaText}>{evaluation.improvedParagraph}</Text>
       </Card>
 
       {/* 3. Grammar Mistakes */}
       {evaluation.grammarMistakes && evaluation.grammarMistakes.length > 0 && (
         <Card style={styles.feedbackSectionCard}>
-          <Text style={[styles.feedbackSectionTitle, { color: palette.danger }]}>📝 Grammar & Style Corrections</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <CheckCircle2 size={18} color={palette.danger} strokeWidth={2.4} />
+            <Text style={styles.sectionHeaderTitle}>GRAMMAR & STYLE CORRECTIONS</Text>
+          </View>
           {evaluation.grammarMistakes.map((m, index) => (
-            <View key={index} style={[styles.mistakeRow, { borderBottomColor: palette.border }]}>
+            <View key={index} style={styles.mistakeRow}>
               <View style={styles.mistakeLabelContainer}>
                 <Text style={styles.mistakeIndex}>Correction {index + 1}</Text>
               </View>
@@ -613,7 +663,7 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
                 <Text style={styles.mistakeOriginal}>- {"\""}{m.original}{"\""}</Text>
                 <Text style={styles.mistakeCorrection}>+ {"\""}{m.correction}{"\""}</Text>
               </View>
-              <Text style={[styles.mistakeExplanation, { color: palette.text }]}>{m.explanation}</Text>
+              <Text style={styles.mistakeExplanation}>{m.explanation}</Text>
             </View>
           ))}
         </Card>
@@ -622,11 +672,14 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
       {/* 4. Vocabulary Suggestions */}
       {evaluation.vocabularySuggestions && evaluation.vocabularySuggestions.length > 0 && (
         <Card style={styles.feedbackSectionCard}>
-          <Text style={[styles.feedbackSectionTitle, { color: palette.primary }]}>🎯 Vocabulary Suggestions</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Target size={18} color={palette.danger} strokeWidth={2.4} />
+            <Text style={styles.sectionHeaderTitle}>VOCABULARY SUGGESTIONS</Text>
+          </View>
           {evaluation.vocabularySuggestions.map((s, index) => (
-            <View key={index} style={[styles.suggestionRow, { borderBottomColor: palette.border }]}>
-              <Text style={[styles.suggestionWord, { color: palette.text }]}>{s.word}</Text>
-              <Text style={[styles.suggestionText, { color: palette.mutedText }]}>{s.suggestion}</Text>
+            <View key={index} style={styles.suggestionRow}>
+              <Text style={styles.suggestionWord}>{s.word}</Text>
+              <Text style={styles.suggestionText}>{s.suggestion}</Text>
             </View>
           ))}
         </Card>
@@ -641,7 +694,7 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
   );
 }
 
-// 9. StatisticsCard & 10. DailyGoalCard
+// 9. StatisticsCard
 interface StatisticsCardProps {
   vocabStats: { today_words: number; total_words: number; current_streak: number } | null;
   grammarStats: { today_questions: number; today_correct: number; total_questions: number; accuracy: number } | null;
@@ -649,82 +702,99 @@ interface StatisticsCardProps {
 }
 
 export function StatisticsCard({ vocabStats, grammarStats, writingCompleted }: StatisticsCardProps) {
-  const palette = usePalette();
-
   return (
     <View style={{ gap: spacing.md }}>
       <Card style={styles.statsCard}>
-        <Text style={[styles.cardTitle, { color: palette.text }]}>📊 English Progress Statistics</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <BarChart2 size={18} color={palette.danger} strokeWidth={2.4} />
+          <Text style={styles.sectionHeaderTitle}>ENGLISH PROGRESS STATISTICS</Text>
+        </View>
 
         <View style={styles.statsSection}>
-          <Text style={[styles.statsSectionLabel, { color: palette.mutedText }]}>VOCABULARY</Text>
+          <Text style={styles.statsSectionLabel}>VOCABULARY</Text>
           <View style={styles.gridStats}>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.primary }]}>{vocabStats?.today_words ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Learned Today</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.today_words ?? 0}</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Learned Today</Text>
             </View>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.primary }]}>{vocabStats?.total_words ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Total Learned</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.total_words ?? 0}</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Total Learned</Text>
             </View>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.primary }]}>{vocabStats?.current_streak ?? 0}d</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Streak</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.current_streak ?? 0}d</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Streak</Text>
             </View>
           </View>
         </View>
 
-        <View style={[styles.divider, { backgroundColor: palette.border }]} />
+        <View style={styles.divider} />
 
         <View style={styles.statsSection}>
-          <Text style={[styles.statsSectionLabel, { color: palette.mutedText }]}>GRAMMAR</Text>
+          <Text style={styles.statsSectionLabel}>GRAMMAR</Text>
           <View style={styles.gridStats}>
             <View style={styles.gridStatItem}>
               <Text style={[styles.gridValue, { color: '#047857' }]}>{grammarStats?.today_questions ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Solved Today</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Solved Today</Text>
             </View>
             <View style={styles.gridStatItem}>
               <Text style={[styles.gridValue, { color: '#047857' }]}>{grammarStats?.total_questions ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Total Solved</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Total Solved</Text>
             </View>
             <View style={styles.gridStatItem}>
               <Text style={[styles.gridValue, { color: '#047857' }]}>
                 {grammarStats?.accuracy ? Math.round(Number(grammarStats.accuracy)) : 0}%
               </Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>Accuracy</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Accuracy</Text>
             </View>
           </View>
         </View>
       </Card>
 
       <Card style={styles.statsCard}>
-        <Text style={[styles.cardTitle, { color: palette.text }]}>🎯 {"Today's English Goal"}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Target size={18} color={palette.danger} strokeWidth={2.4} />
+          <Text style={styles.sectionHeaderTitle}>TODAY'S ENGLISH GOAL</Text>
+        </View>
+
         <View style={styles.goalChecklist}>
           <View style={styles.goalRow}>
-            <Text style={{ fontSize: 20 }}>{vocabStats?.today_words && vocabStats.today_words >= 5 ? '✅' : '⏳'}</Text>
-            <View>
-              <Text style={[styles.goalItemTitle, { color: palette.text }]}>Learn 5 Vocabulary Words</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>
+            {vocabStats?.today_words && vocabStats.today_words >= 5 ? (
+              <CheckCircle2 size={22} color="#10B981" strokeWidth={2.4} />
+            ) : (
+              <Clock size={22} color={palette.textSecondary} strokeWidth={2} />
+            )}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.goalItemTitle}>Learn 5 Vocabulary Words</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, marginTop: 2 }}>
                 Completed: {vocabStats?.today_words ?? 0}/5 words learned
               </Text>
             </View>
           </View>
 
           <View style={styles.goalRow}>
-            <Text style={{ fontSize: 20 }}>{grammarStats?.today_questions && grammarStats.today_questions > 0 ? '✅' : '⏳'}</Text>
-            <View>
-              <Text style={[styles.goalItemTitle, { color: palette.text }]}>Complete a Grammar Quiz</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>
+            {grammarStats?.today_questions && grammarStats.today_questions > 0 ? (
+              <CheckCircle2 size={22} color="#10B981" strokeWidth={2.4} />
+            ) : (
+              <Clock size={22} color={palette.textSecondary} strokeWidth={2} />
+            )}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.goalItemTitle}>Complete a Grammar Quiz</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, marginTop: 2 }}>
                 Completed: {grammarStats?.today_questions ?? 0} questions solved
               </Text>
             </View>
           </View>
 
           <View style={styles.goalRow}>
-            <Text style={{ fontSize: 20 }}>{writingCompleted ? '✅' : '⏳'}</Text>
-            <View>
-              <Text style={[styles.goalItemTitle, { color: palette.text }]}>AI Paragraph Writing Practice</Text>
-              <Text style={{ fontSize: 12, color: palette.mutedText }}>
+            {writingCompleted ? (
+              <CheckCircle2 size={22} color="#10B981" strokeWidth={2.4} />
+            ) : (
+              <Clock size={22} color={palette.textSecondary} strokeWidth={2} />
+            )}
+            <View style={{ flex: 1 }}>
+              <Text style={styles.goalItemTitle}>AI Paragraph Writing Practice</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, marginTop: 2 }}>
                 Status: {writingCompleted ? 'Completed' : 'Not completed today'}
               </Text>
             </View>
@@ -739,13 +809,18 @@ const styles = StyleSheet.create({
   cardContainer: {
     gap: spacing.sm,
   },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+  sectionHeaderTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: palette.danger,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   cardSubtitle: {
     fontSize: 13,
+    color: palette.textSecondary,
     marginBottom: spacing.sm,
+    lineHeight: 18,
   },
   listContainer: {
     gap: spacing.sm,
@@ -756,7 +831,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   wordListLeft: {
     flexDirection: 'row',
@@ -765,32 +840,38 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   indexBadge: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     alignItems: 'center',
     justifyContent: 'center',
   },
   wordText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
   wordPart: {
-    fontSize: 13,
+    fontSize: 12,
     marginTop: 2,
+    color: palette.textSecondary,
+    fontWeight: '500',
   },
   wordListRight: {
     marginLeft: spacing.sm,
   },
   learnedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: '#D1FAE5',
     paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: radius.sm,
   },
   learnedText: {
     color: '#047857',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 12,
   },
   learnBtn: {
@@ -800,34 +881,41 @@ const styles = StyleSheet.create({
   },
   learnBtnText: {
     color: '#FFFFFF',
-    fontWeight: '700',
+    fontWeight: '800',
     fontSize: 12,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    borderTopLeftRadius: radius.lg,
-    borderTopRightRadius: radius.lg,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
     padding: spacing.lg,
-    maxHeight: '80%',
+    maxHeight: '82%',
+    backgroundColor: '#FFF7F8',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
+    borderBottomWidth: 1.5,
+    borderBottomColor: 'rgba(250, 215, 224, 0.85)',
   },
   modalWord: {
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
   modalPart: {
-    fontSize: 14,
+    fontSize: 13,
     fontStyle: 'italic',
+    color: palette.danger,
+    fontWeight: '700',
     marginTop: 2,
   },
   closeBtn: {
@@ -841,21 +929,25 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   sectionHeading: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
+    color: palette.danger,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 4,
+    letterSpacing: 0.8,
+    marginBottom: 2,
   },
   detailBody: {
-    fontSize: 16,
+    fontSize: 15,
     lineHeight: 22,
+    color: palette.textPrimary,
+    fontWeight: '500',
   },
   quoteBox: {
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderStyle: 'dashed',
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    backgroundColor: 'rgba(255, 243, 245, 0.75)',
   },
   rowSection: {
     flexDirection: 'row',
@@ -877,14 +969,18 @@ const styles = StyleSheet.create({
   },
   modalFooter: {
     paddingTop: spacing.md,
-    borderTopWidth: 1,
+    borderTopWidth: 1.5,
+    borderTopColor: 'rgba(250, 215, 224, 0.85)',
   },
   learnedStatusFull: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
     padding: spacing.sm,
     borderRadius: radius.md,
     width: '100%',
+    backgroundColor: '#D1FAE5',
   },
   quizCard: {
     gap: spacing.md,
@@ -896,32 +992,38 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   topicBadge: {
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: palette.danger,
     borderRadius: radius.full,
     paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
+    paddingVertical: 3,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '800',
+    color: palette.danger,
   },
   progressText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
+    color: palette.textSecondary,
   },
   progressBarBg: {
-    height: 6,
+    height: 8,
     borderRadius: radius.full,
     width: '100%',
     overflow: 'hidden',
+    backgroundColor: 'rgba(250, 215, 224, 0.7)',
   },
   progressBarFill: {
     height: '100%',
     borderRadius: radius.full,
+    backgroundColor: palette.danger,
   },
   questionText: {
-    fontSize: 18,
-    fontWeight: '700',
-    lineHeight: 26,
-    marginVertical: spacing.sm,
+    fontSize: 17,
+    fontWeight: '800',
+    lineHeight: 24,
+    color: palette.textPrimary,
+    marginVertical: spacing.xs,
   },
   optionsList: {
     gap: spacing.sm,
@@ -931,7 +1033,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   optionBullet: {
     width: 20,
@@ -951,6 +1053,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 15,
     flex: 1,
+    color: palette.textPrimary,
   },
   quizNav: {
     flexDirection: 'row',
@@ -969,23 +1072,24 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     padding: spacing.lg,
   },
-  resultEmoji: {
-    fontSize: 48,
-  },
   resultTitle: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
+    textAlign: 'center',
   },
   resultScoreText: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: spacing.md,
+    fontSize: 18,
+    fontWeight: '800',
+    color: palette.danger,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopWidth: 1.5,
+    borderTopColor: 'rgba(250, 215, 224, 0.85)',
     paddingTop: spacing.md,
     marginVertical: spacing.xs,
   },
@@ -993,16 +1097,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 22,
+    fontWeight: '800',
   },
   statLabel: {
     fontSize: 12,
+    color: palette.textSecondary,
+    fontWeight: '600',
     marginTop: 2,
   },
   reviewTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '800',
+    color: palette.danger,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
     marginVertical: spacing.md,
   },
   reviewQuestionCard: {
@@ -1011,13 +1120,15 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   reviewHeader: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
   reviewQuestionText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
     lineHeight: 22,
+    color: palette.textPrimary,
   },
   reviewOptionsList: {
     gap: spacing.xs,
@@ -1025,15 +1136,20 @@ const styles = StyleSheet.create({
   reviewOptionItem: {
     padding: spacing.sm,
     borderRadius: radius.sm,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   reviewOptionText: {
     fontSize: 14,
+    fontWeight: '600',
+    color: palette.textPrimary,
   },
   explanationBox: {
     padding: spacing.md,
     borderRadius: radius.md,
     marginTop: spacing.xs,
+    backgroundColor: 'rgba(255, 243, 245, 0.75)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1,
   },
   checklistGrid: {
     flexDirection: 'row',
@@ -1045,19 +1161,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: 6,
     borderRadius: radius.sm,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   checkText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   textEditor: {
     height: 140,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    backgroundColor: 'rgba(255, 247, 248, 0.9)',
     padding: spacing.md,
     fontSize: 15,
+    color: palette.textPrimary,
     textAlignVertical: 'top',
+    fontWeight: '500',
   },
   editorInfo: {
     flexDirection: 'row',
@@ -1067,7 +1187,7 @@ const styles = StyleSheet.create({
   warningBox: {
     backgroundColor: '#FFFBEB',
     borderColor: '#FDE68A',
-    borderWidth: 1,
+    borderWidth: 1.5,
     padding: spacing.sm,
     borderRadius: radius.sm,
     marginTop: spacing.sm,
@@ -1075,7 +1195,8 @@ const styles = StyleSheet.create({
   warningText: {
     color: '#B45309',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
+    flex: 1,
   },
   feedbackContainer: {
     flex: 1,
@@ -1084,15 +1205,11 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     gap: spacing.sm,
   },
-  feedbackSectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
   feedbackBody: {
     fontSize: 15,
     lineHeight: 22,
+    color: palette.textPrimary,
+    fontWeight: '500',
   },
   usageGrid: {
     flexDirection: 'row',
@@ -1103,40 +1220,42 @@ const styles = StyleSheet.create({
   usageBox: {
     flex: 1,
     padding: spacing.sm,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255, 243, 245, 0.75)',
     borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
   },
   usedOkText: {
-    color: '#137333',
+    color: '#047857',
     fontSize: 13,
-    fontWeight: '600',
-    marginTop: 2,
+    fontWeight: '700',
   },
   usedBadText: {
-    color: '#C5221F',
+    color: '#B91C1C',
     fontSize: 13,
-    fontWeight: '600',
-    marginTop: 2,
+    fontWeight: '700',
   },
   originalParaText: {
     fontSize: 14,
     lineHeight: 20,
     fontStyle: 'italic',
+    color: palette.textSecondary,
   },
   improvedParaText: {
     fontSize: 15,
     lineHeight: 22,
-    fontWeight: '500',
+    fontWeight: '600',
+    color: palette.textPrimary,
   },
   divider: {
-    height: 1,
+    height: 1.5,
+    backgroundColor: 'rgba(250, 215, 224, 0.85)',
     marginVertical: spacing.xs,
   },
   mistakeRow: {
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
+    borderBottomColor: 'rgba(250, 215, 224, 0.85)',
     gap: 4,
   },
   mistakeLabelContainer: {
@@ -1149,7 +1268,7 @@ const styles = StyleSheet.create({
   mistakeIndex: {
     color: '#DC2626',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   mistakeDiff: {
     gap: 2,
@@ -1164,25 +1283,29 @@ const styles = StyleSheet.create({
   mistakeCorrection: {
     color: '#047857',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   mistakeExplanation: {
     fontSize: 13,
     marginTop: 2,
     lineHeight: 18,
+    color: palette.textPrimary,
   },
   suggestionRow: {
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
+    borderBottomColor: 'rgba(250, 215, 224, 0.85)',
     gap: 4,
   },
   suggestionWord: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
   suggestionText: {
     fontSize: 13,
     lineHeight: 18,
+    color: palette.textSecondary,
   },
   statsCard: {
     gap: spacing.md,
@@ -1192,8 +1315,9 @@ const styles = StyleSheet.create({
   },
   statsSectionLabel: {
     fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    fontWeight: '800',
+    letterSpacing: 0.8,
+    color: palette.danger,
   },
   gridStats: {
     flexDirection: 'row',
@@ -1205,18 +1329,20 @@ const styles = StyleSheet.create({
   },
   gridValue: {
     fontSize: 22,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   goalChecklist: {
     gap: spacing.md,
+    marginTop: spacing.xs,
   },
   goalRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   goalItemTitle: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
 });

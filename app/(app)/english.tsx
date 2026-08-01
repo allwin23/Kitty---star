@@ -12,6 +12,20 @@ import {
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect } from 'expo-router';
+import {
+  BookOpen,
+  ChevronLeft,
+  FileText,
+  Flame,
+  HelpCircle,
+  History,
+  Lock,
+  Play,
+  RotateCcw,
+  Search,
+  SquarePen,
+  Target,
+} from 'lucide-react-native';
 
 // UI components
 import { Button, Card, HeaderTitleCard, Loading, Screen } from '@/components/ui';
@@ -51,7 +65,6 @@ export default function EnglishScreen() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
 
-
   // Zustand Store values
   const {
     currentWords,
@@ -85,7 +98,6 @@ export default function EnglishScreen() {
   } | null>(null);
 
   // Fetch words that are already learned today — only after store has rehydrated
-  // Without this guard, currentWords is [] on first render and the query never fires
   const todayWordIds = _hasHydrated ? currentWords.map((w) => w.id) : [];
   const learnedTodayQ = useQuery({
     queryKey: ['vocabulary-learned-today', todayWordIds],
@@ -149,7 +161,7 @@ export default function EnglishScreen() {
     return () => clearInterval(timer);
   }, [today, initializeDailyWords, vocabStatsQ, grammarStatsQ, grammarHistoryQ, learnedTodayQ]);
 
-  // Refetch stats when the screen is focused — empty deps prevents infinite loop
+  // Refetch stats when the screen is focused
   useFocusEffect(
     useCallback(() => {
       initializeDailyWords();
@@ -230,13 +242,11 @@ export default function EnglishScreen() {
   };
 
   const handleStartQuiz = () => {
-    // Filter questions by topic
     let pool = grammarData;
     if (selectedTopic !== 'All') {
       pool = grammarData.filter((q) => q.topic === selectedTopic);
     }
 
-    // Pick 5 random questions (or fewer if pool is smaller)
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
     const selected = shuffled.slice(0, 5);
 
@@ -270,13 +280,12 @@ export default function EnglishScreen() {
     if (currentQuestionIndex < quizQuestions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
-      // Quiz finished, calculate score
       let correct = 0;
       let wrong = 0;
 
       quizQuestions.forEach((q) => {
         const userAnswer = quizAnswers[q.id];
-        const correctIndex = q.answer - 1; // 1-indexed in JSON
+        const correctIndex = q.answer - 1;
         if (userAnswer === correctIndex) {
           correct++;
         } else {
@@ -284,10 +293,9 @@ export default function EnglishScreen() {
         }
       });
 
-      const score = correct * 10; // 10 XP per correct question
+      const score = correct * 10;
       const topicLabel = selectedTopic === 'All' ? 'Mixed Grammar' : selectedTopic;
 
-      // Submit quiz results to backend
       finishGrammarQuizMutation.mutate({
         topic: topicLabel,
         correct,
@@ -319,7 +327,6 @@ export default function EnglishScreen() {
     });
   };
 
-  // Filter dictionary words based on search query and category
   const filteredWords = vocabularyData.filter((w) => {
     const matchesSearch =
       w.word.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -350,71 +357,69 @@ export default function EnglishScreen() {
   const grammarStats = grammarStatsQ.data ?? null;
   const historyList = grammarHistoryQ.data?.data ?? [];
 
-  // Determine if Writing Practice has been completed today
-  // Since the DB doesn't have a table for writing, we track it in Zustand
   const writingCompleted = evaluation !== null;
 
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {/* Header */}
+          {/* Header Title Card with Pale Pink Glass */}
           <HeaderTitleCard
-            title="Daily English 💬"
+            title="Daily English"
             subtitle="Complete the daily pillars to master vocabulary and communication"
           />
+
           {activeTab !== 'home' && (
-            <Button
+            <Pressable
               onPress={() => {
                 setActiveTab('home');
                 setQuizState('idle');
               }}
-              style={styles.backButton}
+              style={styles.backButtonContainer}
             >
-              ◀ Home
-            </Button>
+              <ChevronLeft size={18} color={palette.danger} strokeWidth={2.4} />
+              <Text style={styles.backButtonText}>Back to Home</Text>
+            </Pressable>
           )}
 
           {/* HOME VIEW */}
           {activeTab === 'home' && (
             <View style={{ gap: spacing.md }}>
-              {/* Daily Goals Summary */}
+              {/* Daily Practice Goals */}
               <DailyGoalCard
                 vocabStats={vocabStats}
                 grammarStats={grammarStats}
                 writingCompleted={writingCompleted}
               />
 
-              {/* Pillars Navigation Cards */}
+              {/* Learning Pillars Section */}
               <View style={{ gap: spacing.sm }}>
-                <Text style={[styles.sectionTitle, { color: palette.text }]}>Learning Pillars</Text>
+                <Text style={styles.sectionHeaderTitle}>LEARNING PILLARS</Text>
 
                 {/* 1. Vocabulary Card */}
                 <Pressable
                   style={({ pressed }) => [
                     styles.pillarCard,
-                    {
-                      backgroundColor: palette.surface,
-                      borderColor: palette.border,
-                      opacity: pressed ? 0.9 : 1,
-                    },
+                    { opacity: pressed ? 0.92 : 1 },
                   ]}
                   onPress={() => setActiveTab('vocab')}
                 >
                   <View style={styles.pillarLeft}>
-                    <Text style={styles.pillarEmoji}>📖</Text>
+                    <View style={styles.pillarIconBox}>
+                      <BookOpen size={20} color="#121218" strokeWidth={2.4} />
+                    </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={[styles.pillarTitle, { color: palette.text }]}>Vocabulary Builder</Text>
-                      <Text style={[styles.pillarDesc, { color: palette.mutedText }]}>
+                      <Text style={styles.pillarTitle}>Vocabulary Builder</Text>
+                      <Text style={styles.pillarDesc}>
                         Learn 5 new daily words. Rotating dataset.
                       </Text>
                     </View>
                   </View>
                   <View style={styles.pillarStatus}>
-                    <Text style={{ color: palette.primary, fontWeight: '700' }}>
+                    <Text style={styles.pillarStatusCount}>
                       {vocabStats?.today_words ?? 0}/5
                     </Text>
-                    <Text style={{ fontSize: 10, color: palette.mutedText }}>Words</Text>
+                    <Text style={styles.pillarStatusSubtext}>Words</Text>
                   </View>
                 </Pressable>
 
@@ -422,11 +427,7 @@ export default function EnglishScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.pillarCard,
-                    {
-                      backgroundColor: palette.surface,
-                      borderColor: palette.border,
-                      opacity: pressed ? 0.9 : 1,
-                    },
+                    { opacity: pressed ? 0.92 : 1 },
                   ]}
                   onPress={() => {
                     setActiveTab('grammar');
@@ -434,19 +435,21 @@ export default function EnglishScreen() {
                   }}
                 >
                   <View style={styles.pillarLeft}>
-                    <Text style={styles.pillarEmoji}>📝</Text>
+                    <View style={styles.pillarIconBox}>
+                      <FileText size={20} color="#121218" strokeWidth={2.4} />
+                    </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={[styles.pillarTitle, { color: palette.text }]}>Grammar Quizzes</Text>
-                      <Text style={[styles.pillarDesc, { color: palette.mutedText }]}>
-                        reinforce grammar with interactive topic quizzes.
+                      <Text style={styles.pillarTitle}>Grammar Quizzes</Text>
+                      <Text style={styles.pillarDesc}>
+                        Reinforce grammar with interactive topic quizzes.
                       </Text>
                     </View>
                   </View>
                   <View style={styles.pillarStatus}>
-                    <Text style={{ color: '#047857', fontWeight: '700' }}>
+                    <Text style={[styles.pillarStatusCount, { color: '#047857' }]}>
                       {grammarStats?.today_questions ?? 0}
                     </Text>
-                    <Text style={{ fontSize: 10, color: palette.mutedText }}>Solved</Text>
+                    <Text style={styles.pillarStatusSubtext}>Solved</Text>
                   </View>
                 </Pressable>
 
@@ -454,39 +457,38 @@ export default function EnglishScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.pillarCard,
-                    {
-                      backgroundColor: palette.surface,
-                      borderColor: palette.border,
-                      opacity: !allWordsLearnedToday ? 0.6 : pressed ? 0.9 : 1,
-                    },
+                    { opacity: !allWordsLearnedToday ? 0.65 : pressed ? 0.92 : 1 },
                   ]}
                   disabled={!allWordsLearnedToday}
                   onPress={() => setActiveTab('writing')}
                 >
                   <View style={styles.pillarLeft}>
-                    <Text style={styles.pillarEmoji}>✍️</Text>
+                    <View style={styles.pillarIconBox}>
+                      <SquarePen size={20} color="#121218" strokeWidth={2.4} />
+                    </View>
                     <View style={{ flex: 1 }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                        <Text style={[styles.pillarTitle, { color: palette.text }]}>
+                        <Text style={styles.pillarTitle}>
                           AI Writing Practice
                         </Text>
                         {!allWordsLearnedToday && (
                           <View style={styles.lockBadge}>
-                            <Text style={styles.lockText}>🔒 Locked</Text>
+                            <Lock size={10} color="#D94C61" strokeWidth={2.2} />
+                            <Text style={styles.lockText}>Locked</Text>
                           </View>
                         )}
                       </View>
-                      <Text style={[styles.pillarDesc, { color: palette.mutedText }]}>
+                      <Text style={styles.pillarDesc}>
                         {"Write a paragraph using today's words. Reviewed by Gemini."}
                       </Text>
                     </View>
                   </View>
                   <View style={styles.pillarStatus}>
                     <Text
-                      style={{
-                        color: writingCompleted ? '#10B981' : palette.mutedText,
-                        fontWeight: '700',
-                      }}
+                      style={[
+                        styles.pillarStatusCount,
+                        { color: writingCompleted ? '#10B981' : palette.textSecondary },
+                      ]}
                     >
                       {writingCompleted ? 'Done' : 'Pending'}
                     </Text>
@@ -502,14 +504,19 @@ export default function EnglishScreen() {
               />
 
               {/* Reset Tool for Testing Daily Rotation */}
-              <Card style={{ borderColor: palette.border }}>
-                <Text style={{ fontWeight: '700', color: palette.text, marginBottom: spacing.xs }}>
-                  Developer Rotation Control
+              <Card>
+                <Text style={styles.sectionHeaderTitle}>
+                  DEVELOPER ROTATION CONTROL
                 </Text>
-                <Text style={{ fontSize: 12, color: palette.mutedText, marginBottom: spacing.sm }}>
+                <Text style={{ fontSize: 13, color: palette.textSecondary, marginTop: 4, marginBottom: spacing.sm, lineHeight: 18 }}>
                   Exhausted words? Force-reset the daily rotation cycle to select 5 new random words.
                 </Text>
-                <Button onPress={resetDailyWords}>Force Rotate Words</Button>
+                <Button onPress={resetDailyWords}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <RotateCcw size={16} color="#FFFFFF" strokeWidth={2.2} />
+                    <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Force Rotate Words</Text>
+                  </View>
+                </Button>
               </Card>
             </View>
           )}
@@ -527,22 +534,18 @@ export default function EnglishScreen() {
 
               {/* Complete Dictionary Search */}
               <Card style={{ gap: spacing.sm }}>
-                <Text style={[styles.sectionTitle, { color: palette.text }]}>🔎 Vocabulary Dictionary</Text>
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Search size={18} color={palette.danger} strokeWidth={2.4} />
+                  <Text style={styles.sectionHeaderTitle}>Vocabulary Dictionary</Text>
+                </View>
+                <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
                   Search and study all words from our vocabulary dataset.
                 </Text>
 
                 <TextInput
-                  style={[
-                    styles.searchInput,
-                    {
-                      color: palette.text,
-                      borderColor: palette.border,
-                      backgroundColor: palette.surface,
-                    },
-                  ]}
+                  style={styles.searchInput}
                   placeholder="Search word or meaning..."
-                  placeholderTextColor={palette.mutedText}
+                  placeholderTextColor={palette.textSecondary}
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                 />
@@ -556,15 +559,15 @@ export default function EnglishScreen() {
                       style={[
                         styles.catBadge,
                         {
-                          backgroundColor: selectedCategory === cat ? palette.primary : palette.surface,
-                          borderColor: selectedCategory === cat ? palette.primary : palette.border,
+                          backgroundColor: selectedCategory === cat ? palette.danger : 'rgba(255, 243, 245, 0.85)',
+                          borderColor: selectedCategory === cat ? palette.danger : 'rgba(250, 215, 224, 0.85)',
                         },
                       ]}
                     >
                       <Text
                         style={{
-                          color: selectedCategory === cat ? '#FFFFFF' : palette.text,
-                          fontWeight: selectedCategory === cat ? '700' : '400',
+                          color: selectedCategory === cat ? '#FFFFFF' : palette.textPrimary,
+                          fontWeight: selectedCategory === cat ? '800' : '600',
                           fontSize: 13,
                         }}
                       >
@@ -582,25 +585,25 @@ export default function EnglishScreen() {
                       style={({ pressed }) => [
                         styles.dictItem,
                         {
-                          backgroundColor: pressed ? palette.border : palette.surface,
-                          borderColor: palette.border,
+                          backgroundColor: pressed ? 'rgba(250, 215, 224, 0.5)' : 'rgba(255, 243, 245, 0.75)',
+                          borderColor: 'rgba(250, 215, 224, 0.85)',
                         },
                       ]}
                       onPress={() => setSelectedWordDetail(w)}
                     >
-                      <View>
-                        <Text style={[styles.dictWord, { color: palette.text }]}>{w.word}</Text>
-                        <Text style={{ fontSize: 11, color: palette.primary, fontStyle: 'italic' }}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.dictWord}>{w.word}</Text>
+                        <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '600', marginTop: 2 }}>
                           {w.partOfSpeech}
                         </Text>
                       </View>
-                      <Text style={[styles.dictMeaning, { color: palette.mutedText }]} numberOfLines={1}>
+                      <Text style={styles.dictMeaning} numberOfLines={1}>
                         {w.meaning}
                       </Text>
                     </Pressable>
                   ))}
                   {filteredWords.length === 0 && (
-                    <Text style={{ color: palette.mutedText, fontStyle: 'italic', textAlign: 'center' }}>
+                    <Text style={{ color: palette.textSecondary, fontStyle: 'italic', textAlign: 'center', paddingVertical: 12 }}>
                       No matching words found.
                     </Text>
                   )}
@@ -615,8 +618,11 @@ export default function EnglishScreen() {
               {quizState === 'idle' && (
                 <>
                   <Card style={{ gap: spacing.sm }}>
-                    <Text style={[styles.sectionTitle, { color: palette.text }]}>📝 Grammar Quiz Setup</Text>
-                    <Text style={{ color: palette.mutedText, fontSize: 13 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <HelpCircle size={18} color={palette.danger} strokeWidth={2.4} />
+                      <Text style={styles.sectionHeaderTitle}>Grammar Quiz Setup</Text>
+                    </View>
+                    <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
                       {"Pick a grammar focus area or select 'All' for a mixed quiz."}
                     </Text>
 
@@ -628,8 +634,8 @@ export default function EnglishScreen() {
                           style={({ pressed }) => [
                             styles.topicOptionBtn,
                             {
-                              backgroundColor: selectedTopic === topic ? palette.primary : palette.surface,
-                              borderColor: selectedTopic === topic ? palette.primary : palette.border,
+                              backgroundColor: selectedTopic === topic ? palette.danger : 'rgba(255, 243, 245, 0.85)',
+                              borderColor: selectedTopic === topic ? palette.danger : 'rgba(250, 215, 224, 0.85)',
                               opacity: pressed ? 0.9 : 1,
                             },
                           ]}
@@ -637,7 +643,7 @@ export default function EnglishScreen() {
                         >
                           <Text
                             style={{
-                              color: selectedTopic === topic ? '#FFFFFF' : palette.text,
+                              color: selectedTopic === topic ? '#FFFFFF' : palette.textPrimary,
                               fontWeight: '700',
                               fontSize: 13,
                             }}
@@ -649,15 +655,22 @@ export default function EnglishScreen() {
                     </View>
 
                     <Button onPress={handleStartQuiz} style={{ marginTop: spacing.sm }}>
-                      🚀 Start 5-Question Quiz
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <Play size={16} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2.2} />
+                        <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Start 5-Question Quiz</Text>
+                      </View>
                     </Button>
                   </Card>
 
                   {/* History Section */}
                   <Card style={{ gap: spacing.sm }}>
-                    <Text style={[styles.sectionTitle, { color: palette.text }]}>📊 Quiz History</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <History size={18} color={palette.danger} strokeWidth={2.4} />
+                      <Text style={styles.sectionHeaderTitle}>Quiz History</Text>
+                    </View>
+
                     {grammarHistoryQ.isLoading ? (
-                      <ActivityIndicator size="small" color={palette.primary} />
+                      <ActivityIndicator size="small" color={palette.danger} />
                     ) : historyList.length > 0 ? (
                       <View style={{ gap: spacing.sm }}>
                         {historyList.map((h: any) => {
@@ -667,34 +680,29 @@ export default function EnglishScreen() {
                               ? Math.round((h.correct / (h.correct + h.wrong)) * 100)
                               : 0;
                           return (
-                            <View
-                              key={h.id}
-                              style={[
-                                styles.historyRow,
-                                { borderColor: palette.border, backgroundColor: palette.surface },
-                              ]}
-                            >
+                            <View key={h.id} style={styles.historyRow}>
                               <View>
-                                <Text style={{ fontWeight: '700', color: palette.text }}>{h.topic}</Text>
-                                <Text style={{ fontSize: 11, color: palette.mutedText }}>{date}</Text>
+                                <Text style={{ fontWeight: '800', color: palette.textPrimary, fontSize: 14 }}>{h.topic}</Text>
+                                <Text style={{ fontSize: 12, color: palette.textSecondary, marginTop: 2 }}>{date}</Text>
                               </View>
                               <View style={{ alignItems: 'flex-end' }}>
                                 <Text
                                   style={{
-                                    fontWeight: '700',
+                                    fontWeight: '800',
+                                    fontSize: 14,
                                     color: accuracy >= 80 ? '#10B981' : '#F59E0B',
                                   }}
                                 >
                                   {h.correct}/{h.correct + h.wrong} Correct
                                 </Text>
-                                <Text style={{ fontSize: 11, color: palette.primary }}>+{h.score} XP</Text>
+                                <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '700', marginTop: 2 }}>+{h.score} XP</Text>
                               </View>
                             </View>
                           );
                         })}
                       </View>
                     ) : (
-                      <Text style={{ fontStyle: 'italic', color: palette.mutedText }}>
+                      <Text style={{ fontStyle: 'italic', color: palette.textSecondary, paddingVertical: 8 }}>
                         No quizzes completed yet.
                       </Text>
                     )}
@@ -746,7 +754,6 @@ export default function EnglishScreen() {
                   evaluation={evaluation}
                   originalParagraph={writingParagraph}
                   onClear={() => {
-                    // Clear the evaluation state to write another paragraph
                     setEvaluation(null);
                     setWritingParagraph('');
                   }}
@@ -769,7 +776,7 @@ export default function EnglishScreen() {
   );
 }
 
-// 10. DailyGoalCard implementation
+// DailyGoalCard implementation
 interface DailyGoalCardProps {
   vocabStats: any;
   grammarStats: any;
@@ -777,9 +784,6 @@ interface DailyGoalCardProps {
 }
 
 function DailyGoalCard({ vocabStats, grammarStats, writingCompleted }: DailyGoalCardProps) {
-  const scheme = useColorScheme();
-  const palette = colors[scheme === 'dark' ? 'dark' : 'light'];
-
   const vocabDone = vocabStats?.today_words && vocabStats.today_words >= 5;
   const grammarDone = grammarStats?.today_questions && grammarStats.today_questions > 0;
 
@@ -792,31 +796,34 @@ function DailyGoalCard({ vocabStats, grammarStats, writingCompleted }: DailyGoal
   const progressPct = Math.round((doneTasks / totalTasks) * 100);
 
   return (
-    <Card style={[styles.goalHeaderCard, { borderColor: palette.primary }]}>
-      <Text style={[styles.goalHeaderTitle, { color: palette.text }]}>🎯 Daily practice goals</Text>
+    <Card>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <Target size={18} color={palette.danger} strokeWidth={2.4} />
+        <Text style={styles.sectionHeaderTitle}>DAILY PRACTICE GOALS</Text>
+      </View>
       <View style={styles.goalRowContainer}>
         <View style={{ flex: 1, gap: 4 }}>
-          <Text style={{ fontSize: 13, color: palette.mutedText }}>
+          <Text style={{ fontSize: 13, color: palette.textSecondary, lineHeight: 18 }}>
             Complete all daily tasks to keep your streak alive!
           </Text>
-          <View style={[styles.goalBarBg, { backgroundColor: palette.border }]}>
+          <View style={styles.goalBarBg}>
             <View
               style={[
                 styles.goalBarFill,
-                { backgroundColor: palette.primary, width: `${progressPct}%` },
+                { backgroundColor: palette.danger, width: `${progressPct}%` },
               ]}
             />
           </View>
-          <Text style={{ fontSize: 11, color: palette.primary, fontWeight: '700' }}>
+          <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '800' }}>
             {progressPct}% Completed ({doneTasks}/{totalTasks})
           </Text>
         </View>
         <View style={styles.goalStreakContainer}>
-          <Text style={styles.goalStreakEmoji}>🔥</Text>
-          <Text style={[styles.goalStreakVal, { color: palette.text }]}>
+          <Flame size={24} color="#FF9F1C" fill="#FF9F1C" strokeWidth={2.2} />
+          <Text style={styles.goalStreakVal}>
             {vocabStats?.current_streak ?? 0}
           </Text>
-          <Text style={{ fontSize: 10, color: palette.mutedText }}>Streak</Text>
+          <Text style={{ fontSize: 11, color: palette.textSecondary, fontWeight: '600' }}>Streak</Text>
         </View>
       </View>
     </Card>
@@ -829,27 +836,44 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     paddingBottom: spacing['2xl'],
   },
-  header: {
+  backButtonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.xs,
+    gap: 6,
+    alignSelf: 'flex-start',
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    borderRadius: radius.full,
   },
-  backButton: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 4,
+  backButtonText: {
+    color: palette.danger,
+    fontWeight: '800',
+    fontSize: 13,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+  sectionHeaderTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: palette.danger,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
   pillarCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: spacing.md,
-    borderRadius: radius.lg,
-    borderWidth: 1,
+    borderRadius: 24,
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    shadowColor: palette.danger,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   pillarLeft: {
     flexDirection: 'row',
@@ -857,42 +881,71 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     flex: 1,
   },
-  pillarEmoji: {
-    fontSize: 30,
+  pillarIconBox: {
+    width: 44,
+    height: 44,
+    borderRadius: 16,
+    backgroundColor: 'rgba(232, 77, 114, 0.14)',
+    borderColor: 'rgba(232, 77, 114, 0.30)',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pillarTitle: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
+    letterSpacing: -0.2,
   },
   pillarDesc: {
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,
+    color: palette.textSecondary,
+    fontWeight: '500',
   },
   pillarStatus: {
     alignItems: 'center',
     justifyContent: 'center',
     width: 60,
   },
+  pillarStatusCount: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: palette.danger,
+  },
+  pillarStatusSubtext: {
+    fontSize: 11,
+    color: palette.textSecondary,
+    fontWeight: '500',
+    marginTop: 2,
+  },
   lockBadge: {
-    backgroundColor: '#FFEFEF',
-    borderColor: '#FFD1D1',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(240, 115, 146, 0.15)',
+    borderColor: 'rgba(240, 115, 146, 0.35)',
     borderWidth: 1,
     borderRadius: radius.sm,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
   },
   lockText: {
-    color: '#D32F2F',
+    color: palette.danger,
     fontSize: 10,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   searchInput: {
-    height: 40,
+    height: 44,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    backgroundColor: 'rgba(255, 247, 248, 0.9)',
     paddingHorizontal: spacing.md,
     fontSize: 14,
+    color: palette.textPrimary,
+    fontWeight: '500',
   },
   categoryScroll: {
     flexDirection: 'row',
@@ -900,9 +953,9 @@ const styles = StyleSheet.create({
   },
   catBadge: {
     paddingHorizontal: spacing.md,
-    paddingVertical: 6,
+    paddingVertical: 7,
     borderRadius: radius.full,
-    borderWidth: 1,
+    borderWidth: 1.5,
     marginRight: spacing.xs,
   },
   dictList: {
@@ -915,17 +968,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
   },
   dictWord: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
+    color: palette.textPrimary,
   },
   dictMeaning: {
     fontSize: 13,
     flexShrink: 1,
     textAlign: 'right',
     maxWidth: '50%',
+    color: palette.textSecondary,
+    fontWeight: '500',
   },
   topicSelectContainer: {
     flexDirection: 'row',
@@ -934,10 +990,10 @@ const styles = StyleSheet.create({
     marginVertical: spacing.xs,
   },
   topicOptionBtn: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
-    borderRadius: radius.sm,
-    borderWidth: 1,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+    borderRadius: radius.md,
+    borderWidth: 1.5,
   },
   historyRow: {
     flexDirection: 'row',
@@ -945,26 +1001,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: spacing.md,
     borderRadius: radius.md,
-    borderWidth: 1,
-  },
-  goalHeaderCard: {
-    borderWidth: 2,
-    gap: spacing.xs,
-    padding: spacing.md,
-  },
-  goalHeaderTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    backgroundColor: 'rgba(255, 243, 245, 0.75)',
   },
   goalRowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
+    marginTop: 4,
   },
   goalBarBg: {
     height: 8,
     borderRadius: radius.full,
-    marginVertical: 4,
+    backgroundColor: 'rgba(250, 215, 224, 0.7)',
+    marginVertical: 6,
     overflow: 'hidden',
   },
   goalBarFill: {
@@ -976,11 +1027,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: 60,
   },
-  goalStreakEmoji: {
-    fontSize: 22,
-  },
   goalStreakVal: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 17,
+    fontWeight: '800',
+    color: palette.textPrimary,
+    marginTop: 2,
   },
 });
