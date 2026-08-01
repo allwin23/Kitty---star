@@ -8,6 +8,7 @@ export * from './error-state';
 export * from './header-title-card';
 export * from './input';
 export * from './loading';
+export * from './nav-bouquet-backdrop';
 export * from './notification-badge';
 export * from './proof-viewer-modal';
 export * from './screen';

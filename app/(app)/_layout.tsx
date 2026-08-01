@@ -1,93 +1,92 @@
 import { Tabs } from 'expo-router';
-import { Text, View } from 'react-native';
-import { palette } from '@/theme';
-
-function TabIcon({ label, emoji, focused }: { label: string; emoji: string; focused: boolean }) {
-  return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <Text style={{ fontSize: focused ? 22 : 19, opacity: focused ? 1 : 0.75 }}>{emoji}</Text>
-    </View>
-  );
-}
+import { Platform } from 'react-native';
+import { AnimatedTabIcon } from '@/components/ui/animated-tab-icon';
+import { NavBouquetBackdrop } from '@/components/ui/nav-bouquet-backdrop';
 
 export default function AppLayout() {
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: palette.cherryBloom,
-        tabBarInactiveTintColor: palette.textSecondary,
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '700',
-          letterSpacing: 0.1,
-          marginTop: -2,
+        tabBarShowLabel: false,
+        tabBarItemStyle: {
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
         },
         tabBarStyle: {
-          backgroundColor: 'rgba(255, 247, 248, 0.88)',
-          borderTopColor: 'rgba(250, 215, 224, 0.6)',
-          borderTopWidth: 1,
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 24 : 16,
+          left: 20,
+          right: 20,
           height: 60,
-          paddingBottom: 6,
-          paddingTop: 6,
-          shadowColor: '#C73A57',
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.06,
-          shadowRadius: 10,
-          elevation: 8,
+          borderRadius: 999,
+          overflow: 'hidden',
+          backgroundColor: 'rgba(255, 255, 255, 0.72)',
+          borderColor: 'rgba(255, 255, 255, 0.90)',
+          borderWidth: 1.5,
+          paddingHorizontal: 12,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.12,
+          shadowRadius: 20,
+          elevation: 10,
+          ...(Platform.OS === 'web'
+            ? ({
+                backdropFilter: 'blur(18px) saturate(160%)',
+                WebkitBackdropFilter: 'blur(18px) saturate(160%)',
+              } as any)
+            : {}),
         },
+        tabBarBackground: () => <NavBouquetBackdrop />,
       }}
     >
+      {/* 4 Main Visible Tabs */}
       <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => <TabIcon label="Home" emoji="🏠" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <AnimatedTabIcon name="home" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="accountability"
         options={{
           title: 'Plan',
-          tabBarIcon: ({ focused }) => <TabIcon label="Accountability" emoji="✅" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="planner"
-        options={{
-          title: 'Planner',
-          tabBarIcon: ({ focused }) => <TabIcon label="Planner" emoji="📋" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <AnimatedTabIcon name="accountability" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="pomodoro"
         options={{
           title: 'Timer',
-          tabBarIcon: ({ focused }) => <TabIcon label="Pomodoro" emoji="🍅" focused={focused} />,
-        }}
-      />
-      <Tabs.Screen
-        name="statistics"
-        options={{
-          title: 'Stats',
-          tabBarIcon: ({ focused }) => <TabIcon label="Statistics" emoji="📊" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <AnimatedTabIcon name="pomodoro" focused={focused} />
+          ),
         }}
       />
       <Tabs.Screen
         name="journey"
         options={{
           title: 'Journey',
-          tabBarIcon: ({ focused }) => <TabIcon label="Journey" emoji="🗺️" focused={focused} />,
+          tabBarIcon: ({ focused }) => (
+            <AnimatedTabIcon name="journey" focused={focused} />
+          ),
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ focused }) => <TabIcon label="Profile" emoji="👤" focused={focused} />,
-        }}
-      />
+
       {/* Hidden tabs */}
+      <Tabs.Screen name="planner" options={{ href: null }} />
+      <Tabs.Screen name="statistics" options={{ href: null }} />
+      <Tabs.Screen name="profile" options={{ href: null }} />
       <Tabs.Screen name="achievements" options={{ href: null }} />
       <Tabs.Screen name="testing" options={{ href: null }} />
       <Tabs.Screen name="dashboard" options={{ href: null }} />
@@ -101,4 +100,3 @@ export default function AppLayout() {
     </Tabs>
   );
 }
-
