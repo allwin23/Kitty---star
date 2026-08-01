@@ -34,10 +34,10 @@ export const palette = {
   subtleText: '#BFAFB5',
   disabledText: '#D9CDD1',
   background: '#F63E5F',
-  surface: 'rgba(255, 255, 255, 0.15)',
-  surfaceGlass: 'rgba(255, 255, 255, 0.08)',
-  border: 'rgba(255, 255, 255, 0.40)',
-  borderSoft: 'rgba(255, 255, 255, 0.25)',
+  surface: 'rgba(255, 255, 255, 0.70)',
+  surfaceGlass: 'rgba(255, 255, 255, 0.50)',
+  border: 'rgba(255, 255, 255, 0.65)',
+  borderSoft: 'rgba(255, 255, 255, 0.45)',
   statusDanger: '#D94C61',
 } as const;
 
@@ -152,8 +152,8 @@ export const radius = {
 } as const;
 
 export const glassCardStyle = {
-  backgroundColor: 'rgba(255, 255, 255, 0.12)',
-  borderColor: 'rgba(255, 255, 255, 0.40)',
+  backgroundColor: 'rgba(255, 255, 255, 0.70)',
+  borderColor: 'rgba(255, 255, 255, 0.65)',
   borderWidth: 1,
   borderRadius: 32,
   overflow: 'hidden' as const,
