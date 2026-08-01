@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, {
-  Easing,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -24,26 +23,20 @@ const IMAGE_ASSET_MAP: Record<string, any> = {
   cat_hero: FALLBACK_CAT_IMAGE,
 };
 
-const DIGITAL_TAG_MAP: Record<CompanionTag, { bg: string; text: string; border: string }> = {
-  '[TOOL]': { bg: 'rgba(232, 77, 114, 0.20)', text: '#FF4D79', border: '#E84D72' },
-  '[NOTIFICATION]': { bg: 'rgba(249, 115, 22, 0.20)', text: '#FF9F1C', border: '#F97316' },
-  '[PARTNER]': { bg: 'rgba(168, 85, 247, 0.20)', text: '#C084FC', border: '#A855F7' },
-  '[ROUTINE]': { bg: 'rgba(16, 185, 129, 0.20)', text: '#34D399', border: '#10B981' },
-  '[IDLE]': { bg: 'rgba(6, 182, 212, 0.20)', text: '#22D3EE', border: '#06B6D4' },
-};
-
 export function CatBulletinStage() {
   const activeScenario = useCompanionQueueStore((s) => s.activeScenario);
   const queue = useCompanionQueueStore((s) => s.queue);
   const nextScenario = useCompanionQueueStore((s) => s.nextScenario);
 
-  // Digital LED Blinking Dot & Text Ejection animations
-  const ledOpacity = useSharedValue(1);
-  const textOpacity = useSharedValue(1);
-  const textTranslateY = useSharedValue(0);
+  // Typewriter Typed Text State
+  const [displayedSubtext, setDisplayedSubtext] = useState('');
+  const [showCursor, setShowCursor] = useState(true);
 
+  // Reanimated Shared Values for LED Dot & Card Transitions
+  const ledOpacity = useSharedValue(1);
+
+  // Auto-rotation & Blinking LED
   useEffect(() => {
-    // Continuous LED blinking pulse
     ledOpacity.value = withRepeat(
       withSequence(
         withTiming(0.2, { duration: 600 }),
@@ -53,40 +46,51 @@ export function CatBulletinStage() {
       true
     );
 
-    // Auto-advance bulletin board every 6 seconds so the board is NEVER static!
+    // Auto-advance bulletin board every 6.5 seconds
     const interval = setInterval(() => {
       useCompanionQueueStore.getState().nextScenario();
-    }, 6000);
+    }, 6500);
 
     return () => clearInterval(interval);
   }, []);
 
+  // Typewriter Typing Effect for Sentence Text
   useEffect(() => {
-    // Eject text animation when active scenario updates
-    textOpacity.value = 0;
-    textTranslateY.value = 8;
+    setDisplayedSubtext('');
+    let charIdx = 0;
+    const fullText = activeScenario.subtext;
 
-    textOpacity.value = withTiming(1, { duration: 300 });
-    textTranslateY.value = withTiming(0, { duration: 300, easing: Easing.out(Easing.quad) });
+    const timer = setInterval(() => {
+      if (charIdx <= fullText.length) {
+        setDisplayedSubtext(fullText.slice(0, charIdx));
+        charIdx++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 32);
+
+    return () => clearInterval(timer);
   }, [activeScenario]);
+
+  // Cursor Blinking Effect
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 500);
+    return () => clearInterval(cursorInterval);
+  }, []);
 
   const animatedLedStyle = useAnimatedStyle(() => ({
     opacity: ledOpacity.value,
   }));
 
-  const animatedTextStyle = useAnimatedStyle(() => ({
-    opacity: textOpacity.value,
-    transform: [{ translateY: textTranslateY.value }],
-  }));
-
-  const tagStyle = DIGITAL_TAG_MAP[activeScenario.tag] || DIGITAL_TAG_MAP['[IDLE]'];
   const imageSource = IMAGE_ASSET_MAP[activeScenario.imageKey] || IMAGE_ASSET_MAP.cat_hero;
 
   return (
-    <View style={styles.digitalCardContainer}>
-      {/* 50% Left: Fixed Cat Picture Frame */}
-      <View style={styles.leftFixedContainer}>
-        <View style={styles.fixedImageFrame}>
+    <View style={styles.stageParentRow}>
+      {/* CARD 1: DEDICATED PALE PINK FROSTED GLASS CAT IMAGE CARD */}
+      <View style={styles.catImageCardContainer}>
+        <View style={styles.catImageFixedFrame}>
           <Image
             source={imageSource}
             style={styles.catImageFixed}
@@ -95,87 +99,93 @@ export function CatBulletinStage() {
         </View>
       </View>
 
-      {/* 50% Right: Digital LCD Bulletin Billboard */}
-      <View style={styles.rightDigitalBillboard}>
-        {/* Top Digital Status Bar */}
+      {/* CARD 2: DEDICATED CHERRY DIGITAL BULLETIN BOARD CARD */}
+      <View style={styles.digitalBulletinCardContainer}>
+        {/* Top Header Bar */}
         <View style={styles.billboardHeaderRow}>
-          {/* Live LED Dot */}
+          {/* Live LED Indicator */}
           <View style={styles.liveLedWrapper}>
             <Animated.View style={[styles.liveLedDot, animatedLedStyle]} />
             <Text style={styles.liveText}>LIVE TICKER</Text>
           </View>
 
           {/* Digital Tag Pill */}
-          <View style={[styles.digitalTagPill, { backgroundColor: tagStyle.bg, borderColor: tagStyle.border }]}>
-            <Text style={[styles.digitalTagText, { color: tagStyle.text }]}>
+          <View style={styles.digitalTagPill}>
+            <Text style={styles.digitalTagText}>
               {activeScenario.tag}
             </Text>
           </View>
         </View>
 
-        {/* Ejected Digital Bulletin Text */}
-        <Animated.View style={[{ flex: 1, justifyContent: 'center', gap: 4 }, animatedTextStyle]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Sparkles size={13} color={tagStyle.text} strokeWidth={2.4} />
-            <Text style={styles.digitalHeadlineText} numberOfLines={1}>
+        {/* Headline & Typewriter Subtext */}
+        <View style={styles.textContainer}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+            <Sparkles size={14} color="#FFFFFF" strokeWidth={2.4} />
+            <Text style={styles.cherryHeadlineText} numberOfLines={1}>
               {activeScenario.headline}
             </Text>
           </View>
 
-          <Text style={styles.digitalSubtextText} numberOfLines={2}>
-            {activeScenario.subtext}
+          <Text style={styles.cherrySubtextText} numberOfLines={2}>
+            {displayedSubtext}
+            <Text style={{ color: '#FFFFFF', fontWeight: '800' }}>
+              {showCursor ? '|' : ' '}
+            </Text>
           </Text>
-        </Animated.View>
+        </View>
 
-        {/* Bottom Queue Bar */}
+        {/* Bottom Queue Indicator */}
         {queue.length > 0 ? (
           <Pressable onPress={nextScenario} style={styles.nextQueueBtn}>
             <Text style={styles.nextQueueText}>
-              +{queue.length} Queued Event{queue.length > 1 ? 's' : ''}
+              +{queue.length} Queued
             </Text>
-            <ChevronRight size={12} color="#FF4D79" strokeWidth={2.4} />
+            <ChevronRight size={12} color="#FFFFFF" strokeWidth={2.4} />
           </Pressable>
-        ) : null}
+        ) : (
+          <View style={{ height: 16 }} />
+        )}
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  digitalCardContainer: {
-    backgroundColor: '#1E1418',
-    borderColor: 'rgba(232, 77, 114, 0.45)',
+  stageParentRow: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    gap: spacing.md, // Clean space between the two separated cards
+  },
+
+  /* 1. LEFT IMAGE CARD — PALE PINK FROSTED GLASS EFFECT */
+  catImageCardContainer: {
+    width: 125,
+    height: 145,
+    backgroundColor: 'rgba(255, 243, 245, 0.92)', // Signature Pale Pink Glass
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     borderWidth: 1.5,
     borderRadius: 24,
-    padding: spacing.sm,
-    flexDirection: 'row',
+    padding: spacing.xs,
     alignItems: 'center',
-    gap: spacing.sm,
-    shadowColor: '#E84D72',
+    justifyContent: 'center',
+    shadowColor: palette.danger,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
-    elevation: 4,
-    minHeight: 145,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
     ...(Platform.OS === 'web'
       ? ({
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
+          backdropFilter: 'blur(12px) saturate(160%)',
+          WebkitBackdropFilter: 'blur(12px) saturate(160%)',
         } as any)
       : {}),
   },
-  leftFixedContainer: {
-    width: 120,
-    height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fixedImageFrame: {
-    width: 115,
-    height: 115,
+  catImageFixedFrame: {
+    width: 112,
+    height: 112,
     borderRadius: 18,
-    backgroundColor: '#2A1B22',
-    borderColor: 'rgba(250, 215, 224, 0.25)',
+    backgroundColor: '#FFFFFF',
+    borderColor: 'rgba(250, 215, 224, 0.70)',
     borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
@@ -185,12 +195,22 @@ const styles = StyleSheet.create({
     width: '88%',
     height: '88%',
   },
-  rightDigitalBillboard: {
+
+  /* 2. RIGHT BULLETIN CARD — RICH CHERRY COLOR & CRISP WHITE TEXT */
+  digitalBulletinCardContainer: {
     flex: 1,
-    height: 120,
+    height: 145,
+    backgroundColor: palette.danger, // Rich Cherry Color (#E84D72 / #D94C61)
+    borderColor: 'rgba(255, 255, 255, 0.35)',
+    borderWidth: 1.5,
+    borderRadius: 24,
+    padding: spacing.md,
     justifyContent: 'space-between',
-    paddingVertical: 2,
-    paddingRight: 4,
+    shadowColor: palette.danger,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 4,
   },
   billboardHeaderRow: {
     flexDirection: 'row',
@@ -206,44 +226,51 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: '#10B981',
+    backgroundColor: '#FFFFFF',
   },
   liveText: {
-    color: 'rgba(255, 255, 255, 0.60)',
+    color: 'rgba(255, 255, 255, 0.85)',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.6,
   },
   digitalTagPill: {
-    paddingHorizontal: 7,
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    borderColor: 'rgba(255, 255, 255, 0.40)',
+    borderWidth: 1,
+    paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: radius.pill,
-    borderWidth: 1,
   },
   digitalTagText: {
+    color: '#FFFFFF',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.4,
   },
-  digitalHeadlineText: {
-    color: '#FFFFFF',
-    fontSize: 13.5,
+  textContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    gap: 4,
+  },
+  cherryHeadlineText: {
+    color: '#FFFFFF', // Crisp White Text
+    fontSize: 14,
     fontWeight: '800',
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
     letterSpacing: -0.2,
   },
-  digitalSubtextText: {
-    color: 'rgba(255, 243, 245, 0.82)',
-    fontSize: 11.5,
-    lineHeight: 16,
-    fontWeight: '500',
+  cherrySubtextText: {
+    color: 'rgba(255, 255, 255, 0.95)', // Pale Cream White Subtext
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '600',
   },
   nextQueueBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 77, 121, 0.16)',
-    borderColor: 'rgba(255, 77, 121, 0.35)',
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
+    borderColor: 'rgba(255, 255, 255, 0.40)',
     borderWidth: 1,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -251,7 +278,7 @@ const styles = StyleSheet.create({
     gap: 3,
   },
   nextQueueText: {
-    color: '#FF4D79',
+    color: '#FFFFFF',
     fontSize: 10,
     fontWeight: '800',
   },
