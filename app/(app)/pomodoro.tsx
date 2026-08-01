@@ -29,6 +29,7 @@ import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService } from '@/services/backend';
 import { useAuthStore, usePomodoroStore, type PomodoroSessionType } from '@/stores';
+import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
 
@@ -135,8 +136,9 @@ export default function PomodoroScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
       void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
-      void queryClient.invalidateQueries({ queryKey: ['stats'] });
       const mins = Math.max(1, durationMinutes);
+      useGrowthAnimStore.getState().queuePomodoro();
+      useGrowthAnimStore.getState().queueXp(mins * 2);
       if (user?.id) {
         EventBus.emit({
           type: sessionType === 'focus' ? 'SessionEnded' : 'BreakReminder',

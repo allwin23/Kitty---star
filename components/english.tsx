@@ -33,6 +33,7 @@ import {
 
 import { Card } from './ui/card';
 import { Button } from './ui/button';
+import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { palette, radius, spacing } from '@/theme';
 import type { Word } from '@/stores/english-store';
 import type { WritingEvaluation } from '@/services/writing.service';
@@ -370,6 +371,10 @@ export function QuizResult({
 }: QuizResultProps) {
   const total = correctCount + wrongCount;
   const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+
+  React.useEffect(() => {
+    useGrowthAnimStore.getState().queueXp(score || 25);
+  }, [score]);
 
   return (
     <ScrollView style={styles.resultContainer} showsVerticalScrollIndicator={false}>

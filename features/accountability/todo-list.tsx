@@ -14,6 +14,7 @@ import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import { useAuthStore } from '@/stores';
+import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 
 export type TodoTask = {
   id: string;
@@ -91,6 +92,7 @@ export function TodoList({
     const isNowDone = task.status !== 'completed';
     await onToggle?.(task);
     if (isNowDone) {
+      useGrowthAnimStore.getState().queueXp(15);
       CompanionBus.emit({
         eventType: 'DailyGoalAchieved',
         priority: 'high',

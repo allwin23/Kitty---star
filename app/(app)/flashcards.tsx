@@ -591,7 +591,7 @@ export default function FlashcardsScreen() {
 
     return (
       <Screen>
-        <ScrollView contentContainerStyle={{ paddingVertical: spacing.lg }}>
+        <ScrollView contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
           <View style={styles.summaryHeader}>
             <HeaderTitleCard title="Review Complete" showWavingHand={false} />
             <Text style={{ color: '#66545B', fontSize: 14, fontWeight: '600', textAlign: 'center', marginTop: 4 }}>
@@ -666,7 +666,7 @@ export default function FlashcardsScreen() {
 
     return (
       <Screen>
-        <View style={{ flex: 1, justifyContent: 'space-between', paddingBottom: spacing.lg }}>
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
           {/* Top Bar: Black Component Card */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs }}>
             <HeaderTitleCard title="Review Session" showWavingHand={false} />
@@ -682,7 +682,7 @@ export default function FlashcardsScreen() {
           <ReviewProgress current={currentReviewIndex + 1} total={reviewSessionCards.length} />
 
           {/* Centered Flashcard Frame */}
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingVertical: spacing.sm }}>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingVertical: spacing.sm, minHeight: 260 }}>
             <FlashcardViewer
               front={frontText}
               back={backText}
@@ -694,14 +694,14 @@ export default function FlashcardsScreen() {
 
           {/* Rate Controls */}
           {revealed && (
-            <View style={{ gap: spacing.xs, marginTop: 'auto' }}>
+            <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
               <Text style={{ textAlign: 'center', color: '#2A1D22', fontSize: 13, fontWeight: '800', marginBottom: 4 }}>
                 How well did you remember?
               </Text>
               <ReviewButtons onRate={handleRateCard} />
             </View>
           )}
-        </View>
+        </ScrollView>
       </Screen>
     );
   }

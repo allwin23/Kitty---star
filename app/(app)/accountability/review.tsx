@@ -32,6 +32,7 @@ import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { Card, ErrorState, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
 import { CompanionBus } from '@/features/companion/event-bus';
+import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import type { TodoTask } from '@/features/accountability/todo-list';
 import { colors, glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
@@ -124,6 +125,11 @@ export default function ReviewScreen() {
       void queryClient.invalidateQueries({ queryKey: ['submission-review-details', submissionId] });
       void queryClient.invalidateQueries({ queryKey: ['partner-submission'] });
       void queryClient.invalidateQueries({ queryKey: ['partner-current-plan'] });
+
+      if (variables.status === 'approved') {
+        useGrowthAnimStore.getState().queueApproved();
+        useGrowthAnimStore.getState().queueXp(50);
+      }
 
       CompanionBus.emit({
         eventType: 'DailyGoalAchieved',

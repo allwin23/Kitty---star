@@ -33,6 +33,7 @@ import {
 
 import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { useAuthStore, usePyqStore } from '@/stores';
+import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
 import { CompanionBus } from '@/features/companion/event-bus';
@@ -174,6 +175,7 @@ export default function PYQScreen() {
       // Emit Companion Presentation & Notification Engine events
       const score = Math.round(data.accuracy || data.score || 80);
       const xpEarned = 50;
+      useGrowthAnimStore.getState().queueXp(xpEarned);
       CompanionBus.emit({
         eventType: 'XPEarned',
         priority: 'high',

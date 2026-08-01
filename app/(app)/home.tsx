@@ -1,9 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import { Button, Card, CreativeToolsGrid, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import { GrowthStatsAnimatedCard } from '@/components/growth-stats-animated-card';
 import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { notificationService, reportService, testingService } from '@/services/backend';
 import { queryKeys } from '@/lib/query-keys';
@@ -25,6 +26,18 @@ export default function HomeScreen() {
     queryFn: () => reportService.stats(),
     enabled: !!user,
   });
+
+  const [isFocused, setIsFocused] = useState(true);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsFocused(true);
+      void statsQ.refetch();
+      return () => {
+        setIsFocused(false);
+      };
+    }, [statsQ])
+  );
 
   const stats = statsQ.data as {
     xp: number;
@@ -89,29 +102,7 @@ export default function HomeScreen() {
           {statsQ.isLoading ? (
             <Loading />
           ) : stats ? (
-            <Card>
-              <View style={{ gap: spacing[16] }}>
-                <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
-                  Your Growth & Stats
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-around', gap: spacing[16] }}>
-                  {[
-                    { label: 'Level', value: stats.level },
-                    { label: 'XP', value: stats.xp },
-                    { label: 'Streak', value: `${stats.current_streak}d` },
-                    { label: 'Approved', value: stats.approved_days },
-                    { label: 'Pomodoros', value: stats.total_pomodoros },
-                  ].map((s) => (
-                    <View key={s.label} style={{ alignItems: 'center', minWidth: 60 }}>
-                      <Text style={{ fontWeight: '800', fontSize: 22, color: palette.cherryBloom, fontFamily: "'Martian Mono', monospace" }}>
-                        {s.value}
-                      </Text>
-                      <Text style={{ color: palette.textSecondary, fontSize: 12, marginTop: spacing[4] }}>{s.label}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </Card>
+            <GrowthStatsAnimatedCard stats={stats} isFocused={isFocused} />
           ) : null}
 
           {/* Quick Companion Features & Tools */}
