@@ -5,13 +5,26 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from 'react-native';
+import {
+  AlertCircle,
+  BarChart2,
+  Calendar,
+  CheckCircle2,
+  Clock,
+  Coffee,
+  Droplets,
+  Flame,
+  Plus,
+  Sparkles,
+  Target,
+  TrendingUp,
+  Trophy,
+  Zap,
+} from 'lucide-react-native';
 
-import { colors, radius, spacing } from '@/theme';
-import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 // Interfaces
 export interface WaterLog {
@@ -29,7 +42,7 @@ export interface WaterDailyStats {
   current_streak: number;
 }
 
-// 1. WaterProgressCard component
+// 1. WaterProgressCard component — Light Rose Frosted Glass
 export function WaterProgressCard({
   totalMl,
   goalMl,
@@ -37,60 +50,69 @@ export function WaterProgressCard({
   totalMl: number;
   goalMl: number;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-  
   const percentage = Math.min(Math.round((totalMl / goalMl) * 100), 100);
   const remaining = Math.max(goalMl - totalMl, 0);
 
   return (
-    <Card style={[styles.progressCard, { borderColor: palette.border }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.progressCard]}>
       <View style={{ alignItems: 'center', gap: spacing.sm }}>
-        <Text style={{ fontSize: 48 }}>💧</Text>
-        <Text style={{ fontSize: 20, fontWeight: '800', color: palette.text }}>
-          {"Today's Hydration"}
+        <View style={styles.iconCircle}>
+          <Droplets size={32} color="#D94C61" strokeWidth={2.2} />
+        </View>
+
+        <Text style={{ fontSize: 22, fontWeight: '800', color: '#2A1D22' }}>
+          Today&apos;s Hydration
         </Text>
         
-        {/* Fill Percentage Circular/Dial Style representation */}
+        {/* Fill Percentage Display */}
         <View style={styles.statsValueContainer}>
-          <Text style={[styles.statsValueText, { color: palette.primary }]}>
-            {totalMl} <Text style={{ fontSize: 16, color: palette.mutedText }}>/ {goalMl} ml</Text>
+          <Text style={styles.statsValueText}>
+            {totalMl} <Text style={{ fontSize: 16, color: '#66545B', fontWeight: '700' }}>/ {goalMl} ml</Text>
           </Text>
         </View>
 
         {/* Progress Bar */}
         <View style={styles.progressBarContainer}>
-          <View style={[styles.progressBarBg, { backgroundColor: palette.border }]}>
-            <View style={[styles.progressBarFill, { backgroundColor: '#3B82F6', width: `${percentage}%` }]} />
+          <View style={[styles.progressBarBg, { backgroundColor: 'rgba(250, 215, 224, 0.60)' }]}>
+            <View style={[styles.progressBarFill, { backgroundColor: palette.cherryBloom, width: `${percentage}%` }]} />
           </View>
-          <Text style={{ fontSize: 13, fontWeight: '700', color: palette.text, textAlign: 'center' }}>
-            {percentage}% Completed
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+            <Sparkles size={14} color="#D94C61" strokeWidth={2.2} />
+            <Text style={{ fontSize: 13, fontWeight: '800', color: '#2A1D22' }}>
+              {percentage}% Completed
+            </Text>
+          </View>
         </View>
 
-        <View style={[styles.divider, { backgroundColor: palette.border, marginVertical: 4 }]} />
+        <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)', marginVertical: 4 }]} />
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-around', width: '100%' }}>
-          <View style={{ alignItems: 'center' }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: palette.text }}>
-              {remaining} ml
-            </Text>
-            <Text style={{ fontSize: 11, color: palette.mutedText }}>Remaining</Text>
+          <View style={{ alignItems: 'center', gap: 2 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Target size={14} color="#2A1D22" strokeWidth={2.2} />
+              <Text style={{ fontSize: 14, fontWeight: '800', color: '#2A1D22' }}>
+                {remaining} ml
+              </Text>
+            </View>
+            <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '700' }}>Remaining</Text>
           </View>
-          <View style={{ width: 1, backgroundColor: palette.border, height: '80%' }} />
-          <View style={{ alignItems: 'center' }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#10B981' }}>
-              {percentage >= 100 ? 'Goal Achieved!' : 'Keep Drinking!'}
-            </Text>
-            <Text style={{ fontSize: 11, color: palette.mutedText }}>Status</Text>
+          <View style={{ width: 1, backgroundColor: 'rgba(250, 215, 224, 0.90)', height: '80%' }} />
+          <View style={{ alignItems: 'center', gap: 2 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <CheckCircle2 size={14} color={percentage >= 100 ? '#16a34a' : '#D94C61'} strokeWidth={2.2} />
+              <Text style={{ fontSize: 14, fontWeight: '800', color: percentage >= 100 ? '#16a34a' : '#D94C61' }}>
+                {percentage >= 100 ? 'Goal Achieved!' : 'Keep Drinking!'}
+              </Text>
+            </View>
+            <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '700' }}>Status</Text>
           </View>
         </View>
       </View>
-    </Card>
+    </View>
   );
 }
 
-// 2. QuickAddButton component
+// 2. QuickAddButton component — Light Rose Glass Pill Button
 export function QuickAddButton({
   amount,
   onPress,
@@ -98,15 +120,12 @@ export function QuickAddButton({
   amount: number;
   onPress: () => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
-  const getEmoji = (amt: number) => {
-    if (amt <= 150) return '🥛';
-    if (amt <= 250) return '☕';
-    if (amt <= 400) return '🥤';
-    if (amt <= 600) return '🍼';
-    return '🫙';
+  const getIcon = (amt: number) => {
+    if (amt <= 150) return <Droplets size={18} color="#D94C61" strokeWidth={2.2} />;
+    if (amt <= 250) return <Coffee size={18} color="#D94C61" strokeWidth={2.2} />;
+    if (amt <= 400) return <Zap size={18} color="#D94C61" strokeWidth={2.2} />;
+    if (amt <= 600) return <Sparkles size={18} color="#D94C61" strokeWidth={2.2} />;
+    return <Trophy size={18} color="#D94C61" strokeWidth={2.2} />;
   };
 
   return (
@@ -115,28 +134,25 @@ export function QuickAddButton({
       style={({ pressed }) => [
         styles.quickAddBtn,
         {
-          borderColor: palette.border,
-          backgroundColor: pressed ? palette.border : palette.surface,
+          backgroundColor: pressed ? 'rgba(232, 77, 114, 0.18)' : 'rgba(255, 255, 255, 0.90)',
+          borderColor: pressed ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
         },
       ]}
     >
-      <Text style={{ fontSize: 20, marginBottom: 4 }}>{getEmoji(amount)}</Text>
-      <Text style={{ fontSize: 13, fontWeight: '700', color: palette.text }}>
+      {getIcon(amount)}
+      <Text style={{ fontSize: 13, fontWeight: '800', color: '#2A1D22', marginTop: 2 }}>
         +{amount} ml
       </Text>
     </Pressable>
   );
 }
 
-// 3. CustomWaterInput component
+// 3. CustomWaterInput component — Light Rose Frosted Glass
 export function CustomWaterInput({
   onLog,
 }: {
   onLog: (amount: number) => void;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-  
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
@@ -156,10 +172,13 @@ export function CustomWaterInput({
   };
 
   return (
-    <Card style={[styles.inputCard, { borderColor: palette.border }]}>
-      <Text style={{ fontWeight: '700', fontSize: 15, color: palette.text, marginBottom: spacing.xs }}>
-        Custom Entry
-      </Text>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.inputCard]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.xs }}>
+        <Plus size={16} color="#D94C61" strokeWidth={2.4} />
+        <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
+          Custom Entry
+        </Text>
+      </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
         <View style={{ flex: 1 }}>
           <TextInput
@@ -170,32 +189,33 @@ export function CustomWaterInput({
             }}
             placeholder="Enter amount in ml..."
             keyboardType="number-pad"
-            style={[styles.textInput, { borderColor: palette.border, color: palette.text, backgroundColor: palette.background }]}
-            placeholderTextColor={palette.mutedText}
+            style={styles.textInput}
+            placeholderTextColor="#66545B"
           />
         </View>
-        <Button style={{ height: 44, paddingHorizontal: 16 }} onPress={handleSubmit}>
-          Log Water
-        </Button>
+        <Pressable style={styles.primaryBtn} onPress={handleSubmit}>
+          <Droplets size={16} color="#FFFFFF" strokeWidth={2.4} />
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>Log</Text>
+        </Pressable>
       </View>
       {error ? (
-        <Text style={{ color: palette.danger, fontSize: 12, marginTop: 4, fontWeight: '600' }}>
-          ⚠️ {error}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 }}>
+          <AlertCircle size={14} color={palette.danger} strokeWidth={2.2} />
+          <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '700' }}>
+            {error}
+          </Text>
+        </View>
       ) : null}
-    </Card>
+    </View>
   );
 }
 
-// 4. Today's History Card & List
+// 4. Today's History Card & List — Light Rose Frosted Glass
 export function HistoryList({
   logs,
 }: {
   logs: WaterLog[];
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   const formatTime = (isoString: string) => {
     try {
       const d = new Date(isoString);
@@ -206,13 +226,16 @@ export function HistoryList({
   };
 
   return (
-    <Card style={[styles.historyCard, { borderColor: palette.border }]}>
-      <Text style={{ fontWeight: '700', fontSize: 15, color: palette.text, marginBottom: spacing.sm }}>
-        {"Today's Logs"}
-      </Text>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.historyCard]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.sm }}>
+        <Clock size={16} color="#D94C61" strokeWidth={2.4} />
+        <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
+          Today&apos;s Logs
+        </Text>
+      </View>
 
       {logs.length === 0 ? (
-        <Text style={{ color: palette.mutedText, fontSize: 13, textAlign: 'center', marginVertical: spacing.md }}>
+        <Text style={{ color: '#66545B', fontSize: 13, fontWeight: '600', textAlign: 'center', marginVertical: spacing.md }}>
           No water logged yet today. Stay hydrated!
         </Text>
       ) : (
@@ -224,18 +247,18 @@ export function HistoryList({
                 style={[
                   styles.historyItem,
                   {
-                    borderBottomColor: palette.border,
+                    borderBottomColor: 'rgba(250, 215, 224, 0.90)',
                     borderBottomWidth: index === logs.length - 1 ? 0 : 1,
                   },
                 ]}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-                  <Text style={{ fontSize: 16 }}>🥛</Text>
-                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14 }}>
+                  <Droplets size={16} color="#D94C61" strokeWidth={2.2} />
+                  <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
                     {log.amount_ml} ml
                   </Text>
                 </View>
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '700' }}>
                   {formatTime(log.logged_at)}
                 </Text>
               </View>
@@ -243,19 +266,16 @@ export function HistoryList({
           </View>
         </ScrollView>
       )}
-    </Card>
+    </View>
   );
 }
 
-// 5. WeeklyProgressCard component (simple progress for last 7 days)
+// 5. WeeklyProgressCard component — Light Rose Frosted Glass
 export function WeeklyProgressCard({
   stats,
 }: {
   stats: WaterDailyStats[];
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   const formatDayName = (dateStr: string) => {
     try {
       const date = new Date(dateStr);
@@ -265,7 +285,6 @@ export function WeeklyProgressCard({
     }
   };
 
-  // Generate last 7 dates in YYYY-MM-DD format
   const getLast7Days = () => {
     const list = [];
     for (let i = 6; i >= 0; i--) {
@@ -279,14 +298,16 @@ export function WeeklyProgressCard({
   const dates = getLast7Days();
 
   return (
-    <Card style={[styles.weeklyCard, { borderColor: palette.border }]}>
-      <Text style={{ fontWeight: '700', fontSize: 15, color: palette.text, marginBottom: spacing.md }}>
-        Last 7 Days Overview
-      </Text>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.weeklyCard]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.md }}>
+        <Calendar size={16} color="#D94C61" strokeWidth={2.4} />
+        <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
+          Last 7 Days Overview
+        </Text>
+      </View>
 
       <View style={styles.weeklyRow}>
         {dates.map((date) => {
-          // Find stats row matching date
           const stat = stats.find((s) => s.date === date);
           const total = stat?.total_ml ?? 0;
           const goal = stat?.goal_ml ?? 2000;
@@ -295,65 +316,56 @@ export function WeeklyProgressCard({
 
           return (
             <View key={date} style={styles.weeklyBarCol}>
-              <View style={[styles.weeklyBarTrack, { backgroundColor: palette.border }]}>
+              <View style={[styles.weeklyBarTrack, { backgroundColor: 'rgba(250, 215, 224, 0.60)' }]}>
                 <View
                   style={[
                     styles.weeklyBarFill,
                     {
                       height: `${heightPercent}%`,
-                      backgroundColor: completed ? '#10B981' : '#3B82F6',
+                      backgroundColor: completed ? '#16a34a' : palette.cherryBloom,
                     },
                   ]}
                 />
               </View>
-              <Text style={{ fontSize: 11, fontWeight: '700', color: palette.text, marginTop: 4 }}>
+              <Text style={{ fontSize: 11, fontWeight: '800', color: '#2A1D22', marginTop: 4 }}>
                 {formatDayName(date)}
               </Text>
-              <Text style={{ fontSize: 8, color: palette.mutedText, marginTop: 1 }}>
+              <Text style={{ fontSize: 9, color: '#66545B', fontWeight: '700', marginTop: 1 }}>
                 {total > 0 ? `${Math.round(total / 100) / 10}L` : '0L'}
               </Text>
             </View>
           );
         })}
       </View>
-    </Card>
+    </View>
   );
 }
 
-// 6. StatisticsCard component
+// 6. StatisticsCard component — Light Rose Frosted Glass
 export function StatisticsCard({
   history,
 }: {
   history: WaterDailyStats[];
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
-  // Calculations
   const totalConsumed = history.reduce((sum, item) => sum + item.total_ml, 0);
   const recordedDays = history.length;
   
-  // Average daily intake
   const avgIntake = recordedDays > 0 ? Math.round(totalConsumed / recordedDays) : 0;
   
-  // Streak
   const todayStr = new Date().toISOString().slice(0, 10);
   const todayRow = history.find((h) => h.date === todayStr);
   const currentStreak = todayRow?.current_streak ?? 0;
   const longestStreak = history.reduce((max, item) => Math.max(max, item.current_streak), 0);
 
-  // Goal completion %
   const completedDays = history.filter((item) => item.goal_completed).length;
   const completionRate = recordedDays > 0 ? Math.round((completedDays / recordedDays) * 100) : 0;
 
-  // Weekly average (past 7 days in history)
   const past7Days = history.slice(0, 7);
   const weeklyAvg =
     past7Days.length > 0
       ? Math.round(past7Days.reduce((sum, item) => sum + item.total_ml, 0) / past7Days.length)
       : 0;
 
-  // Monthly average (past 30 days in history)
   const past30Days = history.slice(0, 30);
   const monthlyAvg =
     past30Days.length > 0
@@ -361,88 +373,111 @@ export function StatisticsCard({
       : 0;
 
   return (
-    <Card style={[styles.statsCard, { borderColor: palette.border }]}>
-      <Text style={{ fontWeight: '700', fontSize: 15, color: palette.text, marginBottom: spacing.md }}>
-        Hydration Statistics
-      </Text>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.statsCard]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.md }}>
+        <BarChart2 size={16} color="#D94C61" strokeWidth={2.4} />
+        <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
+          Hydration Statistics
+        </Text>
+      </View>
 
       <View style={styles.statsGrid}>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Total Consumed</Text>
-          <Text style={[styles.statsValue, { color: palette.primary }]}>
+          <Text style={styles.statsLabel}>Total Consumed</Text>
+          <Text style={[styles.statsValue, { color: palette.danger }]}>
             {Math.round(totalConsumed / 1000 * 10) / 10} L
           </Text>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Current Streak</Text>
-          <Text style={[styles.statsValue, { color: '#F59E0B' }]}>
-            {currentStreak} Days
-          </Text>
+          <Text style={styles.statsLabel}>Current Streak</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Flame size={14} color="#FF9F1C" strokeWidth={2.4} />
+            <Text style={[styles.statsValue, { color: '#2A1D22' }]}>
+              {currentStreak} Days
+            </Text>
+          </View>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Longest Streak</Text>
-          <Text style={[styles.statsValue, { color: '#EAB308' }]}>
-            {longestStreak} Days
-          </Text>
+          <Text style={styles.statsLabel}>Longest Streak</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Trophy size={14} color="#FF9F1C" strokeWidth={2.4} />
+            <Text style={[styles.statsValue, { color: '#2A1D22' }]}>
+              {longestStreak} Days
+            </Text>
+          </View>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Avg Daily Intake</Text>
+          <Text style={styles.statsLabel}>Avg Daily Intake</Text>
           <Text style={[styles.statsValue, { color: '#3B82F6' }]}>
             {avgIntake} ml
           </Text>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Goal Completion</Text>
-          <Text style={[styles.statsValue, { color: '#10B981' }]}>
+          <Text style={styles.statsLabel}>Goal Completion</Text>
+          <Text style={[styles.statsValue, { color: '#16a34a' }]}>
             {completionRate}%
           </Text>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Weekly Average</Text>
-          <Text style={[styles.statsValue, { color: palette.text }]}>
+          <Text style={styles.statsLabel}>Weekly Average</Text>
+          <Text style={[styles.statsValue, { color: '#2A1D22' }]}>
             {weeklyAvg} ml
           </Text>
         </View>
         <View style={styles.statsCol}>
-          <Text style={[styles.statsLabel, { color: palette.mutedText }]}>Monthly Average</Text>
-          <Text style={[styles.statsValue, { color: palette.text }]}>
+          <Text style={styles.statsLabel}>Monthly Average</Text>
+          <Text style={[styles.statsValue, { color: '#2A1D22' }]}>
             {monthlyAvg} ml
           </Text>
         </View>
       </View>
-    </Card>
+    </View>
   );
 }
 
-// 7. GoalCard component
+// 7. GoalCard component — Light Rose Frosted Glass
 export function GoalCard({
   goalMl,
 }: {
   goalMl: number;
 }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <Card style={[styles.goalCard, { borderColor: palette.border, backgroundColor: palette.surface }]}>
+    <View style={[glassCardStyle, styles.pinkGlassCard, styles.goalCard]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ gap: 2 }}>
-          <Text style={{ fontWeight: '700', color: palette.text, fontSize: 15 }}>
-            Daily Water Goal
-          </Text>
-          <Text style={{ fontSize: 13, color: palette.mutedText }}>
-            Standard health recommendation
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Target size={20} color="#D94C61" strokeWidth={2.2} />
+          <View>
+            <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }}>
+              Daily Water Goal
+            </Text>
+            <Text style={{ fontSize: 12, color: '#66545B', fontWeight: '600' }}>
+              Standard health recommendation
+            </Text>
+          </View>
         </View>
-        <Text style={{ fontSize: 18, fontWeight: '800', color: palette.primary }}>
+        <Text style={{ fontSize: 18, fontWeight: '800', color: palette.danger }}>
           {goalMl} ml
         </Text>
       </View>
-    </Card>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  pinkGlassCard: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
+    borderRadius: 24,
+    padding: spacing.md,
+  },
+  iconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: 'rgba(232, 77, 114, 0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   progressCard: {
     padding: spacing.lg,
   },
@@ -452,6 +487,7 @@ const styles = StyleSheet.create({
   statsValueText: {
     fontSize: 32,
     fontWeight: '800',
+    color: '#2A1D22',
   },
   progressBarContainer: {
     width: '100%',
@@ -474,9 +510,10 @@ const styles = StyleSheet.create({
   },
   quickAddBtn: {
     flex: 1,
+    minWidth: '18%',
     height: 64,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -486,9 +523,23 @@ const styles = StyleSheet.create({
   textInput: {
     height: 44,
     borderRadius: radius.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     paddingHorizontal: spacing.md,
     fontSize: 14,
+    color: '#2A1D22',
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    fontWeight: '600',
+  },
+  primaryBtn: {
+    height: 44,
+    backgroundColor: palette.cherryBloom,
+    paddingHorizontal: 16,
+    borderRadius: radius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
   },
   historyCard: {
     padding: spacing.md,
@@ -539,10 +590,13 @@ const styles = StyleSheet.create({
   },
   statsLabel: {
     fontSize: 11,
+    color: '#66545B',
+    fontWeight: '700',
   },
   statsValue: {
     fontSize: 18,
     fontWeight: '800',
+    color: '#2A1D22',
   },
   goalCard: {
     padding: spacing.md,

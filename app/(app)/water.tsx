@@ -123,17 +123,17 @@ export default function WaterTrackerScreen() {
         <View style={styles.container}>
           {/* Header */}
           <HeaderTitleCard
-            title="Water Tracker 💧"
+            title="Water Tracker"
+            showWavingHand={false}
             subtitle="Stay hydrated to maintain peak mental focus and study stamina"
           />
-
 
           {/* Progress Card */}
           <WaterProgressCard totalMl={totalMl} goalMl={goalMl} />
 
           {/* Quick Add Buttons Grid */}
           <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle, { color: palette.text }]}>Quick Add</Text>
+            <Text style={[styles.sectionTitle, { color: '#2A1D22' }]}>Quick Add</Text>
             <View style={styles.quickAddGrid}>
               {[100, 200, 250, 500, 1000].map((amount) => (
                 <QuickAddButton
