@@ -100,6 +100,7 @@ export function TodoList({
         EventBus.emit({
           type: 'GoalCompleted',
           userId: user.id,
+          targetId: task.id,
           data: { taskTitle: task.title },
         });
       }

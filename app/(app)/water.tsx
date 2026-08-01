@@ -84,6 +84,7 @@ export default function WaterTrackerScreen() {
         EventBus.emit({
           type: 'WaterReminder',
           userId: user.id,
+          targetId: `water-${Date.now()}`,
           data: { amount },
         });
       }

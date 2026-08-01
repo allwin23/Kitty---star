@@ -29,6 +29,7 @@ import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService } from '@/services/backend';
 import { useAuthStore, usePomodoroStore, type PomodoroSessionType } from '@/stores';
+import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
 
 const today = new Date().toISOString().slice(0, 10);
@@ -135,7 +136,19 @@ export default function PomodoroScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
       void queryClient.invalidateQueries({ queryKey: ['stats'] });
-      void queryClient.invalidateQueries({ queryKey: ['journey'] });
+      const mins = Math.max(1, durationMinutes);
+      if (user?.id) {
+        EventBus.emit({
+          type: sessionType === 'focus' ? 'SessionEnded' : 'BreakReminder',
+          userId: user.id,
+          targetId: `pomo-${Date.now()}`,
+          data: {
+            taskTitle: activeTask?.title || 'Study Task',
+            duration: mins,
+            xpEarned: mins * 2,
+          },
+        });
+      }
 
       resetTimer();
 
@@ -218,6 +231,16 @@ export default function PomodoroScreen() {
         Alert.alert('Select a task', msg);
       }
       return;
+    }
+    if (user?.id) {
+      EventBus.emit({
+        type: 'SessionStarted',
+        userId: user.id,
+        targetId: `start-${Date.now()}`,
+        data: {
+          taskTitle: activeTask?.title || 'Study Session',
+        },
+      });
     }
     startTimer();
   };

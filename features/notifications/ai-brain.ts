@@ -19,7 +19,7 @@ export class AINotificationBrain {
     ctx: AIBrainEvaluationContext,
     threshold: number = 0.6,
   ): AIRelevanceDecision {
-    // 1. Urgent events always bypass threshold
+    // 1. Urgent events always bypass threshold and send immediately
     if (eventType === 'StreakLost' || eventType === 'ExamApproaching') {
       return {
         shouldSend: true,
@@ -31,53 +31,80 @@ export class AINotificationBrain {
       };
     }
 
-    let score = 0.5; // Base score
-    const factors: string[] = [];
+    // 2. Determine base score according to event significance
+    let score = 0.75;
+    switch (eventType) {
+      case 'GoalCompleted':
+      case 'SessionEnded':
+      case 'AchievementUnlocked':
+      case 'DailySummary':
+      case 'WeeklySummary':
+        score = 0.88; // Primary milestone achievements
+        break;
+      case 'SessionStarted':
+      case 'WaterReminder':
+      case 'BreakReminder':
+      case 'StreakStarted':
+      case 'PartnerStarted':
+      case 'PartnerCompletedTask':
+      case 'AIRecommendation':
+        score = 0.78; // Action & engagement events
+        break;
+      case 'GoalMissed':
+      case 'WaterSkipped':
+      case 'FocusBroken':
+        score = 0.68; // Cautionary alerts
+        break;
+      default:
+        score = 0.75;
+    }
+
+    const factors: string[] = [`Base event weight (${score})`];
 
     // Factor A: Study Consistency & Inactivity
     const inactivityHours = ctx.inactivityHours ?? 0;
     if (inactivityHours > 24 && eventType === 'SessionStarted') {
-      score += 0.25;
-      factors.push('High inactivity recovery boost (+0.25)');
+      score += 0.15;
+      factors.push('High inactivity recovery boost (+0.15)');
     } else if (inactivityHours > 48) {
-      score += 0.3;
-      factors.push('Critical inactivity recovery boost (+0.3)');
+      score += 0.2;
+      factors.push('Critical inactivity recovery boost (+0.2)');
     }
 
     // Factor B: Current Streak Factor
     const streak = ctx.currentStreakDays ?? 0;
     if (streak > 3 && (eventType === 'StreakStarted' || eventType === 'GoalCompleted')) {
-      score += 0.2;
-      factors.push(`Streak preservation bonus (+0.2, streak=${streak})`);
+      score += 0.15;
+      factors.push(`Streak preservation bonus (+0.15, streak=${streak})`);
     }
 
     // Factor C: Exam Approaching Urgency
     const daysUntilExam = ctx.daysUntilExam ?? 999;
     if (daysUntilExam <= 14) {
-      score += 0.25;
-      factors.push(`Exam countdown urgency (+0.25, exam in ${daysUntilExam}d)`);
+      score += 0.2;
+      factors.push(`Exam countdown urgency (+0.2, exam in ${daysUntilExam}d)`);
     } else if (daysUntilExam <= 30) {
-      score += 0.15;
-      factors.push(`Exam preparation phase (+0.15, exam in ${daysUntilExam}d)`);
+      score += 0.1;
+      factors.push(`Exam preparation phase (+0.1, exam in ${daysUntilExam}d)`);
     }
 
     // Factor D: Partner Activity Context
     if (eventType === 'PartnerStarted' || eventType === 'PartnerCompletedTask') {
       const partnerProgress = ctx.partnerProgressPercent ?? 0;
       if (partnerProgress > 50) {
-        score += 0.2;
-        factors.push(`Partner progress motivation (+0.2)`);
-      } else {
         score += 0.15;
-        factors.push('Partner active (+0.15)');
+        factors.push(`Partner progress motivation (+0.15)`);
+      } else {
+        score += 0.1;
+        factors.push('Partner active (+0.1)');
       }
     }
 
     // Factor E: Unfinished Goals Weight
     const unfinishedGoals = ctx.unfinishedGoalsCount ?? 0;
     if (unfinishedGoals > 0 && (eventType === 'GoalMissed' || eventType === 'BreakReminder')) {
-      score += 0.15;
-      factors.push(`Pending goals impact (+0.15, count=${unfinishedGoals})`);
+      score += 0.1;
+      factors.push(`Pending goals impact (+0.1, count=${unfinishedGoals})`);
     }
 
     // Factor F: Time of Day Suitability
@@ -85,26 +112,26 @@ export class AINotificationBrain {
     const peakHour = ctx.userPeakStudyHour ?? 19; // Default 7 PM peak
     const hourDiff = Math.abs(currentHour - peakHour);
     if (hourDiff <= 2) {
-      score += 0.15;
-      factors.push(`Peak study hour match (+0.15)`);
+      score += 0.1;
+      factors.push(`Peak study hour match (+0.1)`);
     }
 
-    // Factor G: Notification Fatigue Penalty (Sliding Window Dampening)
+    // Factor G: Notification Fatigue Penalty (Only applies to non-user-initiated alerts if count is high)
     const recentNotifs24h = ctx.recentNotificationCount24h ?? 0;
     let fatigueApplied = false;
-    if (recentNotifs24h > 12) {
-      score -= 0.35;
+    if (recentNotifs24h > 20) {
+      score -= 0.2;
       fatigueApplied = true;
-      factors.push(`High notification fatigue penalty (-0.35, recent=${recentNotifs24h})`);
-    } else if (recentNotifs24h > 6) {
-      score -= 0.18;
+      factors.push(`High notification fatigue penalty (-0.2, recent=${recentNotifs24h})`);
+    } else if (recentNotifs24h > 12) {
+      score -= 0.1;
       fatigueApplied = true;
-      factors.push(`Moderate notification fatigue penalty (-0.18, recent=${recentNotifs24h})`);
+      factors.push(`Moderate notification fatigue penalty (-0.1, recent=${recentNotifs24h})`);
     }
 
     // Normalize final score between 0.0 and 1.0
     const finalScore = Math.max(0.0, Math.min(1.0, Math.round(score * 100) / 100));
-    const shouldSend = finalScore >= threshold;
+    const shouldSend = finalScore >= Math.min(threshold, 0.6);
 
     let priority: NotificationPriority = 'medium';
     if (finalScore >= 0.85) priority = 'high';
@@ -113,9 +140,9 @@ export class AINotificationBrain {
     return {
       shouldSend,
       relevanceScore: finalScore,
-      reason: factors.join(' | ') || 'Standard evaluation',
+      reason: factors.join(' | '),
       recommendedPriority: priority,
-      recommendedChannel: finalScore >= 0.75 ? 'both' : 'in_app',
+      recommendedChannel: finalScore >= 0.7 ? 'both' : 'in_app',
       fatigueApplied,
     };
   }

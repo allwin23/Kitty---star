@@ -187,6 +187,7 @@ export default function PYQScreen() {
         EventBus.emit({
           type: 'SessionEnded',
           userId: user.id,
+          targetId: `pyq-${Date.now()}`,
           data: {
             taskTitle: `${selectedSubject} PYQ Practice`,
             scorePercent: score,

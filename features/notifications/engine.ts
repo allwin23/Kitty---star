@@ -7,11 +7,14 @@ import { queryKeys } from '@/lib/query-keys';
 import { AINotificationBrain } from './ai-brain';
 import { EventBus } from './event-bus';
 import { generateNotificationContent } from './templates';
+import { useNotificationStore } from '@/stores/notification-store';
 import type {
   AIBrainEvaluationContext,
   AppNotificationEventPayload,
   NotificationCategory,
+  NotificationChannel,
   NotificationPreferences,
+  NotificationPriority,
   NotificationRecord,
 } from './types';
 
@@ -101,12 +104,23 @@ export class NotificationEngine {
         return null;
       }
 
-      // 4. Deduplication Check
-      const dedupHash = `${userId}:${type}:${event.targetId || ''}`;
+      // 4. Deduplication Check (Action events use 15s window, passive alerts use 10m window)
       const now = Date.now();
+      const isUserAction = [
+        'SessionStarted',
+        'SessionEnded',
+        'GoalCompleted',
+        'WaterReminder',
+        'AchievementUnlocked',
+        'PartnerStarted',
+        'PartnerCompletedTask',
+      ].includes(type);
+
+      const dedupWindow = isUserAction ? 15 * 1000 : DEDUPLICATION_WINDOW_MS;
+      const dedupHash = `${userId}:${type}:${event.targetId || (isUserAction ? Math.floor(now / 15000) : '')}`;
       const lastSent = deduplicationCache.get(dedupHash);
-      if (lastSent && now - lastSent < DEDUPLICATION_WINDOW_MS) {
-        console.log(`[NotificationEngine] Duplicate event ${type} suppressed within 10min window`);
+      if (lastSent && now - lastSent < dedupWindow) {
+        console.log(`[NotificationEngine] Duplicate event ${type} suppressed within dedup window`);
         return null;
       }
 
@@ -157,6 +171,13 @@ export class NotificationEngine {
           data,
           action_url: content.actionUrl,
         });
+
+        if (record) {
+          useNotificationStore.setState((state) => ({
+            notifications: [record!, ...state.notifications.filter((n) => n.id !== record!.id)],
+            unreadCount: state.unreadCount + 1,
+          }));
+        }
 
         // Invalidate React Query cache so UI updates in real-time
         void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
@@ -330,19 +351,35 @@ export class NotificationEngine {
     };
   }
 
-  /** Save notification to Supabase database */
+  /** Save notification to Supabase database (with local fallback record guarantee) */
   private static async saveNotificationToDatabase(notif: {
     user_id: string;
     type: string;
     title: string;
     body: string;
-    priority: string;
-    category: string;
-    channel: string;
+    priority: NotificationPriority;
+    category: NotificationCategory;
+    channel: NotificationChannel;
     relevance_score: number;
     data: Record<string, any>;
     action_url?: string;
-  }): Promise<NotificationRecord | null> {
+  }): Promise<NotificationRecord> {
+    const fallbackRecord: NotificationRecord = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      user_id: notif.user_id,
+      type: notif.type,
+      title: notif.title,
+      body: notif.body,
+      priority: notif.priority,
+      category: notif.category,
+      channel: notif.channel,
+      relevance_score: notif.relevance_score,
+      data: notif.data,
+      action_url: notif.action_url,
+      created_at: new Date().toISOString(),
+      read_at: null,
+    };
+
     try {
       const { data, error } = await (supabase.from('notifications') as any)
         .insert({
@@ -360,16 +397,14 @@ export class NotificationEngine {
         .select()
         .single();
 
-      if (error) {
-        console.error('[NotificationEngine] DB insert error:', error.message);
-        return null;
+      if (!error && data) {
+        return data as NotificationRecord;
       }
-
-      return data as NotificationRecord;
     } catch (err) {
-      console.error('[NotificationEngine] DB insert failed:', err);
-      return null;
+      console.warn('[NotificationEngine] DB insert fallback to local record:', err);
     }
+
+    return fallbackRecord;
   }
 }
 

@@ -27,6 +27,7 @@ import { Card, EmptyState, ErrorState, HeaderTitleCard, Loading, NotificationBad
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
+import { EventBus } from '@/features/notifications/event-bus';
 import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 import {
@@ -162,6 +163,14 @@ export default function AchievementsScreen() {
         message: data.message,
         icon: data.icon,
         xp_bonus: data.xp_bonus,
+      });
+      EventBus.emit({
+        type: 'AchievementUnlocked',
+        userId: partnerId,
+        targetId: `award-${Date.now()}`,
+        data: {
+          badgeTitle: data.title,
+        },
       });
       void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
       void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
