@@ -6,6 +6,7 @@ import {
   Pressable,
   Text,
   TextInput,
+  type TextInputProps,
   View,
 } from 'react-native';
 
@@ -34,6 +35,45 @@ type TodoListProps = {
   showPomodoro?: boolean;
   savingId?: string | null;
 };
+
+// Focus-aware Pink Text Input component
+function PinkTextInput({ style, onFocus, onBlur, placeholderTextColor, ...props }: TextInputProps) {
+  const [focused, setFocused] = useState(false);
+
+  return (
+    <TextInput
+      placeholderTextColor={placeholderTextColor ?? palette.textMuted}
+      onFocus={(e) => {
+        setFocused(true);
+        onFocus?.(e);
+      }}
+      onBlur={(e) => {
+        setFocused(false);
+        onBlur?.(e);
+      }}
+      style={[
+        {
+          backgroundColor: 'rgba(255, 243, 245, 0.85)',
+          borderColor: focused ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
+          borderRadius: radius.input,
+          borderWidth: 1.5,
+          color: palette.textPrimary,
+          paddingHorizontal: spacing[12],
+          paddingVertical: 8,
+          fontSize: 14,
+          ...(Platform.OS === 'web'
+            ? ({
+                outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
+                outlineOffset: 1,
+              } as any)
+            : {}),
+        },
+        style,
+      ]}
+      {...props}
+    />
+  );
+}
 
 export function TodoList({
   tasks,
@@ -117,17 +157,6 @@ export function TodoList({
     ]);
   };
 
-  const inputStyle = {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderColor: 'rgba(250, 215, 224, 0.75)',
-    borderRadius: radius.input,
-    borderWidth: 1,
-    color: palette.textPrimary,
-    paddingHorizontal: spacing[12],
-    paddingVertical: 8,
-    fontSize: 14,
-  };
-
   return (
     <View style={{ gap: spacing[8] }}>
       {tasks.length === 0 ? (
@@ -156,22 +185,19 @@ export function TodoList({
           >
             {isEditing ? (
               <View style={{ gap: spacing[8] }}>
-                <TextInput
-                  style={inputStyle}
+                <PinkTextInput
                   value={editTitle}
                   onChangeText={setEditTitle}
                   placeholder="Task title"
-                  placeholderTextColor={palette.textMuted}
                   autoFocus
                 />
                 <View style={{ flexDirection: 'row', gap: spacing[8], alignItems: 'center' }}>
-                  <TextInput
-                    style={[inputStyle, { flex: 1 }]}
+                  <PinkTextInput
+                    style={{ flex: 1 }}
                     value={editMinutes}
                     onChangeText={setEditMinutes}
                     keyboardType="number-pad"
                     placeholder="Minutes"
-                    placeholderTextColor={palette.textMuted}
                   />
                   <Text style={{ color: palette.textSecondary, fontSize: 13 }}>min</Text>
                 </View>
@@ -322,25 +348,24 @@ export function TodoList({
                   borderRadius: radius.card,
                   padding: spacing[12],
                   gap: spacing[8],
+                  backgroundColor: 'rgba(255, 243, 245, 0.75)',
+                  borderColor: 'rgba(250, 215, 224, 0.85)',
                 },
               ]}
             >
-              <TextInput
-                style={inputStyle}
+              <PinkTextInput
                 value={addTitle}
                 onChangeText={setAddTitle}
                 placeholder="Task title"
-                placeholderTextColor={palette.textMuted}
                 autoFocus
               />
               <View style={{ flexDirection: 'row', gap: spacing[8], alignItems: 'center' }}>
-                <TextInput
-                  style={[inputStyle, { flex: 1 }]}
+                <PinkTextInput
+                  style={{ flex: 1 }}
                   value={addMinutes}
                   onChangeText={setAddMinutes}
                   keyboardType="number-pad"
                   placeholder="Minutes"
-                  placeholderTextColor={palette.textMuted}
                 />
                 <Text style={{ color: palette.textSecondary, fontSize: 13 }}>min</Text>
               </View>
@@ -385,7 +410,7 @@ export function TodoList({
                 borderRadius: radius.card,
                 borderWidth: 1,
                 borderStyle: 'dashed',
-                backgroundColor: 'rgba(255, 245, 247, 0.3)',
+                backgroundColor: 'rgba(255, 245, 247, 0.45)',
                 padding: spacing[12],
                 alignItems: 'center',
               }}
@@ -398,4 +423,3 @@ export function TodoList({
     </View>
   );
 }
-
