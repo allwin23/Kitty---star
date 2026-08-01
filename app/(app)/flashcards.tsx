@@ -15,7 +15,8 @@ import { useFocusEffect } from 'expo-router';
 
 import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
 import { useAuthStore, useFlashcardStore } from '@/stores';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
+
 import { flashcardService, reportService } from '@/services/backend';
 
 // Import our modular components
@@ -43,9 +44,8 @@ const builtInCards = builtInCardsRaw as BuiltInCard[];
 type TabType = 'due' | 'builtin' | 'user';
 
 export default function FlashcardsScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const user = useAuthStore((s) => s.user);
+
 
   // Zustand local store for built-in card schedules
   const { localSchedules, reviewCardLocally } = useFlashcardStore();
@@ -703,12 +703,15 @@ export default function FlashcardsScreen() {
     <Screen>
       <View style={{ flex: 1 }}>
         {/* Header navigation */}
-        <View style={{ marginBottom: spacing.md }}>
-          <Text style={[typography.heading, { color: palette.text, fontSize: 26 }]}>Flashcards Memory</Text>
-          <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-            Spaced repetition schedules designed specifically for medical student MBBS retention.
+        <View style={{ marginBottom: spacing[16], gap: spacing[4] }}>
+          <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            Smart Flashcards ⚡
+          </Text>
+          <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
+            Spaced repetition schedules designed specifically for maximum long-term memory retention.
           </Text>
         </View>
+
 
         {/* Navigation Tabs */}
         <View style={[styles.tabBar, { borderBottomColor: palette.border }]}>

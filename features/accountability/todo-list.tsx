@@ -1,12 +1,3 @@
-/**
- * TodoList — reusable task list component.
- *
- * Used in:
- *  - Prior Planning (create/edit draft tasks)
- *  - Today's Live Todo (edit current_tasks via plannerService)
- *
- * Props decide whether the list is editable or read-only.
- */
 import { useState } from 'react';
 import {
   ActivityIndicator,
@@ -15,11 +6,10 @@ import {
   Pressable,
   Text,
   TextInput,
-  useColorScheme,
   View,
 } from 'react-native';
 
-import { colors, radius, spacing, typography } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import { useAuthStore } from '@/stores';
@@ -36,17 +26,11 @@ export type TodoTask = {
 type TodoListProps = {
   tasks: TodoTask[];
   readOnly?: boolean;
-  /** Called when checkbox is toggled (complete/incomplete task). `null` means not supported. */
   onToggle?: (task: TodoTask) => Promise<void>;
-  /** Called when a task title/minutes is saved inline. */
   onEdit?: (task: TodoTask, title: string, minutes: number) => Promise<void>;
-  /** Called when delete icon pressed. */
   onDelete?: (taskId: string) => Promise<void>;
-  /** Called to start a pomodoro for a task. */
   onPomodoro?: (task: TodoTask) => void;
-  /** Called when the add-task form is submitted. */
   onAdd?: (title: string, minutes: number) => Promise<void>;
-  /** Show pomodoro column. */
   showPomodoro?: boolean;
   savingId?: string | null;
 };
@@ -57,13 +41,10 @@ export function TodoList({
   onToggle,
   onEdit,
   onDelete,
-  onPomodoro,
   onAdd,
   showPomodoro = false,
   savingId,
 }: TodoListProps) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const user = useAuthStore((s) => s.user);
 
   const handleToggle = async (task: TodoTask) => {
@@ -137,19 +118,20 @@ export function TodoList({
   };
 
   const inputStyle = {
-    borderColor: palette.border,
-    borderRadius: radius.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderColor: 'rgba(250, 215, 224, 0.75)',
+    borderRadius: radius.input,
     borderWidth: 1,
-    color: palette.text,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6,
+    color: palette.textPrimary,
+    paddingHorizontal: spacing[12],
+    paddingVertical: 8,
     fontSize: 14,
   };
 
   return (
-    <View style={{ gap: spacing.sm }}>
+    <View style={{ gap: spacing[8] }}>
       {tasks.length === 0 ? (
-        <Text style={{ color: palette.mutedText, textAlign: 'center', paddingVertical: spacing.md }}>
+        <Text style={{ color: palette.textSecondary, textAlign: 'center', paddingVertical: spacing[12], fontSize: 13 }}>
           No tasks yet.
         </Text>
       ) : null}
@@ -162,66 +144,66 @@ export function TodoList({
         return (
           <View
             key={task.id}
-            style={{
-              backgroundColor: palette.surface,
-              borderColor: palette.border,
-              borderRadius: radius.md,
-              borderWidth: 1,
-              padding: spacing.sm,
-              gap: spacing.xs,
-            }}
+            style={[
+              glassCardStyle,
+              {
+                borderRadius: radius.card,
+                padding: spacing[12],
+                gap: spacing[8],
+                backgroundColor: isDone ? 'rgba(255, 245, 247, 0.25)' : 'rgba(255, 245, 247, 0.45)',
+              },
+            ]}
           >
             {isEditing ? (
-              <View style={{ gap: spacing.xs }}>
+              <View style={{ gap: spacing[8] }}>
                 <TextInput
                   style={inputStyle}
                   value={editTitle}
                   onChangeText={setEditTitle}
                   placeholder="Task title"
-                  placeholderTextColor={palette.mutedText}
+                  placeholderTextColor={palette.textMuted}
                   autoFocus
                 />
-                <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', gap: spacing[8], alignItems: 'center' }}>
                   <TextInput
                     style={[inputStyle, { flex: 1 }]}
                     value={editMinutes}
                     onChangeText={setEditMinutes}
                     keyboardType="number-pad"
                     placeholder="Minutes"
-                    placeholderTextColor={palette.mutedText}
+                    placeholderTextColor={palette.textMuted}
                   />
-                  <Text style={{ color: palette.mutedText, fontSize: 13 }}>min</Text>
+                  <Text style={{ color: palette.textSecondary, fontSize: 13 }}>min</Text>
                 </View>
-                <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                <View style={{ flexDirection: 'row', gap: spacing[8] }}>
                   <Pressable
                     onPress={() => void saveEdit(task)}
                     style={{
-                      backgroundColor: palette.primary,
-                      borderRadius: radius.sm,
-                      paddingHorizontal: spacing.md,
-                      paddingVertical: 6,
+                      backgroundColor: palette.cherryBloom,
+                      borderRadius: radius.button,
+                      paddingHorizontal: spacing[16],
+                      paddingVertical: 8,
                     }}
                   >
-                    <Text style={{ color: palette.primaryText, fontSize: 13, fontWeight: '600' }}>
+                    <Text style={{ color: palette.warmWhite, fontSize: 13, fontWeight: '700' }}>
                       Save
                     </Text>
                   </Pressable>
                   <Pressable
                     onPress={() => setEditingId(null)}
                     style={{
-                      borderColor: palette.border,
-                      borderRadius: radius.sm,
-                      borderWidth: 1,
-                      paddingHorizontal: spacing.md,
-                      paddingVertical: 6,
+                      backgroundColor: palette.blush,
+                      borderRadius: radius.button,
+                      paddingHorizontal: spacing[16],
+                      paddingVertical: 8,
                     }}
                   >
-                    <Text style={{ color: palette.text, fontSize: 13 }}>Cancel</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
                   </Pressable>
                 </View>
               </View>
             ) : (
-              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[12] }}>
                 {/* Checkbox */}
                 {onToggle ? (
                   <Pressable
@@ -229,17 +211,16 @@ export function TodoList({
                     style={{
                       width: 22,
                       height: 22,
-                      borderRadius: 4,
+                      borderRadius: radius.pill,
                       borderWidth: 2,
-                      borderColor: isDone ? palette.primary : palette.border,
-                      backgroundColor: isDone ? palette.primary : 'transparent',
+                      borderColor: isDone ? palette.cherryBloom : 'rgba(232, 77, 114, 0.35)',
+                      backgroundColor: isDone ? palette.cherryBloom : 'transparent',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginTop: 2,
                     }}
                   >
                     {isDone ? (
-                      <Text style={{ color: palette.primaryText, fontSize: 12, fontWeight: '700' }}>
+                      <Text style={{ color: palette.warmWhite, fontSize: 11, fontWeight: '800' }}>
                         ✓
                       </Text>
                     ) : null}
@@ -249,17 +230,16 @@ export function TodoList({
                     style={{
                       width: 22,
                       height: 22,
-                      borderRadius: 4,
+                      borderRadius: radius.pill,
                       borderWidth: 2,
-                      borderColor: isDone ? palette.primary : palette.border,
-                      backgroundColor: isDone ? palette.primary : 'transparent',
+                      borderColor: isDone ? palette.cherryBloom : 'rgba(232, 77, 114, 0.35)',
+                      backgroundColor: isDone ? palette.cherryBloom : 'transparent',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      marginTop: 2,
                     }}
                   >
                     {isDone ? (
-                      <Text style={{ color: palette.primaryText, fontSize: 12, fontWeight: '700' }}>
+                      <Text style={{ color: palette.warmWhite, fontSize: 11, fontWeight: '800' }}>
                         ✓
                       </Text>
                     ) : null}
@@ -270,22 +250,22 @@ export function TodoList({
                 <View style={{ flex: 1 }}>
                   <Text
                     style={[
-                      typography.body,
                       {
-                        color: palette.text,
+                        fontSize: 15,
+                        fontWeight: '600',
+                        color: isDone ? palette.textMuted : palette.textPrimary,
                         textDecorationLine: isDone ? 'line-through' : 'none',
-                        opacity: isDone ? 0.6 : 1,
                       },
                     ]}
                   >
                     {task.title}
                   </Text>
-                  <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: 2 }}>
-                    <Text style={{ color: palette.mutedText, fontSize: 12 }}>
-                      {task.estimated_minutes} min
+                  <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: 2 }}>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '500' }}>
+                      ⏳ {task.estimated_minutes} min
                     </Text>
                     {showPomodoro && task.completed_pomodoros !== undefined ? (
-                      <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                      <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '600' }}>
                         🍅 {task.completed_pomodoros}
                       </Text>
                     ) : null}
@@ -294,35 +274,33 @@ export function TodoList({
 
                 {/* Actions */}
                 {isSaving ? (
-                  <ActivityIndicator size="small" color={palette.primary} />
+                  <ActivityIndicator size="small" color={palette.cherryBloom} />
                 ) : (
-                  <View style={{ flexDirection: 'row', gap: spacing.xs }}>
+                  <View style={{ flexDirection: 'row', gap: spacing[4] }}>
                     {!readOnly && onEdit ? (
                       <Pressable
                         onPress={() => startEdit(task)}
                         style={{
-                          paddingHorizontal: spacing.sm,
+                          paddingHorizontal: spacing[12],
                           paddingVertical: 4,
-                          borderRadius: radius.sm,
-                          borderWidth: 1,
-                          borderColor: palette.border,
+                          borderRadius: radius.pill,
+                          backgroundColor: palette.blush,
                         }}
                       >
-                        <Text style={{ fontSize: 12, color: palette.text }}>Edit</Text>
+                        <Text style={{ fontSize: 12, color: palette.cherryBloom, fontWeight: '700' }}>Edit</Text>
                       </Pressable>
                     ) : null}
                     {!readOnly && onDelete ? (
                       <Pressable
                         onPress={() => confirmDelete(task)}
                         style={{
-                          paddingHorizontal: spacing.sm,
+                          paddingHorizontal: spacing[12],
                           paddingVertical: 4,
-                          borderRadius: radius.sm,
-                          borderWidth: 1,
-                          borderColor: palette.danger,
+                          borderRadius: radius.pill,
+                          backgroundColor: 'rgba(217, 76, 97, 0.12)',
                         }}
                       >
-                        <Text style={{ fontSize: 12, color: palette.danger }}>Del</Text>
+                        <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '700' }}>Del</Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -335,68 +313,67 @@ export function TodoList({
 
       {/* Add task */}
       {!readOnly && onAdd ? (
-        <View>
+        <View style={{ marginTop: spacing[4] }}>
           {addOpen ? (
             <View
-              style={{
-                backgroundColor: palette.surface,
-                borderColor: palette.border,
-                borderRadius: radius.md,
-                borderWidth: 1,
-                padding: spacing.sm,
-                gap: spacing.xs,
-              }}
+              style={[
+                glassCardStyle,
+                {
+                  borderRadius: radius.card,
+                  padding: spacing[12],
+                  gap: spacing[8],
+                },
+              ]}
             >
               <TextInput
                 style={inputStyle}
                 value={addTitle}
                 onChangeText={setAddTitle}
                 placeholder="Task title"
-                placeholderTextColor={palette.mutedText}
+                placeholderTextColor={palette.textMuted}
                 autoFocus
               />
-              <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', gap: spacing[8], alignItems: 'center' }}>
                 <TextInput
                   style={[inputStyle, { flex: 1 }]}
                   value={addMinutes}
                   onChangeText={setAddMinutes}
                   keyboardType="number-pad"
                   placeholder="Minutes"
-                  placeholderTextColor={palette.mutedText}
+                  placeholderTextColor={palette.textMuted}
                 />
-                <Text style={{ color: palette.mutedText, fontSize: 13 }}>min</Text>
+                <Text style={{ color: palette.textSecondary, fontSize: 13 }}>min</Text>
               </View>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+              <View style={{ flexDirection: 'row', gap: spacing[8] }}>
                 <Pressable
                   onPress={() => void handleAdd()}
                   disabled={adding}
                   style={{
-                    backgroundColor: palette.primary,
-                    borderRadius: radius.sm,
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: 6,
+                    backgroundColor: palette.cherryBloom,
+                    borderRadius: radius.button,
+                    paddingHorizontal: spacing[16],
+                    paddingVertical: 8,
                     opacity: adding ? 0.6 : 1,
                   }}
                 >
                   {adding ? (
-                    <ActivityIndicator size="small" color={palette.primaryText} />
+                    <ActivityIndicator size="small" color={palette.warmWhite} />
                   ) : (
-                    <Text style={{ color: palette.primaryText, fontSize: 13, fontWeight: '600' }}>
-                      Add
+                    <Text style={{ color: palette.warmWhite, fontSize: 13, fontWeight: '700' }}>
+                      Add Task
                     </Text>
                   )}
                 </Pressable>
                 <Pressable
                   onPress={() => { setAddOpen(false); setAddTitle(''); setAddMinutes('25'); }}
                   style={{
-                    borderColor: palette.border,
-                    borderRadius: radius.sm,
-                    borderWidth: 1,
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: 6,
+                    backgroundColor: palette.blush,
+                    borderRadius: radius.button,
+                    paddingHorizontal: spacing[16],
+                    paddingVertical: 8,
                   }}
                 >
-                  <Text style={{ color: palette.text, fontSize: 13 }}>Cancel</Text>
+                  <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
                 </Pressable>
               </View>
             </View>
@@ -404,15 +381,16 @@ export function TodoList({
             <Pressable
               onPress={() => setAddOpen(true)}
               style={{
-                borderColor: palette.border,
-                borderRadius: radius.md,
+                borderColor: 'rgba(232, 77, 114, 0.35)',
+                borderRadius: radius.card,
                 borderWidth: 1,
                 borderStyle: 'dashed',
-                padding: spacing.sm,
+                backgroundColor: 'rgba(255, 245, 247, 0.3)',
+                padding: spacing[12],
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: palette.primary, fontWeight: '600' }}>+ Add task</Text>
+              <Text style={{ color: palette.cherryBloom, fontWeight: '700', fontSize: 14 }}>+ Add New Task</Text>
             </Pressable>
           )}
         </View>
@@ -420,3 +398,4 @@ export function TodoList({
     </View>
   );
 }
+

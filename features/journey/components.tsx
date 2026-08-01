@@ -18,7 +18,7 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 
 import { Card, Loading, EmptyState, Button, Input } from '@/components/ui';
-import { colors, radius, spacing, typography } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import type {
   MilestoneWithChallenge,
   JourneyEventRow,
@@ -26,9 +26,10 @@ import type {
 } from '@/services/journey.service';
 
 function usePalette() {
-  const cs = useColorScheme();
-  return colors[cs === 'dark' ? 'dark' : 'light'];
+  return palette;
 }
+
+
 
 // ─── JourneyHeader ─────────────────────────────────────────────────────────────
 

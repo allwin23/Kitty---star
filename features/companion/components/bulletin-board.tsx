@@ -5,12 +5,11 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 
 import type { AnnouncementItem } from '../types';
-import { colors, radius, spacing, typography } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 export interface CompanionBulletinBoardProps {
   announcement: AnnouncementItem | null;
@@ -27,9 +26,6 @@ export function CompanionBulletinBoard({
   queueCount = 0,
   onDismiss,
 }: CompanionBulletinBoardProps) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   const slideAnim = useRef(new Animated.Value(-20)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -56,17 +52,8 @@ export function CompanionBulletinBoard({
 
   if (!announcement) {
     return (
-      <View
-        style={[
-          styles.board,
-          {
-            backgroundColor: palette.surface,
-            borderColor: palette.border,
-            borderStyle: 'dashed',
-          },
-        ]}
-      >
-        <Text style={{ color: palette.mutedText, fontSize: 13, textAlign: 'center' }}>
+      <View style={[styles.board, styles.emptyBoard]}>
+        <Text style={{ color: palette.textSecondary, fontSize: 13, textAlign: 'center', fontWeight: '500' }}>
           ✨ Companion Bulletin Board — All caught up!
         </Text>
       </View>
@@ -76,12 +63,12 @@ export function CompanionBulletinBoard({
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case 'critical':
-        return { label: 'CRITICAL', bg: '#ef4444', color: '#ffffff' };
+        return { label: 'CRITICAL', bg: palette.danger, color: '#ffffff' };
       case 'high':
-        return { label: 'HIGH', bg: '#f97316', color: '#ffffff' };
+        return { label: 'HIGH', bg: palette.primaryGlow, color: '#ffffff' };
       case 'normal':
       default:
-        return { label: 'INFO', bg: `${palette.primary}20`, color: palette.primary };
+        return { label: 'INFO', bg: palette.blush, color: palette.cherryBloom };
     }
   };
 
@@ -92,8 +79,6 @@ export function CompanionBulletinBoard({
       style={[
         styles.board,
         {
-          backgroundColor: announcement.priority === 'critical' ? '#fef2f2' : palette.surface,
-          borderColor: announcement.priority === 'critical' ? '#ef4444' : palette.border,
           transform: [{ translateY: slideAnim }],
           opacity: fadeAnim,
         },
@@ -101,11 +86,10 @@ export function CompanionBulletinBoard({
     >
       {/* Header Row */}
       <View style={styles.headerRow}>
-        <Text style={{ fontSize: 20 }}>{announcement.icon}</Text>
+        <Text style={{ fontSize: 18 }}>{announcement.icon}</Text>
         <Text
           style={[
-            typography.title,
-            { color: palette.text, fontSize: 15, flex: 1 },
+            { color: palette.textPrimary, fontSize: 14, fontWeight: '700', flex: 1 },
           ]}
           numberOfLines={1}
         >
@@ -121,28 +105,28 @@ export function CompanionBulletinBoard({
 
         {/* Queue Counter Indicator */}
         {queueCount > 0 ? (
-          <View style={[styles.queueBadge, { backgroundColor: palette.primary }]}>
+          <View style={[styles.queueBadge, { backgroundColor: palette.cherryBloom }]}>
             <Text style={{ color: '#fff', fontSize: 10, fontWeight: '800' }}>+{queueCount}</Text>
           </View>
         ) : null}
 
         {onDismiss ? (
           <Pressable onPress={onDismiss} style={{ padding: 4 }}>
-            <Text style={{ color: palette.mutedText, fontSize: 14 }}>✕</Text>
+            <Text style={{ color: palette.textMuted, fontSize: 14 }}>✕</Text>
           </Pressable>
         ) : null}
       </View>
 
       {/* Typing Announcement Text */}
-      <Text style={[typography.body, { color: palette.text, fontSize: 13, marginTop: spacing.xs }]}>
+      <Text style={{ color: palette.textSecondary, fontSize: 13, marginTop: spacing[4], lineHeight: 18 }}>
         {typingText}
-        {isTyping ? <Text style={{ color: palette.primary, fontWeight: '900' }}>|</Text> : ''}
+        {isTyping ? <Text style={{ color: palette.cherryBloom, fontWeight: '900' }}>|</Text> : ''}
       </Text>
 
       {/* XP Floater Tag if present */}
       {announcement.xpBonus ? (
         <View style={styles.xpFloater}>
-          <Text style={{ color: '#16a34a', fontWeight: '800', fontSize: 12 }}>
+          <Text style={{ color: palette.cherryBloom, fontWeight: '800', fontSize: 12 }}>
             ⭐ +{announcement.xpBonus} XP
           </Text>
         </View>
@@ -153,38 +137,40 @@ export function CompanionBulletinBoard({
 
 const styles = StyleSheet.create({
   board: {
-    borderRadius: radius.md,
-    borderWidth: 1.5,
-    padding: spacing.sm,
-    gap: spacing.xs,
-    position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    ...glassCardStyle,
+    borderRadius: radius.card,
+    padding: spacing[12],
+    gap: spacing[4],
+  },
+  emptyBoard: {
+    backgroundColor: 'rgba(255, 245, 247, 0.25)',
+    borderColor: 'rgba(250, 215, 224, 0.4)',
+    borderStyle: 'dashed',
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.xs,
+    gap: spacing[8],
   },
   badge: {
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: radius.sm,
+    borderRadius: radius.pill,
   },
   queueBadge: {
-    paddingHorizontal: 5,
+    paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: radius.sm,
+    borderRadius: radius.pill,
   },
   xpFloater: {
     alignSelf: 'flex-start',
-    backgroundColor: '#dcfce7',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: radius.sm,
-    marginTop: spacing.xs,
+    backgroundColor: palette.blush,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: radius.pill,
+    marginTop: spacing[4],
+    borderWidth: 1,
+    borderColor: 'rgba(232, 77, 114, 0.2)',
   },
 });
+

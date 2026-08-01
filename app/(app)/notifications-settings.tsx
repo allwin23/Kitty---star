@@ -16,12 +16,11 @@ import { NotificationEngine } from '@/features/notifications/engine';
 import type { NotificationPreferences } from '@/features/notifications/types';
 import { useAuthStore } from '@/stores';
 import { useNotificationStore } from '@/stores/notification-store';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing, typography } from '@/theme';
 
 export default function NotificationSettingsScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
+
 
   const user = useAuthStore((s) => s.user);
   const { preferences, fetchPreferences, updatePreferences } = useNotificationStore();

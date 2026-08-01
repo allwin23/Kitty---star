@@ -1,14 +1,12 @@
-import { ActivityIndicator, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
-import { colors } from '@/theme';
+import { palette } from '@/theme';
 
 export function Loading() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <ActivityIndicator color={palette.primary} />
+    <View style={{ alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+      <ActivityIndicator color={palette.cherryBloom} size="small" />
     </View>
   );
 }
+

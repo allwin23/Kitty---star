@@ -19,7 +19,7 @@ import { useRouter } from 'expo-router';
 import { format } from 'date-fns';
 
 import { Card, Loading, ErrorState, EmptyState } from '@/components/ui';
-import { colors, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import type {
   DailyActivityRow,
   DailyReportRow,
@@ -29,12 +29,11 @@ import type {
   TimeFilter,
 } from '@/services/statistics.service';
 
-// ─── Palette hook ──────────────────────────────────────────────────────────────
-
 function usePalette() {
-  const cs = useColorScheme();
-  return colors[cs === 'dark' ? 'dark' : 'light'];
+  return palette;
 }
+
+
 
 // ─── PartnerToggle ─────────────────────────────────────────────────────────────
 

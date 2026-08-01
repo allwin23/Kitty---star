@@ -18,7 +18,7 @@ import { Screen } from '@/components/ui';
 import { supabase } from '@/lib/supabase';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
-import { colors, spacing, typography } from '@/theme';
+import { palette, spacing } from '@/theme';
 import * as statsService from '@/services/statistics.service';
 import { grammarService } from '@/services';
 import {
@@ -42,8 +42,6 @@ import {
 } from '@/services/statistics.service';
 
 export default function StatisticsScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const queryClient = useQueryClient();
 
   const user = useAuthStore((s) => s.user);
@@ -51,6 +49,7 @@ export default function StatisticsScreen() {
 
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [viewingPartner, setViewingPartner] = useState(false);
+
 
   // Fetch partner_id for current user (or fallback to auth store profile)
   const partnerIdQ = useQuery({
@@ -244,16 +243,17 @@ export default function StatisticsScreen() {
           <RefreshControl refreshing={isAnyRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
-          <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.heading, { color: palette.text }]}>
-              Statistics
+          <View style={{ gap: spacing[4] }}>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              Statistics 📊
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-              {viewingPartner ? "Viewing partner's statistics" : 'Your study progress'}
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
+              {viewingPartner ? "Viewing partner's statistics" : 'Your overall study progress & growth'}
             </Text>
           </View>
+
 
           {/* Partner Toggle */}
           <PartnerToggle

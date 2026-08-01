@@ -1,23 +1,29 @@
 import type { PropsWithChildren } from 'react';
-import { useColorScheme, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 
-import { colors, radius, spacing } from '@/theme';
+import { glassCardStyle, radius, spacing } from '@/theme';
 
-type CardProps = PropsWithChildren<{ style?: StyleProp<ViewStyle> }>;
+type CardProps = PropsWithChildren<{
+  style?: StyleProp<ViewStyle>;
+  variant?: 'glass' | 'solid' | 'flat';
+}>;
 
-export function Card({ children, style }: CardProps) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
+export function Card({ children, style, variant = 'glass' }: CardProps) {
+  const isGlass = variant === 'glass';
 
   return (
     <View
       style={[
+        isGlass
+          ? glassCardStyle
+          : {
+              backgroundColor: 'rgba(255, 247, 248, 0.85)',
+              borderColor: 'rgba(250, 215, 224, 0.6)',
+              borderWidth: 1,
+              borderRadius: radius.card,
+            },
         {
-          backgroundColor: palette.surface,
-          borderColor: palette.border,
-          borderRadius: radius.lg,
-          borderWidth: 1,
-          padding: spacing.md,
+          padding: spacing.lg,
         },
         style,
       ]}
@@ -26,3 +32,4 @@ export function Card({ children, style }: CardProps) {
     </View>
   );
 }
+

@@ -20,12 +20,11 @@ import type {
   CompanionPersonalityMode,
   CompanionPriority,
 } from '@/features/companion/types';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing, typography } from '@/theme';
 
 export default function CompanionScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
+
 
   const [mascotState, setMascotState] = useState<CompanionMascotState>(
     companionMascotService.getMascotState(),

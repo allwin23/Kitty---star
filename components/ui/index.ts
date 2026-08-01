@@ -1,6 +1,7 @@
 export * from './avatar';
 export * from './button';
 export * from './card';
+export * from './cherry-background';
 export * from './empty-state';
 export * from './error-state';
 export * from './input';
@@ -8,5 +9,6 @@ export * from './loading';
 export * from './screen';
 export * from './proof-viewer-modal';
 export * from './notification-badge';
+
 
 

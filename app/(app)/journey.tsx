@@ -17,7 +17,8 @@ import { Card, EmptyState, Loading, Screen, Button } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, spacing } from '@/theme';
+
 
 import { journeyService, type MilestoneWithChallenge } from '@/services/journey.service';
 import { reportService } from '@/services/backend';
@@ -37,12 +38,11 @@ import {
 } from '@/features/journey';
 
 export default function JourneyScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const queryClient = useQueryClient();
 
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
+
 
   const [viewingPartner, setViewingPartner] = useState(false);
   const [selectedMilestone, setSelectedMilestone] = useState<MilestoneWithChallenge | null>(null);
@@ -226,18 +226,19 @@ export default function JourneyScreen() {
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Title Header */}
-          <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.heading, { color: palette.text }]}>
-              XP Journey
+          <View style={{ gap: spacing[4] }}>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              XP Journey 🗺️
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 13 }}>
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
               {viewingPartner
                 ? "Managing partner's surprise milestone rewards"
                 : 'Continuous lifetime XP progress & surprise partner rewards'}
             </Text>
           </View>
+
 
           {/* Mode Toggle Button */}
           {hasPartner ? (

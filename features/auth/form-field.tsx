@@ -1,8 +1,8 @@
 import type { TextInputProps } from 'react-native';
-import { Text, useColorScheme, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { Input } from '@/components/ui';
-import { colors, spacing } from '@/theme';
+import { palette, spacing } from '@/theme';
 
 type FormFieldProps = TextInputProps & {
   error?: string;
@@ -10,14 +10,14 @@ type FormFieldProps = TextInputProps & {
 };
 
 export function FormField({ error, label, ...inputProps }: FormFieldProps) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   return (
-    <View style={{ gap: spacing.xs }}>
-      <Text style={{ color: palette.text, fontWeight: '600' }}>{label}</Text>
+    <View style={{ gap: spacing[4] }}>
+      <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+        {label}
+      </Text>
       <Input {...inputProps} />
-      {error ? <Text style={{ color: palette.danger }}>{error}</Text> : null}
+      {error ? <Text style={{ color: palette.danger, fontSize: 12 }}>{error}</Text> : null}
     </View>
   );
 }
+

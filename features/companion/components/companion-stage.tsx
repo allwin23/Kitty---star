@@ -1,17 +1,14 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { CompanionScheduler, type SynchronizationState } from '../animation-scheduler';
 import { companionMascotService } from '../mascot.service';
 import type { CompanionMascotState } from '../types';
 import { CompanionBulletinBoard } from './bulletin-board';
 import { CompanionMascot } from './companion-mascot';
-import { colors, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 export function CompanionStage() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
   const [syncState, setSyncState] = useState<SynchronizationState>(
     CompanionScheduler.getCurrentState(),
   );
@@ -30,29 +27,21 @@ export function CompanionStage() {
   }, []);
 
   return (
-    <View
-      style={[
-        styles.stageCard,
-        {
-          backgroundColor: palette.surface,
-          borderColor: palette.border,
-        },
-      ]}
-    >
+    <View style={styles.stageCard}>
       {/* Header Level & Personality bar */}
       <View style={styles.headerBar}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-          <Text style={{ fontWeight: '800', color: palette.text, fontSize: 13 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[8] }}>
+          <Text style={{ fontWeight: '800', color: palette.textPrimary, fontSize: 14 }}>
             🐱 {mascotState.name}
           </Text>
-          <View style={[styles.levelBadge, { backgroundColor: `${palette.primary}20` }]}>
-            <Text style={{ color: palette.primary, fontSize: 10, fontWeight: '800' }}>
+          <View style={styles.levelBadge}>
+            <Text style={{ color: palette.cherryBloom, fontSize: 11, fontWeight: '800' }}>
               LVL {mascotState.level}
             </Text>
           </View>
         </View>
 
-        <Text style={{ color: palette.mutedText, fontSize: 11, fontStyle: 'italic' }}>
+        <Text style={{ color: palette.textSecondary, fontSize: 12, fontStyle: 'italic' }}>
           Mode: {mascotState.personalityMode}
         </Text>
       </View>
@@ -85,32 +74,31 @@ export function CompanionStage() {
 
 const styles = StyleSheet.create({
   stageCard: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.sm,
-    gap: spacing.xs,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    elevation: 2,
+    ...glassCardStyle,
+    borderRadius: radius.card,
+    padding: spacing[16],
+    gap: spacing[12],
   },
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: spacing.xs,
+    paddingBottom: spacing[8],
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderBottomColor: 'rgba(250, 215, 224, 0.5)',
   },
   levelBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: radius.sm,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radius.pill,
+    backgroundColor: palette.blush,
+    borderWidth: 1,
+    borderColor: 'rgba(232, 77, 114, 0.2)',
   },
   mainRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing[12],
   },
 });
+

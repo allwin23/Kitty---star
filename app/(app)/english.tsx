@@ -17,7 +17,8 @@ import { useFocusEffect } from 'expo-router';
 import { Screen, Card, Button, Loading } from '@/components/ui';
 
 // Theme tokens
-import { colors, radius, spacing, typography } from '@/theme';
+import { colors, palette, radius, spacing } from '@/theme';
+
 import { CompanionBus } from '@/features/companion/event-bus';
 import { todayIso } from '@/lib/supabase-helpers';
 
@@ -47,10 +48,9 @@ type TabType = 'home' | 'vocab' | 'grammar' | 'writing';
 type QuizState = 'idle' | 'quiz' | 'result';
 
 export default function EnglishScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
+
 
   // Zustand Store values
   const {
@@ -360,14 +360,15 @@ export default function EnglishScreen() {
         <View style={styles.container}>
           {/* Header */}
           <View style={styles.header}>
-            <View>
-              <Text style={[typography.heading, { color: palette.text, fontSize: 24 }]}>
-                Daily English Practice
+            <View style={{ gap: spacing[4] }}>
+              <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+                Daily English 💬
               </Text>
-              <Text style={{ color: palette.mutedText, fontSize: 13 }}>
+              <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
                 Complete the daily pillars to master vocabulary and communication.
               </Text>
             </View>
+
             {activeTab !== 'home' && (
               <Button
                 onPress={() => {

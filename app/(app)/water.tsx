@@ -5,27 +5,25 @@ import { useFocusEffect } from 'expo-router';
 
 import { Loading, Screen } from '@/components/ui';
 import { useAuthStore } from '@/stores';
-import { colors, spacing, typography } from '@/theme';
-import { waterService } from '@/services/backend';
+import { palette, spacing } from '@/theme';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
-
-// Import our modular water tracker components
+import * as waterService from '@/services/water.service';
 import {
+  WaterProgressCard,
+  QuickAddButton,
   CustomWaterInput,
   GoalCard,
   HistoryList,
-  QuickAddButton,
-  StatisticsCard,
-  WaterProgressCard,
   WeeklyProgressCard,
+  StatisticsCard,
 } from '@/components/water';
 
+
 export default function WaterTrackerScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
+
 
   // Queries
   const todayStatsQ = useQuery({
@@ -36,7 +34,7 @@ export default function WaterTrackerScreen() {
 
   const todayLogsQ = useQuery({
     queryKey: ['water-today-logs'],
-    queryFn: () => waterService.getTodayLogs(),
+    queryFn: () => waterService.getDailyHistory(),
     enabled: !!user,
   });
 
@@ -48,7 +46,7 @@ export default function WaterTrackerScreen() {
 
   const statsHistoryQ = useQuery({
     queryKey: ['water-stats-history'],
-    queryFn: () => waterService.getStatsHistory(),
+    queryFn: () => waterService.getWeeklyStats(30),
     enabled: !!user,
   });
 
@@ -64,7 +62,7 @@ export default function WaterTrackerScreen() {
 
   // Mutation for logging water
   const logWaterMutation = useMutation({
-    mutationFn: (amount: number) => waterService.log({ amount_ml: amount }),
+    mutationFn: (amount: number) => waterService.logWater({ amount_ml: amount }),
     onSuccess: (_, amount) => {
       // Invalidate queries to refresh UI immediately
       void queryClient.invalidateQueries({ queryKey: ['water-today-stats'] });
@@ -124,12 +122,15 @@ export default function WaterTrackerScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {/* Header */}
-          <View>
-            <Text style={[typography.heading, { color: palette.text, fontSize: 26 }]}>Water Tracker</Text>
-            <Text style={{ color: palette.mutedText, fontSize: 13 }}>
+          <View style={{ gap: spacing[4] }}>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              Water Tracker 💧
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
               Stay hydrated to maintain peak mental focus and study stamina.
             </Text>
           </View>
+
 
           {/* Progress Card */}
           <WaterProgressCard totalMl={totalMl} goalMl={goalMl} />

@@ -1,22 +1,34 @@
 import type { PropsWithChildren } from 'react';
-import { useColorScheme, View, type StyleProp, type ViewStyle } from 'react-native';
+import { View, type StyleProp, type ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { colors, spacing } from '@/theme';
+import { CherryBackground } from './cherry-background';
+import { spacing } from '@/theme';
 
-type ScreenProps = PropsWithChildren<{ centered?: boolean; style?: StyleProp<ViewStyle> }>;
+type ScreenProps = PropsWithChildren<{
+  centered?: boolean;
+  style?: StyleProp<ViewStyle>;
+  contentStyle?: StyleProp<ViewStyle>;
+  noPadding?: boolean;
+}>;
 
-export function Screen({ children, centered = false, style }: ScreenProps) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
-
+export function Screen({ children, centered = false, style, contentStyle, noPadding = false }: ScreenProps) {
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: palette.background }, style]}>
+    <SafeAreaView style={[{ flex: 1, backgroundColor: '#FFF7F8' }, style]}>
+      <CherryBackground />
       <View
-        style={{ flex: 1, padding: spacing.md, justifyContent: centered ? 'center' : 'flex-start' }}
+        style={[
+          {
+            flex: 1,
+            padding: noPadding ? 0 : spacing.lg,
+            justifyContent: centered ? 'center' : 'flex-start',
+          },
+          contentStyle,
+        ]}
       >
         {children}
       </View>
     </SafeAreaView>
   );
 }
+

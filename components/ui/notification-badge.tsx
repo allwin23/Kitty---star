@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { useNotificationStore } from '@/stores/notification-store';
-import { colors, radius, spacing } from '@/theme';
+import { glassCardStyle, palette, radius } from '@/theme';
 
 export function NotificationBadge() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
 
   const unreadCount = useNotificationStore((s) => s.unreadCount);
@@ -22,8 +20,7 @@ export function NotificationBadge() {
       onPress={() => router.push('/(app)/notifications')}
       style={({ pressed }) => [
         styles.container,
-        { backgroundColor: palette.surface, borderColor: palette.border },
-        pressed && { opacity: 0.7 },
+        pressed && { opacity: 0.75, transform: [{ scale: 0.95 }] },
       ]}
     >
       <Text style={{ fontSize: 18 }}>🔔</Text>
@@ -40,26 +37,33 @@ export function NotificationBadge() {
 
 const styles = StyleSheet.create({
   container: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: radius.full,
+    backgroundColor: 'rgba(255, 245, 247, 0.55)',
     borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.75)',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
+    shadowColor: '#C73A57',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
   },
   badge: {
     position: 'absolute',
-    top: -4,
-    right: -4,
-    backgroundColor: '#ef4444', // Red
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
+    top: -3,
+    right: -3,
+    backgroundColor: palette.cherryBloom,
+    borderRadius: radius.full,
+    minWidth: 20,
+    height: 20,
     paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: '#ffffff',
   },
   badgeText: {
@@ -68,3 +72,4 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
 });
+

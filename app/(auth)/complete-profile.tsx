@@ -3,12 +3,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Avatar, Button, Screen } from '@/components/ui';
+import { Avatar, Button, Card, Screen } from '@/components/ui';
 import { pickAndUploadAvatar } from '@/features/auth/avatar';
 import { FormField } from '@/features/auth/form-field';
 import { completeProfileSchema, type CompleteProfileFormValues } from '@/features/auth/schemas';
 import { useAuthStore } from '@/stores';
-import { colors, spacing, typography } from '@/theme';
+import { palette, spacing } from '@/theme';
 
 export default function CompleteProfileScreen() {
   const user = useAuthStore((state) => state.user);
@@ -40,43 +40,57 @@ export default function CompleteProfileScreen() {
   };
 
   return (
-    <Screen>
-      <View style={{ flex: 1, gap: spacing.lg, justifyContent: 'center' }}>
-        <View style={{ gap: spacing.xs }}>
-          <Text style={typography.heading}>Complete your profile</Text>
-          <Text style={{ color: colors.light.mutedText }}>
-            Add the details your study partner will see.
-          </Text>
-        </View>
-        <View style={{ alignItems: 'center', gap: spacing.sm }}>
-          <Avatar
-            label={profile?.full_name ?? user?.email ?? 'User'}
-            size={80}
-            source={avatarUrl ?? undefined}
-          />
-          <Button disabled={selectingAvatar || loading} onPress={chooseAvatar}>
-            {selectingAvatar ? 'Uploading photo…' : 'Choose avatar (optional)'}
-          </Button>
-        </View>
-        <Controller
-          control={control}
-          name="fullName"
-          render={({ field: { onBlur, onChange, value }, fieldState: { error } }) => (
-            <FormField
-              autoComplete="name"
-              error={error?.message}
-              label="Full name"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
+    <Screen centered>
+      <View style={{ width: '100%', maxWidth: 400, paddingHorizontal: spacing[16] }}>
+        <Card style={{ gap: spacing[24], paddingVertical: spacing[32] }}>
+          <View style={{ alignItems: 'center', gap: spacing[8] }}>
+            <Text style={{ fontSize: 44 }}>👤🌸</Text>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              Complete Your Profile
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+              Add the details your study partner will see in your companion journal.
+            </Text>
+          </View>
+
+          <View style={{ alignItems: 'center', gap: spacing[12] }}>
+            <Avatar
+              label={profile?.full_name ?? user?.email ?? 'User'}
+              size={88}
+              source={avatarUrl ?? undefined}
             />
-          )}
-        />
-        {message ? <Text style={{ color: colors.light.danger }}>{message}</Text> : null}
-        <Button disabled={loading || selectingAvatar} onPress={handleSubmit(onSubmit)}>
-          {loading ? 'Saving…' : 'Continue'}
-        </Button>
+            <Button variant="secondary" disabled={selectingAvatar || loading} onPress={chooseAvatar}>
+              {selectingAvatar ? 'Uploading Photo…' : 'Choose Avatar'}
+            </Button>
+          </View>
+
+          <Controller
+            control={control}
+            name="fullName"
+            render={({ field: { onBlur, onChange, value }, fieldState: { error } }) => (
+              <FormField
+                autoComplete="name"
+                error={error?.message}
+                label="Full name"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
+
+          {message ? (
+            <Text style={{ color: palette.statusDanger, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+              {message}
+            </Text>
+          ) : null}
+
+          <Button disabled={loading || selectingAvatar} onPress={handleSubmit(onSubmit)}>
+            {loading ? 'Saving…' : 'Continue'}
+          </Button>
+        </Card>
       </View>
     </Screen>
   );
 }
+

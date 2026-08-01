@@ -18,7 +18,7 @@ import {
 import { format } from 'date-fns';
 
 import { Card, Loading, EmptyState, Button, Input } from '@/components/ui';
-import { colors, radius, spacing, typography } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 import {
   getAchievementCategory,
   getBadgeIcon,
@@ -29,9 +29,10 @@ import {
 } from '@/services/achievement.service';
 
 function usePalette() {
-  const cs = useColorScheme();
-  return colors[cs === 'dark' ? 'dark' : 'light'];
+  return palette;
 }
+
+
 
 // ─── Category Badge Pill ───────────────────────────────────────────────────────
 

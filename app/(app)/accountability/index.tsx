@@ -39,24 +39,22 @@ import {
 } from '@/components/ui';
 import { TodoList, type TodoTask } from '@/features/accountability/todo-list';
 import { PomodoroModal } from '@/features/accountability/pomodoro-modal';
-import { colors, radius, spacing, typography } from '@/theme';
+import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
+
 
 const getTodayStr = () => format(new Date(), 'yyyy-MM-dd');
 const getTomorrowStr = (dateStr: string) => format(addDays(new Date(dateStr + 'T00:00:00'), 1), 'yyyy-MM-dd');
 
 function SectionTitle({ children }: { children: string }) {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   return (
-    <Text style={[typography.title, { color: palette.text, fontSize: 18 }]}>{children}</Text>
+    <Text style={{ color: palette.textPrimary, fontSize: 18, fontWeight: '800', letterSpacing: -0.2 }}>{children}</Text>
   );
 }
 
 export default function AccountabilityScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const router = useRouter();
   const queryClient = useQueryClient();
+
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
 

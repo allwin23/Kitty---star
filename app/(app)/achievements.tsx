@@ -25,7 +25,8 @@ import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
+
 import {
   achievementService,
   getAchievementCategory,
@@ -50,12 +51,11 @@ type TopTab = 'my_achievements' | 'partner_achievements' | 'gallery' | 'history'
 type GalleryFilter = 'all' | 'unlocked' | 'locked';
 
 export default function AchievementsScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const queryClient = useQueryClient();
 
   const user = useAuthStore((s) => s.user);
   const profile = useAuthStore((s) => s.profile);
+
 
   const [activeTab, setActiveTab] = useState<TopTab>('my_achievements');
   const [galleryFilter, setGalleryFilter] = useState<GalleryFilter>('all');
@@ -212,16 +212,17 @@ export default function AchievementsScreen() {
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
         }
       >
-        <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
+        <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
           {/* Header */}
-          <View style={{ gap: spacing.xs }}>
-            <Text style={[typography.heading, { color: palette.text }]}>
-              Achievements
+          <View style={{ gap: spacing[4] }}>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              Achievements 🏆
             </Text>
-            <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-              Your central recognition & achievement hub
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
+              Your central recognition & companion milestone hub
             </Text>
           </View>
+
 
           {/* Top Summary Card */}
           <AchievementSummaryCard

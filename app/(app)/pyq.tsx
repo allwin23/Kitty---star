@@ -16,7 +16,8 @@ import { useFocusEffect } from 'expo-router';
 
 import { Button, Card, EmptyState, Loading, Screen } from '@/components/ui';
 import { useAuthStore, usePyqStore } from '@/stores';
-import { colors, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing, typography } from '@/theme';
+
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import {
@@ -48,9 +49,8 @@ interface Question {
 type ViewState = 'home' | 'config' | 'test' | 'result' | 'review';
 
 export default function PYQScreen() {
-  const colorScheme = useColorScheme();
-  const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const user = useAuthStore((s) => s.user);
+
 
   // States
   const [viewState, setViewState] = useState<ViewState>('home');
@@ -376,13 +376,16 @@ export default function PYQScreen() {
     return (
       <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ gap: spacing.lg, paddingBottom: spacing['2xl'] }}>
-            <View>
-              <Text style={[typography.heading, { color: palette.text }]}>PYQ Practice</Text>
-              <Text style={{ color: palette.mutedText, fontSize: 14 }}>
+          <View style={{ gap: spacing[24], paddingBottom: spacing[48] }}>
+            <View style={{ gap: spacing[4] }}>
+              <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+                PYQ Practice 📚
+              </Text>
+              <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
                 Practice Previous Year Questions sorted by subject. Non-repeating question bank ensures comprehensive coverage.
               </Text>
             </View>
+
 
             {/* Aggregated stats */}
             {stats && (

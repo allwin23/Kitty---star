@@ -9,7 +9,7 @@ import { connectWithInvite, createPartnerInvite } from '@/features/auth/invites'
 import { FormField } from '@/features/auth/form-field';
 import { inviteCodeSchema, type InviteCodeFormValues } from '@/features/auth/schemas';
 import { useAuthStore } from '@/stores';
-import { colors, spacing, typography } from '@/theme';
+import { palette, spacing } from '@/theme';
 
 export default function PartnerLinkingScreen() {
   const router = useRouter();
@@ -62,38 +62,52 @@ export default function PartnerLinkingScreen() {
   };
 
   return (
-    <Screen>
-      <View style={{ flex: 1, gap: spacing.lg, justifyContent: 'center' }}>
-        <Button
-          disabled={generating || connecting || switchingAccount}
-          onPress={() => void switchAccount()}
-          style={{ alignSelf: 'flex-start' }}
-        >
-          {switchingAccount ? 'Signing out…' : 'Use a different account'}
-        </Button>
-        <View style={{ gap: spacing.xs }}>
-          <Text style={typography.heading}>Link your partner</Text>
-          <Text style={{ color: colors.light.mutedText }}>
-            Invite a study partner or join with their code.
-          </Text>
+    <Screen centered>
+      <View style={{ width: '100%', maxWidth: 420, paddingHorizontal: spacing[16], gap: spacing[16] }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+          <Button
+            variant="tertiary"
+            disabled={generating || connecting || switchingAccount}
+            onPress={() => void switchAccount()}
+          >
+            {switchingAccount ? 'Signing Out…' : '← Use Different Account'}
+          </Button>
         </View>
-        <Card>
-          <View style={{ gap: spacing.sm }}>
-            <Text style={{ fontWeight: '700' }}>Create an invite</Text>
-            <Text style={{ color: colors.light.mutedText }}>
-              Invite codes expire after 24 hours.
+
+        <Card style={{ gap: spacing[24], paddingVertical: spacing[24] }}>
+          <View style={{ alignItems: 'center', gap: spacing[8] }}>
+            <Text style={{ fontSize: 40 }}>👥🌸</Text>
+            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+              Link Study Partner
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+              Invite a study companion or join using their unique invite code.
+            </Text>
+          </View>
+
+          {/* Section A: Create Invite */}
+          <View style={{ gap: spacing[12] }}>
+            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>Create an Invite</Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
+              Invite codes expire automatically after 24 hours.
             </Text>
             {createdCode ? (
-              <Text style={[typography.title, { letterSpacing: 2 }]}>{createdCode}</Text>
+              <View style={{ backgroundColor: palette.blush, padding: spacing[12], borderRadius: 16, alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: '800', color: palette.cherryBloom, letterSpacing: 4, fontFamily: 'monospace' }}>
+                  {createdCode}
+                </Text>
+              </View>
             ) : null}
             <Button disabled={generating || connecting} onPress={generateCode}>
-              {generating ? 'Generating…' : 'Generate invite code'}
+              {generating ? 'Generating…' : 'Generate Invite Code'}
             </Button>
           </View>
-        </Card>
-        <Card>
-          <View style={{ gap: spacing.sm }}>
-            <Text style={{ fontWeight: '700' }}>Join with an invite</Text>
+
+          <View style={{ height: 1, backgroundColor: palette.softRose }} />
+
+          {/* Section B: Join with Invite */}
+          <View style={{ gap: spacing[12] }}>
+            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>Join with an Invite</Text>
             <Controller
               control={control}
               name="code"
@@ -109,13 +123,19 @@ export default function PartnerLinkingScreen() {
                 />
               )}
             />
-            <Button disabled={connecting || generating} onPress={handleSubmit(connect)}>
-              {connecting ? 'Connecting…' : 'Connect'}
+            <Button variant="secondary" disabled={connecting || generating} onPress={handleSubmit(connect)}>
+              {connecting ? 'Connecting…' : 'Connect Partner'}
             </Button>
           </View>
+
+          {message ? (
+            <Text style={{ color: palette.statusDanger, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+              {message}
+            </Text>
+          ) : null}
         </Card>
-        {message ? <Text style={{ color: colors.light.danger }}>{message}</Text> : null}
       </View>
     </Screen>
   );
 }
+
