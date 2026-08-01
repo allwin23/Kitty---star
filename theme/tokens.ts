@@ -34,10 +34,10 @@ export const palette = {
   subtleText: '#BFAFB5',
   disabledText: '#D9CDD1',
   background: '#F63E5F',
-  surface: 'rgba(255, 247, 248, 0.65)',
-  surfaceGlass: 'rgba(255, 245, 247, 0.38)',
-  border: 'rgba(255, 255, 255, 0.65)',
-  borderSoft: 'rgba(250, 215, 224, 0.45)',
+  surface: 'rgba(255, 255, 255, 0.15)',
+  surfaceGlass: 'rgba(255, 255, 255, 0.08)',
+  border: 'rgba(255, 255, 255, 0.40)',
+  borderSoft: 'rgba(255, 255, 255, 0.25)',
   statusDanger: '#D94C61',
 } as const;
 
@@ -45,10 +45,10 @@ export const palette = {
 export const colors = {
   light: {
     background: '#F63E5F',
-    surface: 'rgba(255, 247, 248, 0.65)',
-    surfaceGlass: 'rgba(255, 245, 247, 0.38)',
-    border: 'rgba(255, 255, 255, 0.65)',
-    borderSoft: 'rgba(250, 215, 224, 0.45)',
+    surface: 'rgba(255, 255, 255, 0.15)',
+    surfaceGlass: 'rgba(255, 255, 255, 0.08)',
+    border: 'rgba(255, 255, 255, 0.40)',
+    borderSoft: 'rgba(255, 255, 255, 0.25)',
     text: '#2A1D22',
     mutedText: '#66545B',
     subtleText: '#BFAFB5',
@@ -152,14 +152,15 @@ export const radius = {
 } as const;
 
 export const glassCardStyle = {
-  backgroundColor: 'rgba(255, 245, 247, 0.38)',
-  borderColor: 'rgba(255, 255, 255, 0.65)',
+  backgroundColor: 'rgba(255, 255, 255, 0.12)',
+  borderColor: 'rgba(255, 255, 255, 0.40)',
   borderWidth: 1,
-  borderRadius: radius.card,
-  shadowColor: '#C73A57',
-  shadowOffset: { width: 0, height: 12 },
+  borderRadius: 32,
+  overflow: 'hidden' as const,
+  shadowColor: '#000000',
+  shadowOffset: { width: 0, height: 20 },
   shadowOpacity: 0.10,
-  shadowRadius: 20,
-  elevation: 4,
+  shadowRadius: 30,
+  elevation: 6,
 } as const;
 
