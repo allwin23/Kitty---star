@@ -17,8 +17,8 @@ export function CherryBackground() {
               d={`M ${gridSize} 0 L 0 0 0 ${gridSize}`}
               fill="none"
               stroke="#FFE4EB"
-              strokeWidth="1.2"
-              strokeOpacity="0.22"
+              strokeWidth="1.8"
+              strokeOpacity="0.45"
             />
           </Pattern>
         </Defs>

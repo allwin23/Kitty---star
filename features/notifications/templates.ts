@@ -324,6 +324,25 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
       'Countdown alert: {daysUntilExam} days remaining until {examName}. You\'ve got this!',
     ],
   },
+
+  PartnerConnected: {
+    priority: 'high',
+    category: 'partner',
+    channel: 'both',
+    actionUrl: '/(app)/home',
+    titles: [
+      '🤝 Partner Connected!',
+      '🎉 Study Partner Linked!',
+      '✨ Partner Joined Your Journey',
+      '👥 Team Mode Activated!',
+    ],
+    bodies: [
+      'You are now connected with your study partner! Track plans & study together.',
+      'Study partner linked! Share daily goals and boost each other\'s momentum.',
+      'Your partner is connected. Start a pomodoro focus session together!',
+      'Partner linked successfully! Check off daily tasks to stay accountable.',
+    ],
+  },
 };
 
 /** History set of recently chosen copy to prevent repeating identical messages */

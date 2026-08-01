@@ -27,17 +27,29 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
             },
         {
           padding: spacing.lg,
+          overflow: 'hidden',
         },
         style,
       ]}
     >
-      {/* Frosted Focus Zone */}
+      {/* Frosted Focus Zone clipped strictly within card bounds */}
       {isGlass ? (
-        <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(255, 255, 255, 0.50)' }]} />
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { borderRadius: radius.card, overflow: 'hidden' },
+          ]}
+          pointerEvents="none"
+        >
+          <View
+            style={[
+              StyleSheet.absoluteFill,
+              { backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: radius.card },
+            ]}
+          />
 
           {/* Top-left focus gradient zone */}
-          <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
+          <Svg height="100%" width="100%" style={[StyleSheet.absoluteFill, { borderRadius: radius.card }]}>
             <Defs>
               <LinearGradient id="cardFocusGradient" x1="0" y1="0" x2="1" y2="1">
                 <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.40" />

@@ -77,6 +77,14 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     subtext: 'You have a new update! Tap notifications to view details.',
     imageKey: 'Screenshot 2026-08-01 175024',
   },
+  PartnerConnected: {
+    id: 'partner-connected',
+    eventType: 'PartnerConnected',
+    tag: '[PARTNER]',
+    headline: 'Study Partner Connected! 🎉',
+    subtext: 'You are now linked with your study partner! Share goals and study together.',
+    imageKey: 'Screenshot 2026-08-01 175031',
+  },
   PartnerStartedFocus: {
     id: 'partner-start',
     eventType: 'PartnerStartedFocus',
@@ -99,7 +107,7 @@ export const CAT_SCENARIOS: Record<string, CatScenario> = {
     tag: '[PARTNER]',
     headline: 'Partner Award Received',
     subtext: 'Your study partner sent you an award badge! Trophy added to gallery.',
-    imageKey: 'Screenshot 2026-08-01 175038',
+    imageKey: 'Screenshot 2026-08-01 175043',
   },
   PartnerSubmittedProof: {
     id: 'partner-proof',

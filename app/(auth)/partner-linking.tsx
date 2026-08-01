@@ -8,6 +8,7 @@ import { Button, Card, Screen } from '@/components/ui';
 import { connectWithInvite, createPartnerInvite } from '@/features/auth/invites';
 import { FormField } from '@/features/auth/form-field';
 import { inviteCodeSchema, type InviteCodeFormValues } from '@/features/auth/schemas';
+import { EventBus } from '@/features/notifications/event-bus';
 import { useAuthStore } from '@/stores';
 import { palette, spacing } from '@/theme';
 
@@ -41,6 +42,13 @@ export default function PartnerLinkingScreen() {
     setMessage(null);
     const result = await connectWithInvite(code.trim().toUpperCase());
     if (!result.error) {
+      if (user?.id) {
+        EventBus.emit({
+          type: 'PartnerConnected',
+          userId: user.id,
+          targetId: `link-${Date.now()}`,
+        });
+      }
       const refreshed = await refreshProfile();
       if (refreshed.error) setMessage(refreshed.error);
     } else {

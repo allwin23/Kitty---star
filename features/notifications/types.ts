@@ -20,7 +20,8 @@ export type NotificationEventType =
   | 'StreakLost'
   | 'FocusBroken'
   | 'AIRecommendation'
-  | 'ExamApproaching';
+  | 'ExamApproaching'
+  | 'PartnerConnected';
 
 export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low';
 

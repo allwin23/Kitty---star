@@ -80,6 +80,9 @@ EventBus.on('*', (event) => {
       GoalCompleted: 'ToolTaskCompleted',
       WaterReminder: 'ToolWaterLogged',
       AchievementUnlocked: 'PartnerSentAward',
+      PartnerConnected: 'PartnerConnected',
+      PartnerStarted: 'PartnerStartedFocus',
+      PartnerCompletedTask: 'PartnerCompletedTask',
     };
     const targetKey = mapType[event.type] || 'NotificationAlert';
     useCompanionQueueStore.getState().enqueueEvent(targetKey);
