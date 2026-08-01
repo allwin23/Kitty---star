@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { supabase } from '@/lib/supabase';
 import { queryClient } from '@/lib/query-client';
 import { queryKeys } from '@/lib/query-keys';
+import { useAuthStore } from './auth-store';
 import { NotificationEngine } from '@/features/notifications/engine';
 import type { NotificationPreferences, NotificationRecord } from '@/features/notifications/types';
 
@@ -151,11 +152,17 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
   clearAll: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
       set({ notifications: [], unreadCount: 0 });
-      await supabase.from('notifications').delete().eq('user_id', user.id);
+      const authUser = useAuthStore.getState().user;
+      const userId = authUser?.id;
+      if (userId) {
+        await supabase.from('notifications').delete().eq('user_id', userId);
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.id) {
+          await supabase.from('notifications').delete().eq('user_id', user.id);
+        }
+      }
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     } catch (err) {
       console.error('[NotificationStore] Clear all failed:', err);

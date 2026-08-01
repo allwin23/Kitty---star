@@ -124,33 +124,6 @@ export default function HomeScreen() {
             </View>
           </Card>
 
-          {/* Notifications */}
-          {notifications.length > 0 ? (
-            <Card>
-              <View style={{ gap: spacing[12] }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: palette.textSecondary, letterSpacing: 0.5, textTransform: 'uppercase' }}>
-                  Unread Notifications ({notifications.length})
-                </Text>
-                {notifications.map((n) => (
-                  <View
-                    key={n.id}
-                    style={{
-                      borderBottomColor: 'rgba(250, 215, 224, 0.4)',
-                      borderBottomWidth: 1,
-                      paddingVertical: spacing[8],
-                      gap: spacing[4],
-                    }}
-                  >
-                    <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 15 }}>{n.title}</Text>
-                    <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>{n.body}</Text>
-                    <Button size="sm" variant="tertiary" onPress={() => void handleMarkRead(n.id)} style={{ alignSelf: 'flex-start', marginTop: spacing[4] }}>
-                      Mark as read
-                    </Button>
-                  </View>
-                ))}
-              </View>
-            </Card>
-          ) : null}
 
           {/* Developer testing tools */}
           <Card>

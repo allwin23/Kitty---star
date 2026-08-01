@@ -1,28 +1,34 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
   Alert,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
-  TextInput,
-  useColorScheme,
   View,
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { isToday, isYesterday, parseISO } from 'date-fns';
+import {
+  Bell,
+  BookOpen,
+  CheckCheck,
+  Droplets,
+  Settings,
+  Trash2,
+  Trophy,
+  Users,
+} from 'lucide-react-native';
 
-import { Card, EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
+import { EmptyState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { NotificationCard } from '@/features/notifications/components/notification-card';
-import type { NotificationRecord } from '@/features/notifications/types';
 import { useAuthStore } from '@/stores';
 import { useNotificationStore } from '@/stores/notification-store';
-import { palette, radius, spacing, typography } from '@/theme';
+import { palette, radius, spacing } from '@/theme';
 
 export default function NotificationsScreen() {
   const router = useRouter();
-
-
   const user = useAuthStore((s) => s.user);
   const {
     notifications,
@@ -37,7 +43,6 @@ export default function NotificationsScreen() {
     setActiveFilter,
   } = useNotificationStore();
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
@@ -53,63 +58,37 @@ export default function NotificationsScreen() {
   };
 
   const handleClearAll = () => {
-    Alert.alert(
-      'Clear All Notifications',
-      'Are you sure you want to clear your entire notification history?',
-      [
+    const title = 'Clear All Notifications';
+    const msg = 'Are you sure you want to clear your entire notification history?';
+    if (Platform.OS === 'web') {
+      if (window.confirm(`${title}\n\n${msg}`)) {
+        void clearAll();
+      }
+    } else {
+      Alert.alert(title, msg, [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Clear All', style: 'destructive', onPress: () => void clearAll() },
-      ],
-    );
+      ]);
+    }
   };
 
-  // Filter list by category chip & search query
+  // Filter list by active filter chip
   const filteredNotifications = notifications.filter((item) => {
-    // 1. Filter Chip
     if (activeFilter === 'unread' && item.read_at) return false;
     if (activeFilter === 'partner' && item.category !== 'partner') return false;
     if (activeFilter === 'study' && item.category !== 'study') return false;
     if (activeFilter === 'water' && item.category !== 'water') return false;
     if (activeFilter === 'achievements' && item.category !== 'achievements') return false;
-
-    // 2. Search Query
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      return (
-        item.title.toLowerCase().includes(q) ||
-        item.body.toLowerCase().includes(q)
-      );
-    }
     return true;
   });
 
-  // Group notifications into Today, Yesterday, Earlier
-  const todayList: NotificationRecord[] = [];
-  const yesterdayList: NotificationRecord[] = [];
-  const earlierList: NotificationRecord[] = [];
-
-  filteredNotifications.forEach((n) => {
-    try {
-      const date = parseISO(n.created_at);
-      if (isToday(date)) {
-        todayList.push(n);
-      } else if (isYesterday(date)) {
-        yesterdayList.push(n);
-      } else {
-        earlierList.push(n);
-      }
-    } catch (e) {
-      earlierList.push(n);
-    }
-  });
-
   const filterChips = [
-    { id: 'all', label: 'All' },
-    { id: 'unread', label: `Unread (${unreadCount})` },
-    { id: 'partner', label: '👥 Partner' },
-    { id: 'study', label: '📚 Study' },
-    { id: 'water', label: '💧 Water' },
-    { id: 'achievements', label: '🏆 Awards' },
+    { id: 'all', label: 'All', icon: Bell },
+    { id: 'unread', label: `Unread (${unreadCount})`, icon: Bell },
+    { id: 'partner', label: 'Partner', icon: Users },
+    { id: 'study', label: 'Study', icon: BookOpen },
+    { id: 'water', label: 'Water', icon: Droplets },
+    { id: 'achievements', label: 'Awards', icon: Trophy },
   ];
 
   return (
@@ -117,203 +96,125 @@ export default function NotificationsScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={palette.primary} />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={palette.danger} />
         }
       >
-        <View style={{ gap: spacing.md, paddingBottom: spacing['2xl'] }}>
-          {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <HeaderTitleCard
-              title="Notifications 🔔"
-              subtitle="Stay up to date with partner activity & study reminders"
-            />
+        <View style={styles.container}>
+          {/* Header Bar */}
+          <View style={styles.headerRow}>
+            <View style={{ flex: 1, paddingRight: spacing.sm }}>
+              <HeaderTitleCard
+                title="Notifications"
+                subtitle="Stay up to date with partner activity & study reminders"
+              />
+            </View>
 
-            {/* Quick Settings Icon */}
+            {/* Quick Settings Button */}
             <Pressable
               onPress={() => router.push('/(app)/notifications-settings')}
-              style={{
-                backgroundColor: palette.surface,
-                borderColor: palette.border,
-                borderWidth: 1,
-                borderRadius: radius.md,
-                paddingHorizontal: spacing.sm,
-                paddingVertical: 8,
-              }}
+              style={styles.headerSettingsBtn}
             >
-              <Text style={{ color: palette.text, fontSize: 13, fontWeight: '600' }}>⚙️ Settings</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Settings size={15} color={palette.danger} strokeWidth={2.2} />
+                <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '800' }}>Settings</Text>
+              </View>
             </Pressable>
           </View>
 
           {/* Action Toolbar */}
-          <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>
+          <View style={styles.toolbarRow}>
             <Pressable
               onPress={() => void markAllAsRead()}
               disabled={unreadCount === 0}
-              style={{
-                flex: 1,
-                backgroundColor: unreadCount > 0 ? `${palette.primary}15` : palette.surface,
-                borderColor: palette.border,
-                borderWidth: 1,
-                borderRadius: radius.sm,
-                paddingVertical: 8,
-                alignItems: 'center',
-                opacity: unreadCount > 0 ? 1 : 0.5,
-              }}
+              style={[
+                styles.actionBtn,
+                { opacity: unreadCount > 0 ? 1 : 0.5 },
+              ]}
             >
-              <Text style={{ color: palette.primary, fontSize: 12, fontWeight: '700' }}>
-                ✓ Mark All Read
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <CheckCheck size={16} color={palette.danger} strokeWidth={2.4} />
+                <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '800' }}>
+                  Mark All Read
+                </Text>
+              </View>
             </Pressable>
 
             <Pressable
               onPress={handleClearAll}
               disabled={notifications.length === 0}
-              style={{
-                backgroundColor: palette.surface,
-                borderColor: palette.border,
-                borderWidth: 1,
-                borderRadius: radius.sm,
-                paddingHorizontal: spacing.md,
-                paddingVertical: 8,
-                opacity: notifications.length > 0 ? 1 : 0.5,
-              }}
+              style={[
+                styles.actionBtn,
+                { opacity: notifications.length > 0 ? 1 : 0.5 },
+              ]}
             >
-              <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '600' }}>
-                Clear All
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Trash2 size={16} color={palette.danger} strokeWidth={2.4} />
+                <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '800' }}>
+                  Clear All
+                </Text>
+              </View>
             </Pressable>
           </View>
 
-          {/* Search bar */}
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              backgroundColor: palette.surface,
-              borderColor: palette.border,
-              borderWidth: 1,
-              borderRadius: radius.md,
-              paddingHorizontal: spacing.sm,
-            }}
-          >
-            <Text style={{ fontSize: 14 }}>🔍</Text>
-            <TextInput
-              style={{
-                flex: 1,
-                color: palette.text,
-                paddingVertical: spacing.sm,
-                paddingHorizontal: spacing.xs,
-                fontSize: 14,
-              }}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search notifications..."
-              placeholderTextColor={palette.mutedText}
-            />
-            {searchQuery ? (
-              <Pressable onPress={() => setSearchQuery('')}>
-                <Text style={{ color: palette.mutedText, fontSize: 14 }}>✕</Text>
-              </Pressable>
-            ) : null}
-          </View>
-
           {/* Filter Chips */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: spacing.xs }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
             {filterChips.map((chip) => {
               const active = activeFilter === chip.id;
+              const ChipIcon = chip.icon;
+
               return (
                 <Pressable
                   key={chip.id}
                   onPress={() => setActiveFilter(chip.id)}
-                  style={{
-                    backgroundColor: active ? palette.primary : palette.surface,
-                    borderColor: active ? palette.primary : palette.border,
-                    borderWidth: 1,
-                    borderRadius: radius.full || 20,
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: 6,
-                  }}
+                  style={[
+                    styles.filterChip,
+                    {
+                      backgroundColor: active ? palette.danger : 'rgba(255, 243, 245, 0.85)',
+                      borderColor: active ? palette.danger : 'rgba(250, 215, 224, 0.85)',
+                    },
+                  ]}
                 >
-                  <Text
-                    style={{
-                      color: active ? palette.primaryText : palette.text,
-                      fontSize: 12,
-                      fontWeight: active ? '700' : '500',
-                    }}
-                  >
-                    {chip.label}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <ChipIcon size={14} color={active ? '#FFFFFF' : palette.textPrimary} strokeWidth={2.2} />
+                    <Text
+                      style={{
+                        color: active ? '#FFFFFF' : palette.textPrimary,
+                        fontSize: 13,
+                        fontWeight: active ? '800' : '600',
+                      }}
+                    >
+                      {chip.label}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })}
           </ScrollView>
 
-          {/* Content Sections */}
+          {/* Notifications List */}
           {loading && notifications.length === 0 ? (
             <Loading />
           ) : filteredNotifications.length === 0 ? (
-            <EmptyState
-              title="No Notifications"
-              description={
-                searchQuery
-                  ? `No notifications matching "${searchQuery}"`
-                  : activeFilter === 'unread'
-                  ? 'You are all caught up! No unread alerts.'
-                  : 'You have no notifications in this category.'
-              }
-            />
+            <View style={styles.emptyContainer}>
+              <EmptyState
+                title="No Notifications"
+                description={
+                  activeFilter === 'unread'
+                    ? 'You are all caught up! No unread alerts.'
+                    : 'You have no notifications in this category.'
+                }
+              />
+            </View>
           ) : (
-            <View style={{ gap: spacing.lg }}>
-              {/* Group 1: Today */}
-              {todayList.length > 0 && (
-                <View style={{ gap: spacing.sm }}>
-                  <Text style={[typography.title, { color: palette.mutedText, fontSize: 13, textTransform: 'uppercase' }]}>
-                    Today ({todayList.length})
-                  </Text>
-                  {todayList.map((n) => (
-                    <NotificationCard
-                      key={n.id}
-                      notification={n}
-                      onMarkRead={markAsRead}
-                      onDelete={deleteNotification}
-                    />
-                  ))}
-                </View>
-              )}
-
-              {/* Group 2: Yesterday */}
-              {yesterdayList.length > 0 && (
-                <View style={{ gap: spacing.sm }}>
-                  <Text style={[typography.title, { color: palette.mutedText, fontSize: 13, textTransform: 'uppercase' }]}>
-                    Yesterday ({yesterdayList.length})
-                  </Text>
-                  {yesterdayList.map((n) => (
-                    <NotificationCard
-                      key={n.id}
-                      notification={n}
-                      onMarkRead={markAsRead}
-                      onDelete={deleteNotification}
-                    />
-                  ))}
-                </View>
-              )}
-
-              {/* Group 3: Earlier */}
-              {earlierList.length > 0 && (
-                <View style={{ gap: spacing.sm }}>
-                  <Text style={[typography.title, { color: palette.mutedText, fontSize: 13, textTransform: 'uppercase' }]}>
-                    Earlier ({earlierList.length})
-                  </Text>
-                  {earlierList.map((n) => (
-                    <NotificationCard
-                      key={n.id}
-                      notification={n}
-                      onMarkRead={markAsRead}
-                      onDelete={deleteNotification}
-                    />
-                  ))}
-                </View>
-              )}
+            <View style={{ gap: spacing.sm }}>
+              {filteredNotifications.map((n) => (
+                <NotificationCard
+                  key={n.id}
+                  notification={n}
+                  onMarkRead={markAsRead}
+                  onDelete={deleteNotification}
+                />
+              ))}
             </View>
           )}
         </View>
@@ -321,3 +222,56 @@ export default function NotificationsScreen() {
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    gap: spacing.md,
+    paddingBottom: spacing['2xl'],
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  headerSettingsBtn: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 10,
+  },
+  toolbarRow: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    alignItems: 'center',
+  },
+  actionBtn: {
+    flex: 1,
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    borderRadius: radius.md,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  filterScroll: {
+    gap: spacing.xs,
+    paddingVertical: 2,
+  },
+  filterChip: {
+    borderWidth: 1.5,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
+  },
+  emptyContainer: {
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderWidth: 1.5,
+    borderRadius: 24,
+    padding: spacing.md,
+    marginVertical: spacing.sm,
+  },
+});
