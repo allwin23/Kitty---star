@@ -1,1 +1,1 @@
-export const appName = 'Study Partner';
+export const appName = 'Kitty & Star';
