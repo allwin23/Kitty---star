@@ -33,7 +33,7 @@ export const palette = {
   mutedText: '#66545B',
   subtleText: '#BFAFB5',
   disabledText: '#D9CDD1',
-  background: '#FFF7F8',
+  background: '#F63E5F',
   surface: 'rgba(255, 247, 248, 0.65)',
   surfaceGlass: 'rgba(255, 245, 247, 0.38)',
   border: 'rgba(255, 255, 255, 0.65)',
@@ -44,7 +44,7 @@ export const palette = {
 
 export const colors = {
   light: {
-    background: '#FFF7F8',
+    background: '#F63E5F',
     surface: 'rgba(255, 247, 248, 0.65)',
     surfaceGlass: 'rgba(255, 245, 247, 0.38)',
     border: 'rgba(255, 255, 255, 0.65)',

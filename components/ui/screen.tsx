@@ -14,7 +14,7 @@ type ScreenProps = PropsWithChildren<{
 
 export function Screen({ children, centered = false, style, contentStyle, noPadding = false }: ScreenProps) {
   return (
-    <SafeAreaView style={[{ flex: 1, backgroundColor: '#FFF7F8' }, style]}>
+    <SafeAreaView style={[{ flex: 1, backgroundColor: '#F63E5F' }, style]}>
       <CherryBackground />
       <View
         style={[
