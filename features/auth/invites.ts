@@ -29,7 +29,7 @@ export async function createPartnerInvite(
       return { code: existingInvite.code };
     }
 
-    // 2. Attempt RPC helper
+    
     const { data: rpcData, error: rpcError } = await (supabase as any).rpc('generate_invite');
     if (!rpcError && rpcData?.code) {
       return { code: rpcData.code };
