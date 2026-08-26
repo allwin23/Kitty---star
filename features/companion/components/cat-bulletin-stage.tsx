@@ -7,7 +7,7 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import { ChevronRight, Heart, Sparkles, Star } from 'lucide-react-native';
+import { ChevronRight, Sparkles, Star } from 'lucide-react-native';
 
 import { useCompanionQueueStore } from '../companion-queue-store';
 import { palette, radius, spacing } from '@/theme';
@@ -129,32 +129,32 @@ export function CatBulletinStage() {
 
       {/* CARD 2: DEDICATED CHERRY DIGITAL BULLETIN BOARD CARD */}
       <View style={styles.digitalBulletinCardContainer}>
-        {/* Background Watermark Layer (Ultra Dense Hearts & Stars) */}
+        {/* Background Watermark Layer (Ultra Dense Stars & Sparkles) */}
         <View style={styles.watermarkContainer} pointerEvents="none">
           {/* Row 1: Top Scatter */}
-          <Heart size={38} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: 2, left: 6, transform: [{ rotate: '-20deg' }] }} />
+          <Star size={38} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: 2, left: 6, transform: [{ rotate: '-20deg' }] }} />
           <Star size={24} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: 4, left: '22%', transform: [{ rotate: '10deg' }] }} />
           <Sparkles size={30} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', top: 2, left: '42%' }} />
-          <Heart size={30} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: 6, left: '64%', transform: [{ rotate: '15deg' }] }} />
+          <Star size={30} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: 6, left: '64%', transform: [{ rotate: '15deg' }] }} />
           <Sparkles size={44} color="rgba(255, 255, 255, 0.25)" style={{ position: 'absolute', top: -6, right: 14, transform: [{ rotate: '25deg' }] }} />
 
           {/* Row 2: Upper Middle Scatter */}
           <Star size={26} color="rgba(255, 255, 255, 0.20)" fill="rgba(255, 255, 255, 0.14)" style={{ position: 'absolute', top: '24%', left: 16, transform: [{ rotate: '-12deg' }] }} />
-          <Heart size={44} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '22%', left: '32%', transform: [{ rotate: '-8deg' }] }} />
+          <Star size={44} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '22%', left: '32%', transform: [{ rotate: '-8deg' }] }} />
           <Star size={32} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: '26%', right: '28%', transform: [{ rotate: '18deg' }] }} />
           <Sparkles size={28} color="rgba(255, 255, 255, 0.20)" style={{ position: 'absolute', top: '25%', right: 10 }} />
 
           {/* Row 3: Center & Lower Middle Scatter */}
           <Sparkles size={34} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', top: '48%', left: 4 }} />
-          <Heart size={48} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '42%', left: '46%', transform: [{ rotate: '14deg' }] }} />
+          <Star size={48} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', top: '42%', left: '46%', transform: [{ rotate: '14deg' }] }} />
           <Star size={36} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', top: '45%', right: 8, transform: [{ rotate: '-10deg' }] }} />
-          <Heart size={28} color="rgba(255, 255, 255, 0.20)" fill="rgba(255, 255, 255, 0.14)" style={{ position: 'absolute', top: '50%', right: '35%', transform: [{ rotate: '-18deg' }] }} />
+          <Star size={28} color="rgba(255, 255, 255, 0.20)" fill="rgba(255, 255, 255, 0.14)" style={{ position: 'absolute', top: '50%', right: '35%', transform: [{ rotate: '-18deg' }] }} />
 
           {/* Row 4: Bottom Scatter */}
-          <Heart size={54} color="rgba(255, 255, 255, 0.26)" fill="rgba(255, 255, 255, 0.18)" style={{ position: 'absolute', bottom: -14, left: -6, transform: [{ rotate: '-15deg' }] }} />
+          <Star size={54} color="rgba(255, 255, 255, 0.26)" fill="rgba(255, 255, 255, 0.18)" style={{ position: 'absolute', bottom: -14, left: -6, transform: [{ rotate: '-15deg' }] }} />
           <Star size={26} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', bottom: 6, left: '26%', transform: [{ rotate: '12deg' }] }} />
           <Sparkles size={36} color="rgba(255, 255, 255, 0.22)" style={{ position: 'absolute', bottom: 2, left: '42%', transform: [{ rotate: '-25deg' }] }} />
-          <Heart size={42} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', bottom: -10, right: 30, transform: [{ rotate: '18deg' }] }} />
+          <Star size={42} color="rgba(255, 255, 255, 0.24)" fill="rgba(255, 255, 255, 0.16)" style={{ position: 'absolute', bottom: -10, right: 30, transform: [{ rotate: '18deg' }] }} />
           <Star size={32} color="rgba(255, 255, 255, 0.22)" fill="rgba(255, 255, 255, 0.15)" style={{ position: 'absolute', bottom: 4, right: -6, transform: [{ rotate: '10deg' }] }} />
         </View>
 
@@ -165,7 +165,7 @@ export function CatBulletinStage() {
             {/* Live LED Indicator */}
             <View style={styles.liveLedWrapper}>
               <Animated.View style={[styles.liveLedDot, animatedLedStyle]} />
-              <Text style={styles.liveText}>Thangoooooo</Text>
+              <Text style={styles.liveText}>Cat Wisdom</Text>
             </View>
           </View>
 
