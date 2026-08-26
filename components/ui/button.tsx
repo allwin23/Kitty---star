@@ -83,8 +83,8 @@ export function Button({
         };
       case 'lg':
         return {
-          container: { paddingVertical: spacing[16], paddingHorizontal: spacing[32] },
-          text: { fontSize: 18, lineHeight: 24 },
+          container: { paddingVertical: spacing[12], paddingHorizontal: spacing[16] },
+          text: { fontSize: 16, lineHeight: 22 },
         };
       case 'md':
       default:

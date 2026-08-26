@@ -581,12 +581,15 @@ export default function PomodoroScreen() {
 
               {/* Huge Timer */}
               <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
                 style={{
-                  fontSize: 72,
+                  fontSize: 56,
                   fontWeight: '800',
                   color: isRunning && !isPaused ? palette.danger : palette.textPrimary,
                   fontFamily: "'Martian Mono', monospace",
                   letterSpacing: -1,
+                  textAlign: 'center',
                 }}
               >
                 {formatTime(timerSeconds)}
@@ -1074,10 +1077,11 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   fullScreenCenterContent: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 20,
-    marginVertical: 'auto',
+    gap: 16,
+    marginVertical: 12,
   },
   fullScreenSessionPill: {
     backgroundColor: 'rgba(232, 77, 114, 0.18)',
@@ -1089,15 +1093,15 @@ const styles = StyleSheet.create({
   },
   fullScreenTaskTitle: {
     color: '#FFFFFF',
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: '800',
     textAlign: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 16,
   },
   timerRingOuter: {
-    width: 260,
-    height: 260,
-    borderRadius: 130,
+    width: 230,
+    height: 230,
+    borderRadius: 115,
     backgroundColor: 'rgba(232, 77, 114, 0.10)',
     borderWidth: 3,
     borderColor: 'rgba(232, 77, 114, 0.35)',
@@ -1112,9 +1116,9 @@ const styles = StyleSheet.create({
   timerRingInner: {
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 12,
+    gap: 10,
     width: '100%',
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
   liveLedRow: {
     flexDirection: 'row',
@@ -1122,7 +1126,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   fullScreenClockText: {
-    fontSize: 54,
+    fontSize: 46,
     fontWeight: '800',
     color: '#FFFFFF',
     letterSpacing: -1,
