@@ -815,17 +815,32 @@ export default function FlashcardsScreen() {
                 /* 1. Subjects Selection */
                 <View style={{ gap: spacing.xs }}>
                   <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16, marginBottom: spacing.xs }}>Subjects</Text>
-                  {builtInSubjects.map((subject) => {
-                    const count = builtInCards.filter((c) => c.subject === subject).length;
-                    return (
-                      <SubjectCard
-                        key={subject}
-                        subject={subject}
-                        cardCount={count}
-                        onPress={() => setSelectedBuiltInSubject(subject)}
-                      />
-                    );
-                  })}
+                  {builtInSubjects.length === 0 ? (
+                    <View style={[glassCardStyle, styles.pinkGlassCard, { alignItems: 'center', padding: spacing.lg, gap: spacing.sm }]}>
+                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>All Custom Flashcards</Text>
+                      <Text style={{ color: '#66545B', fontSize: 13, textAlign: 'center', lineHeight: 18 }}>
+                        Default pre-made cards have been removed. Switch to "My Flashcards" tab to create your own custom folders and cards!
+                      </Text>
+                      <Pressable
+                        onPress={() => setActiveTab('user')}
+                        style={[styles.primaryBtn, { marginTop: spacing.xs }]}
+                      >
+                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>Go to My Flashcards</Text>
+                      </Pressable>
+                    </View>
+                  ) : (
+                    builtInSubjects.map((subject) => {
+                      const count = builtInCards.filter((c) => c.subject === subject).length;
+                      return (
+                        <SubjectCard
+                          key={subject}
+                          subject={subject}
+                          cardCount={count}
+                          onPress={() => setSelectedBuiltInSubject(subject)}
+                        />
+                      );
+                    })
+                  )}
                 </View>
               ) : !selectedBuiltInTopic ? (
                 /* 2. Topics Selection */
