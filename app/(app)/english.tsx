@@ -405,8 +405,8 @@ export default function EnglishScreen() {
                   onPress={() => setActiveTab('vocab')}
                 >
                   <View style={styles.pillarLeft}>
-                    <View style={styles.pillarIconBox}>
-                      <BookOpen size={20} color={palette.danger} strokeWidth={2.4} />
+                    <View style={[styles.pillarIconBox, { backgroundColor: '#FFE4EB', borderColor: 'rgba(232, 77, 114, 0.40)' }]}>
+                      <BookOpen size={20} color="#C73A57" strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.pillarTitle}>Vocabulary Builder</Text>
@@ -415,8 +415,8 @@ export default function EnglishScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={[styles.pillarStatusPill, { backgroundColor: 'rgba(232, 77, 114, 0.12)' }]}>
-                    <Text style={[styles.pillarStatusCount, { color: palette.danger }]}>
+                  <View style={[styles.pillarStatusPill, { backgroundColor: '#FFE4EB' }]}>
+                    <Text style={[styles.pillarStatusCount, { color: '#C73A57' }]}>
                       {vocabStats?.today_words ?? 0}/5 Words
                     </Text>
                   </View>
@@ -434,7 +434,7 @@ export default function EnglishScreen() {
                   }}
                 >
                   <View style={styles.pillarLeft}>
-                    <View style={[styles.pillarIconBox, { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.30)' }]}>
+                    <View style={[styles.pillarIconBox, { backgroundColor: '#D1FAE5', borderColor: 'rgba(16, 185, 129, 0.40)' }]}>
                       <FileText size={20} color="#047857" strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
@@ -444,7 +444,7 @@ export default function EnglishScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={[styles.pillarStatusPill, { backgroundColor: 'rgba(16, 185, 129, 0.12)' }]}>
+                  <View style={[styles.pillarStatusPill, { backgroundColor: '#D1FAE5' }]}>
                     <Text style={[styles.pillarStatusCount, { color: '#047857' }]}>
                       {grammarStats?.today_questions ?? 0} Solved
                     </Text>
@@ -455,13 +455,13 @@ export default function EnglishScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.pillarCard,
-                    { opacity: !allWordsLearnedToday ? 0.75 : pressed ? 0.92 : 1 },
+                    { opacity: !allWordsLearnedToday ? 0.85 : pressed ? 0.92 : 1 },
                   ]}
                   disabled={!allWordsLearnedToday}
                   onPress={() => setActiveTab('writing')}
                 >
                   <View style={styles.pillarLeft}>
-                    <View style={[styles.pillarIconBox, { backgroundColor: 'rgba(245, 158, 11, 0.12)', borderColor: 'rgba(245, 158, 11, 0.30)' }]}>
+                    <View style={[styles.pillarIconBox, { backgroundColor: '#FEF3C7', borderColor: 'rgba(245, 158, 11, 0.40)' }]}>
                       <SquarePen size={20} color="#D97706" strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
@@ -471,7 +471,7 @@ export default function EnglishScreen() {
                         </Text>
                         {!allWordsLearnedToday && (
                           <View style={styles.lockBadge}>
-                            <Lock size={10} color="#D94C61" strokeWidth={2.2} />
+                            <Lock size={10} color="#DC2626" strokeWidth={2.2} />
                             <Text style={styles.lockText}>Locked</Text>
                           </View>
                         )}
@@ -486,10 +486,10 @@ export default function EnglishScreen() {
                       styles.pillarStatusPill,
                       {
                         backgroundColor: writingCompleted
-                          ? 'rgba(16, 185, 129, 0.12)'
+                          ? '#D1FAE5'
                           : !allWordsLearnedToday
-                          ? 'rgba(217, 76, 97, 0.10)'
-                          : 'rgba(102, 84, 91, 0.10)',
+                          ? '#FEE2E2'
+                          : '#FEF3C7',
                       },
                     ]}
                   >
@@ -498,10 +498,10 @@ export default function EnglishScreen() {
                         styles.pillarStatusCount,
                         {
                           color: writingCompleted
-                            ? '#10B981'
+                            ? '#047857'
                             : !allWordsLearnedToday
-                            ? palette.danger
-                            : palette.textSecondary,
+                            ? '#DC2626'
+                            : '#D97706',
                         },
                       ]}
                     >
@@ -880,15 +880,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: spacing.md,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255, 243, 245, 0.85)',
-    borderColor: 'rgba(250, 215, 224, 0.85)',
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    borderColor: 'rgba(232, 77, 114, 0.30)',
     borderWidth: 1.5,
-    shadowColor: palette.danger,
+    shadowColor: '#8A1535',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.14,
     shadowRadius: 10,
-    elevation: 3,
+    elevation: 4,
   },
   pillarLeft: {
     flexDirection: 'row',

@@ -128,18 +128,6 @@ export function Button({
   const vStyles = getVariantStyles();
   const sStyles = getSizeStyles();
 
-  const disabledContainerStyle: ViewStyle = {
-    backgroundColor: 'rgba(245, 230, 235, 0.85)',
-    borderColor: 'rgba(199, 58, 87, 0.30)',
-    borderWidth: 1.5,
-    shadowOpacity: 0,
-    elevation: 0,
-  };
-
-  const disabledTextStyle: TextStyle = {
-    color: 'rgba(120, 95, 105, 0.80)',
-  };
-
   return (
     <Pressable
       accessibilityRole="button"
@@ -147,29 +135,32 @@ export function Button({
       onPress={onPress}
       style={({ pressed }) => [
         {
+          flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
           borderRadius: radius.button,
-          opacity: pressed && !disabled ? 0.88 : 1,
+          opacity: disabled ? 0.55 : pressed ? 0.88 : 1,
           transform: [{ scale: pressed && !disabled ? 0.97 : 1 }],
         },
         vStyles.container,
         sStyles.container,
-        disabled && disabledContainerStyle,
         style,
       ]}
     >
-      <Text
-        style={[
-          { fontWeight: '800', letterSpacing: 0.2 },
-          vStyles.text,
-          sStyles.text,
-          disabled && disabledTextStyle,
-          textStyle,
-        ]}
-      >
-        {children}
-      </Text>
+      {typeof children === 'string' || typeof children === 'number' ? (
+        <Text
+          style={[
+            { fontWeight: '800', letterSpacing: 0.2, textAlign: 'center' },
+            vStyles.text,
+            sStyles.text,
+            textStyle,
+          ]}
+        >
+          {children}
+        </Text>
+      ) : (
+        children
+      )}
     </Pressable>
   );
 }

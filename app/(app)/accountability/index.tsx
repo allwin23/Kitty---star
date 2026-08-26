@@ -603,6 +603,8 @@ export default function AccountabilityScreen() {
               {/* Submit button */}
               {currentPlan && currentTasks.length > 0 ? (
                 <Button
+                  variant="primary"
+                  size="lg"
                   onPress={() =>
                     router.push({
                       pathname: '/(app)/accountability/submit',
