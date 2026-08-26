@@ -363,14 +363,11 @@ export default function ReviewScreen() {
             </View>
           </View>
 
-          {/* General Proofs */}
-          <View style={[glassCardStyle, styles.pinkGlassCard]}>
-            <View style={{ gap: spacing.md }}>
-              <Text style={styles.sectionTitleText}>General Proof Images ({generalProofs.length})</Text>
-
-              {generalProofs.length === 0 ? (
-                <Text style={styles.cardSubText}>No general proof images uploaded.</Text>
-              ) : (
+          {/* General Proofs (Legacy Support Only) */}
+          {generalProofs.length > 0 && (
+            <View style={[glassCardStyle, styles.pinkGlassCard]}>
+              <View style={{ gap: spacing.md }}>
+                <Text style={styles.sectionTitleText}>General Proof Images ({generalProofs.length})</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {generalProofs.map((proof) => {
                     void loadProofUrl(proof.image_url);
@@ -394,9 +391,9 @@ export default function ReviewScreen() {
                     );
                   })}
                 </View>
-              )}
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Review Status & Actions */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
