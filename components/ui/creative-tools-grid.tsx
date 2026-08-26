@@ -245,23 +245,17 @@ const styles = StyleSheet.create({
   toolCard: {
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: 'rgba(255, 243, 245, 0.75)',
-    borderColor: 'rgba(250, 215, 224, 0.75)',
+    backgroundColor: 'rgba(255, 243, 245, 0.95)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     borderWidth: 1.5,
     borderRadius: 24,
     padding: spacing[16],
     gap: spacing[12],
     shadowColor: palette.danger,
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.10,
-    shadowRadius: 14,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
     elevation: 4,
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(16px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(16px) saturate(160%)',
-        } as any)
-      : {}),
   },
   watermarkContainer: {
     position: 'absolute',
@@ -295,11 +289,13 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: palette.danger,
     letterSpacing: -0.2,
+    backgroundColor: 'transparent',
   },
   subtitleText: {
     fontSize: 12,
     lineHeight: 16,
     color: palette.textSecondary,
     fontWeight: '500',
+    backgroundColor: 'transparent',
   },
 });

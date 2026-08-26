@@ -33,20 +33,7 @@ interface PomodoroState {
   syncBackgroundTime: () => void;
 }
 
-const getStorage = () => {
-  try {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      return {
-        getItem: (name: string) => window.localStorage.getItem(name),
-        setItem: (name: string, value: string) => window.localStorage.setItem(name, value),
-        removeItem: (name: string) => window.localStorage.removeItem(name),
-      };
-    }
-    return AsyncStorage;
-  } catch (e) {
-    return AsyncStorage;
-  }
-};
+const getStorage = () => AsyncStorage;
 
 export const usePomodoroStore = create<PomodoroState>()(
   persist(

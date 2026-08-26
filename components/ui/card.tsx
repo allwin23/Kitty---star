@@ -41,13 +41,6 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
           ]}
           pointerEvents="none"
         >
-          <View
-            style={[
-              StyleSheet.absoluteFill,
-              { backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: radius.card },
-            ]}
-          />
-
           {/* Top-left focus gradient zone */}
           <Svg height="100%" width="100%" style={[StyleSheet.absoluteFill, { borderRadius: radius.card }]}>
             <Defs>

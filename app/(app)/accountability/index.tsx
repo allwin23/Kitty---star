@@ -417,7 +417,7 @@ export default function AccountabilityScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
       >
-        <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
+        <View style={{ gap: spacing.lg, paddingBottom: 160 }}>
           {/* Header */}
           <HeaderTitleCard
             title="Accountability 📋"
@@ -715,7 +715,7 @@ export default function AccountabilityScreen() {
           </Card>
 
           {/* Reports History link */}
-          <Button onPress={() => router.push('/(app)/accountability/reports')}>
+          <Button variant="white" size="lg" onPress={() => router.push('/(app)/accountability/reports')}>
             {"View Report History \u2192"}
           </Button>
         </View>

@@ -3,7 +3,7 @@ import { Pressable, Text, type StyleProp, type TextStyle, type ViewStyle } from 
 
 import { palette, radius, spacing } from '@/theme';
 
-type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive';
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive' | 'white';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 type ButtonProps = PropsWithChildren<{
@@ -26,34 +26,61 @@ export function Button({
 }: ButtonProps) {
   const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
     switch (variant) {
-      case 'secondary':
+      case 'white':
         return {
           container: {
-            backgroundColor: palette.blush,
-            borderWidth: 1,
-            borderColor: 'rgba(232, 77, 114, 0.25)',
+            backgroundColor: '#FFFFFF',
+            borderWidth: 1.5,
+            borderColor: 'rgba(232, 77, 114, 0.40)',
+            shadowColor: '#8A1535',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 10,
+            elevation: 4,
           },
           text: {
             color: palette.cherryBloom,
+            fontWeight: '800',
+          },
+        };
+      case 'secondary':
+        return {
+          container: {
+            backgroundColor: 'rgba(255, 243, 245, 0.95)',
+            borderWidth: 1.5,
+            borderColor: 'rgba(232, 77, 114, 0.35)',
+          },
+          text: {
+            color: palette.cherryBloom,
+            fontWeight: '700',
           },
         };
       case 'tertiary':
         return {
           container: {
-            backgroundColor: 'transparent',
-            paddingHorizontal: spacing[8],
+            backgroundColor: 'rgba(255, 255, 255, 0.20)',
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.40)',
+            paddingHorizontal: spacing[12],
           },
           text: {
-            color: palette.textSecondary,
+            color: '#FFFFFF',
+            fontWeight: '700',
           },
         };
       case 'destructive':
         return {
           container: {
             backgroundColor: palette.danger,
+            shadowColor: palette.danger,
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.30,
+            shadowRadius: 8,
+            elevation: 4,
           },
           text: {
             color: '#FFFFFF',
+            fontWeight: '800',
           },
         };
       case 'primary':
@@ -61,14 +88,17 @@ export function Button({
         return {
           container: {
             backgroundColor: palette.cherryBloom,
-            shadowColor: palette.cherryBloom,
+            borderColor: 'rgba(255, 255, 255, 0.30)',
+            borderWidth: 1,
+            shadowColor: '#5C0D22',
             shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.25,
+            shadowOpacity: 0.30,
             shadowRadius: 10,
-            elevation: 4,
+            elevation: 5,
           },
           text: {
-            color: palette.warmWhite,
+            color: '#FFFFFF',
+            fontWeight: '800',
           },
         };
     }

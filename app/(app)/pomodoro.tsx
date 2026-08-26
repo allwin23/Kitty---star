@@ -164,12 +164,17 @@ export default function PomodoroScreen() {
   // Active task object
   const activeTask = currentTasks.find((t) => t.id === selectedTaskId);
 
-  // Auto-reset selection if the selected task is completed or no longer exists
+  // Auto-select first active pending task if none selected, or reset if completed/removed
   useEffect(() => {
-    if (selectedTaskId && currentPlan) {
-      const task = currentTasks.find((t) => t.id === selectedTaskId);
-      if (!task || task.status === 'completed') {
-        setSelectedTaskId(null);
+    if (currentPlan && currentTasks.length > 0) {
+      const activePending = currentTasks.find((t) => t.status !== 'completed');
+      if (selectedTaskId) {
+        const task = currentTasks.find((t) => t.id === selectedTaskId);
+        if (!task || task.status === 'completed') {
+          setSelectedTaskId(activePending?.id ?? null);
+        }
+      } else if (activePending) {
+        setSelectedTaskId(activePending.id);
       }
     }
   }, [currentTasks, selectedTaskId, setSelectedTaskId, currentPlan]);
@@ -458,7 +463,7 @@ export default function PomodoroScreen() {
             title="No active plan started"
             description="You must start today's plan on the Plan tab before you can use the Pomodoro timer."
           />
-          <Button variant="primary" onPress={() => router.push('/(app)/accountability')}>
+          <Button variant="white" size="lg" onPress={() => router.push('/(app)/accountability')}>
             Go to Plan tab
           </Button>
         </View>
@@ -474,7 +479,7 @@ export default function PomodoroScreen() {
             title="No tasks in plan"
             description="Add some tasks on the Plan tab first so you have something to focus on."
           />
-          <Button variant="primary" onPress={() => router.push('/(app)/accountability')}>
+          <Button variant="white" size="lg" onPress={() => router.push('/(app)/accountability')}>
             Go to Plan tab
           </Button>
         </View>
