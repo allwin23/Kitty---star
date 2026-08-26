@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import {
-  Bot,
+  BarChart2,
   CheckCircle2,
   Compass,
   Trophy,
@@ -34,14 +34,6 @@ interface ToolItem {
 }
 
 const TOOLS: ToolItem[] = [
-  {
-    id: 'companion',
-    title: 'Companion',
-    subtitle: 'Mascot Engine',
-    route: '/(app)/companion',
-    icon: Bot,
-    delayOffset: 0,
-  },
   {
     id: 'accountability',
     title: 'Accountability',
@@ -97,6 +89,14 @@ const TOOLS: ToolItem[] = [
     route: '/(app)/english',
     icon: MessageSquare,
     delayOffset: 1100,
+  },
+  {
+    id: 'statistics',
+    title: 'Statistics',
+    subtitle: 'Study Analytics',
+    route: '/(app)/statistics',
+    icon: BarChart2,
+    delayOffset: 1200,
   },
 ];
 
