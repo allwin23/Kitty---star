@@ -113,8 +113,8 @@ export default function PomodoroScreen() {
   useFocusEffect(
     useCallback(() => {
       void currentPlanQ.refetch();
-      syncBackgroundTime();
-    }, [currentPlanQ, syncBackgroundTime])
+      usePomodoroStore.getState().syncBackgroundTime();
+    }, [])
   );
 
   const currentPlan = currentPlanQ.data as {
@@ -208,13 +208,15 @@ export default function PomodoroScreen() {
 
   // Keep screen active (prevent screen timeout) when in Full-Screen View
   useEffect(() => {
-    if (isFullScreen) {
-      void activateKeepAwakeAsync('pomodoro-keep-awake-tag');
-    } else {
-      void deactivateKeepAwake('pomodoro-keep-awake-tag');
+    if (Platform.OS !== 'web' && isFullScreen) {
+      void activateKeepAwakeAsync('pomodoro-keep-awake-tag').catch(() => {});
+    } else if (Platform.OS !== 'web') {
+      void deactivateKeepAwake('pomodoro-keep-awake-tag').catch(() => {});
     }
     return () => {
-      void deactivateKeepAwake('pomodoro-keep-awake-tag');
+      if (Platform.OS !== 'web') {
+        void deactivateKeepAwake('pomodoro-keep-awake-tag').catch(() => {});
+      }
     };
   }, [isFullScreen]);
 
