@@ -316,7 +316,8 @@ export default function ReviewScreen() {
                             {task.title}
                           </Text>
                           <Text style={styles.cardSubText}>
-                            ⏳ {task.estimated_minutes} min • 🍅 {task.completed_pomodoros || 0} pomodoros
+                            ⏳ Worked/Planned: <Text style={{ color: palette.cherryBloom, fontWeight: '800' }}>{task.completed_minutes || 0}/{task.estimated_minutes} min</Text> • 🍅 {task.completed_pomodoros || 0} pomodoros
+                            {(task.completed_minutes || 0) > task.estimated_minutes ? ` 🔥 (+${(task.completed_minutes || 0) - task.estimated_minutes}m overtime)` : ''}
                           </Text>
                         </View>
                       </View>

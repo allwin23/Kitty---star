@@ -20,6 +20,7 @@ export type TodoTask = {
   id: string;
   title: string;
   estimated_minutes: number;
+  completed_minutes?: number;
   status?: 'pending' | 'completed';
   completed_pomodoros?: number;
   order: number;
@@ -289,12 +290,13 @@ export function TodoList({
                   >
                     {task.title}
                   </Text>
-                  <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: 2 }}>
-                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '500' }}>
-                      ⏳ {task.estimated_minutes} min
+                  <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: 2, flexWrap: 'wrap' }}>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
+                      ⏳ {task.completed_minutes !== undefined ? `${task.completed_minutes}/${task.estimated_minutes}` : `${task.estimated_minutes}`} min
+                      {task.completed_minutes !== undefined && task.completed_minutes > task.estimated_minutes ? ` 🔥 (+${task.completed_minutes - task.estimated_minutes}m Overtime)` : ''}
                     </Text>
                     {showPomodoro && task.completed_pomodoros !== undefined ? (
-                      <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '600' }}>
+                      <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '700' }}>
                         🍅 {task.completed_pomodoros}
                       </Text>
                     ) : null}

@@ -334,9 +334,16 @@ export default function SubmitScreen() {
                             >
                               {task.title}
                             </Text>
-                            <Text style={styles.cardSubText}>
-                              {task.estimated_minutes}m
-                            </Text>
+                            <View style={{ alignItems: 'flex-end' }}>
+                              <Text style={[styles.cardSubText, { fontWeight: '700', color: palette.cherryBloom }]}>
+                                {task.completed_minutes ?? 0}/{task.estimated_minutes} min
+                              </Text>
+                              {(task.completed_minutes ?? 0) > task.estimated_minutes && (
+                                <Text style={{ color: '#D97706', fontSize: 10, fontWeight: '800' }}>
+                                  🔥 +{(task.completed_minutes ?? 0) - task.estimated_minutes}m overtime
+                                </Text>
+                              )}
+                            </View>
                           </View>
 
                           {/* Task proofs container */}

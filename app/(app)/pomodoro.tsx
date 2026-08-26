@@ -707,6 +707,7 @@ export default function PomodoroScreen() {
                 const estMins = task.estimated_minutes;
                 const compMins = task.completed_minutes;
                 const remainingMins = Math.max(0, estMins - compMins);
+                const overtimeMins = compMins > estMins ? compMins - estMins : 0;
                 const completedPomodoros = task.completed_pomodoros;
 
                 const taskProgressPct = Math.min(100, Math.round((compMins / estMins) * 100));
@@ -715,10 +716,14 @@ export default function PomodoroScreen() {
                 let badgeColor: string = palette.textSecondary;
                 let badgeBg: string = 'rgba(255, 243, 245, 0.85)';
 
-                if (isCompleted || compMins >= estMins) {
+                if (isCompleted) {
                   stateLabel = 'Completed';
                   badgeColor = '#047857';
                   badgeBg = '#D1FAE5';
+                } else if (overtimeMins > 0) {
+                  stateLabel = `Overtime (+${overtimeMins}m)`;
+                  badgeColor = '#D97706';
+                  badgeBg = '#FEF3C7';
                 } else if (compMins > 0) {
                   stateLabel = 'In Progress';
                   badgeColor = palette.danger;
@@ -726,7 +731,7 @@ export default function PomodoroScreen() {
                 }
 
                 const handleSelectTask = () => {
-                  if (isCompleted || compMins >= estMins) return;
+                  if (isCompleted) return;
                   if (isRunning && sessionType === 'focus') return;
                   setSelectedTaskId(isSelected ? null : task.id);
                 };
@@ -734,12 +739,12 @@ export default function PomodoroScreen() {
                 return (
                   <Pressable
                     key={task.id}
-                    disabled={isCompleted || compMins >= estMins || (isRunning && sessionType === 'focus')}
+                    disabled={isCompleted || (isRunning && sessionType === 'focus')}
                     onPress={handleSelectTask}
                     style={[
                       styles.taskCard,
                       isSelected && styles.selectedTaskCard,
-                      (isCompleted || compMins >= estMins) && { opacity: 0.65 },
+                      isCompleted && { opacity: 0.65 },
                     ]}
                   >
                     <View style={{ gap: spacing[8] }}>
@@ -748,7 +753,7 @@ export default function PomodoroScreen() {
                         <Text
                           style={[
                             styles.taskTitle,
-                            (isCompleted || compMins >= estMins) && { textDecorationLine: 'line-through', color: palette.textSecondary },
+                            isCompleted && { textDecorationLine: 'line-through', color: palette.textSecondary },
                           ]}
                           numberOfLines={1}
                         >
@@ -759,6 +764,8 @@ export default function PomodoroScreen() {
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                             {stateLabel === 'Completed' ? (
                               <CheckCircle2 size={11} color={badgeColor} strokeWidth={2.4} />
+                            ) : overtimeMins > 0 ? (
+                              <Flame size={11} color={badgeColor} strokeWidth={2.4} />
                             ) : stateLabel === 'In Progress' ? (
                               <Flame size={11} color={badgeColor} strokeWidth={2.4} />
                             ) : (
@@ -775,16 +782,23 @@ export default function PomodoroScreen() {
                       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                           <Timer size={14} color={palette.danger} strokeWidth={2.2} />
-                          <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '500' }}>
-                            {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}m / {estMins}m)
+                          <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
+                            {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}/{estMins}m)
                           </Text>
                         </View>
 
-                        {!isCompleted && remainingMins > 0 ? (
+                        {overtimeMins > 0 ? (
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                            <Flame size={13} color="#D97706" strokeWidth={2.4} />
+                            <Text style={{ fontSize: 13, color: '#D97706', fontWeight: '800' }}>
+                              +{overtimeMins}m Overtime
+                            </Text>
+                          </View>
+                        ) : !isCompleted && remainingMins > 0 ? (
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                             <Clock size={13} color={palette.textSecondary} strokeWidth={2} />
                             <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
-                              {remainingMins} min remaining
+                              {remainingMins}m remaining
                             </Text>
                           </View>
                         ) : (
@@ -803,7 +817,7 @@ export default function PomodoroScreen() {
                           style={{
                             width: `${taskProgressPct}%`,
                             height: '100%',
-                            backgroundColor: isCompleted ? '#10B981' : palette.danger,
+                            backgroundColor: isCompleted ? '#10B981' : overtimeMins > 0 ? '#F59E0B' : palette.danger,
                             borderRadius: radius.full,
                           }}
                         />
