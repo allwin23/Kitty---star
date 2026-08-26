@@ -10,7 +10,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Gift } from 'lucide-react-native';
 
@@ -18,7 +18,7 @@ import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, 
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
-import { glassCardStyle, palette, spacing } from '@/theme';
+import { glassCardStyle, palette, radius, spacing } from '@/theme';
 
 import { journeyService, type MilestoneWithChallenge } from '@/services/journey.service';
 import { reportService } from '@/services/backend';
@@ -231,41 +231,71 @@ export default function JourneyScreen() {
             <NotificationBadge />
           </View>
 
-          {/* Mode Toggle Button */}
+          {/* Mode Toggle Segmented Control */}
           {hasPartner ? (
-            <View style={{ flexDirection: 'row', gap: spacing[12] }}>
-              <Button
+            <View
+              style={{
+                flexDirection: 'row',
+                borderRadius: radius.button,
+                backgroundColor: 'rgba(255, 243, 245, 0.90)',
+                borderColor: 'rgba(250, 215, 224, 0.90)',
+                borderWidth: 1.5,
+                padding: 4,
+              }}
+            >
+              <Pressable
                 onPress={() => setViewingPartner(false)}
                 style={{
                   flex: 1,
-                  backgroundColor: !viewingPartner ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
+                  paddingVertical: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radius.button,
+                  backgroundColor: !viewingPartner ? palette.cherryBloom : 'transparent',
+                  shadowColor: !viewingPartner ? palette.cherryBloom : 'transparent',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: !viewingPartner ? 3 : 0,
                 }}
               >
                 <Text
                   style={{
-                    color: !viewingPartner ? '#FFFFFF' : palette.textPrimary,
-                    fontWeight: '700',
+                    color: !viewingPartner ? '#FFFFFF' : palette.cherryBloom,
+                    fontWeight: '800',
+                    fontSize: 13,
                   }}
                 >
                   {"My Journey Path"}
                 </Text>
-              </Button>
-              <Button
+              </Pressable>
+
+              <Pressable
                 onPress={() => setViewingPartner(true)}
                 style={{
                   flex: 1,
-                  backgroundColor: viewingPartner ? palette.cherryBloom : 'rgba(255, 243, 245, 0.75)',
+                  paddingVertical: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: radius.button,
+                  backgroundColor: viewingPartner ? palette.cherryBloom : 'transparent',
+                  shadowColor: viewingPartner ? palette.cherryBloom : 'transparent',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 6,
+                  elevation: viewingPartner ? 3 : 0,
                 }}
               >
                 <Text
                   style={{
-                    color: viewingPartner ? '#FFFFFF' : palette.textPrimary,
-                    fontWeight: '700',
+                    color: viewingPartner ? '#FFFFFF' : palette.cherryBloom,
+                    fontWeight: '800',
+                    fontSize: 13,
                   }}
                 >
                   {"Manage Partner's Rewards"}
                 </Text>
-              </Button>
+              </Pressable>
             </View>
           ) : null}
 

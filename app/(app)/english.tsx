@@ -406,7 +406,7 @@ export default function EnglishScreen() {
                 >
                   <View style={styles.pillarLeft}>
                     <View style={styles.pillarIconBox}>
-                      <BookOpen size={20} color="#121218" strokeWidth={2.4} />
+                      <BookOpen size={20} color={palette.danger} strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.pillarTitle}>Vocabulary Builder</Text>
@@ -415,11 +415,10 @@ export default function EnglishScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={styles.pillarStatus}>
-                    <Text style={styles.pillarStatusCount}>
-                      {vocabStats?.today_words ?? 0}/5
+                  <View style={[styles.pillarStatusPill, { backgroundColor: 'rgba(232, 77, 114, 0.12)' }]}>
+                    <Text style={[styles.pillarStatusCount, { color: palette.danger }]}>
+                      {vocabStats?.today_words ?? 0}/5 Words
                     </Text>
-                    <Text style={styles.pillarStatusSubtext}>Words</Text>
                   </View>
                 </Pressable>
 
@@ -435,8 +434,8 @@ export default function EnglishScreen() {
                   }}
                 >
                   <View style={styles.pillarLeft}>
-                    <View style={styles.pillarIconBox}>
-                      <FileText size={20} color="#121218" strokeWidth={2.4} />
+                    <View style={[styles.pillarIconBox, { backgroundColor: 'rgba(16, 185, 129, 0.12)', borderColor: 'rgba(16, 185, 129, 0.30)' }]}>
+                      <FileText size={20} color="#047857" strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.pillarTitle}>Grammar Quizzes</Text>
@@ -445,11 +444,10 @@ export default function EnglishScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={styles.pillarStatus}>
+                  <View style={[styles.pillarStatusPill, { backgroundColor: 'rgba(16, 185, 129, 0.12)' }]}>
                     <Text style={[styles.pillarStatusCount, { color: '#047857' }]}>
-                      {grammarStats?.today_questions ?? 0}
+                      {grammarStats?.today_questions ?? 0} Solved
                     </Text>
-                    <Text style={styles.pillarStatusSubtext}>Solved</Text>
                   </View>
                 </Pressable>
 
@@ -457,17 +455,17 @@ export default function EnglishScreen() {
                 <Pressable
                   style={({ pressed }) => [
                     styles.pillarCard,
-                    { opacity: !allWordsLearnedToday ? 0.65 : pressed ? 0.92 : 1 },
+                    { opacity: !allWordsLearnedToday ? 0.75 : pressed ? 0.92 : 1 },
                   ]}
                   disabled={!allWordsLearnedToday}
                   onPress={() => setActiveTab('writing')}
                 >
                   <View style={styles.pillarLeft}>
-                    <View style={styles.pillarIconBox}>
-                      <SquarePen size={20} color="#121218" strokeWidth={2.4} />
+                    <View style={[styles.pillarIconBox, { backgroundColor: 'rgba(245, 158, 11, 0.12)', borderColor: 'rgba(245, 158, 11, 0.30)' }]}>
+                      <SquarePen size={20} color="#D97706" strokeWidth={2.4} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                         <Text style={styles.pillarTitle}>
                           AI Writing Practice
                         </Text>
@@ -483,14 +481,31 @@ export default function EnglishScreen() {
                       </Text>
                     </View>
                   </View>
-                  <View style={styles.pillarStatus}>
+                  <View
+                    style={[
+                      styles.pillarStatusPill,
+                      {
+                        backgroundColor: writingCompleted
+                          ? 'rgba(16, 185, 129, 0.12)'
+                          : !allWordsLearnedToday
+                          ? 'rgba(217, 76, 97, 0.10)'
+                          : 'rgba(102, 84, 91, 0.10)',
+                      },
+                    ]}
+                  >
                     <Text
                       style={[
                         styles.pillarStatusCount,
-                        { color: writingCompleted ? '#10B981' : palette.textSecondary },
+                        {
+                          color: writingCompleted
+                            ? '#10B981'
+                            : !allWordsLearnedToday
+                            ? palette.danger
+                            : palette.textSecondary,
+                        },
                       ]}
                     >
-                      {writingCompleted ? 'Done' : 'Pending'}
+                      {writingCompleted ? 'Done' : !allWordsLearnedToday ? 'Learn Words First' : 'Pending'}
                     </Text>
                   </View>
                 </Pressable>
@@ -904,15 +919,16 @@ const styles = StyleSheet.create({
     color: palette.textSecondary,
     fontWeight: '500',
   },
-  pillarStatus: {
+  pillarStatusPill: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 60,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: radius.pill,
   },
   pillarStatusCount: {
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '800',
-    color: palette.danger,
   },
   pillarStatusSubtext: {
     fontSize: 11,

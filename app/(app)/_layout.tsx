@@ -54,7 +54,7 @@ export default function AppLayout() {
         ),
       }}
     >
-      {/* Main Visible Tabs */}
+      {/* Main Visible Tabs (4 Items) */}
       <Tabs.Screen
         name="home"
         options={{
@@ -83,15 +83,6 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="journey"
-        options={{
-          title: 'Journey',
-          tabBarIcon: ({ focused }) => (
-            <AnimatedTabIcon name="journey" focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="statistics"
         options={{
           title: 'Stats',
@@ -102,6 +93,7 @@ export default function AppLayout() {
       />
 
       {/* Hidden tabs */}
+      <Tabs.Screen name="journey" options={{ href: null }} />
       <Tabs.Screen name="planner" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
       <Tabs.Screen name="achievements" options={{ href: null }} />

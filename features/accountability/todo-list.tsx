@@ -177,15 +177,14 @@ export function TodoList({
         return (
           <View
             key={task.id}
-            style={[
-              glassCardStyle,
-              {
-                borderRadius: radius.card,
-                padding: spacing[12],
-                gap: spacing[8],
-                backgroundColor: isDone ? 'rgba(255, 245, 247, 0.25)' : 'rgba(255, 245, 247, 0.45)',
-              },
-            ]}
+            style={{
+              borderRadius: 16,
+              padding: spacing[12],
+              gap: spacing[8],
+              backgroundColor: isDone ? 'rgba(255, 245, 247, 0.40)' : 'rgba(255, 240, 243, 0.75)',
+              borderColor: isDone ? 'rgba(232, 77, 114, 0.12)' : 'rgba(232, 77, 114, 0.22)',
+              borderWidth: 1,
+            }}
           >
             {isEditing ? (
               <View style={{ gap: spacing[8] }}>

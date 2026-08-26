@@ -515,8 +515,16 @@ export default function SubmitScreen() {
                       </View>
                     )}
                     <Button
-                      disabled={isSending || currentTasks.length === 0 || pickedImages.length === 0}
-                      onPress={() => void handleSend()}
+                      disabled={isSending || currentTasks.length === 0}
+                      variant="primary"
+                      size="lg"
+                      onPress={() => {
+                        if (pickedImages.length === 0) {
+                          Alert.alert('Proof required', 'Please attach at least 1 proof image above before submitting.');
+                          return;
+                        }
+                        void handleSend();
+                      }}
                     >
                       {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
                     </Button>
