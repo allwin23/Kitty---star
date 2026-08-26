@@ -113,7 +113,8 @@ export default function PomodoroScreen() {
   useFocusEffect(
     useCallback(() => {
       void currentPlanQ.refetch();
-    }, [currentPlanQ])
+      syncBackgroundTime();
+    }, [currentPlanQ, syncBackgroundTime])
   );
 
   const currentPlan = currentPlanQ.data as {
@@ -145,6 +146,7 @@ export default function PomodoroScreen() {
     startedAt,
     isFullScreen,
     scheduledNotifId,
+    hasAutoOpened,
     tick,
     startTimer,
     pauseTimer,
@@ -154,6 +156,7 @@ export default function PomodoroScreen() {
     setSessionType,
     setDurationMinutes,
     setFullScreen,
+    setHasAutoOpened,
     setScheduledNotifId,
     syncBackgroundTime,
   } = usePomodoroStore();
@@ -183,18 +186,25 @@ export default function PomodoroScreen() {
     };
   }, [syncBackgroundTime]);
 
-  // 3-Second delay timer -> automatically open Full-Screen Running View
+  // 3-Second delay timer -> automatically open Full-Screen Running View ONLY ONCE per session
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout> | null = null;
-    if (isRunning && !isPaused && !isFullScreen) {
+    if (isRunning && !isPaused && !hasAutoOpened && !isFullScreen) {
       timeout = setTimeout(() => {
         setFullScreen(true);
+        setHasAutoOpened(true);
       }, 3000);
     }
     return () => {
       if (timeout) clearTimeout(timeout);
     };
-  }, [isRunning, isPaused, isFullScreen, setFullScreen]);
+  }, [isRunning, isPaused, hasAutoOpened, isFullScreen, setFullScreen, setHasAutoOpened]);
+
+  // User explicit "Run in Background" handler
+  const handleRunInBackground = () => {
+    setFullScreen(false);
+    setHasAutoOpened(true);
+  };
 
   // Keep screen active (prevent screen timeout) when in Full-Screen View
   useEffect(() => {
@@ -815,7 +825,7 @@ export default function PomodoroScreen() {
           {/* Top Header Bar */}
           <View style={styles.fullScreenHeaderRow}>
             <Pressable
-              onPress={() => setFullScreen(false)}
+              onPress={handleRunInBackground}
               style={styles.runInBackgroundBtnTop}
             >
               <ArrowLeft size={16} color="#FFFFFF" strokeWidth={2.4} />
@@ -905,7 +915,7 @@ export default function PomodoroScreen() {
 
             {/* Run in Background Go-Back Main Button */}
             <Pressable
-              onPress={() => setFullScreen(false)}
+              onPress={handleRunInBackground}
               style={styles.runInBackgroundMainBtn}
             >
               <Minimize2 size={16} color="#FFFFFF" strokeWidth={2.4} />
