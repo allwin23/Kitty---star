@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
+  AppState,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
@@ -10,15 +13,22 @@ import {
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
+import * as Notifications from 'expo-notifications';
 import {
+  ArrowLeft,
+  Bell,
   CheckCircle2,
   CheckSquare,
   Clock,
   Coffee,
   Flame,
+  Maximize2,
+  Minimize2,
   Pause,
   Play,
   RotateCcw,
+  Sparkles,
   Sun,
   Target,
   Timer,
@@ -34,6 +44,56 @@ import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
 
 import { todayIso } from '@/lib/supabase-helpers';
+
+/** Schedule local push notification when timer completes */
+const scheduleLocalFinishNotification = async (
+  taskTitle: string,
+  sessionType: PomodoroSessionType,
+  seconds: number
+) => {
+  try {
+    if (Platform.OS === 'web') return null;
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') {
+      const req = await Notifications.requestPermissionsAsync();
+      if (req.status !== 'granted') return null;
+    }
+
+    const title =
+      sessionType === 'focus' ? '🍅 Pomodoro Focus Complete!' : '☕ Break Finished!';
+    const body =
+      sessionType === 'focus'
+        ? `Great job! You finished your focus session for "${taskTitle}".`
+        : 'Break time is over! Ready to jump back into focus?';
+
+    const notifId = await Notifications.scheduleNotificationAsync({
+      content: {
+        title,
+        body,
+        sound: true,
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: Math.max(1, Math.floor(seconds)),
+      },
+    });
+    return notifId;
+  } catch (err) {
+    console.warn('[Pomodoro] Local notification schedule error:', err);
+    return null;
+  }
+};
+
+/** Cancel scheduled local notification */
+const cancelLocalNotification = async (notifId: string | null) => {
+  if (!notifId || Platform.OS === 'web') return;
+  try {
+    await Notifications.cancelScheduledNotificationAsync(notifId);
+  } catch (err) {
+    // Ignored
+  }
+};
 
 export default function PomodoroScreen() {
   const router = useRouter();
@@ -83,6 +143,8 @@ export default function PomodoroScreen() {
     sessionType,
     selectedTaskId,
     startedAt,
+    isFullScreen,
+    scheduledNotifId,
     tick,
     startTimer,
     pauseTimer,
@@ -91,6 +153,9 @@ export default function PomodoroScreen() {
     setSelectedTaskId,
     setSessionType,
     setDurationMinutes,
+    setFullScreen,
+    setScheduledNotifId,
+    syncBackgroundTime,
   } = usePomodoroStore();
 
   // Active task object
@@ -105,6 +170,43 @@ export default function PomodoroScreen() {
       }
     }
   }, [currentTasks, selectedTaskId, setSelectedTaskId, currentPlan]);
+
+  // AppState listener for background / inactive app time sync
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        syncBackgroundTime();
+      }
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [syncBackgroundTime]);
+
+  // 3-Second delay timer -> automatically open Full-Screen Running View
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    if (isRunning && !isPaused && !isFullScreen) {
+      timeout = setTimeout(() => {
+        setFullScreen(true);
+      }, 3000);
+    }
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [isRunning, isPaused, isFullScreen, setFullScreen]);
+
+  // Keep screen active (prevent screen timeout) when in Full-Screen View
+  useEffect(() => {
+    if (isFullScreen) {
+      void activateKeepAwakeAsync('pomodoro-keep-awake-tag');
+    } else {
+      void deactivateKeepAwake('pomodoro-keep-awake-tag');
+    }
+    return () => {
+      void deactivateKeepAwake('pomodoro-keep-awake-tag');
+    };
+  }, [isFullScreen]);
 
   // Complete pomodoro session mutation
   const completeMutation = useMutation({
@@ -130,7 +232,7 @@ export default function PomodoroScreen() {
         endedAt: pEndedAt,
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.partnerPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
@@ -153,6 +255,10 @@ export default function PomodoroScreen() {
         });
       }
 
+      if (scheduledNotifId) {
+        await cancelLocalNotification(scheduledNotifId);
+      }
+
       resetTimer();
 
       const typeLabel =
@@ -165,7 +271,7 @@ export default function PomodoroScreen() {
       if (Platform.OS === 'web') {
         window.alert(`Nice job! ${typeLabel}`);
       } else {
-        Alert.alert('Session Complete!', typeLabel);
+        Alert.alert('Session Complete! 🍅', typeLabel);
       }
     },
     onError: (e: Error) => {
@@ -177,30 +283,33 @@ export default function PomodoroScreen() {
     },
   });
 
-  const handleComplete = useCallback(async (isAuto = false) => {
-    if (completing) return;
-    setCompleting(true);
-    try {
-      if (isAuto) {
-        await completeMutation.mutateAsync();
-      } else {
-        const title = 'Complete session early?';
-        const msg = 'Do you want to log this pomodoro now with the current active duration?';
-        if (Platform.OS === 'web') {
-          if (window.confirm(`${title}\n\n${msg}`)) {
-            await completeMutation.mutateAsync();
-          }
+  const handleComplete = useCallback(
+    async (isAuto = false) => {
+      if (completing) return;
+      setCompleting(true);
+      try {
+        if (isAuto) {
+          await completeMutation.mutateAsync();
         } else {
-          Alert.alert(title, msg, [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Complete', onPress: () => void completeMutation.mutate() },
-          ]);
+          const title = 'Complete session early?';
+          const msg = 'Do you want to log this pomodoro now with the current active duration?';
+          if (Platform.OS === 'web') {
+            if (window.confirm(`${title}\n\n${msg}`)) {
+              await completeMutation.mutateAsync();
+            }
+          } else {
+            Alert.alert(title, msg, [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Complete', onPress: () => void completeMutation.mutate() },
+            ]);
+          }
         }
+      } finally {
+        setCompleting(false);
       }
-    } finally {
-      setCompleting(false);
-    }
-  }, [completing, completeMutation]);
+    },
+    [completing, completeMutation]
+  );
 
   // Tick timer seconds every second
   useEffect(() => {
@@ -225,7 +334,7 @@ export default function PomodoroScreen() {
     }
   }, [timerSeconds, isRunning, handleComplete]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (sessionType === 'focus' && !selectedTaskId) {
       const msg = 'Please select a task from the list below before starting your focus session.';
       if (Platform.OS === 'web') {
@@ -246,19 +355,52 @@ export default function PomodoroScreen() {
       });
     }
     startTimer();
+
+    // Schedule local device notification for session completion
+    const notifId = await scheduleLocalFinishNotification(
+      activeTask?.title || 'Study Session',
+      sessionType,
+      timerSeconds
+    );
+    setScheduledNotifId(notifId);
   };
 
-  const handleReset = () => {
+  const handlePause = async () => {
+    pauseTimer();
+    if (scheduledNotifId) {
+      await cancelLocalNotification(scheduledNotifId);
+      setScheduledNotifId(null);
+    }
+  };
+
+  const handleResume = async () => {
+    resumeTimer();
+    const notifId = await scheduleLocalFinishNotification(
+      activeTask?.title || 'Study Session',
+      sessionType,
+      timerSeconds
+    );
+    setScheduledNotifId(notifId);
+  };
+
+  const handleReset = async () => {
     const title = 'Reset timer?';
     const msg = 'Are you sure you want to discard this timer session?';
+    const performReset = async () => {
+      if (scheduledNotifId) {
+        await cancelLocalNotification(scheduledNotifId);
+      }
+      resetTimer();
+    };
+
     if (Platform.OS === 'web') {
       if (window.confirm(`${title}\n\n${msg}`)) {
-        resetTimer();
+        void performReset();
       }
     } else {
       Alert.alert(title, msg, [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Discard', style: 'destructive', onPress: () => resetTimer() },
+        { text: 'Discard', style: 'destructive', onPress: () => void performReset() },
       ]);
     }
   };
@@ -328,6 +470,9 @@ export default function PomodoroScreen() {
     );
   }
 
+  const totalDurationSecs = Math.max(1, durationMinutes * 60);
+  const progressPct = Math.min(100, Math.max(0, ((totalDurationSecs - timerSeconds) / totalDurationSecs) * 100));
+
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -338,6 +483,27 @@ export default function PomodoroScreen() {
               title="Study Timer"
               subtitle="Stay focused and track your study sessions"
             />
+
+            {/* Background running mini banner */}
+            {isRunning && !isFullScreen && (
+              <Pressable
+                onPress={() => setFullScreen(true)}
+                style={styles.runningBanner}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
+                  <View style={styles.livePulseDot} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+                      Timer Running in Background ({formatTime(timerSeconds)})
+                    </Text>
+                    <Text style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: 11, fontWeight: '600' }}>
+                      Tap to open full-screen mode & keep screen active
+                    </Text>
+                  </View>
+                </View>
+                <Maximize2 size={16} color="#FFFFFF" strokeWidth={2.4} />
+              </Pressable>
+            )}
 
             <View style={styles.tabsContainer}>
               {(['focus', 'short_break', 'long_break'] as PomodoroSessionType[]).map((type) => {
@@ -434,14 +600,14 @@ export default function PomodoroScreen() {
                 ) : (
                   <>
                     {isPaused ? (
-                      <Button variant="primary" size="lg" onPress={resumeTimer} style={{ flex: 1 }}>
+                      <Button variant="primary" size="lg" onPress={handleResume} style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                           <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
                           <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
                         </View>
                       </Button>
                     ) : (
-                      <Button variant="secondary" size="lg" onPress={pauseTimer} style={{ flex: 1 }}>
+                      <Button variant="secondary" size="lg" onPress={handlePause} style={{ flex: 1 }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                           <Pause size={18} color={palette.danger} strokeWidth={2.4} />
                           <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
@@ -533,7 +699,7 @@ export default function PomodoroScreen() {
                 const remainingMins = Math.max(0, estMins - compMins);
                 const completedPomodoros = task.completed_pomodoros;
 
-                const progressPct = Math.min(100, Math.round((compMins / estMins) * 100));
+                const taskProgressPct = Math.min(100, Math.round((compMins / estMins) * 100));
 
                 let stateLabel = 'Not Started';
                 let badgeColor: string = palette.textSecondary;
@@ -625,7 +791,7 @@ export default function PomodoroScreen() {
                       <View style={{ height: 6, backgroundColor: 'rgba(250, 215, 224, 0.7)', borderRadius: radius.full, marginTop: 4, overflow: 'hidden' }}>
                         <View
                           style={{
-                            width: `${progressPct}%`,
+                            width: `${taskProgressPct}%`,
                             height: '100%',
                             backgroundColor: isCompleted ? '#10B981' : palette.danger,
                             borderRadius: radius.full,
@@ -640,6 +806,116 @@ export default function PomodoroScreen() {
           </View>
         </View>
       </ScrollView>
+
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      {/* FULL-SCREEN RUNNING TIMER VIEW MODAL */}
+      {/* ──────────────────────────────────────────────────────────────────────── */}
+      <Modal visible={isFullScreen} animationType="slide" transparent={false} statusBarTranslucent>
+        <View style={styles.fullScreenContainer}>
+          {/* Top Header Bar */}
+          <View style={styles.fullScreenHeaderRow}>
+            <Pressable
+              onPress={() => setFullScreen(false)}
+              style={styles.runInBackgroundBtnTop}
+            >
+              <ArrowLeft size={16} color="#FFFFFF" strokeWidth={2.4} />
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+                Run in Background
+              </Text>
+            </Pressable>
+
+            <View style={styles.keepAwakeBadge}>
+              <Sparkles size={13} color="#F472B6" strokeWidth={2.4} />
+              <Text style={{ color: '#F472B6', fontSize: 11, fontWeight: '800' }}>
+                Screen Kept Active
+              </Text>
+            </View>
+          </View>
+
+          {/* Main Hero Content */}
+          <View style={styles.fullScreenCenterContent}>
+            {/* Session Type Pill */}
+            <View style={styles.fullScreenSessionPill}>
+              <Text style={{ color: '#E84D72', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>
+                {sessionType === 'focus' ? '🍅 FOCUS SESSION' : sessionType === 'short_break' ? '☕ SHORT BREAK' : '🌴 LONG BREAK'}
+              </Text>
+            </View>
+
+            {/* Task Title */}
+            {sessionType === 'focus' && activeTask && (
+              <Text style={styles.fullScreenTaskTitle} numberOfLines={2}>
+                {activeTask.title}
+              </Text>
+            )}
+
+            {/* Giant Timer Ring Display */}
+            <View style={styles.timerRingOuter}>
+              <View style={styles.timerRingInner}>
+                <View style={styles.liveLedRow}>
+                  <View style={[styles.livePulseDot, { backgroundColor: isPaused ? '#F59E0B' : '#10B981' }]} />
+                  <Text style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>
+                    {isPaused ? 'TIMER PAUSED' : 'LIVE TIMER RUNNING'}
+                  </Text>
+                </View>
+
+                <Text style={styles.fullScreenClockText}>
+                  {formatTime(timerSeconds)}
+                </Text>
+
+                {/* Progress bar line */}
+                <View style={styles.fullScreenProgressBarTrack}>
+                  <View style={[styles.fullScreenProgressBarFill, { width: `${progressPct}%` }]} />
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Bottom Actions */}
+          <View style={styles.fullScreenBottomContainer}>
+            {/* Play/Pause & Actions */}
+            <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
+              {isPaused ? (
+                <Pressable onPress={handleResume} style={[styles.fsMainActionBtn, { backgroundColor: '#10B981' }]}>
+                  <Play size={20} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
+                </Pressable>
+              ) : (
+                <Pressable onPress={handlePause} style={[styles.fsMainActionBtn, { backgroundColor: '#F59E0B' }]}>
+                  <Pause size={20} color="#FFFFFF" strokeWidth={2.4} />
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                </Pressable>
+              )}
+
+              <Pressable onPress={handleReset} style={styles.fsSecondaryActionBtn}>
+                <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
+              </Pressable>
+
+              <Pressable
+                onPress={() => void handleComplete(false)}
+                disabled={completing}
+                style={styles.fsSecondaryActionBtn}
+              >
+                {completing ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <CheckCircle2 size={18} color="#10B981" strokeWidth={2.4} />
+                )}
+              </Pressable>
+            </View>
+
+            {/* Run in Background Go-Back Main Button */}
+            <Pressable
+              onPress={() => setFullScreen(false)}
+              style={styles.runInBackgroundMainBtn}
+            >
+              <Minimize2 size={16} color="#FFFFFF" strokeWidth={2.4} />
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
+                Run in Background (Go Back)
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </Screen>
   );
 }
@@ -673,6 +949,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.12,
     shadowRadius: 6,
     elevation: 3,
+  },
+  runningBanner: {
+    backgroundColor: '#E84D72',
+    borderRadius: 16,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#E84D72',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    elevation: 6,
+  },
+  livePulseDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#10B981',
   },
   durationChip: {
     borderRadius: radius.input,
@@ -716,5 +1011,142 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: radius.pill,
+  },
+
+  /* FULL-SCREEN RUNNING TIMER STYLES */
+  fullScreenContainer: {
+    flex: 1,
+    backgroundColor: '#150A10',
+    paddingTop: Platform.OS === 'ios' ? 60 : 40,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+  },
+  fullScreenHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  runInBackgroundBtnTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.22)',
+    borderWidth: 1.5,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  keepAwakeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(244, 114, 182, 0.15)',
+    borderColor: 'rgba(244, 114, 182, 0.30)',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  fullScreenCenterContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
+    marginVertical: 'auto',
+  },
+  fullScreenSessionPill: {
+    backgroundColor: 'rgba(232, 77, 114, 0.18)',
+    borderColor: 'rgba(232, 77, 114, 0.40)',
+    borderWidth: 1.5,
+    borderRadius: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+  },
+  fullScreenTaskTitle: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '800',
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
+  timerRingOuter: {
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: 'rgba(232, 77, 114, 0.10)',
+    borderWidth: 3,
+    borderColor: 'rgba(232, 77, 114, 0.35)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#E84D72',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
+    elevation: 10,
+  },
+  timerRingInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    width: '100%',
+    paddingHorizontal: 16,
+  },
+  liveLedRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  fullScreenClockText: {
+    fontSize: 54,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -1,
+  },
+  fullScreenProgressBarTrack: {
+    width: '80%',
+    height: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  fullScreenProgressBarFill: {
+    height: '100%',
+    backgroundColor: '#E84D72',
+    borderRadius: 3,
+  },
+  fullScreenBottomContainer: {
+    gap: 12,
+    width: '100%',
+  },
+  fsMainActionBtn: {
+    flex: 1,
+    height: 52,
+    borderRadius: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  fsSecondaryActionBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.20)',
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  runInBackgroundMainBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderWidth: 1.5,
+    borderRadius: 26,
+    height: 50,
   },
 });

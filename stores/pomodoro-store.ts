@@ -10,6 +10,9 @@ interface PomodoroState {
   sessionType: PomodoroSessionType;
   selectedTaskId: string | null;
   startedAt: string | null;
+  targetEndTime: number | null;
+  isFullScreen: boolean;
+  scheduledNotifId: string | null;
 
   // Actions
   setDurationMinutes: (mins: number) => void;
@@ -21,9 +24,12 @@ interface PomodoroState {
   resetTimer: () => void;
   tick: () => void;
   setTimerSeconds: (seconds: number) => void;
+  setFullScreen: (full: boolean) => void;
+  setScheduledNotifId: (id: string | null) => void;
+  syncBackgroundTime: () => void;
 }
 
-export const usePomodoroStore = create<PomodoroState>((set) => ({
+export const usePomodoroStore = create<PomodoroState>((set, get) => ({
   durationMinutes: 25,
   timerSeconds: 25 * 60,
   isRunning: false,
@@ -31,6 +37,9 @@ export const usePomodoroStore = create<PomodoroState>((set) => ({
   sessionType: 'focus',
   selectedTaskId: null,
   startedAt: null,
+  targetEndTime: null,
+  isFullScreen: false,
+  scheduledNotifId: null,
 
   setDurationMinutes: (mins) =>
     set((state) => {
@@ -58,30 +67,43 @@ export const usePomodoroStore = create<PomodoroState>((set) => ({
         sessionType: type,
         durationMinutes: defaultMins,
         timerSeconds: defaultMins * 60,
-        // Keep selectedTaskId but it is only active during 'focus'
       };
     }),
 
   startTimer: () =>
     set((state) => {
       if (state.isRunning) return {};
+      const targetEndTime = Date.now() + state.timerSeconds * 1000;
       return {
         isRunning: true,
         isPaused: false,
         startedAt: new Date().toISOString(),
+        targetEndTime,
       };
     }),
 
   pauseTimer: () =>
     set((state) => {
       if (!state.isRunning || state.isPaused) return {};
-      return { isPaused: true };
+      let remaining = state.timerSeconds;
+      if (state.targetEndTime) {
+        remaining = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
+      }
+      return {
+        isPaused: true,
+        timerSeconds: remaining,
+        targetEndTime: null,
+      };
     }),
 
   resumeTimer: () =>
     set((state) => {
       if (!state.isRunning || !state.isPaused) return {};
-      return { isPaused: false };
+      const targetEndTime = Date.now() + state.timerSeconds * 1000;
+      return {
+        isPaused: false,
+        targetEndTime,
+      };
     }),
 
   resetTimer: () =>
@@ -90,18 +112,27 @@ export const usePomodoroStore = create<PomodoroState>((set) => ({
       isPaused: false,
       timerSeconds: state.durationMinutes * 60,
       startedAt: null,
+      targetEndTime: null,
+      isFullScreen: false,
+      scheduledNotifId: null,
     })),
 
   tick: () =>
     set((state) => {
       if (!state.isRunning || state.isPaused) return {};
-      const nextSeconds = state.timerSeconds - 1;
-      if (nextSeconds <= 0) {
+
+      let remaining = state.timerSeconds - 1;
+      if (state.targetEndTime) {
+        remaining = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
+      }
+
+      if (remaining <= 0) {
         return {
           timerSeconds: 0,
+          targetEndTime: null,
         };
       }
-      return { timerSeconds: nextSeconds };
+      return { timerSeconds: remaining };
     }),
 
   setTimerSeconds: (seconds) =>
@@ -109,4 +140,16 @@ export const usePomodoroStore = create<PomodoroState>((set) => ({
       if (state.isRunning) return {};
       return { timerSeconds: seconds };
     }),
+
+  setFullScreen: (full) => set({ isFullScreen: full }),
+
+  setScheduledNotifId: (id) => set({ scheduledNotifId: id }),
+
+  syncBackgroundTime: () => {
+    const { isRunning, isPaused, targetEndTime } = get();
+    if (isRunning && !isPaused && targetEndTime) {
+      const remaining = Math.max(0, Math.ceil((targetEndTime - Date.now()) / 1000));
+      set({ timerSeconds: remaining });
+    }
+  },
 }));
