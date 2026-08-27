@@ -24,102 +24,77 @@ export function Button({
   style,
   textStyle,
 }: ButtonProps) {
-  const getVariantStyles = (): { container: ViewStyle; text: TextStyle } => {
-    switch (variant) {
-      case 'white':
-        return {
-          container: {
-            backgroundColor: '#FFFFFF',
-            borderWidth: 1.5,
-            borderColor: 'rgba(232, 77, 114, 0.40)',
-            overflow: 'hidden',
-            elevation: 3,
-          },
-          text: {
-            color: palette.cherryBloom,
-            fontWeight: '800',
-          },
-        };
-      case 'secondary':
-        return {
-          container: {
-            backgroundColor: 'rgba(255, 243, 245, 0.95)',
-            borderWidth: 1.5,
-            borderColor: 'rgba(232, 77, 114, 0.35)',
-            overflow: 'hidden',
-          },
-          text: {
-            color: palette.cherryBloom,
-            fontWeight: '700',
-          },
-        };
-      case 'tertiary':
-        return {
-          container: {
-            backgroundColor: 'rgba(255, 255, 255, 0.20)',
-            borderWidth: 1,
-            borderColor: 'rgba(255, 255, 255, 0.40)',
-            paddingHorizontal: spacing[12],
-            overflow: 'hidden',
-          },
-          text: {
-            color: '#FFFFFF',
-            fontWeight: '700',
-          },
-        };
-      case 'destructive':
-        return {
-          container: {
-            backgroundColor: palette.danger,
-            overflow: 'hidden',
-            elevation: 3,
-          },
-          text: {
-            color: '#FFFFFF',
-            fontWeight: '800',
-          },
-        };
-      case 'primary':
-      default:
-        return {
-          container: {
-            backgroundColor: palette.cherryBloom,
-            borderColor: 'rgba(255, 255, 255, 0.30)',
-            borderWidth: 1,
-            overflow: 'hidden',
-            elevation: 3,
-          },
-          text: {
-            color: '#FFFFFF',
-            fontWeight: '800',
-          },
-        };
-    }
+  // Resolve variant styles directly to guarantee correct compilation in production
+  const containerStyle: ViewStyle = {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.button ?? 20,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'transparent',
   };
 
-  const getSizeStyles = (): { container: ViewStyle; text: TextStyle } => {
-    switch (size) {
-      case 'sm':
-        return {
-          container: { paddingVertical: spacing[8], paddingHorizontal: spacing[16] },
-          text: { fontSize: 14, lineHeight: 18 },
-        };
-      case 'lg':
-        return {
-          container: { paddingVertical: spacing[12], paddingHorizontal: spacing[16] },
-          text: { fontSize: 16, lineHeight: 22 },
-        };
-      case 'md':
-      default:
-        return {
-          container: { paddingVertical: spacing[12], paddingHorizontal: spacing[24] },
-          text: { fontSize: 16, lineHeight: 22 },
-        };
-    }
+  const textStyleResolved: TextStyle = {
+    fontWeight: '800',
+    textAlign: 'center',
   };
 
-  const vStyles = getVariantStyles();
-  const sStyles = getSizeStyles();
+  // Assign background color and borders based on variant
+  if (variant === 'white') {
+    containerStyle.backgroundColor = '#FFFFFF';
+    containerStyle.borderColor = 'rgba(232, 77, 114, 0.40)';
+    containerStyle.borderWidth = 1.5;
+    containerStyle.elevation = 3;
+    textStyleResolved.color = palette.cherryBloom || '#C73A57';
+    textStyleResolved.fontWeight = '800';
+  } else if (variant === 'secondary') {
+    containerStyle.backgroundColor = 'rgba(255, 243, 245, 0.95)';
+    containerStyle.borderColor = 'rgba(232, 77, 114, 0.35)';
+    containerStyle.borderWidth = 1.5;
+    textStyleResolved.color = palette.cherryBloom || '#C73A57';
+    textStyleResolved.fontWeight = '700';
+  } else if (variant === 'tertiary') {
+    containerStyle.backgroundColor = 'rgba(255, 255, 255, 0.20)';
+    containerStyle.borderColor = 'rgba(255, 255, 255, 0.40)';
+    containerStyle.borderWidth = 1;
+    textStyleResolved.color = '#FFFFFF';
+    textStyleResolved.fontWeight = '700';
+  } else if (variant === 'destructive') {
+    containerStyle.backgroundColor = palette.danger || '#D94C61';
+    containerStyle.elevation = 3;
+    textStyleResolved.color = '#FFFFFF';
+    textStyleResolved.fontWeight = '800';
+  } else {
+    // primary & default
+    containerStyle.backgroundColor = palette.cherryBloom || '#C73A57';
+    containerStyle.borderColor = 'rgba(255, 255, 255, 0.30)';
+    containerStyle.borderWidth = 1;
+    containerStyle.elevation = 3;
+    textStyleResolved.color = '#FFFFFF';
+    textStyleResolved.fontWeight = '800';
+  }
+
+  // Resolve size spacing
+  let paddingVertical: number = spacing[12] ?? 12;
+  let paddingHorizontal: number = spacing[24] ?? 24;
+  let fontSize = 16;
+  let lineHeight = 22;
+
+  if (size === 'sm') {
+    paddingVertical = spacing[8] ?? 8;
+    paddingHorizontal = spacing[16] ?? 16;
+    fontSize = 14;
+    lineHeight = 18;
+  } else if (size === 'lg') {
+    paddingVertical = spacing[12] ?? 12;
+    paddingHorizontal = spacing[16] ?? 16;
+    fontSize = 16;
+    lineHeight = 22;
+  }
+
+  const sizeContainerStyle: ViewStyle = { paddingVertical, paddingHorizontal };
+  const sizeTextStyle: TextStyle = { fontSize, lineHeight };
 
   return (
     <Pressable
@@ -127,25 +102,21 @@ export function Button({
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
+        containerStyle,
+        sizeContainerStyle,
         {
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderRadius: radius.button,
           opacity: disabled ? 0.55 : pressed ? 0.88 : 1,
           transform: [{ scale: pressed && !disabled ? 0.97 : 1 }],
         },
-        vStyles.container,
-        sStyles.container,
         style,
       ]}
     >
       {typeof children === 'string' || typeof children === 'number' ? (
         <Text
           style={[
-            { fontWeight: '800', letterSpacing: 0.2, textAlign: 'center' },
-            vStyles.text,
-            sStyles.text,
+            textStyleResolved,
+            sizeTextStyle,
+            { letterSpacing: 0.2 },
             textStyle,
           ]}
         >

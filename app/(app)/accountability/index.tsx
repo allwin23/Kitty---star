@@ -602,7 +602,7 @@ export default function AccountabilityScreen() {
                     size="lg"
                     disabled={startDayMutation.isPending}
                     onPress={() => void startDayMutation.mutateAsync()}
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', backgroundColor: palette.cherryBloom }}
                   >
                     {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
                   </Button>
@@ -635,7 +635,7 @@ export default function AccountabilityScreen() {
                       params: { planId: currentPlan.id },
                     })
                   }
-                  style={{ width: '100%', marginTop: spacing.xs }}
+                  style={{ width: '100%', marginTop: spacing.xs, backgroundColor: palette.cherryBloom }}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                     <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
