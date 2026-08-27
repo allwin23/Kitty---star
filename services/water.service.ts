@@ -23,14 +23,9 @@ export async function logWater(input: WaterLogInput): Promise<WaterLogRow> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Authentication required.');
 
-  const { data, error } = await supabase
-    .from('water_logs')
-    .insert({
-      user_id: user.id,
-      amount_ml: parsed.amount_ml,
-    })
-    .select()
-    .single();
+  const { data, error } = await supabase.rpc('log_water', {
+    p_amount_ml: parsed.amount_ml,
+  });
 
   return throwIfErrorOrNull(data, error, 'Failed to log water.');
 }

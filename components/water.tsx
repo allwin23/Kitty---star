@@ -178,7 +178,7 @@ export function CustomWaterInput({
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.xs }}>
         <Plus size={16} color="#D94C61" strokeWidth={2.4} />
         <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
-          Custom Entry
+          Log Water Intake
         </Text>
       </View>
       <View style={{ flexDirection: 'row', gap: spacing.sm, alignItems: 'center' }}>

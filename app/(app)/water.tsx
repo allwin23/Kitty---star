@@ -11,7 +11,6 @@ import { EventBus } from '@/features/notifications/event-bus';
 import * as waterService from '@/services/water.service';
 import {
   WaterProgressCard,
-  QuickAddButton,
   CustomWaterInput,
   GoalCard,
   HistoryList,
@@ -131,20 +130,6 @@ export default function WaterTrackerScreen() {
 
           {/* Progress Card */}
           <WaterProgressCard totalMl={totalMl} goalMl={goalMl} />
-
-          {/* Quick Add Buttons Grid */}
-          <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle, { color: '#2A1D22' }]}>Quick Add</Text>
-            <View style={styles.quickAddGrid}>
-              {[100, 200, 250, 500, 1000].map((amount) => (
-                <QuickAddButton
-                  key={amount}
-                  amount={amount}
-                  onPress={() => handleLogWater(amount)}
-                />
-              ))}
-            </View>
-          </View>
 
           {/* Custom Input */}
           <CustomWaterInput onLog={handleLogWater} />

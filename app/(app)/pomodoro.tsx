@@ -721,13 +721,13 @@ export default function PomodoroScreen() {
           </Card>
 
           {/* Session Controls (Moved outside of the Card!) */}
-          <View style={{ flexDirection: 'row', gap: spacing[12], width: '100%', marginTop: spacing[16], marginBottom: spacing[8] }}>
+          <View style={{ flexDirection: 'row', gap: spacing[12], justifyContent: 'center', marginTop: spacing[16], marginBottom: spacing[8] }}>
             {!isRunning ? (
               <Pressable
                 disabled={sessionType === 'focus' && !selectedTaskId}
                 onPress={handleStart}
                 style={({ pressed }) => ({
-                  flex: 1,
+                  alignSelf: 'center',
                   opacity: (sessionType === 'focus' && !selectedTaskId) ? 0.5 : pressed ? 0.88 : 1,
                   transform: [{ scale: pressed && !(sessionType === 'focus' && !selectedTaskId) ? 0.97 : 1 }],
                 })}
@@ -738,7 +738,7 @@ export default function PomodoroScreen() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: 8,
-                    width: '100%',
+                    paddingHorizontal: 36,
                     height: 52,
                     backgroundColor: '#C73A57',
                     borderRadius: 26,
@@ -1085,7 +1085,7 @@ export default function PomodoroScreen() {
 
           {/* Bottom Actions: Clean Pause/Resume & Reset Only */}
           <View style={styles.fullScreenBottomContainer}>
-            <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
+            <View style={{ flexDirection: 'row', gap: 12 }}>
               {isPaused ? (
                 <Pressable onPress={handleResume} style={[styles.fsMainActionBtn, { backgroundColor: palette.cherryBloom }]}>
                   <Play size={20} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
@@ -1324,7 +1324,6 @@ const styles = StyleSheet.create({
   },
   fullScreenBottomContainer: {
     gap: 12,
-    width: '100%',
   },
   fsMainActionBtn: {
     flex: 1,
