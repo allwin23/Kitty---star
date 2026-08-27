@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { Pressable, Text, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { Platform, Pressable, Text, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 
 import { palette, radius, spacing } from '@/theme';
 
@@ -32,11 +32,15 @@ export function Button({
             backgroundColor: '#FFFFFF',
             borderWidth: 1.5,
             borderColor: 'rgba(232, 77, 114, 0.40)',
-            shadowColor: '#8A1535',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.15,
-            shadowRadius: 10,
-            elevation: 4,
+            overflow: 'hidden',
+            ...(Platform.OS === 'ios'
+              ? {
+                  shadowColor: '#8A1535',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 10,
+                }
+              : { elevation: 3 }),
           },
           text: {
             color: palette.cherryBloom,
@@ -49,6 +53,7 @@ export function Button({
             backgroundColor: 'rgba(255, 243, 245, 0.95)',
             borderWidth: 1.5,
             borderColor: 'rgba(232, 77, 114, 0.35)',
+            overflow: 'hidden',
           },
           text: {
             color: palette.cherryBloom,
@@ -62,6 +67,7 @@ export function Button({
             borderWidth: 1,
             borderColor: 'rgba(255, 255, 255, 0.40)',
             paddingHorizontal: spacing[12],
+            overflow: 'hidden',
           },
           text: {
             color: '#FFFFFF',
@@ -72,11 +78,15 @@ export function Button({
         return {
           container: {
             backgroundColor: palette.danger,
-            shadowColor: palette.danger,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.30,
-            shadowRadius: 8,
-            elevation: 4,
+            overflow: 'hidden',
+            ...(Platform.OS === 'ios'
+              ? {
+                  shadowColor: palette.danger,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.30,
+                  shadowRadius: 8,
+                }
+              : { elevation: 3 }),
           },
           text: {
             color: '#FFFFFF',
@@ -90,11 +100,15 @@ export function Button({
             backgroundColor: palette.cherryBloom,
             borderColor: 'rgba(255, 255, 255, 0.30)',
             borderWidth: 1,
-            shadowColor: '#5C0D22',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.30,
-            shadowRadius: 10,
-            elevation: 5,
+            overflow: 'hidden',
+            ...(Platform.OS === 'ios'
+              ? {
+                  shadowColor: '#5C0D22',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.30,
+                  shadowRadius: 10,
+                }
+              : { elevation: 3 }),
           },
           text: {
             color: '#FFFFFF',
