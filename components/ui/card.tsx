@@ -23,9 +23,11 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
               borderColor: 'rgba(250, 215, 224, 0.90)',
               borderWidth: 1.5,
               borderRadius: radius.card,
+              overflow: 'hidden',
             },
         {
           padding: spacing.lg,
+          overflow: 'hidden',
         },
         style,
       ]}

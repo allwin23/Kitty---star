@@ -91,11 +91,11 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
       style={({ pressed }) => [
         styles.card,
         {
-          backgroundColor: isUnread ? 'rgba(255, 243, 245, 0.95)' : 'rgba(255, 243, 245, 0.78)',
-          borderColor: isUnread ? palette.danger : 'rgba(250, 215, 224, 0.85)',
+          backgroundColor: isUnread ? '#FFF5F7' : '#FFFFFF',
+          borderColor: isUnread ? '#E84D72' : '#FAD7E0',
           borderWidth: isUnread ? 2 : 1.5,
+          opacity: pressed ? 0.9 : 1,
         },
-        pressed && { opacity: 0.9 },
       ]}
     >
       <View style={styles.headerRow}>
@@ -172,10 +172,10 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing.md,
     gap: spacing.xs,
-    elevation: 3,
-    // NOTE: Do NOT add overflow:'hidden' here — it kills backgroundColor on Android release builds when combined with elevation
+    // NOTE: elevation is web-only to prevent rendering bugs on Android native
     ...(Platform.OS === 'web'
       ? ({
+          elevation: 3,
           backdropFilter: 'blur(12px) saturate(160%)',
           WebkitBackdropFilter: 'blur(12px) saturate(160%)',
         } as any)

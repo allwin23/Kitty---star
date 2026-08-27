@@ -244,13 +244,14 @@ const styles = StyleSheet.create({
   },
   toolCard: {
     position: 'relative',
+    overflow: 'hidden',
     backgroundColor: 'rgba(255, 243, 245, 0.95)',
     borderColor: 'rgba(250, 215, 224, 0.90)',
     borderWidth: 1.5,
     borderRadius: 24,
     padding: spacing[16],
     gap: spacing[12],
-    elevation: 4,
+    ...(Platform.OS === 'web' ? { elevation: 4 } : {}),
   },
   watermarkContainer: {
     position: 'absolute',

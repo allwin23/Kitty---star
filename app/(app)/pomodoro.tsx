@@ -717,63 +717,63 @@ export default function PomodoroScreen() {
               >
                 {formatTime(timerSeconds)}
               </Text>
+            </View>
+          </Card>
 
-              {/* Session Controls */}
-              <View style={{ flexDirection: 'row', gap: spacing[12], width: '100%', marginTop: spacing[8] }}>
-                {!isRunning ? (
+          {/* Session Controls (Moved outside of the Card!) */}
+          <View style={{ flexDirection: 'row', gap: spacing[12], width: '100%', marginTop: spacing[16], marginBottom: spacing[8] }}>
+            {!isRunning ? (
+              <Pressable
+                disabled={sessionType === 'focus' && !selectedTaskId}
+                onPress={handleStart}
+                style={({ pressed }) => [
+                  styles.primaryActionBtn,
+                  sessionType === 'focus' && !selectedTaskId && { opacity: 0.5 },
+                  pressed && { opacity: 0.88 },
+                ]}
+              >
+                <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+              </Pressable>
+            ) : (
+              <>
+                {isPaused ? (
                   <Pressable
-                    disabled={sessionType === 'focus' && !selectedTaskId}
-                    onPress={handleStart}
+                    onPress={handleResume}
                     style={({ pressed }) => [
                       styles.primaryActionBtn,
-                      sessionType === 'focus' && !selectedTaskId && { opacity: 0.5 },
                       pressed && { opacity: 0.88 },
                     ]}
                   >
                     <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
                   </Pressable>
                 ) : (
-                  <>
-                    {isPaused ? (
-                      <Pressable
-                        onPress={handleResume}
-                        style={({ pressed }) => [
-                          styles.primaryActionBtn,
-                          pressed && { opacity: 0.88 },
-                        ]}
-                      >
-                        <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
-                      </Pressable>
-                    ) : (
-                      <Pressable
-                        onPress={handlePause}
-                        style={({ pressed }) => [
-                          styles.secondaryActionBtn,
-                          pressed && { opacity: 0.88 },
-                        ]}
-                      >
-                        <Pause size={18} color={palette.danger} strokeWidth={2.4} />
-                        <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
-                      </Pressable>
-                    )}
-
-                    <Pressable
-                      onPress={handleReset}
-                      style={({ pressed }) => [
-                        styles.destructiveActionBtn,
-                        pressed && { opacity: 0.88 },
-                      ]}
-                    >
-                      <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
-                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
-                    </Pressable>
-                  </>
+                  <Pressable
+                    onPress={handlePause}
+                    style={({ pressed }) => [
+                      styles.secondaryActionBtn,
+                      pressed && { opacity: 0.88 },
+                    ]}
+                  >
+                    <Pause size={18} color={palette.danger} strokeWidth={2.4} />
+                    <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                  </Pressable>
                 )}
-              </View>
-            </View>
-          </Card>
+
+                <Pressable
+                  onPress={handleReset}
+                  style={({ pressed }) => [
+                    styles.destructiveActionBtn,
+                    pressed && { opacity: 0.88 },
+                  ]}
+                >
+                  <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
+                </Pressable>
+              </>
+            )}
+          </View>
 
           {/* Duration Chips Settings */}
           <Card>
@@ -1136,7 +1136,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    overflow: 'hidden',
   },
   secondaryActionBtn: {
     flex: 1,
@@ -1149,7 +1148,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    overflow: 'hidden',
   },
   destructiveActionBtn: {
     flex: 1,
@@ -1160,7 +1158,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    overflow: 'hidden',
   },
 
   /* FULL-SCREEN RUNNING TIMER STYLES */

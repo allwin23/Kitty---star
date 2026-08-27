@@ -496,21 +496,39 @@ export default function AccountabilityScreen() {
                         : "You didn\u2019t set prior planning for today. Start an empty day to add tasks now."
                     }
                   />
-                  {/* If no plan exists, no draft, and no report for today, let user start an empty day */}
-                  {!currentPlan && !hasTodayDraftTasks && !todayReport ? (
-                    <Button
-                      disabled={startEmptyDayMutation.isPending}
-                      onPress={() => void startEmptyDayMutation.mutateAsync()}
-                    >
-                      {startEmptyDayMutation.isPending ? 'Starting\u2026' : 'Start Empty Day'}
-                    </Button>
-                  ) : null}
                 </View>
               ) : (
                 <TodoList tasks={initialTasks} readOnly />
               )}
             </View>
           </Card>
+
+          {/* Start Empty Day Button (Placed after Card!) */}
+          {!currentPlan && !hasTodayDraftTasks && !todayReport && !initialPlanQ.isLoading && (
+            <Pressable
+              accessibilityRole="button"
+              disabled={startEmptyDayMutation.isPending}
+              onPress={() => void startEmptyDayMutation.mutateAsync()}
+              style={({ pressed }) => ({
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#C73A57',
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.30)',
+                paddingVertical: 14,
+                paddingHorizontal: 16,
+                marginTop: spacing.md,
+                opacity: startEmptyDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
+                transform: [{ scale: pressed && !startEmptyDayMutation.isPending ? 0.97 : 1 }],
+              })}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                {startEmptyDayMutation.isPending ? 'Starting...' : 'Start Empty Day'}
+              </Text>
+            </Pressable>
+          )}
 
           {/* ─── Section 3: My Today Tasks ─── */}
           <Card>
@@ -597,29 +615,6 @@ export default function AccountabilityScreen() {
                     title="Today's Plan Not Started"
                     description="Start today's plan to add tasks, run Pomodoro study sessions, and submit your day to your partner."
                   />
-                  <Pressable
-                    accessibilityRole="button"
-                    disabled={startDayMutation.isPending}
-                    onPress={() => void startDayMutation.mutateAsync()}
-                    style={({ pressed }) => ({
-                      width: '100%',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: '#C73A57',
-                      borderRadius: 20,
-                      borderWidth: 1,
-                      borderColor: 'rgba(255, 255, 255, 0.30)',
-                      paddingVertical: 14,
-                      paddingHorizontal: 16,
-                      elevation: 3,
-                      opacity: startDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
-                      transform: [{ scale: pressed && !startDayMutation.isPending ? 0.97 : 1 }],
-                    })}
-                  >
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                      {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
-                    </Text>
-                  </Pressable>
                 </View>
               ) : currentPlan.status === 'submitted' ? (
                 <View style={{ gap: spacing.sm }}>
@@ -637,43 +632,69 @@ export default function AccountabilityScreen() {
                   savingId={savingTaskId}
                 />
               )}
-
-              {/* Submit button */}
-              {currentPlan && currentTasks.length > 0 ? (
-                <Pressable
-                  accessibilityRole="button"
-                  onPress={() =>
-                    router.push({
-                      pathname: '/(app)/accountability/submit',
-                      params: { planId: currentPlan.id },
-                    })
-                  }
-                  style={({ pressed }) => ({
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    width: '100%',
-                    marginTop: spacing.xs,
-                    backgroundColor: '#C73A57',
-                    borderRadius: 20,
-                    borderWidth: 1,
-                    borderColor: 'rgba(255, 255, 255, 0.30)',
-                    paddingVertical: 14,
-                    paddingHorizontal: 16,
-                    elevation: 3,
-                    opacity: pressed ? 0.88 : 1,
-                    transform: [{ scale: pressed ? 0.97 : 1 }],
-                  })}
-                >
-                  <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                    {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
-                  </Text>
-                </Pressable>
-              ) : null}
             </View>
           </Card>
+
+          {/* Start Today's Plan Button (Placed after Card!) */}
+          {!currentPlan && !todayReport && !currentPlanQ.isLoading && !todayReportQ.isLoading && (
+            <Pressable
+              accessibilityRole="button"
+              disabled={startDayMutation.isPending}
+              onPress={() => void startDayMutation.mutateAsync()}
+              style={({ pressed }) => ({
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#C73A57',
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.30)',
+                paddingVertical: 14,
+                paddingHorizontal: 16,
+                marginTop: spacing.md,
+                opacity: startDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
+                transform: [{ scale: pressed && !startDayMutation.isPending ? 0.97 : 1 }],
+              })}
+            >
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
+              </Text>
+            </Pressable>
+          )}
+
+          {/* Submit button (Placed after Card!) */}
+          {currentPlan && currentTasks.length > 0 ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() =>
+                router.push({
+                  pathname: '/(app)/accountability/submit',
+                  params: { planId: currentPlan.id },
+                })
+              }
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                width: '100%',
+                marginTop: spacing.md,
+                backgroundColor: '#C73A57',
+                borderRadius: 20,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.30)',
+                paddingVertical: 14,
+                paddingHorizontal: 16,
+                opacity: pressed ? 0.88 : 1,
+                transform: [{ scale: pressed ? 0.97 : 1 }],
+              })}
+            >
+              <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+              </Text>
+            </Pressable>
+          ) : null}
 
           {/* ─── Section 4: Partner's Live Tasks ─── */}
           <Card>
