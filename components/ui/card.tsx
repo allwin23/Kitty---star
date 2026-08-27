@@ -23,17 +23,15 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
               borderColor: 'rgba(250, 215, 224, 0.90)',
               borderWidth: 1.5,
               borderRadius: radius.card,
-              overflow: 'hidden',
             },
         {
           padding: spacing.lg,
-          overflow: 'hidden',
         },
         style,
       ]}
     >
-      {/* Frosted Focus Zone clipped strictly within card bounds */}
-      {isGlass ? (
+      {/* Frosted Focus Zone — only on web where backdrop-filter works */}
+      {isGlass && Platform.OS === 'web' ? (
         <View
           style={[
             StyleSheet.absoluteFill,

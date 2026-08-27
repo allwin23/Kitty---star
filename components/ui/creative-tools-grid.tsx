@@ -244,7 +244,6 @@ const styles = StyleSheet.create({
   },
   toolCard: {
     position: 'relative',
-    overflow: 'hidden',
     backgroundColor: 'rgba(255, 243, 245, 0.95)',
     borderColor: 'rgba(250, 215, 224, 0.90)',
     borderWidth: 1.5,

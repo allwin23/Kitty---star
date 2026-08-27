@@ -32,7 +32,6 @@ export function HeaderTitleCard({
           paddingVertical: 14,
           alignItems: 'center',
           justifyContent: 'center',
-          overflow: 'hidden',
           elevation: 4,
           ...(Platform.OS === 'web'
             ? ({

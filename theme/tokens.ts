@@ -158,8 +158,8 @@ export const glassCardStyle = {
   borderColor: 'rgba(250, 215, 224, 0.90)',
   borderWidth: 1.5,
   borderRadius: 24,
-  overflow: 'hidden' as const,
   elevation: 4,
+  // NOTE: overflow:'hidden' is intentionally omitted — it destroys backgroundColor on Android release APK when combined with elevation
   ...(Platform.OS === 'web'
     ? ({
         backdropFilter: 'blur(16px) saturate(160%)',

@@ -172,8 +172,8 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing.md,
     gap: spacing.xs,
-    overflow: 'hidden',
     elevation: 3,
+    // NOTE: Do NOT add overflow:'hidden' here — it kills backgroundColor on Android release builds when combined with elevation
     ...(Platform.OS === 'web'
       ? ({
           backdropFilter: 'blur(12px) saturate(160%)',

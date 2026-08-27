@@ -183,7 +183,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    overflow: 'hidden',
     elevation: 4,
     ...(Platform.OS === 'web'
       ? ({
