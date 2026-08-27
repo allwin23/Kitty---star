@@ -990,10 +990,6 @@ const styles = StyleSheet.create({
   },
   activeTabButton: {
     backgroundColor: '#FFFFFF',
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.12,
-    shadowRadius: 6,
     elevation: 3,
   },
   runningBanner: {
@@ -1003,10 +999,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#E84D72',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
     elevation: 6,
   },
   livePulseDot: {
@@ -1035,10 +1027,6 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: 24,
     padding: spacing[16],
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
     elevation: 3,
   },
   selectedTaskCard: {
@@ -1161,11 +1149,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(232, 77, 114, 0.35)',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#E84D72',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.4,
-    shadowRadius: 24,
-    elevation: 10,
+    elevation: 4,
   },
   timerRingInner: {
     alignItems: 'center',

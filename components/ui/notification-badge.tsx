@@ -183,11 +183,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.30,
-    shadowRadius: 12,
-    elevation: 8,
+    overflow: 'hidden',
+    elevation: 4,
     ...(Platform.OS === 'web'
       ? ({
           backdropFilter: 'blur(16px) saturate(180%)',
@@ -208,11 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: '#121218',
-    shadowColor: palette.cherryBloom,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 5,
+    elevation: 4,
   },
   badgeText: {
     color: '#ffffff',

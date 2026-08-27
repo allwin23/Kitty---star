@@ -173,14 +173,7 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     gap: spacing.xs,
     overflow: 'hidden',
-    ...(Platform.OS === 'ios'
-      ? {
-          shadowColor: palette.danger,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 10,
-        }
-      : { elevation: 3 }),
+    elevation: 3,
     ...(Platform.OS === 'web'
       ? ({
           backdropFilter: 'blur(12px) saturate(160%)',

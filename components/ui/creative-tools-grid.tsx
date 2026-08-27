@@ -251,10 +251,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing[16],
     gap: spacing[12],
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
     elevation: 4,
   },
   watermarkContainer: {

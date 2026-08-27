@@ -159,10 +159,6 @@ export const glassCardStyle = {
   borderWidth: 1.5,
   borderRadius: 24,
   overflow: 'hidden' as const,
-  shadowColor: '#8A1535',
-  shadowOffset: { width: 0, height: 6 },
-  shadowOpacity: 0.08,
-  shadowRadius: 14,
   elevation: 4,
   ...(Platform.OS === 'web'
     ? ({

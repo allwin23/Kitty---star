@@ -33,14 +33,7 @@ export function Button({
             borderWidth: 1.5,
             borderColor: 'rgba(232, 77, 114, 0.40)',
             overflow: 'hidden',
-            ...(Platform.OS === 'ios'
-              ? {
-                  shadowColor: '#8A1535',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.15,
-                  shadowRadius: 10,
-                }
-              : { elevation: 3 }),
+            elevation: 3,
           },
           text: {
             color: palette.cherryBloom,
@@ -79,14 +72,7 @@ export function Button({
           container: {
             backgroundColor: palette.danger,
             overflow: 'hidden',
-            ...(Platform.OS === 'ios'
-              ? {
-                  shadowColor: palette.danger,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.30,
-                  shadowRadius: 8,
-                }
-              : { elevation: 3 }),
+            elevation: 3,
           },
           text: {
             color: '#FFFFFF',
@@ -101,14 +87,7 @@ export function Button({
             borderColor: 'rgba(255, 255, 255, 0.30)',
             borderWidth: 1,
             overflow: 'hidden',
-            ...(Platform.OS === 'ios'
-              ? {
-                  shadowColor: '#5C0D22',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.30,
-                  shadowRadius: 10,
-                }
-              : { elevation: 3 }),
+            elevation: 3,
           },
           text: {
             color: '#FFFFFF',

@@ -35,10 +35,6 @@ export function Avatar({ label, size = 40, source }: AvatarProps) {
         width: size,
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.8)',
-        shadowColor: palette.cherryBloom,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
         elevation: 2,
       }}
     >

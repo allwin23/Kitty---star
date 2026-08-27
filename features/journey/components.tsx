@@ -554,10 +554,6 @@ export function JourneyNode({
               : isUnlocked
                 ? palette.danger
                 : 'rgba(250, 215, 224, 0.90)',
-            shadowColor: palette.danger,
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.12,
-            shadowRadius: 8,
             elevation: 4,
           }}
         >

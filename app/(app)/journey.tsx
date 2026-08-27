@@ -252,10 +252,6 @@ export default function JourneyScreen() {
                   justifyContent: 'center',
                   borderRadius: radius.button,
                   backgroundColor: !viewingPartner ? palette.cherryBloom : 'transparent',
-                  shadowColor: !viewingPartner ? palette.cherryBloom : 'transparent',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 6,
                   elevation: !viewingPartner ? 3 : 0,
                 }}
               >
@@ -279,10 +275,6 @@ export default function JourneyScreen() {
                   justifyContent: 'center',
                   borderRadius: radius.button,
                   backgroundColor: viewingPartner ? palette.cherryBloom : 'transparent',
-                  shadowColor: viewingPartner ? palette.cherryBloom : 'transparent',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 6,
                   elevation: viewingPartner ? 3 : 0,
                 }}
               >

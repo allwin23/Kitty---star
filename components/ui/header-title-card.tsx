@@ -33,14 +33,7 @@ export function HeaderTitleCard({
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
-          ...(Platform.OS === 'ios'
-            ? {
-                shadowColor: '#000000',
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.28,
-                shadowRadius: 16,
-              }
-            : { elevation: 4 }),
+          elevation: 4,
           ...(Platform.OS === 'web'
             ? ({
                 backdropFilter: 'blur(16px) saturate(180%)',

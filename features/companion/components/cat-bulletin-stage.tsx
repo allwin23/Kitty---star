@@ -221,10 +221,7 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    overflow: 'hidden',
     elevation: 3,
     ...(Platform.OS === 'web'
       ? ({
@@ -285,10 +282,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing.md,
     justifyContent: 'space-between',
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 12,
     elevation: 4,
     position: 'relative',
     overflow: 'hidden',
