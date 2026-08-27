@@ -26,6 +26,7 @@ import {
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
+import { Send } from 'lucide-react-native';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
 import type { TodoTask } from '@/features/accountability/todo-list';
@@ -525,8 +526,14 @@ export default function SubmitScreen() {
                         }
                         void handleSend();
                       }}
+                      style={{ width: '100%', marginTop: spacing.xs }}
                     >
-                      {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                        <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>
+                          {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
+                        </Text>
+                      </View>
                     </Button>
                   </View>
                 </View>

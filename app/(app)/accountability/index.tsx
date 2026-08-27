@@ -15,6 +15,7 @@ import { Alert, RefreshControl, ScrollView, Text, useColorScheme, View } from 'r
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { format, addDays } from 'date-fns';
+import { Send } from 'lucide-react-native';
 
 import { plannerService, notificationService } from '@/services/backend';
 import {
@@ -611,8 +612,14 @@ export default function AccountabilityScreen() {
                       params: { planId: currentPlan.id },
                     })
                   }
+                  style={{ width: '100%', marginTop: spacing.xs }}
                 >
-                  {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>
+                      {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+                    </Text>
+                  </View>
                 </Button>
               ) : null}
             </View>

@@ -392,124 +392,126 @@ export default function EnglishScreen() {
                 writingCompleted={writingCompleted}
               />
 
-              {/* Learning Pillars Section */}
-              <View style={{ gap: spacing.sm }}>
-                <Text style={styles.sectionHeaderTitle}>LEARNING PILLARS</Text>
+              {/* Learning Pillars Section Card */}
+              <Card>
+                <View style={{ gap: spacing.sm }}>
+                  <Text style={styles.sectionHeaderTitle}>LEARNING PILLARS</Text>
 
-                {/* 1. Vocabulary Card */}
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.pillarCard,
-                    { opacity: pressed ? 0.92 : 1 },
-                  ]}
-                  onPress={() => setActiveTab('vocab')}
-                >
-                  <View style={styles.pillarLeft}>
-                    <View style={[styles.pillarIconBox, { backgroundColor: '#FFE4EB', borderColor: 'rgba(232, 77, 114, 0.40)' }]}>
-                      <BookOpen size={20} color="#C73A57" strokeWidth={2.4} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.pillarTitle}>Vocabulary Builder</Text>
-                      <Text style={styles.pillarDesc}>
-                        Learn 5 new daily words. Rotating dataset.
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={[styles.pillarStatusPill, { backgroundColor: '#FFE4EB' }]}>
-                    <Text style={[styles.pillarStatusCount, { color: '#C73A57' }]}>
-                      {vocabStats?.today_words ?? 0}/5 Words
-                    </Text>
-                  </View>
-                </Pressable>
-
-                {/* 2. Grammar Card */}
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.pillarCard,
-                    { opacity: pressed ? 0.92 : 1 },
-                  ]}
-                  onPress={() => {
-                    setActiveTab('grammar');
-                    setQuizState('idle');
-                  }}
-                >
-                  <View style={styles.pillarLeft}>
-                    <View style={[styles.pillarIconBox, { backgroundColor: '#D1FAE5', borderColor: 'rgba(16, 185, 129, 0.40)' }]}>
-                      <FileText size={20} color="#047857" strokeWidth={2.4} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.pillarTitle}>Grammar Quizzes</Text>
-                      <Text style={styles.pillarDesc}>
-                        Reinforce grammar with interactive topic quizzes.
-                      </Text>
-                    </View>
-                  </View>
-                  <View style={[styles.pillarStatusPill, { backgroundColor: '#D1FAE5' }]}>
-                    <Text style={[styles.pillarStatusCount, { color: '#047857' }]}>
-                      {grammarStats?.today_questions ?? 0} Solved
-                    </Text>
-                  </View>
-                </Pressable>
-
-                {/* 3. Writing Practice Card */}
-                <Pressable
-                  style={({ pressed }) => [
-                    styles.pillarCard,
-                    { opacity: !allWordsLearnedToday ? 0.85 : pressed ? 0.92 : 1 },
-                  ]}
-                  disabled={!allWordsLearnedToday}
-                  onPress={() => setActiveTab('writing')}
-                >
-                  <View style={styles.pillarLeft}>
-                    <View style={[styles.pillarIconBox, { backgroundColor: '#FEF3C7', borderColor: 'rgba(245, 158, 11, 0.40)' }]}>
-                      <SquarePen size={20} color="#D97706" strokeWidth={2.4} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                        <Text style={styles.pillarTitle}>
-                          AI Writing Practice
-                        </Text>
-                        {!allWordsLearnedToday && (
-                          <View style={styles.lockBadge}>
-                            <Lock size={10} color="#DC2626" strokeWidth={2.2} />
-                            <Text style={styles.lockText}>Locked</Text>
-                          </View>
-                        )}
-                      </View>
-                      <Text style={styles.pillarDesc}>
-                        {"Write a paragraph using today's words. Reviewed by Gemini."}
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    style={[
-                      styles.pillarStatusPill,
-                      {
-                        backgroundColor: writingCompleted
-                          ? '#D1FAE5'
-                          : !allWordsLearnedToday
-                          ? '#FEE2E2'
-                          : '#FEF3C7',
-                      },
+                  {/* 1. Vocabulary Card */}
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.pillarCard,
+                      { opacity: pressed ? 0.92 : 1 },
                     ]}
+                    onPress={() => setActiveTab('vocab')}
                   >
-                    <Text
+                    <View style={styles.pillarLeft}>
+                      <View style={[styles.pillarIconBox, { backgroundColor: '#FFE4EB', borderColor: 'rgba(232, 77, 114, 0.40)' }]}>
+                        <BookOpen size={20} color="#C73A57" strokeWidth={2.4} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.pillarTitle}>Vocabulary Builder</Text>
+                        <Text style={styles.pillarDesc}>
+                          Learn 5 new daily words. Rotating dataset.
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={[styles.pillarStatusPill, { backgroundColor: '#FFE4EB' }]}>
+                      <Text style={[styles.pillarStatusCount, { color: '#C73A57' }]}>
+                        {vocabStats?.today_words ?? 0}/5 Words
+                      </Text>
+                    </View>
+                  </Pressable>
+
+                  {/* 2. Grammar Card */}
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.pillarCard,
+                      { opacity: pressed ? 0.92 : 1 },
+                    ]}
+                    onPress={() => {
+                      setActiveTab('grammar');
+                      setQuizState('idle');
+                    }}
+                  >
+                    <View style={styles.pillarLeft}>
+                      <View style={[styles.pillarIconBox, { backgroundColor: '#D1FAE5', borderColor: 'rgba(16, 185, 129, 0.40)' }]}>
+                        <FileText size={20} color="#047857" strokeWidth={2.4} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.pillarTitle}>Grammar Quizzes</Text>
+                        <Text style={styles.pillarDesc}>
+                          Reinforce grammar with interactive topic quizzes.
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={[styles.pillarStatusPill, { backgroundColor: '#D1FAE5' }]}>
+                      <Text style={[styles.pillarStatusCount, { color: '#047857' }]}>
+                        {grammarStats?.today_questions ?? 0} Solved
+                      </Text>
+                    </View>
+                  </Pressable>
+
+                  {/* 3. Writing Practice Card */}
+                  <Pressable
+                    style={({ pressed }) => [
+                      styles.pillarCard,
+                      { opacity: !allWordsLearnedToday ? 0.85 : pressed ? 0.92 : 1 },
+                    ]}
+                    disabled={!allWordsLearnedToday}
+                    onPress={() => setActiveTab('writing')}
+                  >
+                    <View style={styles.pillarLeft}>
+                      <View style={[styles.pillarIconBox, { backgroundColor: '#FEF3C7', borderColor: 'rgba(245, 158, 11, 0.40)' }]}>
+                        <SquarePen size={20} color="#D97706" strokeWidth={2.4} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                          <Text style={styles.pillarTitle}>
+                            AI Writing Practice
+                          </Text>
+                          {!allWordsLearnedToday && (
+                            <View style={styles.lockBadge}>
+                              <Lock size={10} color="#DC2626" strokeWidth={2.2} />
+                              <Text style={styles.lockText}>Locked</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.pillarDesc}>
+                          {"Write a paragraph using today's words. Reviewed by Gemini."}
+                        </Text>
+                      </View>
+                    </View>
+                    <View
                       style={[
-                        styles.pillarStatusCount,
+                        styles.pillarStatusPill,
                         {
-                          color: writingCompleted
-                            ? '#047857'
+                          backgroundColor: writingCompleted
+                            ? '#D1FAE5'
                             : !allWordsLearnedToday
-                            ? '#DC2626'
-                            : '#D97706',
+                            ? '#FEE2E2'
+                            : '#FEF3C7',
                         },
                       ]}
                     >
-                      {writingCompleted ? 'Done' : !allWordsLearnedToday ? 'Learn Words First' : 'Pending'}
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
+                      <Text
+                        style={[
+                          styles.pillarStatusCount,
+                          {
+                            color: writingCompleted
+                              ? '#047857'
+                              : !allWordsLearnedToday
+                              ? '#DC2626'
+                              : '#D97706',
+                          },
+                        ]}
+                      >
+                        {writingCompleted ? 'Done' : !allWordsLearnedToday ? 'Learn Words First' : 'Pending'}
+                      </Text>
+                    </View>
+                  </Pressable>
+                </View>
+              </Card>
 
               {/* Overall Statistics */}
               <StatisticsCard
@@ -880,15 +882,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: spacing.md,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    borderColor: 'rgba(232, 77, 114, 0.30)',
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+    borderColor: 'rgba(250, 215, 224, 0.90)',
     borderWidth: 1.5,
-    shadowColor: '#8A1535',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.14,
-    shadowRadius: 10,
-    elevation: 4,
   },
   pillarLeft: {
     flexDirection: 'row',
