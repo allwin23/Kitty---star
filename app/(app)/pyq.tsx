@@ -31,10 +31,9 @@ import {
   Zap,
 } from 'lucide-react-native';
 
-import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import { Button, Card, EmptyState, HeaderTitleCard, Input, Loading, NotificationBadge, Screen } from '@/components/ui';
 import { useAuthStore, usePyqStore, usePyqQuestionsStore } from '@/stores';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
-import * as DocumentPicker from 'expo-document-picker';
 import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
 import { CompanionBus } from '@/features/companion/event-bus';
@@ -73,6 +72,8 @@ export default function PYQScreen() {
   // States
   const [viewState, setViewState] = useState<ViewState>('home');
   const [selectedSubject, setSelectedSubject] = useState<string>('All');
+  const [isImportVisible, setIsImportVisible] = useState<boolean>(false);
+  const [pastedJson, setPastedJson] = useState<string>('');
   
   // Config states
   const [numQuestions, setNumQuestions] = useState<number>(10);
@@ -307,25 +308,18 @@ export default function PYQScreen() {
     });
   };
 
-  const handleImportJson = async () => {
+  const handleImportPastedJson = () => {
     try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: 'application/json',
-        copyToCacheDirectory: true,
-      });
-
-      if (result.canceled || !result.assets || result.assets.length === 0) {
+      if (!pastedJson.trim()) {
+        Alert.alert('Empty Input', 'Please paste your questions JSON content first.');
         return;
       }
 
-      const asset = result.assets[0];
-      const response = await fetch(asset.uri);
-      const text = await response.text();
-      const parsed = JSON.parse(text);
+      const parsed = JSON.parse(pastedJson);
 
       // Validate the json schema
       if (!Array.isArray(parsed)) {
-        Alert.alert('Invalid Format', 'JSON file must contain an array of question objects.');
+        Alert.alert('Invalid Format', 'JSON must contain an array of question objects.');
         return;
       }
 
@@ -361,6 +355,8 @@ export default function PYQScreen() {
 
       addCustomQuestions(questionsToImport);
       Alert.alert('Success', `Imported ${questionsToImport.length} questions successfully!`);
+      setPastedJson('');
+      setIsImportVisible(false);
     } catch (e: any) {
       Alert.alert('Import Failed', `Error parsing JSON: ${e.message}`);
     }
@@ -569,7 +565,7 @@ export default function PYQScreen() {
 
             {/* Upload Custom PYQ JSON Button (Aesthetic bottom primary action) */}
             <Pressable
-              onPress={handleImportJson}
+              onPress={() => setIsImportVisible(!isImportVisible)}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.88 : 1,
                 transform: [{ scale: pressed ? 0.97 : 1 }],
@@ -594,10 +590,82 @@ export default function PYQScreen() {
               >
                 <Sparkles size={18} color="#FFFFFF" strokeWidth={2.4} />
                 <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                  Upload Custom PYQ JSON
+                  {isImportVisible ? 'Close JSON Paste Area' : 'Import Custom PYQ JSON'}
                 </Text>
               </View>
             </Pressable>
+
+            {/* Paste JSON Content Area */}
+            {isImportVisible && (
+              <Card style={{ padding: spacing.md, gap: spacing.md, borderColor: palette.cherryBloom, borderWidth: 1.5 }}>
+                <View style={{ gap: spacing.xs }}>
+                  <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>Paste PYQ Questions JSON</Text>
+                  <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '600', lineHeight: 15 }}>
+                    Open your questions JSON file, copy the entire array text, and paste it below.
+                  </Text>
+                  <Text style={{ fontSize: 10, color: palette.danger, fontWeight: '700', fontStyle: 'italic' }}>
+                    {'Example Format: [{"id":"1","year":2026,"subject":"Chemistry","topic":"Acids","question":"What is HCl?","options":["Acid","Base"],"answer":1}]'}
+                  </Text>
+                </View>
+
+                <Input
+                  multiline
+                  placeholder="Paste JSON array text here..."
+                  value={pastedJson}
+                  onChangeText={setPastedJson}
+                  style={{ height: 120, textAlignVertical: 'top' }}
+                />
+
+                <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                  <Pressable
+                    onPress={handleImportPastedJson}
+                    style={({ pressed }) => ({
+                      flex: 2,
+                      opacity: pressed ? 0.88 : 1,
+                    })}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: '#C73A57',
+                        borderRadius: 14,
+                        paddingVertical: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.20)',
+                      }}
+                    >
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Import Questions</Text>
+                    </View>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => {
+                      setIsImportVisible(false);
+                      setPastedJson('');
+                    }}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      opacity: pressed ? 0.88 : 1,
+                    })}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 14,
+                        paddingVertical: 12,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderWidth: 1.5,
+                        borderColor: 'rgba(18, 18, 24, 0.15)',
+                      }}
+                    >
+                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Cancel</Text>
+                    </View>
+                  </Pressable>
+                </View>
+              </Card>
+            )}
 
             {/* Restore deleted subjects action helper */}
             {deletedSubjects.length > 0 && (
