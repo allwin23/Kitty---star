@@ -103,6 +103,13 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
         style={[
           styles.cardBase,
           isUnread ? styles.cardUnread : styles.cardRead,
+          Platform.OS === 'web' && {
+            elevation: 3,
+            shadowColor: '#2a1d22',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+          },
         ]}
       >
         <View style={styles.headerRow}>
@@ -180,17 +187,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 16,
     gap: 6,
-    // Add flat platform specific styles safely
-    ...Platform.select({
-      web: {
-        elevation: 3,
-        shadowColor: '#2a1d22',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      default: {},
-    }),
   },
   cardRead: {
     backgroundColor: '#FFFFFF',

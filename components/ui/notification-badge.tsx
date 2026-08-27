@@ -139,7 +139,16 @@ export function NotificationBadge() {
       <Animated.View style={[styles.pulseRing, pulseAnimatedStyle]} />
 
       {/* Main Glass Button */}
-      <Animated.View style={[styles.container, containerAnimatedStyle]}>
+      <Animated.View
+        style={[
+          styles.container,
+          containerAnimatedStyle,
+          Platform.OS === 'web' && ({
+            backdropFilter: 'blur(16px) saturate(180%)',
+            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+          } as any),
+        ]}
+      >
         <Animated.View style={[{ transformOrigin: 'top center' }, bellAnimatedStyle]}>
           <Bell size={22} color="#FFFFFF" strokeWidth={2.4} />
         </Animated.View>
@@ -184,12 +193,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'relative',
     elevation: 4,
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(16px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-        } as any)
-      : {}),
   },
   badge: {
     position: 'absolute',
