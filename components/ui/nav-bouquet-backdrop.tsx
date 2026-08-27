@@ -135,14 +135,14 @@ export function NavBouquetBackdrop() {
 
       {/* Bouquet Particle Cluster spanning from 1.5% to 96.5% */}
       <FloatingParticle type="cat" initialX={1.5} initialY={14} scale={0.9} duration={3200} />
-      <FloatingParticle type="heart" initialX={12} initialY={30} scale={0.85} duration={2800} />
+      <FloatingParticle type="star" initialX={12} initialY={30} scale={0.85} duration={2800} />
       <FloatingParticle type="star" initialX={24} initialY={14} scale={0.9} duration={3400} />
       <FloatingParticle type="sparkle" initialX={36} initialY={32} scale={0.8} duration={2600} />
-      <FloatingParticle type="heart" initialX={48} initialY={14} scale={0.95} duration={3100} />
+      <FloatingParticle type="star" initialX={48} initialY={14} scale={0.95} duration={3100} />
       <FloatingParticle type="star" initialX={60} initialY={30} scale={0.85} duration={2900} />
       <FloatingParticle type="cat" initialX={72} initialY={14} scale={0.9} duration={3500} />
       <FloatingParticle type="sparkle" initialX={84} initialY={28} scale={0.8} duration={2700} />
-      <FloatingParticle type="heart" initialX={96} initialY={12} scale={0.85} duration={3000} />
+      <FloatingParticle type="star" initialX={96} initialY={12} scale={0.85} duration={3000} />
     </View>
   );
 }
