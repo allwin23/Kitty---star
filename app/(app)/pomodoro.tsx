@@ -768,15 +768,15 @@ export default function PomodoroScreen() {
                         justifyContent: 'center',
                         gap: 8,
                         width: '100%',
-                        height: 52,
+                        height: 44,
                         backgroundColor: '#C73A57',
-                        borderRadius: 26,
+                        borderRadius: 22,
                         borderWidth: 1,
                         borderColor: 'rgba(255, 255, 255, 0.30)',
                       }}
                     >
-                      <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
+                      <Play size={16} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Resume</Text>
                     </View>
                   </Pressable>
                 ) : (
@@ -795,15 +795,15 @@ export default function PomodoroScreen() {
                         justifyContent: 'center',
                         gap: 8,
                         width: '100%',
-                        height: 52,
+                        height: 44,
                         backgroundColor: '#FFFFFF',
-                        borderRadius: 26,
+                        borderRadius: 22,
                         borderWidth: 1.5,
                         borderColor: 'rgba(232, 77, 114, 0.40)',
                       }}
                     >
-                      <Pause size={18} color={palette.danger} strokeWidth={2.4} />
-                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                      <Pause size={16} color={palette.danger} strokeWidth={2.4} />
+                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 14 }}>Pause</Text>
                     </View>
                   </Pressable>
                 )}
@@ -823,15 +823,15 @@ export default function PomodoroScreen() {
                       justifyContent: 'center',
                       gap: 8,
                       width: '100%',
-                      height: 52,
+                      height: 44,
                       backgroundColor: '#D94C61',
-                      borderRadius: 26,
+                      borderRadius: 22,
                       borderWidth: 1,
                       borderColor: 'rgba(255, 255, 255, 0.30)',
                     }}
                   >
-                    <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
+                    <RotateCcw size={16} color="#FFFFFF" strokeWidth={2.2} />
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Reset</Text>
                   </View>
                 </Pressable>
               </>

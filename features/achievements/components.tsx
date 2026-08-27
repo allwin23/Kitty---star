@@ -1128,9 +1128,10 @@ export function CreatePartnerAwardModal({
           padding: spacing.md,
         }}
       >
-        <ScrollView
-          style={{ width: '100%', maxWidth: 360 }}
-          contentContainerStyle={{
+        <View
+          style={{
+            width: '100%',
+            maxWidth: 360,
             backgroundColor: 'rgba(255, 243, 245, 0.95)',
             borderRadius: radius.lg,
             borderWidth: 1.5,
@@ -1173,7 +1174,7 @@ export function CreatePartnerAwardModal({
               {isSending ? 'Sending...' : 'Send Award'}
             </Button>
           </View>
-        </ScrollView>
+        </View>
       </View>
     </Modal>
   );

@@ -120,7 +120,7 @@ export function VocabularyCard({
                     style={({ pressed }) => [
                       styles.learnBtn,
                       {
-                        backgroundColor: pressed ? palette.deepCherry : palette.danger,
+                        backgroundColor: pressed ? 'rgba(232, 77, 114, 0.22)' : 'rgba(232, 77, 114, 0.12)',
                       },
                     ]}
                   >
@@ -330,13 +330,22 @@ export function GrammarQuestion({
 
       {/* Navigation Buttons */}
       <View style={styles.quizNav}>
-        <Button style={styles.navBtn} disabled={questionNumber === 1} onPress={onPrev}>
+        <Button
+          variant="secondary"
+          style={styles.navBtn}
+          disabled={questionNumber === 1}
+          onPress={onPrev}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            <ChevronLeft size={16} color="#FFFFFF" strokeWidth={2.4} />
-            <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>Previous</Text>
+            <ChevronLeft size={16} color={palette.danger} strokeWidth={2.4} />
+            <Text style={{ color: palette.danger, fontWeight: '700' }}>Previous</Text>
           </View>
         </Button>
-        <Button style={styles.navBtn} onPress={onNext}>
+        <Button
+          variant="primary"
+          style={styles.navBtn}
+          onPress={onNext}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>
               {questionNumber === totalQuestions ? 'Finish Quiz' : 'Next'}
@@ -885,7 +894,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.sm,
   },
   learnBtnText: {
-    color: '#FFFFFF',
+    color: '#2A1D22',
     fontWeight: '800',
     fontSize: 12,
   },
@@ -1014,7 +1023,6 @@ const styles = StyleSheet.create({
   progressBarBg: {
     height: 8,
     borderRadius: radius.full,
-    width: '100%',
     overflow: 'hidden',
     backgroundColor: 'rgba(250, 215, 224, 0.7)',
   },
