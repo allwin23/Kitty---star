@@ -25,6 +25,7 @@ import {
   getPartnerCurrentPlan,
   getPartnerSubmission,
   getPartnerProfile,
+  getReviewDeadline,
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
@@ -687,6 +688,23 @@ export default function AccountabilityScreen() {
                   <Text style={{ color: palette.mutedText, fontSize: 12 }}>
                     Submitted {format(new Date(partnerSub.submitted_at), 'dd MMM HH:mm')}
                   </Text>
+                  {partnerSub.status === 'pending' ? (
+                    <View
+                      style={{
+                        backgroundColor: 'rgba(232, 77, 114, 0.10)',
+                        borderColor: 'rgba(232, 77, 114, 0.30)',
+                        borderWidth: 1,
+                        borderRadius: radius.md,
+                        paddingHorizontal: 10,
+                        paddingVertical: 6,
+                        marginVertical: 4,
+                      }}
+                    >
+                      <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '800' }}>
+                        ⏰ Review Deadline: {format(getReviewDeadline(partnerSub.submitted_at), 'dd MMM, 11:00 a')} (Auto-rejects if unreviewed)
+                      </Text>
+                    </View>
+                  ) : null}
                   <Text
                     style={{
                       color:

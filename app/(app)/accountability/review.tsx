@@ -27,7 +27,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { submissionService } from '@/services/backend';
-import { getProofImageUrl } from '@/services/planner-read.service';
+import { getProofImageUrl, getReviewDeadline, isSubmissionExpired } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { Card, ErrorState, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
@@ -220,6 +220,23 @@ export default function ReviewScreen() {
               <Text style={styles.cardSubText}>
                 Submitted {new Date(submission.submitted_at).toLocaleString()}
               </Text>
+              {submission.status === 'pending' ? (
+                <View
+                  style={{
+                    backgroundColor: 'rgba(232, 77, 114, 0.12)',
+                    borderColor: 'rgba(232, 77, 114, 0.30)',
+                    borderWidth: 1,
+                    borderRadius: radius.md,
+                    paddingHorizontal: 12,
+                    paddingVertical: 6,
+                    marginTop: 4,
+                  }}
+                >
+                  <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '800' }}>
+                    ⏰ Review Deadline: {new Date(getReviewDeadline(submission.submitted_at)).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (Auto-rejects if not reviewed)
+                  </Text>
+                </View>
+              ) : null}
               {submission.remark ? (
                 <Text style={{ color: palette.textPrimary, fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic', fontWeight: '500' }}>
                   &quot;{submission.remark}&quot;

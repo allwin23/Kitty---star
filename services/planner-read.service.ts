@@ -40,7 +40,32 @@ export async function getCurrentPlan(date: string) {
   return throwIfError(data, error);
 }
 
-/** Get my most recent pending submission. */
+/** Checks if a pending submission has passed its review deadline (next morning 11:00 AM). */
+export function isSubmissionExpired(submittedAt: string | Date): boolean {
+  const submittedDate = new Date(submittedAt);
+  if (isNaN(submittedDate.getTime())) return false;
+
+  const deadline = new Date(submittedDate);
+  if (submittedDate.getHours() >= 11) {
+    deadline.setDate(deadline.getDate() + 1);
+  }
+  deadline.setHours(11, 0, 0, 0);
+
+  return new Date() > deadline;
+}
+
+/** Get the review deadline Date for a submission (11:00 AM next morning). */
+export function getReviewDeadline(submittedAt: string | Date): Date {
+  const submittedDate = new Date(submittedAt);
+  const deadline = new Date(submittedDate);
+  if (submittedDate.getHours() >= 11) {
+    deadline.setDate(deadline.getDate() + 1);
+  }
+  deadline.setHours(11, 0, 0, 0);
+  return deadline;
+}
+
+/** Get my most recent pending submission. Auto-rejects if deadline passed. */
 export async function getMySubmission(_date: string) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -52,11 +77,27 @@ export async function getMySubmission(_date: string) {
     .order('submitted_at', { ascending: false })
     .limit(1)
     .maybeSingle();
+
   if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  // Fail-safe: Auto-reject if 11:00 AM review deadline passed
+  if (isSubmissionExpired(data.submitted_at)) {
+    try {
+      await supabase.rpc('reject_day', {
+        p_submission_id: data.id,
+        p_comment: 'Auto-rejected: Review deadline (11:00 AM next morning) passed.',
+      });
+    } catch (e) {
+      console.warn('Auto-reject failed:', e);
+    }
+    return null;
+  }
+
   return data;
 }
 
-/** Get partner's latest pending submission (visible if we are their partner). */
+/** Get partner's latest pending submission. Auto-rejects if deadline passed. */
 export async function getPartnerSubmission() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
@@ -68,7 +109,24 @@ export async function getPartnerSubmission() {
     .order('submitted_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  return throwIfError(data, error);
+
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+
+  // Fail-safe: Auto-reject if 11:00 AM review deadline passed
+  if (isSubmissionExpired(data.submitted_at)) {
+    try {
+      await supabase.rpc('reject_day', {
+        p_submission_id: data.id,
+        p_comment: 'Auto-rejected: Review deadline (11:00 AM next morning) passed.',
+      });
+    } catch (e) {
+      console.warn('Auto-reject failed:', e);
+    }
+    return null;
+  }
+
+  return data;
 }
 
 /** Get pomodoro sessions for a plan. */
