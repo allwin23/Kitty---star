@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
+  NativeModules,
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -38,7 +39,7 @@ import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen 
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService, plannerService } from '@/services/backend';
-import { useAuthStore, usePomodoroStore, type PomodoroSessionType } from '@/stores';
+import { useAuthStore, usePomodoroStore, useAppBlockStore, type PomodoroSessionType } from '@/stores';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
@@ -245,6 +246,19 @@ export default function PomodoroScreen() {
     setScheduledNotifId,
     syncBackgroundTime,
   } = usePomodoroStore();
+
+  const { blockedPackages, isBlockerEnabled } = useAppBlockStore();
+
+  // Start/Stop native app blocker service based on Pomodoro state
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    if (isBlockerEnabled && isRunning && !isPaused && sessionType === 'focus' && blockedPackages.length > 0) {
+      NativeModules.AppBlocker.startBlockingService(blockedPackages);
+    } else {
+      NativeModules.AppBlocker.stopBlockingService();
+    }
+  }, [isBlockerEnabled, isRunning, isPaused, sessionType, blockedPackages]);
 
   // Active task object
   const activeTask = currentTasks.find((t) => t.id === selectedTaskId);
