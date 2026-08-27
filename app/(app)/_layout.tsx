@@ -33,7 +33,7 @@ export default function AppLayout() {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',
-          shadowColor: '#8A1535',
+          shadowColor: '#8A1535',  
           shadowOffset: { width: 0, height: 6 },
           shadowOpacity: 0.20,
           shadowRadius: 16,
