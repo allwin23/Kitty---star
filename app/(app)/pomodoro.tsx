@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -447,12 +447,22 @@ export default function PomodoroScreen() {
     };
   }, [isRunning, isPaused, tick]);
 
-  // Auto-complete session when timer runs down to 0
+  // Auto-complete session when timer runs down to 0 — guarded to fire only once
+  const completionAttemptedRef = useRef(false);
+
   useEffect(() => {
-    if (isRunning && timerSeconds === 0) {
+    // Reset the guard whenever timer is no longer at 0 or not running
+    if (!isRunning || timerSeconds > 0) {
+      completionAttemptedRef.current = false;
+      return;
+    }
+
+    // Timer hit 0 and is running — attempt completion exactly once
+    if (isRunning && timerSeconds === 0 && !completionAttemptedRef.current) {
+      completionAttemptedRef.current = true;
       const timer = setTimeout(() => {
         void handleComplete(true);
-      }, 0);
+      }, 100);
       return () => clearTimeout(timer);
     }
   }, [timerSeconds, isRunning, handleComplete]);

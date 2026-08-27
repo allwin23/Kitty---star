@@ -159,10 +159,23 @@ export const usePomodoroStore = create<PomodoroState>()(
       setScheduledNotifId: (id) => set({ scheduledNotifId: id }),
 
       syncBackgroundTime: () => {
-        const { isRunning, isPaused, targetEndTime } = get();
+        const { isRunning, isPaused, targetEndTime, durationMinutes } = get();
         if (isRunning && !isPaused && targetEndTime) {
           const remaining = Math.max(0, Math.ceil((targetEndTime - Date.now()) / 1000));
           set({ timerSeconds: remaining });
+        }
+        // Safety: if timer expired while in background, auto-reset to prevent crash loop
+        if (isRunning && !isPaused && !targetEndTime) {
+          set({
+            isRunning: false,
+            isPaused: false,
+            timerSeconds: durationMinutes * 60,
+            startedAt: null,
+            targetEndTime: null,
+            isFullScreen: false,
+            scheduledNotifId: null,
+            hasAutoOpened: false,
+          });
         }
       },
     }),
@@ -181,6 +194,41 @@ export const usePomodoroStore = create<PomodoroState>()(
         scheduledNotifId: state.scheduledNotifId,
         hasAutoOpened: state.hasAutoOpened,
       }),
+      onRehydrateStorage: () => (state) => {
+        // On app startup: if the persisted state has isRunning=true but timerSeconds<=0,
+        // it means the app was killed mid-session after the timer expired.
+        // Reset everything to prevent the infinite crash loop.
+        if (state && state.isRunning && state.timerSeconds <= 0) {
+          usePomodoroStore.setState({
+            isRunning: false,
+            isPaused: false,
+            timerSeconds: state.durationMinutes * 60,
+            startedAt: null,
+            targetEndTime: null,
+            isFullScreen: false,
+            scheduledNotifId: null,
+            hasAutoOpened: false,
+          });
+        }
+        // Also check: if targetEndTime is in the past, compute remaining and reset if expired
+        if (state && state.isRunning && !state.isPaused && state.targetEndTime) {
+          const remaining = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
+          if (remaining <= 0) {
+            usePomodoroStore.setState({
+              isRunning: false,
+              isPaused: false,
+              timerSeconds: state.durationMinutes * 60,
+              startedAt: null,
+              targetEndTime: null,
+              isFullScreen: false,
+              scheduledNotifId: null,
+              hasAutoOpened: false,
+            });
+          } else {
+            usePomodoroStore.setState({ timerSeconds: remaining });
+          }
+        }
+      },
     }
   )
 );
