@@ -1,4 +1,13 @@
 -- Fix date ISO/timezone handling, pomodoro completion, and partner submission
+
+-- Drop existing functions to prevent "cannot remove parameter defaults" errors
+drop function if exists public.create_draft(date, jsonb);
+drop function if exists public.duplicate_draft_into_daily_plans(date);
+drop function if exists public.complete_pomodoro(uuid, uuid, integer, text, timestamptz, timestamptz);
+drop function if exists public.submit_day(uuid, text);
+drop function if exists public.create_submission_proof(uuid, text, text);
+
+-- 1. Create duplicate_draft_into_daily_plans
 create or replace function public.duplicate_draft_into_daily_plans(p_date date)
 returns jsonb
 language plpgsql
@@ -50,7 +59,8 @@ begin
 end;
 $$;
 
-create or replace function public.create_draft(p_date date, p_tasks jsonb)
+-- 2. Create create_draft
+create or replace function public.create_draft(p_date date, p_tasks jsonb default '[]'::jsonb)
 returns public.planner_drafts
 language plpgsql
 security definer
@@ -81,12 +91,13 @@ begin
 end;
 $$;
 
+-- 3. Create complete_pomodoro
 create or replace function public.complete_pomodoro(
   p_plan_id uuid,
   p_task_id uuid,
   p_duration integer,
   p_session_type text default 'focus',
-  p_started_at timestamptz default now() - interval '25 minutes',
+  p_started_at timestamptz default (now() - '00:25:00'::interval),
   p_ended_at timestamptz default now()
 )
 returns public.pomodoro_sessions
@@ -114,6 +125,7 @@ begin
 end;
 $$;
 
+-- 4. Create submit_day
 create or replace function public.submit_day(p_plan_id uuid, p_remark text default null)
 returns public.daily_submissions
 language plpgsql
@@ -149,6 +161,7 @@ begin
 end;
 $$;
 
+-- 5. Create create_submission_proof
 create or replace function public.create_submission_proof(p_submission_id uuid, p_image_url text, p_caption text default null)
 returns public.submission_proofs
 language plpgsql
@@ -169,3 +182,10 @@ begin
   return v_proof;
 end;
 $$;
+
+-- Grant EXECUTE permissions back to authenticated role
+grant execute on function public.create_draft(date, jsonb) to authenticated;
+grant execute on function public.duplicate_draft_into_daily_plans(date) to authenticated;
+grant execute on function public.complete_pomodoro(uuid, uuid, integer, text, timestamptz, timestamptz) to authenticated;
+grant execute on function public.submit_day(uuid, text) to authenticated;
+grant execute on function public.create_submission_proof(uuid, text, text) to authenticated;
