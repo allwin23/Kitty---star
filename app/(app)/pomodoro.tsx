@@ -95,6 +95,91 @@ const cancelLocalNotification = async (notifId: string | null) => {
   }
 };
 
+/** Aesthetic Flip Clock Digit Card Display for Full-Screen Mode */
+function AestheticFlipClock({ seconds, isPaused }: { seconds: number; isPaused: boolean }) {
+  const hrs = Math.floor(seconds / 3600);
+  const mins = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  const hrsStr = hrs > 0 ? pad(hrs) : null;
+  const minsStr = pad(mins);
+  const secsStr = pad(secs);
+
+  return (
+    <View style={flipStyles.clockContainer}>
+      {hrsStr ? (
+        <>
+          <View style={flipStyles.flipCard}>
+            <View style={flipStyles.splitLine} />
+            <Text style={flipStyles.flipText}>{hrsStr}</Text>
+          </View>
+          <Text style={flipStyles.colonText}>:</Text>
+        </>
+      ) : null}
+
+      <View style={flipStyles.flipCard}>
+        <View style={flipStyles.splitLine} />
+        <Text style={flipStyles.flipText}>{minsStr}</Text>
+      </View>
+
+      <Text style={[flipStyles.colonText, isPaused && { opacity: 0.5 }]}>:</Text>
+
+      <View style={flipStyles.flipCard}>
+        <View style={flipStyles.splitLine} />
+        <Text style={flipStyles.flipText}>{secsStr}</Text>
+      </View>
+    </View>
+  );
+}
+
+const flipStyles = StyleSheet.create({
+  clockContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    marginVertical: 18,
+  },
+  flipCard: {
+    width: 95,
+    height: 105,
+    backgroundColor: 'rgba(255, 255, 255, 0.09)',
+    borderColor: 'rgba(232, 77, 114, 0.35)',
+    borderWidth: 1.5,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    overflow: 'hidden',
+    elevation: 4,
+  },
+  splitLine: {
+    position: 'absolute',
+    top: '50%',
+    left: 0,
+    right: 0,
+    height: 2,
+    backgroundColor: '#000000',
+    opacity: 0.4,
+    zIndex: 5,
+  },
+  flipText: {
+    fontSize: 50,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    fontFamily: "'Martian Mono', monospace",
+    letterSpacing: -1,
+  },
+  colonText: {
+    fontSize: 40,
+    fontWeight: '800',
+    color: '#E84D72',
+    marginHorizontal: 2,
+  },
+});
+
 export default function PomodoroScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -670,7 +755,7 @@ export default function PomodoroScreen() {
               </View>
 
               <View style={{ flexDirection: 'row', gap: spacing[8], flexWrap: 'wrap' }}>
-                {[1, 25, 30, 45, 50, 60].map((mins) => {
+                {[1, 25, 30, 45, 50, 55, 60].map((mins) => {
                   const isSel = durationMinutes === mins;
                   return (
                     <Pressable
@@ -869,13 +954,6 @@ export default function PomodoroScreen() {
                 Run in Background
               </Text>
             </Pressable>
-
-            <View style={styles.keepAwakeBadge}>
-              <Sparkles size={13} color="#F472B6" strokeWidth={2.4} />
-              <Text style={{ color: '#F472B6', fontSize: 11, fontWeight: '800' }}>
-                Screen Kept Active
-              </Text>
-            </View>
           </View>
 
           {/* Main Hero Content */}
@@ -894,71 +972,43 @@ export default function PomodoroScreen() {
               </Text>
             )}
 
-            {/* Giant Timer Ring Display */}
-            <View style={styles.timerRingOuter}>
-              <View style={styles.timerRingInner}>
-                <View style={styles.liveLedRow}>
-                  <View style={[styles.livePulseDot, { backgroundColor: isPaused ? '#F59E0B' : '#10B981' }]} />
-                  <Text style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: 11, fontWeight: '800', letterSpacing: 1.5 }}>
-                    {isPaused ? 'TIMER PAUSED' : 'LIVE TIMER RUNNING'}
-                  </Text>
-                </View>
+            {/* Aesthetic Flip Clock Display */}
+            <AestheticFlipClock seconds={timerSeconds} isPaused={isPaused} />
 
-                <Text style={styles.fullScreenClockText}>
-                  {formatTime(timerSeconds)}
-                </Text>
+            {/* Live LED Status & Subtitle */}
+            <View style={styles.liveLedRow}>
+              <View style={[styles.livePulseDot, { backgroundColor: isPaused ? '#F59E0B' : '#10B981' }]} />
+              <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 12, fontWeight: '800', letterSpacing: 1.2 }}>
+                {isPaused ? 'TIMER PAUSED' : 'LIVE TIMER RUNNING'}
+              </Text>
+            </View>
 
-                {/* Progress bar line */}
-                <View style={styles.fullScreenProgressBarTrack}>
-                  <View style={[styles.fullScreenProgressBarFill, { width: `${progressPct}%` }]} />
-                </View>
-              </View>
+            {/* Progress bar line */}
+            <View style={[styles.fullScreenProgressBarTrack, { marginTop: 12 }]}>
+              <View style={[styles.fullScreenProgressBarFill, { width: `${progressPct}%` }]} />
             </View>
           </View>
 
-          {/* Bottom Actions */}
+          {/* Bottom Actions: Clean Pause/Resume & Reset Only */}
           <View style={styles.fullScreenBottomContainer}>
-            {/* Play/Pause & Actions */}
             <View style={{ flexDirection: 'row', gap: 12, width: '100%' }}>
               {isPaused ? (
-                <Pressable onPress={handleResume} style={[styles.fsMainActionBtn, { backgroundColor: '#10B981' }]}>
+                <Pressable onPress={handleResume} style={[styles.fsMainActionBtn, { backgroundColor: palette.cherryBloom }]}>
                   <Play size={20} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
                   <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
                 </Pressable>
               ) : (
-                <Pressable onPress={handlePause} style={[styles.fsMainActionBtn, { backgroundColor: '#F59E0B' }]}>
-                  <Pause size={20} color="#FFFFFF" strokeWidth={2.4} />
-                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                <Pressable onPress={handlePause} style={[styles.fsMainActionBtn, { backgroundColor: 'rgba(255, 243, 245, 0.95)', borderColor: 'rgba(232, 77, 114, 0.40)', borderWidth: 1.5 }]}>
+                  <Pause size={20} color={palette.danger} strokeWidth={2.4} />
+                  <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
                 </Pressable>
               )}
 
-              <Pressable onPress={handleReset} style={styles.fsSecondaryActionBtn}>
-                <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
-              </Pressable>
-
-              <Pressable
-                onPress={() => void handleComplete(false)}
-                disabled={completing}
-                style={styles.fsSecondaryActionBtn}
-              >
-                {completing ? (
-                  <ActivityIndicator size="small" color="#FFFFFF" />
-                ) : (
-                  <CheckCircle2 size={18} color="#10B981" strokeWidth={2.4} />
-                )}
+              <Pressable onPress={handleReset} style={[styles.fsMainActionBtn, { backgroundColor: palette.danger }]}>
+                <RotateCcw size={20} color="#FFFFFF" strokeWidth={2.2} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
               </Pressable>
             </View>
-
-            {/* Run in Background Go-Back Main Button */}
-            <Pressable
-              onPress={handleRunInBackground}
-              style={styles.runInBackgroundMainBtn}
-            >
-              <Minimize2 size={16} color="#FFFFFF" strokeWidth={2.4} />
-              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
-                Run in Background (Go Back)
-              </Text>
-            </Pressable>
           </View>
         </View>
       </Modal>
