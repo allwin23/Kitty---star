@@ -675,6 +675,16 @@ export default function PomodoroScreen() {
   };
 
   const handleReset = async () => {
+    if (sessionType === 'focus' && isChromeSyncEnabled && strictMode) {
+      const msg = 'Strict Mode is active: You cannot cancel or discard this focus session until the timer expires.';
+      if (Platform.OS === 'web') {
+        window.alert(msg);
+      } else {
+        Alert.alert('Strict Mode Active', msg);
+      }
+      return;
+    }
+
     const title = 'Reset timer?';
     const msg = 'Are you sure you want to discard this timer session?';
     const performReset = async () => {
@@ -882,6 +892,11 @@ export default function PomodoroScreen() {
               >
                 {formatTime(timerSeconds)}
               </Text>
+              {isRunning && sessionType === 'focus' && strictMode && (
+                <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 4 }}>
+                  🔒 Strict Blocker Mode Active
+                </Text>
+              )}
             </View>
           </Card>
 
@@ -2002,6 +2017,11 @@ export default function PomodoroScreen() {
                 {isPaused ? 'TIMER PAUSED' : 'LIVE TIMER RUNNING'}
               </Text>
             </View>
+            {sessionType === 'focus' && strictMode && (
+              <Text style={{ color: '#F43F5E', fontSize: 13, fontWeight: '800', letterSpacing: 1.2, marginTop: 8 }}>
+                🔒 STRICT MODE LOCKED
+              </Text>
+            )}
 
             {/* Progress bar line */}
             <View style={[styles.fullScreenProgressBarTrack, { marginTop: 12 }]}>

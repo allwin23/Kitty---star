@@ -232,4 +232,54 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
     expect(domains).not.toContain('youtube.com');
     expect(domains).not.toContain('youtu.be');
   });
+
+  describe('Strict Mode Anti-Bypass Enforcement', () => {
+    test('startFocusSession with strictMode enables strict locking', async () => {
+      await engine.startFocusSession(25, ['social'], [], true);
+      const state = await engine.getSessionState();
+      expect(state.active).toBe(true);
+      expect(state.strictMode).toBe(true);
+    });
+
+    test('cancelFocusSession throws error and preserves rules if strict session is active', async () => {
+      await engine.startFocusSession(25, ['social'], [], true);
+      
+      // Attempt cancel should reject
+      await expect(engine.cancelFocusSession()).rejects.toThrow(
+        "Strict Mode is active: Focus session cannot be cancelled."
+      );
+
+      // Verify session state and rule blocks are preserved
+      const state = await engine.getSessionState();
+      expect(state.active).toBe(true);
+      expect(state.strictMode).toBe(true);
+      expect(adapter.blockedDomains).toContain('instagram.com');
+    });
+
+    test('cancelFocusSession is allowed if strict session has expired', async () => {
+      // Start short focus session
+      await engine.startFocusSession(25, ['social'], [], true);
+      
+      // Mock expiration by setting endsAt to past
+      await adapter.setStorage('endsAt', Date.now() - 1000);
+
+      // Cancel should be allowed on expired session
+      await engine.cancelFocusSession();
+
+      const state = await engine.getSessionState();
+      expect(state.active).toBe(false);
+      expect(state.strictMode).toBe(false);
+      expect(adapter.blockedDomains).toEqual([]);
+    });
+
+    test('completeFocusSession unlocks and clears strictMode upon normal timer expiry', async () => {
+      await engine.startFocusSession(25, ['social'], [], true);
+      await engine.completeFocusSession();
+
+      const state = await engine.getSessionState();
+      expect(state.active).toBe(false);
+      expect(state.strictMode).toBe(false);
+      expect(adapter.blockedDomains).toEqual([]);
+    });
+  });
 });

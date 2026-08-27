@@ -36,14 +36,15 @@ export class CoreFocusEngine {
       const blockedCategories = await this.adapter.getStorage("blockedCategories");
       const customDomains = await this.adapter.getStorage("customDomains");
       const isCompleted = await this.adapter.getStorage("isCompleted");
-      const strictMode = await this.adapter.getStorage("strictMode");
+      const rawStrict = await this.adapter.getStorage("strictMode");
+      const strictMode = typeof rawStrict === 'boolean' ? rawStrict : false;
 
       // Validate storage values to check for corruption
       const isValidActive = typeof active === 'boolean';
       const isValidEndsAt = typeof endsAt === 'number' && !isNaN(endsAt);
       const isValidCategories = Array.isArray(blockedCategories);
       const isValidCustom = Array.isArray(customDomains);
-      const isValidStrict = typeof strictMode === 'boolean';
+      const isValidStrict = true;
 
       if (!isValidActive || !isValidEndsAt || !isValidCategories || !isValidCustom || !isValidStrict) {
         console.warn("[Engine] Focus Lock storage corrupted or incomplete. Resetting local session...");
