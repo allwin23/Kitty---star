@@ -11,6 +11,8 @@ import {
   Text,
   View,
   NativeModules,
+  Switch,
+  TextInput,
 } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -33,6 +35,8 @@ import {
   Sun,
   Target,
   Timer,
+  Smartphone,
+  X,
 } from 'lucide-react-native';
 
 import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
@@ -247,7 +251,58 @@ export default function PomodoroScreen() {
     syncBackgroundTime,
   } = usePomodoroStore();
 
-  const { blockedPackages, isBlockerEnabled } = useAppBlockStore();
+  const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } = useAppBlockStore();
+
+  const [blockerModalVisible, setBlockerModalVisible] = useState(false);
+  const [apps, setApps] = useState<{ name: string; packageName: string }[]>([]);
+  const [search, setSearch] = useState('');
+  const [usagePermission, setUsagePermission] = useState(false);
+  const [overlayPermission, setOverlayPermission] = useState(false);
+  const [loadingApps, setLoadingApps] = useState(false);
+
+  // Check permissions & load apps when blocker settings modal is visible
+  useEffect(() => {
+    if (Platform.OS !== 'android' || !blockerModalVisible) return;
+
+    let active = true;
+    const checkPermissionsAndLoad = async () => {
+      try {
+        const hasUsage = await NativeModules.AppBlocker.isUsageStatsPermissionGranted();
+        const hasOverlay = await NativeModules.AppBlocker.isOverlayPermissionGranted();
+
+        if (active) {
+          setUsagePermission(hasUsage);
+          setOverlayPermission(hasOverlay);
+
+          if (hasUsage && hasOverlay) {
+            setLoadingApps(true);
+            const installed = await NativeModules.AppBlocker.getInstalledApps();
+            const sorted = installed.sort((a: any, b: any) => a.name.localeCompare(b.name));
+            setApps(sorted);
+            setLoadingApps(false);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading blocker settings:', err);
+      }
+    };
+
+    void checkPermissionsAndLoad();
+
+    const interval = setInterval(checkPermissionsAndLoad, 2000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [blockerModalVisible]);
+
+  const togglePackage = (packageName: string) => {
+    if (blockedPackages.includes(packageName)) {
+      setBlockedPackages(blockedPackages.filter((pkg) => pkg !== packageName));
+    } else {
+      setBlockedPackages([...blockedPackages, packageName]);
+    }
+  };
 
   // Start/Stop native app blocker service based on Pomodoro state
   useEffect(() => {
@@ -891,6 +946,243 @@ export default function PomodoroScreen() {
               </View>
             </View>
           </Card>
+
+          {/* App Blocker Settings Card */}
+          {Platform.OS === 'android' && (
+            <Card>
+              <View style={{ gap: spacing[12] }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                    <Smartphone size={16} color={palette.danger} strokeWidth={2.4} />
+                    <Text style={styles.sectionHeaderTitle}>
+                      FOCUS APP BLOCKER
+                    </Text>
+                  </View>
+                  <Switch
+                    value={isBlockerEnabled}
+                    disabled={isRunning}
+                    onValueChange={setBlockerEnabled}
+                    trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
+                    thumbColor="#ffffff"
+                  />
+                </View>
+
+                <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
+                  Prevent access to selected apps during focus sessions.
+                </Text>
+
+                {isBlockerEnabled && (
+                  <Pressable
+                    onPress={() => setBlockerModalVisible(true)}
+                    style={{
+                      backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                      borderColor: palette.danger,
+                      borderWidth: 1.5,
+                      borderRadius: radius.md,
+                      padding: spacing[12],
+                      alignItems: 'center',
+                      marginTop: spacing[4],
+                    }}
+                  >
+                    <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 13 }}>
+                      Configure Banned Apps ({blockedPackages.length} selected)
+                    </Text>
+                  </Pressable>
+                )}
+              </View>
+            </Card>
+          )}
+
+          {/* App Blocker Configuration Modal */}
+          <Modal
+            visible={blockerModalVisible}
+            animationType="slide"
+            transparent
+            onRequestClose={() => setBlockerModalVisible(false)}
+          >
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: spacing[16],
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  maxWidth: 360,
+                  maxHeight: '80%',
+                  backgroundColor: '#FFF7F8',
+                  borderRadius: radius.lg,
+                  borderWidth: 1.5,
+                  borderColor: 'rgba(250, 215, 224, 0.90)',
+                  padding: spacing[16],
+                  gap: spacing[12],
+                }}
+              >
+                {/* Header */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 16 }}>
+                    Banned Apps Config
+                  </Text>
+                  <Pressable onPress={() => setBlockerModalVisible(false)}>
+                    <X size={18} color={palette.textSecondary} strokeWidth={2.4} />
+                  </Pressable>
+                </View>
+
+                {(!usagePermission || !overlayPermission) && (
+                  <View
+                    style={{
+                      backgroundColor: '#FFFBEB',
+                      borderColor: '#FDE68A',
+                      borderWidth: 1.5,
+                      borderRadius: radius.md,
+                      padding: spacing[12],
+                      gap: spacing[8],
+                    }}
+                  >
+                    <Text style={{ color: '#B45309', fontWeight: '800', fontSize: 13 }}>
+                      Required Permissions
+                    </Text>
+                    <Text style={{ color: '#B45309', fontSize: 12, lineHeight: 18 }}>
+                      To block other apps, Kitty & Star needs Usage Access and Display Over Other Apps permissions.
+                    </Text>
+
+                    {!usagePermission && (
+                      <Pressable
+                        onPress={() => NativeModules.AppBlocker.requestUsageStatsPermission()}
+                        style={{
+                          backgroundColor: '#B45309',
+                          borderRadius: radius.sm,
+                          paddingVertical: 8,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 12 }}>
+                          Grant Usage Access
+                        </Text>
+                      </Pressable>
+                    )}
+
+                    {!overlayPermission && (
+                      <Pressable
+                        onPress={() => NativeModules.AppBlocker.requestOverlayPermission()}
+                        style={{
+                          backgroundColor: '#B45309',
+                          borderRadius: radius.sm,
+                          paddingVertical: 8,
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 12 }}>
+                          Grant Display Over Other Apps
+                        </Text>
+                      </Pressable>
+                    )}
+                  </View>
+                )}
+
+                {usagePermission && overlayPermission && (
+                  <>
+                    <TextInput
+                      style={{
+                        borderColor: 'rgba(250, 215, 224, 0.85)',
+                        borderWidth: 1.5,
+                        borderRadius: radius.md,
+                        color: palette.textPrimary,
+                        paddingHorizontal: spacing[12],
+                        paddingVertical: 8,
+                        fontSize: 14,
+                        backgroundColor: '#FFFFFF',
+                      }}
+                      placeholder="Search apps..."
+                      placeholderTextColor={palette.textSecondary}
+                      value={search}
+                      onChangeText={setSearch}
+                    />
+
+                    {loadingApps ? (
+                      <ActivityIndicator size="small" color={palette.danger} style={{ marginVertical: spacing[16] }} />
+                    ) : (
+                      <ScrollView
+                        style={{
+                          flex: 1,
+                          borderWidth: 1,
+                          borderColor: 'rgba(250, 215, 224, 0.85)',
+                          borderRadius: radius.md,
+                          backgroundColor: '#FFFDFD',
+                        }}
+                        nestedScrollEnabled
+                      >
+                        {apps
+                          .filter((app) => app.name.toLowerCase().includes(search.toLowerCase()))
+                          .map((app) => {
+                            const isBlocked = blockedPackages.includes(app.packageName);
+                            return (
+                              <Pressable
+                                key={app.packageName}
+                                onPress={() => togglePackage(app.packageName)}
+                                style={{
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-between',
+                                  paddingVertical: 10,
+                                  paddingHorizontal: spacing[12],
+                                  borderBottomWidth: 1,
+                                  borderBottomColor: 'rgba(250, 215, 224, 0.40)',
+                                }}
+                              >
+                                <View style={{ flex: 1, marginRight: spacing[8] }}>
+                                  <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 13 }} numberOfLines={1}>
+                                    {app.name}
+                                  </Text>
+                                  <Text style={{ color: palette.textSecondary, fontSize: 11 }} numberOfLines={1}>
+                                    {app.packageName}
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    width: 20,
+                                    height: 20,
+                                    borderRadius: 6,
+                                    borderWidth: 2,
+                                    borderColor: isBlocked ? palette.danger : palette.textMuted,
+                                    backgroundColor: isBlocked ? palette.danger : 'transparent',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {isBlocked && (
+                                    <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '900' }}>
+                                      ✓
+                                    </Text>
+                                  )}
+                                </View>
+                              </Pressable>
+                            );
+                          })}
+                        {apps.filter((app) => app.name.toLowerCase().includes(search.toLowerCase())).length === 0 && (
+                          <Text style={{ color: palette.textSecondary, fontSize: 12, textAlign: 'center', padding: spacing[16] }}>
+                            No apps found.
+                          </Text>
+                        )}
+                      </ScrollView>
+                    )}
+
+                    <Text style={{ color: palette.textSecondary, fontSize: 11, fontStyle: 'italic' }}>
+                      Selected: {blockedPackages.length} app(s) to block.
+                    </Text>
+                  </>
+                )}
+
+                <Button variant="primary" onPress={() => setBlockerModalVisible(false)} style={{ marginTop: spacing[4] }}>
+                  Close & Save
+                </Button>
+              </View>
+            </View>
+          </Modal>
 
           {/* Glass Card for Today's Focus Tasks Header & Description */}
           <Card>
