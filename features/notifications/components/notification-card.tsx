@@ -14,7 +14,6 @@ import {
 } from 'lucide-react-native';
 
 import type { NotificationRecord } from '../types';
-import { palette, radius, spacing } from '@/theme';
 
 export interface NotificationCardProps {
   notification: NotificationRecord;
@@ -23,22 +22,24 @@ export interface NotificationCardProps {
 }
 
 function renderCategoryIcon(category: string, size: number) {
+  // Dark icons to contrast sharply with the light cards
+  const darkColor = '#2A1D22';
   switch (category) {
     case 'partner':
-      return <Users size={size} color="#121218" strokeWidth={2.4} />;
+      return <Users size={size} color={darkColor} strokeWidth={2.4} />;
     case 'water':
-      return <Droplets size={size} color="#121218" strokeWidth={2.4} />;
+      return <Droplets size={size} color={darkColor} strokeWidth={2.4} />;
     case 'achievements':
-      return <Trophy size={size} color="#121218" strokeWidth={2.4} />;
+      return <Trophy size={size} color={darkColor} strokeWidth={2.4} />;
     case 'ai_coach':
-      return <Bot size={size} color="#121218" strokeWidth={2.4} />;
+      return <Bot size={size} color={darkColor} strokeWidth={2.4} />;
     case 'reports':
-      return <BarChart2 size={size} color="#121218" strokeWidth={2.4} />;
+      return <BarChart2 size={size} color={darkColor} strokeWidth={2.4} />;
     case 'social':
-      return <Flame size={size} color="#121218" strokeWidth={2.4} />;
+      return <Flame size={size} color={darkColor} strokeWidth={2.4} />;
     case 'study':
     default:
-      return <BookOpen size={size} color="#121218" strokeWidth={2.4} />;
+      return <BookOpen size={size} color={darkColor} strokeWidth={2.4} />;
   }
 }
 
@@ -46,18 +47,18 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
   const router = useRouter();
   const isUnread = !notification.read_at;
 
-  // Get color badge for priority
+  // Solid, high-contrast badges for readability
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return { label: 'URGENT', bg: 'rgba(239, 68, 68, 0.15)', color: '#DC2626' };
+        return { label: 'URGENT', bg: '#D94C61', color: '#FFFFFF' };
       case 'high':
-        return { label: 'HIGH', bg: 'rgba(249, 115, 22, 0.15)', color: '#EA580C' };
+        return { label: 'HIGH', bg: '#FFBE5C', color: '#2A1D22' };
       case 'medium':
-        return { label: 'INFO', bg: 'rgba(240, 115, 146, 0.15)', color: palette.danger };
+        return { label: 'INFO', bg: '#E84D72', color: '#FFFFFF' };
       case 'low':
       default:
-        return { label: 'TIP', bg: 'rgba(250, 215, 224, 0.5)', color: palette.textSecondary };
+        return { label: 'TIP', bg: '#FFF0F2', color: '#E84D72' };
     }
   };
 
@@ -88,79 +89,86 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
   return (
     <Pressable
       onPress={handlePress}
-      style={({ pressed }) => [
-        styles.card,
-        {
-          backgroundColor: isUnread ? '#FFF5F7' : '#FFFFFF',
-          borderColor: isUnread ? '#E84D72' : '#FAD7E0',
-          borderWidth: isUnread ? 2 : 1.5,
-          opacity: pressed ? 0.9 : 1,
-        },
-      ]}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.9 : 1,
+        width: '100%',
+        marginBottom: 10,
+      })}
     >
-      <View style={styles.headerRow}>
-        {/* Category Icon Badge */}
-        <View style={styles.iconContainer}>
-          {renderCategoryIcon(notification.category, 20)}
-        </View>
-
-        {/* Title and metadata */}
-        <View style={{ flex: 1, gap: 2 }}>
-          <View style={styles.titleRow}>
-            <Text
-              style={[
-                styles.titleText,
-                isUnread && { fontWeight: '800', color: palette.textPrimary },
-              ]}
-              numberOfLines={1}
-            >
-              {notification.title}
-            </Text>
-
-            {/* Unread pink indicator dot */}
-            {isUnread ? <View style={styles.unreadDot} /> : null}
+      {/* 
+        This is a standard View component. We define background and borders inline 
+        using static string hex colors to make it 100% bulletproof on release APKs.
+      */}
+      <View
+        style={[
+          styles.cardBase,
+          isUnread ? styles.cardUnread : styles.cardRead,
+        ]}
+      >
+        <View style={styles.headerRow}>
+          {/* Category Icon Badge */}
+          <View style={styles.iconContainer}>
+            {renderCategoryIcon(notification.category, 20)}
           </View>
 
-          <Text style={styles.timeText}>
-            {formatTime(notification.created_at)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Body Content */}
-      <Text style={styles.bodyText}>
-        {notification.body}
-      </Text>
-
-      {/* Footer Tags & Actions */}
-      <View style={styles.footerRow}>
-        <View style={[styles.badge, { backgroundColor: priorityBadge.bg }]}>
-          <Text style={{ color: priorityBadge.color, fontSize: 10, fontWeight: '800' }}>
-            {priorityBadge.label}
-          </Text>
-        </View>
-
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginLeft: 'auto' }}>
-          {notification.action_url ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-              <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '700' }}>
-                View Details
+          {/* Title and metadata */}
+          <View style={{ flex: 1, gap: 2 }}>
+            <View style={styles.titleRow}>
+              <Text
+                style={[
+                  styles.titleText,
+                  isUnread && { fontWeight: '800' },
+                ]}
+                numberOfLines={1}
+              >
+                {notification.title}
               </Text>
-              <ChevronRight size={14} color={palette.danger} strokeWidth={2.4} />
-            </View>
-          ) : null}
 
-          {onDelete ? (
-            <Pressable
-              onPress={(e) => {
-                e.stopPropagation();
-                onDelete(notification.id);
-              }}
-              style={styles.deleteBtn}
-            >
-              <X size={14} color={palette.textSecondary} strokeWidth={2.4} />
-            </Pressable>
-          ) : null}
+              {/* Unread pink indicator dot */}
+              {isUnread ? <View style={styles.unreadDot} /> : null}
+            </View>
+
+            <Text style={styles.timeText}>
+              {formatTime(notification.created_at)}
+            </Text>
+          </View>
+        </View>
+
+        {/* Body Content */}
+        <Text style={styles.bodyText}>
+          {notification.body}
+        </Text>
+
+        {/* Footer Tags & Actions */}
+        <View style={styles.footerRow}>
+          <View style={[styles.badge, { backgroundColor: priorityBadge.bg }]}>
+            <Text style={{ color: priorityBadge.color, fontSize: 10, fontWeight: '800' }}>
+              {priorityBadge.label}
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginLeft: 'auto' }}>
+            {notification.action_url ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Text style={{ color: '#E84D72', fontSize: 12, fontWeight: '700' }}>
+                  View Details
+                </Text>
+                <ChevronRight size={14} color="#E84D72" strokeWidth={2.4} />
+              </View>
+            ) : null}
+
+            {onDelete ? (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onDelete(notification.id);
+                }}
+                style={styles.deleteBtn}
+              >
+                <X size={14} color="#66545B" strokeWidth={2.4} />
+              </Pressable>
+            ) : null}
+          </View>
         </View>
       </View>
     </Pressable>
@@ -168,23 +176,36 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
 }
 
 const styles = StyleSheet.create({
-  card: {
+  cardBase: {
     borderRadius: 24,
-    padding: spacing.md,
-    gap: spacing.xs,
-    // NOTE: elevation is web-only to prevent rendering bugs on Android native
-    ...(Platform.OS === 'web'
-      ? ({
-          elevation: 3,
-          backdropFilter: 'blur(12px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(12px) saturate(160%)',
-        } as any)
-      : {}),
+    padding: 16,
+    gap: 6,
+    // Add flat platform specific styles safely
+    ...Platform.select({
+      web: {
+        elevation: 3,
+        shadowColor: '#2a1d22',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      default: {},
+    }),
+  },
+  cardRead: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#FAD7E0',
+    borderWidth: 1.5,
+  },
+  cardUnread: {
+    backgroundColor: '#FFF5F7',
+    borderColor: '#E84D72',
+    borderWidth: 2,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: 12,
   },
   iconContainer: {
     width: 40,
@@ -200,42 +221,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: spacing.xs,
+    gap: 8,
   },
   titleText: {
     fontSize: 15,
     fontWeight: '700',
-    color: palette.textPrimary,
+    color: '#2A1D22',
     flex: 1,
   },
   timeText: {
     fontSize: 11,
-    color: palette.textSecondary,
+    color: '#66545B',
     fontWeight: '500',
   },
   bodyText: {
     fontSize: 14,
     lineHeight: 20,
-    color: palette.textPrimary,
-    marginTop: spacing.xs,
+    color: '#3A2D32',
+    marginTop: 4,
     fontWeight: '500',
   },
   unreadDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: palette.danger,
+    backgroundColor: '#E84D72',
   },
   footerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: spacing.xs,
+    marginTop: 6,
   },
   badge: {
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: radius.pill,
+    borderRadius: 999,
   },
   deleteBtn: {
     padding: 4,

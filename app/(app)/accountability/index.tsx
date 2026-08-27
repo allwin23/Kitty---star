@@ -510,23 +510,29 @@ export default function AccountabilityScreen() {
               disabled={startEmptyDayMutation.isPending}
               onPress={() => void startEmptyDayMutation.mutateAsync()}
               style={({ pressed }) => ({
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#C73A57',
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: 'rgba(255, 255, 255, 0.30)',
-                paddingVertical: 14,
-                paddingHorizontal: 16,
-                marginTop: spacing.md,
                 opacity: startEmptyDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
                 transform: [{ scale: pressed && !startEmptyDayMutation.isPending ? 0.97 : 1 }],
+                width: '100%',
+                marginTop: spacing.md,
               })}
             >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                {startEmptyDayMutation.isPending ? 'Starting...' : 'Start Empty Day'}
-              </Text>
+              <View
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#C73A57',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.30)',
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+              >
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                  {startEmptyDayMutation.isPending ? 'Starting...' : 'Start Empty Day'}
+                </Text>
+              </View>
             </Pressable>
           )}
 
@@ -642,23 +648,29 @@ export default function AccountabilityScreen() {
               disabled={startDayMutation.isPending}
               onPress={() => void startDayMutation.mutateAsync()}
               style={({ pressed }) => ({
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#C73A57',
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: 'rgba(255, 255, 255, 0.30)',
-                paddingVertical: 14,
-                paddingHorizontal: 16,
-                marginTop: spacing.md,
                 opacity: startDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
                 transform: [{ scale: pressed && !startDayMutation.isPending ? 0.97 : 1 }],
+                width: '100%',
+                marginTop: spacing.md,
               })}
             >
-              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
-              </Text>
+              <View
+                style={{
+                  width: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#C73A57',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.30)',
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+              >
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                  {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
+                </Text>
+              </View>
             </Pressable>
           )}
 
@@ -673,26 +685,32 @@ export default function AccountabilityScreen() {
                 })
               }
               style={({ pressed }) => ({
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                width: '100%',
-                marginTop: spacing.md,
-                backgroundColor: '#C73A57',
-                borderRadius: 20,
-                borderWidth: 1,
-                borderColor: 'rgba(255, 255, 255, 0.30)',
-                paddingVertical: 14,
-                paddingHorizontal: 16,
                 opacity: pressed ? 0.88 : 1,
                 transform: [{ scale: pressed ? 0.97 : 1 }],
+                width: '100%',
+                marginTop: spacing.md,
               })}
             >
-              <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-              <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
-              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  width: '100%',
+                  backgroundColor: '#C73A57',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.30)',
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+              >
+                <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                  {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+                </Text>
+              </View>
             </Pressable>
           ) : null}
 
