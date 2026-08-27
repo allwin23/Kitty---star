@@ -4,6 +4,36 @@ import { AnimatedTabIcon } from '@/components/ui/animated-tab-icon';
 import { NavBouquetBackdrop } from '@/components/ui/nav-bouquet-backdrop';
 
 export default function AppLayout() {
+  const tabBarStyleResolved = [
+    {
+      position: Platform.OS === 'web' ? ('fixed' as any) : 'absolute',
+      bottom: Platform.OS === 'ios' ? 24 : 18,
+      left: Platform.OS === 'web' ? '50%' : 16,
+      right: Platform.OS === 'web' ? 'auto' : 16,
+      width: Platform.OS === 'web' ? '92%' : undefined,
+      maxWidth: 480,
+      alignSelf: 'center',
+      height: 62,
+      borderRadius: 31,
+      backgroundColor: '#FFFFFF',
+      borderWidth: 1.5,
+      borderColor: 'rgba(232, 77, 114, 0.35)',
+      paddingHorizontal: 8,
+      paddingBottom: 0,
+      paddingTop: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      elevation: 6,
+      zIndex: 99999,
+    },
+    Platform.OS === 'web' && ({
+      transform: 'translateX(-50%)',
+      backdropFilter: 'blur(16px) saturate(160%)',
+      WebkitBackdropFilter: 'blur(16px) saturate(160%)',
+    } as any),
+  ];
+
   return (
     <Tabs
       screenOptions={{
@@ -24,35 +54,7 @@ export default function AppLayout() {
           width: '100%',
           height: '100%',
         },
-        tabBarStyle: {
-          position: Platform.OS === 'web' ? ('fixed' as any) : 'absolute',
-          bottom: Platform.OS === 'ios' ? 24 : 18,
-          left: Platform.OS === 'web' ? '50%' : 16,
-          right: Platform.OS === 'web' ? 'auto' : 16,
-          width: Platform.OS === 'web' ? '92%' : undefined,
-          maxWidth: 480,
-          alignSelf: 'center',
-          height: 62,
-          borderRadius: 31,
-          backgroundColor: '#FFFFFF',
-          borderWidth: 1.5,
-          borderColor: 'rgba(232, 77, 114, 0.35)',
-          paddingHorizontal: 8,
-          paddingBottom: 0,
-          paddingTop: 0,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-around',
-          elevation: 6,
-          zIndex: 99999,
-          ...(Platform.OS === 'web'
-            ? ({
-                transform: 'translateX(-50%)',
-                backdropFilter: 'blur(16px) saturate(160%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(160%)',
-              } as any)
-            : {}),
-        },
+        tabBarStyle: tabBarStyleResolved,
         tabBarBackground: () => (
           <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%', borderRadius: 31, overflow: 'hidden' }}>
             <NavBouquetBackdrop />

@@ -63,13 +63,11 @@ function PinkTextInput({ style, onFocus, onBlur, placeholderTextColor, ...props 
           paddingHorizontal: spacing[12],
           paddingVertical: 8,
           fontSize: 14,
-          ...(Platform.OS === 'web'
-            ? ({
-                outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
-                outlineOffset: 1,
-              } as any)
-            : {}),
         },
+        Platform.OS === 'web' && ({
+          outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
+          outlineOffset: 1,
+        } as any),
         style,
       ]}
       {...props}

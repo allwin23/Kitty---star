@@ -117,7 +117,16 @@ export function CatBulletinStage() {
   return (
     <View style={styles.stageParentRow}>
       {/* CARD 1: DEDICATED PALE PINK FROSTED GLASS CAT IMAGE CARD */}
-      <View style={styles.catImageCardContainer}>
+      <View
+        style={[
+          styles.catImageCardContainer,
+          Platform.OS === 'web' && ({
+            elevation: 3,
+            backdropFilter: 'blur(12px) saturate(160%)',
+            WebkitBackdropFilter: 'blur(12px) saturate(160%)',
+          } as any),
+        ]}
+      >
         <View style={styles.catImageFixedFrame}>
           <Image
             source={imageSource}
@@ -128,7 +137,12 @@ export function CatBulletinStage() {
       </View>
 
       {/* CARD 2: DEDICATED CHERRY DIGITAL BULLETIN BOARD CARD */}
-      <View style={styles.digitalBulletinCardContainer}>
+      <View
+        style={[
+          styles.digitalBulletinCardContainer,
+          Platform.OS === 'web' && { elevation: 4 },
+        ]}
+      >
         {/* Background Watermark Layer (Ultra Dense Stars & Sparkles) */}
         <View style={styles.watermarkContainer} pointerEvents="none">
           {/* Row 1: Top Scatter */}
@@ -222,13 +236,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    elevation: 3,
-    ...(Platform.OS === 'web'
-      ? ({
-          backdropFilter: 'blur(12px) saturate(160%)',
-          WebkitBackdropFilter: 'blur(12px) saturate(160%)',
-        } as any)
-      : {}),
   },
   catImageFixedFrame: {
     width: 112,
@@ -282,7 +289,6 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing.md,
     justifyContent: 'space-between',
-    elevation: 4,
     position: 'relative',
     overflow: 'hidden',
   },

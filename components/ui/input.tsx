@@ -27,13 +27,11 @@ export function Input({ style, placeholderTextColor, onFocus, onBlur, ...props }
           fontSize: 16,
           paddingHorizontal: spacing[16],
           paddingVertical: spacing[12],
-          ...(Platform.OS === 'web'
-            ? ({
-                outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
-                outlineOffset: 1,
-              } as any)
-            : {}),
         },
+        Platform.OS === 'web' && ({
+          outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
+          outlineOffset: 1,
+        } as any),
         style,
       ]}
       {...props}
