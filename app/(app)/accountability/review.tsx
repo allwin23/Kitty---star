@@ -79,7 +79,7 @@ export default function ReviewScreen() {
         .select(`
           *,
           submission_proofs(*),
-          current_plans(*),
+          current_plans(*, current_tasks(*)),
           profiles:user_id(full_name)
         `)
         .eq('id', submissionId)
