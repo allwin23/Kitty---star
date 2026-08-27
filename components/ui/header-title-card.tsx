@@ -32,11 +32,15 @@ export function HeaderTitleCard({
           paddingVertical: 14,
           alignItems: 'center',
           justifyContent: 'center',
-          shadowColor: '#000000',
-          shadowOffset: { width: 0, height: 8 },
-          shadowOpacity: 0.28,
-          shadowRadius: 16,
-          elevation: 8,
+          overflow: 'hidden',
+          ...(Platform.OS === 'ios'
+            ? {
+                shadowColor: '#000000',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.28,
+                shadowRadius: 16,
+              }
+            : { elevation: 4 }),
           ...(Platform.OS === 'web'
             ? ({
                 backdropFilter: 'blur(16px) saturate(180%)',

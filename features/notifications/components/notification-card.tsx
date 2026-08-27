@@ -172,11 +172,15 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: spacing.md,
     gap: spacing.xs,
-    shadowColor: palette.danger,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 3,
+    overflow: 'hidden',
+    ...(Platform.OS === 'ios'
+      ? {
+          shadowColor: palette.danger,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.08,
+          shadowRadius: 10,
+        }
+      : { elevation: 3 }),
     ...(Platform.OS === 'web'
       ? ({
           backdropFilter: 'blur(12px) saturate(160%)',
