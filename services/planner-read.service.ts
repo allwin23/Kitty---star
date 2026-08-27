@@ -81,12 +81,29 @@ export async function getPomodoroSessions(planId: string) {
   return throwIfError(data ?? [], error);
 }
 
-/** Get signed URL for a proof image. */
+/** Get signed URL for a proof image with public URL fallback. */
 export async function getProofImageUrl(path: string): Promise<string | null> {
-  const { data } = await supabase.storage
-    .from('proof-images')
-    .createSignedUrl(path, 60 * 60); // 1 hour
-  return data?.signedUrl ?? null;
+  if (!path) return null;
+
+  // If path is already a full HTTP(S) URL
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+
+  try {
+    const { data, error } = await supabase.storage
+      .from('proof-images')
+      .createSignedUrl(path, 60 * 60); // 1 hour
+
+    if (!error && data?.signedUrl) {
+      return data.signedUrl;
+    }
+  } catch (err) {
+    // Fallthrough to public URL fallback
+  }
+
+  const { data: pubData } = supabase.storage.from('proof-images').getPublicUrl(path);
+  return pubData?.publicUrl ?? null;
 }
 
 /** Get the partner's current plan for a date (read-only, for live visibility). */

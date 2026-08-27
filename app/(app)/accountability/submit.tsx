@@ -151,12 +151,12 @@ export default function SubmitScreen() {
     if (taskId) setUploadingTaskId(taskId);
     try {
       const response = await fetch(asset.uri);
-      const blob = await response.blob();
+      const arrayBuffer = await response.arrayBuffer();
 
       await submissionService.uploadProof(
         submission.id,
         user.id,
-        blob,
+        arrayBuffer,
         validExt,
         undefined,
         taskId
@@ -192,8 +192,8 @@ export default function SubmitScreen() {
         for (const img of pickedImages) {
           try {
             const response = await fetch(img.uri);
-            const blob = await response.blob();
-            await submissionService.uploadProof(subResult.id, user.id, blob, img.ext, undefined, img.taskId);
+            const arrayBuffer = await response.arrayBuffer();
+            await submissionService.uploadProof(subResult.id, user.id, arrayBuffer, img.ext, undefined, img.taskId);
           } catch (e) {
             console.warn('Failed uploading image during submit:', e);
           }

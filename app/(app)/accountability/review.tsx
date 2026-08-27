@@ -10,7 +10,7 @@
  *  - Approve / Reject buttons -> submissionService.review()
  *    (which calls review_submission RPC -> approve_day or reject_day)
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -108,6 +108,19 @@ export default function ReviewScreen() {
     },
     enabled: !!submission?.user_id && !!submission?.current_plans?.date,
   });
+
+  useEffect(() => {
+    if (!submission?.submission_proofs) return;
+    for (const proof of submission.submission_proofs) {
+      if (proof.image_url && !proofUrls[proof.image_url]) {
+        void getProofImageUrl(proof.image_url).then((url) => {
+          if (url) {
+            setProofUrls((prev) => ({ ...prev, [proof.image_url]: url }));
+          }
+        });
+      }
+    }
+  }, [submission]);
 
   useFocusEffect(
     useCallback(() => {
