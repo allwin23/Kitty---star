@@ -11,7 +11,7 @@
  * Auto-start: If today has a draft but no plan, auto-duplicate into plans on mount.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { Alert, Pressable, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { format, addDays } from 'date-fns';
@@ -597,15 +597,29 @@ export default function AccountabilityScreen() {
                     title="Today's Plan Not Started"
                     description="Start today's plan to add tasks, run Pomodoro study sessions, and submit your day to your partner."
                   />
-                  <Button
-                    variant="primary"
-                    size="lg"
+                  <Pressable
+                    accessibilityRole="button"
                     disabled={startDayMutation.isPending}
                     onPress={() => void startDayMutation.mutateAsync()}
-                    style={{ width: '100%', backgroundColor: palette.cherryBloom }}
+                    style={({ pressed }) => ({
+                      width: '100%',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: '#C73A57',
+                      borderRadius: 20,
+                      borderWidth: 1,
+                      borderColor: 'rgba(255, 255, 255, 0.30)',
+                      paddingVertical: 14,
+                      paddingHorizontal: 16,
+                      elevation: 3,
+                      opacity: startDayMutation.isPending ? 0.55 : pressed ? 0.88 : 1,
+                      transform: [{ scale: pressed && !startDayMutation.isPending ? 0.97 : 1 }],
+                    })}
                   >
-                    {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
-                  </Button>
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                      {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
+                    </Text>
+                  </Pressable>
                 </View>
               ) : currentPlan.status === 'submitted' ? (
                 <View style={{ gap: spacing.sm }}>
@@ -626,24 +640,37 @@ export default function AccountabilityScreen() {
 
               {/* Submit button */}
               {currentPlan && currentTasks.length > 0 ? (
-                <Button
-                  variant="primary"
-                  size="lg"
+                <Pressable
+                  accessibilityRole="button"
                   onPress={() =>
                     router.push({
                       pathname: '/(app)/accountability/submit',
                       params: { planId: currentPlan.id },
                     })
                   }
-                  style={{ width: '100%', marginTop: spacing.xs, backgroundColor: palette.cherryBloom }}
+                  style={({ pressed }) => ({
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    width: '100%',
+                    marginTop: spacing.xs,
+                    backgroundColor: '#C73A57',
+                    borderRadius: 20,
+                    borderWidth: 1,
+                    borderColor: 'rgba(255, 255, 255, 0.30)',
+                    paddingVertical: 14,
+                    paddingHorizontal: 16,
+                    elevation: 3,
+                    opacity: pressed ? 0.88 : 1,
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                  })}
                 >
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                    <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>
-                      {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
-                    </Text>
-                  </View>
-                </Button>
+                  <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                    {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+                  </Text>
+                </Pressable>
               ) : null}
             </View>
           </Card>

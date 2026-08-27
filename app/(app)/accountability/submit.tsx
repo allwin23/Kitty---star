@@ -530,10 +530,9 @@ export default function SubmitScreen() {
                         </Text>
                       </View>
                     )}
-                    <Button
+                    <Pressable
+                      accessibilityRole="button"
                       disabled={isSending || currentTasks.length === 0}
-                      variant="primary"
-                      size="lg"
                       onPress={() => {
                         if (pickedImages.length === 0) {
                           Alert.alert('Proof required', 'Please attach at least 1 proof image above before submitting.');
@@ -541,15 +540,29 @@ export default function SubmitScreen() {
                         }
                         void handleSend();
                       }}
-                      style={{ width: '100%', marginTop: spacing.xs }}
+                      style={({ pressed }) => ({
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        width: '100%',
+                        marginTop: spacing.xs,
+                        backgroundColor: '#C73A57',
+                        borderRadius: 20,
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.30)',
+                        paddingVertical: 14,
+                        paddingHorizontal: 16,
+                        elevation: 3,
+                        opacity: (isSending || currentTasks.length === 0) ? 0.55 : pressed ? 0.88 : 1,
+                        transform: [{ scale: pressed ? 0.97 : 1 }],
+                      })}
                     >
-                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                        <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>
-                          {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
-                        </Text>
-                      </View>
-                    </Button>
+                      <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                        {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
+                      </Text>
+                    </Pressable>
                   </View>
                 </View>
               )}

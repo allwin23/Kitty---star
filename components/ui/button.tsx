@@ -1,7 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import { Platform, Pressable, Text, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
-
-import { palette, radius, spacing } from '@/theme';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive' | 'white';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -15,6 +13,11 @@ type ButtonProps = PropsWithChildren<{
   textStyle?: StyleProp<TextStyle>;
 }>;
 
+// Hardcoded color constants to guarantee they survive minification/tree-shaking
+const CHERRY = '#C73A57';
+const WHITE = '#FFFFFF';
+const DANGER = '#D94C61';
+
 export function Button({
   children,
   disabled = false,
@@ -24,77 +27,85 @@ export function Button({
   style,
   textStyle,
 }: ButtonProps) {
-  // Resolve variant styles directly to guarantee correct compilation in production
-  const containerStyle: ViewStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.button ?? 20,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'transparent',
-  };
+  // Pick variant colors — all hardcoded, no dynamic palette lookups
+  let bg: string;
+  let borderClr: string;
+  let borderW: number;
+  let elev: number;
+  let textClr: string;
+  let textWt: TextStyle['fontWeight'];
 
-  const textStyleResolved: TextStyle = {
-    fontWeight: '800',
-    textAlign: 'center',
-  };
-
-  // Assign background color and borders based on variant
-  if (variant === 'white') {
-    containerStyle.backgroundColor = '#FFFFFF';
-    containerStyle.borderColor = 'rgba(232, 77, 114, 0.40)';
-    containerStyle.borderWidth = 1.5;
-    containerStyle.elevation = 3;
-    textStyleResolved.color = palette.cherryBloom || '#C73A57';
-    textStyleResolved.fontWeight = '800';
-  } else if (variant === 'secondary') {
-    containerStyle.backgroundColor = 'rgba(255, 243, 245, 0.95)';
-    containerStyle.borderColor = 'rgba(232, 77, 114, 0.35)';
-    containerStyle.borderWidth = 1.5;
-    textStyleResolved.color = palette.cherryBloom || '#C73A57';
-    textStyleResolved.fontWeight = '700';
-  } else if (variant === 'tertiary') {
-    containerStyle.backgroundColor = 'rgba(255, 255, 255, 0.20)';
-    containerStyle.borderColor = 'rgba(255, 255, 255, 0.40)';
-    containerStyle.borderWidth = 1;
-    textStyleResolved.color = '#FFFFFF';
-    textStyleResolved.fontWeight = '700';
-  } else if (variant === 'destructive') {
-    containerStyle.backgroundColor = palette.danger || '#D94C61';
-    containerStyle.elevation = 3;
-    textStyleResolved.color = '#FFFFFF';
-    textStyleResolved.fontWeight = '800';
-  } else {
-    // primary & default
-    containerStyle.backgroundColor = palette.cherryBloom || '#C73A57';
-    containerStyle.borderColor = 'rgba(255, 255, 255, 0.30)';
-    containerStyle.borderWidth = 1;
-    containerStyle.elevation = 3;
-    textStyleResolved.color = '#FFFFFF';
-    textStyleResolved.fontWeight = '800';
+  switch (variant) {
+    case 'white':
+      bg = WHITE;
+      borderClr = 'rgba(232, 77, 114, 0.40)';
+      borderW = 1.5;
+      elev = 3;
+      textClr = CHERRY;
+      textWt = '800';
+      break;
+    case 'secondary':
+      bg = 'rgba(255, 243, 245, 0.95)';
+      borderClr = 'rgba(232, 77, 114, 0.35)';
+      borderW = 1.5;
+      elev = 0;
+      textClr = CHERRY;
+      textWt = '700';
+      break;
+    case 'tertiary':
+      bg = 'rgba(255, 255, 255, 0.20)';
+      borderClr = 'rgba(255, 255, 255, 0.40)';
+      borderW = 1;
+      elev = 0;
+      textClr = WHITE;
+      textWt = '700';
+      break;
+    case 'destructive':
+      bg = DANGER;
+      borderClr = 'transparent';
+      borderW = 0;
+      elev = 3;
+      textClr = WHITE;
+      textWt = '800';
+      break;
+    default:
+      // primary
+      bg = CHERRY;
+      borderClr = 'rgba(255, 255, 255, 0.30)';
+      borderW = 1;
+      elev = 3;
+      textClr = WHITE;
+      textWt = '800';
+      break;
   }
 
-  // Resolve size spacing
-  let paddingVertical: number = spacing[12] ?? 12;
-  let paddingHorizontal: number = spacing[24] ?? 24;
-  let fontSize = 16;
-  let lineHeight = 22;
+  // Pick size padding
+  let pV: number;
+  let pH: number;
+  let fSize: number;
+  let lHeight: number;
 
-  if (size === 'sm') {
-    paddingVertical = spacing[8] ?? 8;
-    paddingHorizontal = spacing[16] ?? 16;
-    fontSize = 14;
-    lineHeight = 18;
-  } else if (size === 'lg') {
-    paddingVertical = spacing[12] ?? 12;
-    paddingHorizontal = spacing[16] ?? 16;
-    fontSize = 16;
-    lineHeight = 22;
+  switch (size) {
+    case 'sm':
+      pV = 8;
+      pH = 16;
+      fSize = 14;
+      lHeight = 18;
+      break;
+    case 'lg':
+      pV = 12;
+      pH = 16;
+      fSize = 16;
+      lHeight = 22;
+      break;
+    default:
+      // md
+      pV = 12;
+      pH = 24;
+      fSize = 16;
+      lHeight = 22;
+      break;
   }
-
-  const sizeContainerStyle: ViewStyle = { paddingVertical, paddingHorizontal };
-  const sizeTextStyle: TextStyle = { fontSize, lineHeight };
 
   return (
     <Pressable
@@ -102,9 +113,17 @@ export function Button({
       disabled={disabled}
       onPress={onPress}
       style={({ pressed }) => [
-        containerStyle,
-        sizeContainerStyle,
         {
+          flexDirection: 'row' as const,
+          alignItems: 'center' as const,
+          justifyContent: 'center' as const,
+          borderRadius: 20,
+          backgroundColor: bg,
+          borderColor: borderClr,
+          borderWidth: borderW,
+          elevation: elev,
+          paddingVertical: pV,
+          paddingHorizontal: pH,
           opacity: disabled ? 0.55 : pressed ? 0.88 : 1,
           transform: [{ scale: pressed && !disabled ? 0.97 : 1 }],
         },
@@ -114,9 +133,14 @@ export function Button({
       {typeof children === 'string' || typeof children === 'number' ? (
         <Text
           style={[
-            textStyleResolved,
-            sizeTextStyle,
-            { letterSpacing: 0.2 },
+            {
+              color: textClr,
+              fontWeight: textWt,
+              fontSize: fSize,
+              lineHeight: lHeight,
+              letterSpacing: 0.2,
+              textAlign: 'center' as const,
+            },
             textStyle,
           ]}
         >
@@ -128,4 +152,3 @@ export function Button({
     </Pressable>
   );
 }
-
