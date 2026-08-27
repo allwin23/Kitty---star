@@ -156,7 +156,7 @@ export const useEnglishStore = create<EnglishState>()(
         const userId = useAuthStore.getState().user?.id || 'anonymous';
         const { userStates = {} } = get();
         const { selected, newUsedWordIds } = pickTodayWords([]);
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = format(new Date(), 'yyyy-MM-dd');
 
         const updatedUserState = {
           lastGeneratedDate: todayStr,

@@ -165,14 +165,25 @@ export default function AccountabilityScreen() {
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────
 
   const startDayMutation = useMutation({
-    mutationFn: () => plannerService.createDailyPlans(today),
+    mutationFn: async () => {
+      try {
+        return await plannerService.createDailyPlans(today);
+      } catch (e: any) {
+        // Fallback: create default draft if needed and retry plan creation
+        await plannerService.createDraft(today, [{ title: 'Daily Focus Session', estimated_minutes: 25 }]);
+        return await plannerService.createDailyPlans(today);
+      }
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.initialPlan(today) });
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
       void queryClient.invalidateQueries({ queryKey: ['draft'] });
       void queryClient.invalidateQueries({ queryKey: ['today-report', today] });
     },
-    onError: (e: Error) => Alert.alert('Error starting day', e.message),
+    onError: (e: Error) => {
+      autoStartRef.current = false;
+      Alert.alert('Error starting day', e.message);
+    },
   });
 
   const todayDraft = todayDraftQ.data as {
@@ -581,10 +592,21 @@ export default function AccountabilityScreen() {
                   </View>
                 </View>
               ) : !currentPlan ? (
-                <EmptyState
-                  title="Not started"
-                  description={"No tasks for today. Use \u201CStart Empty Day\u201D above, or plan tomorrow\u2019s tasks in Prior Planning."}
-                />
+                <View style={{ gap: spacing.sm, alignItems: 'center' }}>
+                  <EmptyState
+                    title="Today's Plan Not Started"
+                    description="Start today's plan to add tasks, run Pomodoro study sessions, and submit your day to your partner."
+                  />
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    disabled={startDayMutation.isPending}
+                    onPress={() => void startDayMutation.mutateAsync()}
+                    style={{ width: '100%' }}
+                  >
+                    {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
+                  </Button>
+                </View>
               ) : currentPlan.status === 'submitted' ? (
                 <View style={{ gap: spacing.sm }}>
                   <TodoList tasks={currentTasks} readOnly />

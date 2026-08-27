@@ -73,11 +73,10 @@ export async function getMonthlyActivity(
   month?: number,
 ): Promise<DailyActivityRow[]> {
   const now = new Date();
-  const y = year ?? now.getUTCFullYear();
-  const m = month ?? now.getUTCMonth() + 1; // 1-based
+  const y = year ?? now.getFullYear();
+  const m = month ?? now.getMonth() + 1; // 1-based
   const start = `${y}-${String(m).padStart(2, '0')}-01`;
-  const endDate = new Date(Date.UTC(y, m, 1)); // first day of next month in UTC
-  const end = endDate.toISOString().slice(0, 10);
+  const end = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
 
   const { data, error } = await supabase
     .from('daily_user_activity')
@@ -98,16 +97,13 @@ async function computeStreak(today: DailyActivityRow | null): Promise<number> {
 
   const allDates = new Set((data ?? []).map((r) => r.date));
   let streak = 0;
-  const cursor = new Date();
-
-  // If today has no activity yet, start counting from yesterday
-  if (!today) cursor.setUTCDate(cursor.getUTCDate() - 1);
+  let daysBack = !today ? 1 : 0;
 
   while (true) {
-    const iso = cursor.toISOString().slice(0, 10);
+    const iso = daysAgoIso(daysBack);
     if (!allDates.has(iso)) break;
     streak++;
-    cursor.setUTCDate(cursor.getUTCDate() - 1);
+    daysBack++;
   }
 
   return streak;

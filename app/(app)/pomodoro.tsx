@@ -37,7 +37,7 @@ import {
 import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
-import { pomodoroService } from '@/services/backend';
+import { pomodoroService, plannerService } from '@/services/backend';
 import { useAuthStore, usePomodoroStore, type PomodoroSessionType } from '@/stores';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { EventBus } from '@/features/notifications/event-bus';
@@ -313,9 +313,26 @@ export default function PomodoroScreen() {
   // Complete pomodoro session mutation
   const completeMutation = useMutation({
     mutationFn: async () => {
-      if (!currentPlan) throw new Error('No active plan found');
-      if (sessionType === 'focus' && !selectedTaskId) {
-        throw new Error('A focus session requires a selected task');
+      let targetPlan = currentPlan;
+      if (!targetPlan) {
+        // Try fetching active plan directly
+        targetPlan = (await getCurrentPlan(today)) as typeof currentPlan;
+        if (!targetPlan) {
+          // Try auto-creating today's plan if draft exists
+          try {
+            await plannerService.createDailyPlans(today);
+            targetPlan = (await getCurrentPlan(today)) as typeof currentPlan;
+          } catch (e) {
+            // Ignored, will throw fallback error below
+          }
+        }
+      }
+
+      if (!targetPlan) throw new Error('No active plan found for today.');
+      if (sessionType === 'focus' && !selectedTaskId && targetPlan.current_tasks.length > 0) {
+        // Auto-fallback to first task if none explicitly selected
+        const firstTask = targetPlan.current_tasks.find((t) => t.status !== 'completed') || targetPlan.current_tasks[0];
+        if (firstTask) setSelectedTaskId(firstTask.id);
       }
 
       const elapsedSeconds = durationMinutes * 60 - timerSeconds;
@@ -326,8 +343,8 @@ export default function PomodoroScreen() {
       const pEndedAt = new Date().toISOString();
 
       return pomodoroService.complete({
-        planId: currentPlan.id,
-        taskId: sessionType === 'focus' ? selectedTaskId! : undefined,
+        planId: targetPlan.id,
+        taskId: sessionType === 'focus' ? selectedTaskId || targetPlan.current_tasks[0]?.id : undefined,
         duration: loggedDuration,
         sessionType,
         startedAt: pStartedAt,
@@ -377,10 +394,14 @@ export default function PomodoroScreen() {
       }
     },
     onError: (e: Error) => {
+      if (scheduledNotifId) {
+        void cancelLocalNotification(scheduledNotifId);
+      }
+      resetTimer();
       if (Platform.OS === 'web') {
         window.alert(`Failed to save session: ${e.message}`);
       } else {
-        Alert.alert('Error completing session', e.message);
+        Alert.alert('Session Reset', `Could not log session: ${e.message}`);
       }
     },
   });

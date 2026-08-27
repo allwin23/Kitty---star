@@ -15,7 +15,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { format } from 'date-fns';
 
-import { submissionService } from '@/services/backend';
+import { submissionService, plannerService } from '@/services/backend';
 import {
   getInitialPlan,
   getCurrentPlan,
@@ -172,7 +172,21 @@ export default function SubmitScreen() {
   };
 
   const handleSend = async () => {
-    const effectivePlanId = planId || currentQ.data?.id;
+    let effectivePlanId = planId || currentQ.data?.id;
+    if (!effectivePlanId && user?.id) {
+      try {
+        const livePlan = (await getCurrentPlan(today)) as { id: string } | null;
+        effectivePlanId = livePlan?.id;
+        if (!effectivePlanId) {
+          await plannerService.createDailyPlans(today);
+          const newPlan = (await getCurrentPlan(today)) as { id: string } | null;
+          effectivePlanId = newPlan?.id;
+        }
+      } catch (e) {
+        // Fallthrough
+      }
+    }
+
     if (!effectivePlanId || !user?.id) {
       Alert.alert('No active plan', 'Please start a daily plan before submitting.');
       return;
@@ -219,11 +233,12 @@ export default function SubmitScreen() {
       setPickedImages([]);
       setRemark('');
 
-      Alert.alert(
-        'Day Submitted!',
-        `Your daily report has been sent to ${partnerName} for review.`,
-        [{ text: 'OK', onPress: () => router.back() }]
-      );
+      const hasPartner = !!partnerProfile;
+      const successMsg = hasPartner
+        ? `Your daily report has been sent to ${partnerName} for review.`
+        : 'Your daily report has been saved successfully.';
+
+      Alert.alert('Day Submitted! 🎉', successMsg, [{ text: 'OK', onPress: () => router.back() }]);
     } catch (e: any) {
       Alert.alert('Submission Failed', e.message || 'An error occurred while submitting.');
     } finally {

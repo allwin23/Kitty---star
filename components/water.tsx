@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { format, subDays } from 'date-fns';
+import { todayIso, daysAgoIso } from '@/lib/supabase-helpers';
 import {
   Pressable,
   ScrollView,
@@ -288,9 +290,7 @@ export function WeeklyProgressCard({
   const getLast7Days = () => {
     const list = [];
     for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      list.push(d.toISOString().slice(0, 10));
+      list.push(daysAgoIso(i));
     }
     return list;
   };
@@ -352,7 +352,7 @@ export function StatisticsCard({
   
   const avgIntake = recordedDays > 0 ? Math.round(totalConsumed / recordedDays) : 0;
   
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = todayIso();
   const todayRow = history.find((h) => h.date === todayStr);
   const currentStreak = todayRow?.current_streak ?? 0;
   const longestStreak = history.reduce((max, item) => Math.max(max, item.current_streak), 0);
