@@ -14,6 +14,14 @@ export default function AppLayout() {
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center',
+          height: 62,
+          paddingVertical: 0,
+        },
+        tabBarIconStyle: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignSelf: 'center',
+          width: '100%',
           height: '100%',
         },
         tabBarStyle: {
@@ -30,6 +38,8 @@ export default function AppLayout() {
           borderWidth: 1.5,
           borderColor: 'rgba(232, 77, 114, 0.35)',
           paddingHorizontal: 8,
+          paddingBottom: 0,
+          paddingTop: 0,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-around',

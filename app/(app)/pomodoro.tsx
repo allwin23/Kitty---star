@@ -1141,7 +1141,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 52,
     borderRadius: 26,
-    backgroundColor: '#FFF3F5',
+    backgroundColor: '#FFFFFF',
     borderColor: 'rgba(232, 77, 114, 0.40)',
     borderWidth: 1.5,
     flexDirection: 'row',
