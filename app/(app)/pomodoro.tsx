@@ -726,50 +726,113 @@ export default function PomodoroScreen() {
               <Pressable
                 disabled={sessionType === 'focus' && !selectedTaskId}
                 onPress={handleStart}
-                style={({ pressed }) => [
-                  styles.primaryActionBtn,
-                  sessionType === 'focus' && !selectedTaskId && { opacity: 0.5 },
-                  pressed && { opacity: 0.88 },
-                ]}
+                style={({ pressed }) => ({
+                  flex: 1,
+                  opacity: (sessionType === 'focus' && !selectedTaskId) ? 0.5 : pressed ? 0.88 : 1,
+                  transform: [{ scale: pressed && !(sessionType === 'focus' && !selectedTaskId) ? 0.97 : 1 }],
+                })}
               >
-                <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    width: '100%',
+                    height: 52,
+                    backgroundColor: '#C73A57',
+                    borderRadius: 26,
+                    borderWidth: 1,
+                    borderColor: 'rgba(255, 255, 255, 0.30)',
+                  }}
+                >
+                  <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+                </View>
               </Pressable>
             ) : (
               <>
                 {isPaused ? (
                   <Pressable
                     onPress={handleResume}
-                    style={({ pressed }) => [
-                      styles.primaryActionBtn,
-                      pressed && { opacity: 0.88 },
-                    ]}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      opacity: pressed ? 0.88 : 1,
+                      transform: [{ scale: pressed ? 0.97 : 1 }],
+                    })}
                   >
-                    <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        width: '100%',
+                        height: 52,
+                        backgroundColor: '#C73A57',
+                        borderRadius: 26,
+                        borderWidth: 1,
+                        borderColor: 'rgba(255, 255, 255, 0.30)',
+                      }}
+                    >
+                      <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
+                    </View>
                   </Pressable>
                 ) : (
                   <Pressable
                     onPress={handlePause}
-                    style={({ pressed }) => [
-                      styles.secondaryActionBtn,
-                      pressed && { opacity: 0.88 },
-                    ]}
+                    style={({ pressed }) => ({
+                      flex: 1,
+                      opacity: pressed ? 0.88 : 1,
+                      transform: [{ scale: pressed ? 0.97 : 1 }],
+                    })}
                   >
-                    <Pause size={18} color={palette.danger} strokeWidth={2.4} />
-                    <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 8,
+                        width: '100%',
+                        height: 52,
+                        backgroundColor: '#FFFFFF',
+                        borderRadius: 26,
+                        borderWidth: 1.5,
+                        borderColor: 'rgba(232, 77, 114, 0.40)',
+                      }}
+                    >
+                      <Pause size={18} color={palette.danger} strokeWidth={2.4} />
+                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                    </View>
                   </Pressable>
                 )}
 
                 <Pressable
                   onPress={handleReset}
-                  style={({ pressed }) => [
-                    styles.destructiveActionBtn,
-                    pressed && { opacity: 0.88 },
-                  ]}
+                  style={({ pressed }) => ({
+                    flex: 1,
+                    opacity: pressed ? 0.88 : 1,
+                    transform: [{ scale: pressed ? 0.97 : 1 }],
+                  })}
                 >
-                  <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
-                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 8,
+                      width: '100%',
+                      height: 52,
+                      backgroundColor: '#D94C61',
+                      borderRadius: 26,
+                      borderWidth: 1,
+                      borderColor: 'rgba(255, 255, 255, 0.30)',
+                    }}
+                  >
+                    <RotateCcw size={18} color="#FFFFFF" strokeWidth={2.2} />
+                    <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
+                  </View>
                 </Pressable>
               </>
             )}

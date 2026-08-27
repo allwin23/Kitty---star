@@ -24,22 +24,20 @@ export function HeaderTitleCard({
       style={[
         {
           alignSelf: 'flex-start',
-          backgroundColor: '#FFFFFF',
-          borderColor: 'rgba(232, 77, 114, 0.35)',
-          borderWidth: 1.5,
+          backgroundColor: 'rgba(18, 18, 24, 0.90)',
+          borderColor: 'rgba(255, 255, 255, 0.18)',
+          borderWidth: 1,
           borderRadius: 999,
           paddingHorizontal: 28,
           paddingVertical: 14,
           alignItems: 'center',
           justifyContent: 'center',
-          elevation: 2,
-          ...(Platform.OS === 'web'
-            ? ({
-                backdropFilter: 'blur(16px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-              } as any)
-            : {}),
         },
+        Platform.OS === 'web' && ({
+          elevation: 4,
+          backdropFilter: 'blur(16px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+        } as any),
         style,
       ]}
     >
@@ -56,21 +54,21 @@ export function HeaderTitleCard({
               marginBottom: 4,
             }}
           >
-            <Text style={{ color: '#E84D72', fontSize: 9, fontWeight: '800', letterSpacing: 0.8, textTransform: 'uppercase' }}>
+            <Text style={{ color: '#F07392', fontSize: 9, fontWeight: '800', letterSpacing: 0.8, textTransform: 'uppercase' }}>
               {badgeText}
             </Text>
           </View>
         ) : null}
 
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-          <Text style={{ fontSize: 20, fontWeight: '800', color: '#2A1D22', letterSpacing: -0.3, textAlign: 'center' }}>
+          <Text style={{ fontSize: 20, fontWeight: '800', color: '#FFFFFF', letterSpacing: -0.3, textAlign: 'center' }}>
             {title}
           </Text>
           {showWavingHand ? <AnimatedWavingHand size={26} /> : null}
         </View>
 
         {subtitle ? (
-          <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '500', textAlign: 'center', marginTop: 2 }}>
+          <Text style={{ color: 'rgba(255, 255, 255, 0.72)', fontSize: 12, fontWeight: '500', textAlign: 'center', marginTop: 2 }}>
             {subtitle}
           </Text>
         ) : null}
