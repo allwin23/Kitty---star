@@ -6,4 +6,5 @@ export * from './settings-store';
 export * from './pyq-store';
 export * from './flashcard-store';
 export * from './english-store';
+export * from './pyq-questions-store';
 

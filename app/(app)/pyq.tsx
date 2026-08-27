@@ -32,8 +32,9 @@ import {
 } from 'lucide-react-native';
 
 import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
-import { useAuthStore, usePyqStore } from '@/stores';
+import { useAuthStore, usePyqStore, usePyqQuestionsStore } from '@/stores';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
+import * as DocumentPicker from 'expo-document-picker';
 import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
 import { CompanionBus } from '@/features/companion/event-bus';
@@ -98,6 +99,13 @@ export default function PYQScreen() {
 
   // Zustand used questions store
   const { usedQuestionIds, addUsedQuestionIds, clearUsedQuestionIds } = usePyqStore();
+  const {
+    customQuestions,
+    addCustomQuestions,
+    deleteSubject,
+    deletedSubjects,
+    restoreDeletedSubjects,
+  } = usePyqQuestionsStore();
   const queryClient = useQueryClient();
 
   // Load backend stats
@@ -122,8 +130,14 @@ export default function PYQScreen() {
     }, [])
   );
 
-  // Derive all unique subjects from the JSON dynamically
-  const dynamicSubjects = Array.from(new Set((questionsData as Question[]).map((q) => q.subject)));
+  // Combine static local JSON data with custom uploaded questions
+  // and filter out any deleted subjects
+  const allQuestions = [...questionsData, ...customQuestions].filter(
+    (q) => !deletedSubjects.some((ds) => ds.toLowerCase() === q.subject.toLowerCase())
+  ) as Question[];
+
+  // Derive all unique subjects from the combined questions pool dynamically
+  const dynamicSubjects = Array.from(new Set(allQuestions.map((q) => q.subject)));
 
   // Setup / start new test attempt
   const startAttemptMutation = useMutation({
@@ -214,7 +228,7 @@ export default function PYQScreen() {
     setSelectedSubject(subj);
     
     // Calculate total questions in pool for this subject
-    let pool = questionsData as Question[];
+    let pool = allQuestions;
     if (subj !== 'All') {
       pool = pool.filter((q) => q.subject.toLowerCase() === subj.toLowerCase());
     }
@@ -225,7 +239,7 @@ export default function PYQScreen() {
 
   const handleStartTest = async () => {
     // 1. Build test questions using non-repeating cycle logic
-    let pool = questionsData as Question[];
+    let pool = allQuestions;
     if (selectedSubject !== 'All') {
       pool = pool.filter((q) => q.subject.toLowerCase() === selectedSubject.toLowerCase());
     }
@@ -291,6 +305,84 @@ export default function PYQScreen() {
       year: finalQuestions[0].year,
       mode: 'test',
     });
+  };
+
+  const handleImportJson = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: 'application/json',
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled || !result.assets || result.assets.length === 0) {
+        return;
+      }
+
+      const asset = result.assets[0];
+      const response = await fetch(asset.uri);
+      const text = await response.text();
+      const parsed = JSON.parse(text);
+
+      // Validate the json schema
+      if (!Array.isArray(parsed)) {
+        Alert.alert('Invalid Format', 'JSON file must contain an array of question objects.');
+        return;
+      }
+
+      // Check format of first element
+      const first = parsed[0];
+      if (first && (typeof first.question !== 'string' || !Array.isArray(first.options) || typeof first.answer !== 'number')) {
+        Alert.alert('Invalid Format', 'Each question object must have at least: question (string), options (array of strings), and answer (number, e.g. 1-indexed option number).');
+        return;
+      }
+
+      // Helper to match subject name case-insensitively with existing static subjects
+      const existingSubjects = Array.from(new Set((questionsData as Question[]).map((q) => q.subject)));
+      const findMatchingSubjectCase = (subjectName: string) => {
+        const trimmed = subjectName.trim();
+        const match = existingSubjects.find((s) => s.toLowerCase() === trimmed.toLowerCase());
+        if (match) return match;
+        // Capitalize first letter if it is a new custom subject
+        return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
+      };
+
+      // Map parsed items to Question type
+      const questionsToImport = parsed.map((item: any, idx: number) => {
+        return {
+          id: item.id || `custom-${Date.now()}-${idx}`,
+          year: typeof item.year === 'number' ? item.year : new Date().getFullYear(),
+          subject: typeof item.subject === 'string' ? findMatchingSubjectCase(item.subject) : 'Custom Subject',
+          topic: typeof item.topic === 'string' ? item.topic.trim() : 'General',
+          question: String(item.question).trim(),
+          options: Array.isArray(item.options) ? item.options.map(String) : [],
+          answer: typeof item.answer === 'number' ? item.answer : 1,
+        };
+      });
+
+      addCustomQuestions(questionsToImport);
+      Alert.alert('Success', `Imported ${questionsToImport.length} questions successfully!`);
+    } catch (e: any) {
+      Alert.alert('Import Failed', `Error parsing JSON: ${e.message}`);
+    }
+  };
+
+  const handleDeleteSubjectPrompt = (subj: string) => {
+    const title = 'Delete Subject';
+    const msg = `Are you sure you want to delete "${subj}" and all of its questions?`;
+    if (Platform.OS === 'web') {
+      if (window.confirm(`${title}\n\n${msg}`)) {
+        deleteSubject(subj);
+      }
+    } else {
+      Alert.alert(title, msg, [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => deleteSubject(subj),
+        },
+      ]);
+    }
   };
 
   const trackTimeForCurrentQuestion = () => {
@@ -423,7 +515,7 @@ export default function PYQScreen() {
               </View>
             )}
 
-            {/* Dynamic Subjects List — Compact Horizontal Cards */}
+            {/* Dynamic Subjects List — Compact Horizontal Cards with Deletion Support */}
             <View style={{ gap: spacing.xs }}>
               <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Select Subject</Text>
               
@@ -440,19 +532,88 @@ export default function PYQScreen() {
                 </Pressable>
 
                 {dynamicSubjects.map((subj) => (
-                  <Pressable
+                  <View
                     key={subj}
-                    onPress={() => handleSelectSubject(subj)}
-                    style={[styles.subjectCard, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)' }]}
+                    style={[
+                      styles.subjectCard,
+                      {
+                        backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                        borderColor: 'rgba(250, 215, 224, 0.90)',
+                        justifyContent: 'space-between',
+                      },
+                    ]}
                   >
-                    <Book size={17} color="#D94C61" strokeWidth={2.2} />
-                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13, flex: 1 }} numberOfLines={1}>
-                      {subj}
-                    </Text>
-                  </Pressable>
+                    <Pressable
+                      onPress={() => handleSelectSubject(subj)}
+                      style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                    >
+                      <Book size={17} color="#D94C61" strokeWidth={2.2} />
+                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13, flex: 1 }} numberOfLines={1}>
+                        {subj}
+                      </Text>
+                    </Pressable>
+
+                    <Pressable
+                      onPress={() => handleDeleteSubjectPrompt(subj)}
+                      style={({ pressed }) => ({
+                        opacity: pressed ? 0.6 : 1,
+                        padding: 4,
+                      })}
+                    >
+                      <XCircle size={17} color="#D94C61" strokeWidth={2.2} />
+                    </Pressable>
+                  </View>
                 ))}
               </View>
             </View>
+
+            {/* Upload Custom PYQ JSON Button (Aesthetic bottom primary action) */}
+            <Pressable
+              onPress={handleImportJson}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.88 : 1,
+                transform: [{ scale: pressed ? 0.97 : 1 }],
+                width: '100%',
+                marginTop: spacing.xs,
+              })}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  width: '100%',
+                  backgroundColor: palette.cherryBloom,
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.30)',
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+              >
+                <Sparkles size={18} color="#FFFFFF" strokeWidth={2.4} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                  Upload Custom PYQ JSON
+                </Text>
+              </View>
+            </Pressable>
+
+            {/* Restore deleted subjects action helper */}
+            {deletedSubjects.length > 0 && (
+              <Pressable
+                onPress={() => {
+                  restoreDeletedSubjects();
+                  Alert.alert('Restored', 'All deleted subjects have been restored.');
+                }}
+                style={[styles.resetButton, { backgroundColor: '#C73A57' }]}
+              >
+                <RotateCcw size={16} color="#FFFFFF" strokeWidth={2.2} />
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+                  Restore Deleted Subjects ({deletedSubjects.length})
+                </Text>
+              </Pressable>
+            )}
 
             {/* Reset study cycle pool helper */}
             {usedQuestionIds.length > 0 && (
