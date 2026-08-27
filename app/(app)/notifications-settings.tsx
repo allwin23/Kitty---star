@@ -52,7 +52,7 @@ export default function NotificationSettingsScreen() {
   const [loadingApps, setLoadingApps] = useState(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android' || !AppBlocker) return;
 
     let active = true;
     const checkPermissionsAndLoad = async () => {
@@ -477,7 +477,7 @@ export default function NotificationSettingsScreen() {
 
                         {!usagePermission && (
                           <Pressable
-                            onPress={() => AppBlocker.requestUsageStatsPermission()}
+                            onPress={() => AppBlocker?.requestUsageStatsPermission()}
                             style={{
                               backgroundColor: '#B45309',
                               borderRadius: radius.sm,
@@ -493,7 +493,7 @@ export default function NotificationSettingsScreen() {
 
                         {!overlayPermission && (
                           <Pressable
-                            onPress={() => AppBlocker.requestOverlayPermission()}
+                            onPress={() => AppBlocker?.requestOverlayPermission()}
                             style={{
                               backgroundColor: '#B45309',
                               borderRadius: radius.sm,

@@ -262,7 +262,7 @@ export default function PomodoroScreen() {
 
   // Check permissions & load apps when blocker settings modal is visible
   useEffect(() => {
-    if (Platform.OS !== 'android' || !blockerModalVisible) return;
+    if (Platform.OS !== 'android' || !blockerModalVisible || !NativeModules.AppBlocker) return;
 
     let active = true;
     const checkPermissionsAndLoad = async () => {
@@ -306,7 +306,7 @@ export default function PomodoroScreen() {
 
   // Start/Stop native app blocker service based on Pomodoro state
   useEffect(() => {
-    if (Platform.OS !== 'android') return;
+    if (Platform.OS !== 'android' || !NativeModules.AppBlocker) return;
 
     if (isBlockerEnabled && isRunning && !isPaused && sessionType === 'focus' && blockedPackages.length > 0) {
       NativeModules.AppBlocker.startBlockingService(blockedPackages);
@@ -1052,7 +1052,7 @@ export default function PomodoroScreen() {
 
                     {!usagePermission && (
                       <Pressable
-                        onPress={() => NativeModules.AppBlocker.requestUsageStatsPermission()}
+                        onPress={() => NativeModules.AppBlocker?.requestUsageStatsPermission()}
                         style={{
                           backgroundColor: '#B45309',
                           borderRadius: radius.sm,
@@ -1068,7 +1068,7 @@ export default function PomodoroScreen() {
 
                     {!overlayPermission && (
                       <Pressable
-                        onPress={() => NativeModules.AppBlocker.requestOverlayPermission()}
+                        onPress={() => NativeModules.AppBlocker?.requestOverlayPermission()}
                         style={{
                           backgroundColor: '#B45309',
                           borderRadius: radius.sm,
