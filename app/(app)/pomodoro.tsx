@@ -37,13 +37,16 @@ import {
   Timer,
   Smartphone,
   X,
+  Laptop,
 } from 'lucide-react-native';
 
 import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService, plannerService } from '@/services/backend';
-import { useAuthStore, usePomodoroStore, useAppBlockStore, type PomodoroSessionType } from '@/stores';
+import { useAuthStore, usePomodoroStore, useAppBlockStore, useChromeBlockerStore, type PomodoroSessionType } from '@/stores';
+import { focusLockSyncService } from '@/lib/focus-lock-sync';
+import { focusProfilesService, type FocusProfile } from '@/lib/focus-profiles-service';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { EventBus } from '@/features/notifications/event-bus';
 import { palette, radius, spacing } from '@/theme';
@@ -253,12 +256,69 @@ export default function PomodoroScreen() {
 
   const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } = useAppBlockStore();
 
+  const {
+    isChromeSyncEnabled,
+    blockedCategories,
+    customDomains,
+    strictMode,
+    studyEmail,
+    setChromeSyncEnabled,
+    setBlockedCategories,
+    setCustomDomains,
+    setStrictMode,
+    setStudyEmail,
+  } = useChromeBlockerStore();
+
   const [blockerModalVisible, setBlockerModalVisible] = useState(false);
   const [apps, setApps] = useState<{ name: string; packageName: string }[]>([]);
   const [search, setSearch] = useState('');
   const [usagePermission, setUsagePermission] = useState(false);
   const [overlayPermission, setOverlayPermission] = useState(false);
   const [loadingApps, setLoadingApps] = useState(false);
+
+  // Focus Profiles state & query
+  const [profilesModalVisible, setProfilesModalVisible] = useState(false);
+  const [profileEditorVisible, setProfileEditorVisible] = useState(false);
+  const [editingProfile, setEditingProfile] = useState<FocusProfile | null>(null);
+  const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
+
+  // Profile Editor form states
+  const [editorName, setEditorName] = useState('');
+  const [editorDuration, setEditorDuration] = useState(25);
+  const [editorCategories, setEditorCategories] = useState<string[]>([]);
+  const [editorCustomDomains, setEditorCustomDomains] = useState<string[]>([]);
+  const [editorStrict, setEditorStrict] = useState(false);
+
+  const profilesQuery = useQuery({
+    queryKey: ['focus_profiles'],
+    queryFn: () => focusProfilesService.fetchProfiles(),
+    enabled: !!user,
+  });
+
+  const seedProfilesMutation = useMutation({
+    mutationFn: async () => {
+      const defaults = [
+        { name: 'Deep Work', duration: 45, categories: ['social', 'video'], strict: true, domains: [] },
+        { name: 'Coding', duration: 50, categories: ['social', 'shopping'], strict: false, domains: ['github.com'] },
+        { name: 'Study', duration: 30, categories: ['social', 'gaming', 'shopping'], strict: false, domains: [] },
+        { name: 'Reading', duration: 20, categories: ['social', 'video', 'news'], strict: false, domains: [] },
+        { name: 'Exam', duration: 60, categories: ['social', 'video', 'gaming', 'shopping', 'news'], strict: true, domains: [] },
+      ];
+
+      for (const item of defaults) {
+        await focusProfilesService.createProfile(
+          item.name,
+          item.duration,
+          item.categories,
+          item.strict,
+          item.domains
+        );
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['focus_profiles'] });
+    }
+  });
 
   // Check permissions & load apps when blocker settings modal is visible
   useEffect(() => {
@@ -411,7 +471,7 @@ export default function PomodoroScreen() {
       const pStartedAt = startedAt ?? new Date(Date.now() - loggedDuration * 60000).toISOString();
       const pEndedAt = new Date().toISOString();
 
-      return pomodoroService.complete({
+      const result = await pomodoroService.complete({
         planId: targetPlan.id,
         taskId: sessionType === 'focus' ? selectedTaskId || targetPlan.current_tasks[0]?.id : undefined,
         duration: loggedDuration,
@@ -419,6 +479,16 @@ export default function PomodoroScreen() {
         startedAt: pStartedAt,
         endedAt: pEndedAt,
       });
+
+      if (sessionType === 'focus' && isChromeSyncEnabled) {
+        try {
+          await focusLockSyncService.completeFocusLockSession();
+        } catch (e) {
+          console.error('[Pomodoro] Failed to sync session completion to Supabase:', e);
+        }
+      }
+
+      return result;
     },
     onSuccess: async () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
@@ -556,6 +626,25 @@ export default function PomodoroScreen() {
         },
       });
     }
+    // Sync focus session to Supabase if enabled
+    if (sessionType === 'focus' && isChromeSyncEnabled) {
+      try {
+        await focusLockSyncService.startFocusLockSession(
+          durationMinutes,
+          blockedCategories,
+          strictMode,
+          customDomains
+        );
+      } catch (err: any) {
+        if (Platform.OS === 'web') {
+          window.alert(`Could not sync session to desktop browser: ${err.message}`);
+        } else {
+          Alert.alert('Focus Sync Failed', `Could not sync session to desktop browser: ${err.message}`);
+        }
+        return; // Aborts the timer start so no false indication occurs!
+      }
+    }
+
     startTimer();
 
     // Schedule local device notification for session completion
@@ -591,6 +680,13 @@ export default function PomodoroScreen() {
     const performReset = async () => {
       if (scheduledNotifId) {
         await cancelLocalNotification(scheduledNotifId);
+      }
+      if (sessionType === 'focus' && isChromeSyncEnabled) {
+        try {
+          await focusLockSyncService.cancelFocusLockSession();
+        } catch (e) {
+          console.error('[Pomodoro] Failed to cancel focus session in Supabase:', e);
+        }
       }
       resetTimer();
     };
@@ -993,6 +1089,180 @@ export default function PomodoroScreen() {
             </Card>
           )}
 
+          {/* Chrome Focus Lock Card */}
+          <Card>
+            <View style={{ gap: spacing[12] }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                  <Laptop size={16} color={palette.danger} strokeWidth={2.4} />
+                  <Text style={styles.sectionHeaderTitle}>
+                    CHROME FOCUS LOCK
+                  </Text>
+                </View>
+                <Switch
+                  value={isChromeSyncEnabled}
+                  disabled={isRunning}
+                  onValueChange={setChromeSyncEnabled}
+                  trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
+                  thumbColor="#ffffff"
+                />
+              </View>
+
+              <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
+                Sync focus session to your desktop browser extension (Chrome, Edge, Brave) to block distracting websites.
+              </Text>
+
+              {isChromeSyncEnabled && (
+                <View style={{ gap: spacing[12], marginTop: spacing[4] }}>
+                  {/* Focus Profile Selection */}
+                  <View style={{ gap: spacing[8] }}>
+                    <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                      Focus Profile:
+                    </Text>
+                    <Pressable
+                      disabled={isRunning}
+                      onPress={() => setProfilesModalVisible(true)}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderColor: 'rgba(232, 77, 114, 0.25)',
+                        borderWidth: 1.5,
+                        borderRadius: radius.md,
+                        paddingHorizontal: spacing[12],
+                        paddingVertical: 10,
+                        backgroundColor: '#FFFFFF',
+                      }}
+                    >
+                      <Text style={{ color: palette.textPrimary, fontSize: 13, fontWeight: '600' }}>
+                        {selectedProfileId 
+                          ? profilesQuery.data?.find(p => p.id === selectedProfileId)?.name || 'Custom Setup' 
+                          : 'Custom Setup (No Profile Selected)'}
+                      </Text>
+                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
+                        MANAGE
+                      </Text>
+                    </Pressable>
+                  </View>
+
+                  {/* Study profile email selection for YouTube exemption */}
+                  <View style={{ gap: spacing[8] }}>
+                    <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                      Study Profile Google Email (for YouTube Access):
+                    </Text>
+                    <TextInput
+                      style={{
+                        borderColor: 'rgba(232, 77, 114, 0.25)',
+                        borderWidth: 1.5,
+                        borderRadius: radius.md,
+                        color: palette.textPrimary,
+                        paddingHorizontal: spacing[12],
+                        paddingVertical: 8,
+                        fontSize: 13,
+                        backgroundColor: '#FFFFFF',
+                      }}
+                      placeholder="e.g. user@study.edu"
+                      keyboardType="email-address"
+                      value={studyEmail}
+                      editable={!isRunning}
+                      onChangeText={async (val) => {
+                        setStudyEmail(val);
+                        try {
+                          await focusLockSyncService.updateStudyEmail(val);
+                        } catch (e: any) {
+                          console.warn('Failed to sync study email:', e.message);
+                        }
+                      }}
+                    />
+                    <Text style={{ color: palette.textSecondary, fontSize: 11 }}>
+                      If the extension profile email matches, YouTube is allowed during focus.
+                    </Text>
+                  </View>
+
+                  <View style={{ gap: spacing[8] }}>
+                    <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                      Categories to Block:
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[8] }}>
+                      {['social', 'video', 'gaming', 'shopping', 'news'].map((cat) => {
+                        const isSelected = blockedCategories.includes(cat);
+                        return (
+                          <Pressable
+                            key={cat}
+                            disabled={isRunning}
+                            onPress={() => {
+                              if (isSelected) {
+                                setBlockedCategories(blockedCategories.filter(c => c !== cat));
+                              } else {
+                                setBlockedCategories([...blockedCategories, cat]);
+                              }
+                            }}
+                            style={{
+                              backgroundColor: isSelected ? 'rgba(232, 77, 114, 0.12)' : 'transparent',
+                              borderColor: isSelected ? palette.danger : 'rgba(232, 77, 114, 0.25)',
+                              borderWidth: 1.5,
+                              borderRadius: radius.sm,
+                              paddingHorizontal: spacing[8],
+                              paddingVertical: 6,
+                            }}
+                          >
+                            <Text style={{ color: isSelected ? palette.danger : palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                              {cat.toUpperCase()}
+                            </Text>
+                          </Pressable>
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View style={{ gap: spacing[4] }}>
+                    <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                      Custom Domains (comma separated):
+                    </Text>
+                    <TextInput
+                      editable={!isRunning}
+                      style={{
+                        borderColor: 'rgba(232, 77, 114, 0.25)',
+                        borderWidth: 1.5,
+                        borderRadius: radius.md,
+                        color: palette.textPrimary,
+                        paddingHorizontal: spacing[12],
+                        paddingVertical: 8,
+                        fontSize: 12,
+                        backgroundColor: isRunning ? 'rgba(255, 243, 245, 0.35)' : '#FFFFFF',
+                      }}
+                      placeholder="e.g. news.ycombinator.com, dev.to"
+                      placeholderTextColor={palette.textSecondary}
+                      value={customDomains.join(', ')}
+                      onChangeText={(val) => {
+                        const list = val.split(',').map(d => d.trim()).filter(d => d.length > 0);
+                        setCustomDomains(list);
+                      }}
+                    />
+                  </View>
+
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing[4] }}>
+                    <View style={{ flex: 1, marginRight: spacing[8] }}>
+                      <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                        Strict Mode
+                      </Text>
+                      <Text style={{ color: palette.textSecondary, fontSize: 11 }}>
+                        Cannot pause or stop the timer once started.
+                      </Text>
+                    </View>
+                    <Switch
+                      value={strictMode}
+                      disabled={isRunning}
+                      onValueChange={setStrictMode}
+                      trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
+                      thumbColor="#ffffff"
+                    />
+                  </View>
+                </View>
+              )}
+            </View>
+          </Card>
+
           {/* App Blocker Configuration Modal */}
           <Modal
             visible={blockerModalVisible}
@@ -1180,6 +1450,356 @@ export default function PomodoroScreen() {
                 <Button variant="primary" onPress={() => setBlockerModalVisible(false)} style={{ marginTop: spacing[4] }}>
                   Close & Save
                 </Button>
+              </View>
+            </View>
+          </Modal>
+
+          {/* Focus Profiles Management Modal */}
+          <Modal
+            visible={profilesModalVisible}
+            animationType="slide"
+            transparent
+            onRequestClose={() => setProfilesModalVisible(false)}
+          >
+            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: spacing[16] }}>
+              <View style={{ width: '100%', maxHeight: '80%', backgroundColor: '#FFF7F8', borderRadius: radius.lg, borderWidth: 1.5, borderColor: palette.danger, padding: spacing[16], gap: spacing[12] }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Text style={{ fontSize: 16, fontWeight: '800', color: palette.danger }}>
+                    MANAGE FOCUS PROFILES
+                  </Text>
+                  <Pressable onPress={() => setProfilesModalVisible(false)}>
+                    <X size={20} color={palette.textPrimary} />
+                  </Pressable>
+                </View>
+
+                {profilesQuery.isLoading ? (
+                  <ActivityIndicator size="small" color={palette.danger} style={{ marginVertical: spacing[24] }} />
+                ) : (
+                  <ScrollView style={{ flexGrow: 0, maxHeight: 350 }} nestedScrollEnabled>
+                    {profilesQuery.data && profilesQuery.data.length > 0 ? (
+                      profilesQuery.data.map((profile) => (
+                        <View
+                          key={profile.id}
+                          style={{
+                            backgroundColor: '#FFFFFF',
+                            borderColor: 'rgba(232, 77, 114, 0.15)',
+                            borderWidth: 1.5,
+                            borderRadius: radius.md,
+                            padding: spacing[12],
+                            marginBottom: spacing[8],
+                            gap: spacing[8],
+                          }}
+                        >
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ fontWeight: '800', fontSize: 14, color: palette.textPrimary }}>
+                              {profile.name}
+                            </Text>
+                            <View style={{ flexDirection: 'row', gap: spacing[8] }}>
+                              <Pressable
+                                onPress={() => {
+                                  setSelectedProfileId(profile.id);
+                                  setDurationMinutes(profile.duration_minutes);
+                                  setBlockedCategories(profile.blocked_categories);
+                                  setCustomDomains(profile.custom_domains);
+                                  setStrictMode(profile.strict_mode);
+                                  setProfilesModalVisible(false);
+                                }}
+                                style={{
+                                  backgroundColor: palette.danger,
+                                  borderRadius: radius.sm,
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 4,
+                                }}
+                              >
+                                <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }}>SELECT</Text>
+                              </Pressable>
+                              <Pressable
+                                onPress={() => {
+                                  setEditingProfile(profile);
+                                  setEditorName(profile.name);
+                                  setEditorDuration(profile.duration_minutes);
+                                  setEditorCategories(profile.blocked_categories);
+                                  setEditorCustomDomains(profile.custom_domains);
+                                  setEditorStrict(profile.strict_mode);
+                                  setProfileEditorVisible(true);
+                                }}
+                                style={{
+                                  backgroundColor: 'rgba(232, 77, 114, 0.1)',
+                                  borderRadius: radius.sm,
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 4,
+                                  borderColor: palette.danger,
+                                  borderWidth: 1,
+                                }}
+                              >
+                                <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '700' }}>EDIT</Text>
+                              </Pressable>
+                              <Pressable
+                                onPress={() => {
+                                  Alert.alert(
+                                    'Delete profile?',
+                                    `Are you sure you want to delete profile "${profile.name}"?`,
+                                    [
+                                      { text: 'Cancel', style: 'cancel' },
+                                      {
+                                        text: 'Delete',
+                                        style: 'destructive',
+                                        onPress: async () => {
+                                          try {
+                                            await focusProfilesService.deleteProfile(profile.id);
+                                            if (selectedProfileId === profile.id) {
+                                              setSelectedProfileId(null);
+                                            }
+                                            void profilesQuery.refetch();
+                                          } catch (e: any) {
+                                            Alert.alert('Error', e.message);
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  );
+                                }}
+                                style={{
+                                  backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                                  borderRadius: radius.sm,
+                                  paddingHorizontal: 8,
+                                  paddingVertical: 4,
+                                }}
+                              >
+                                <Text style={{ color: palette.textPrimary, fontSize: 11, fontWeight: '700' }}>DEL</Text>
+                              </Pressable>
+                            </View>
+                          </View>
+                          <Text style={{ fontSize: 12, color: palette.textSecondary }}>
+                            Duration: {profile.duration_minutes}m | Strict: {profile.strict_mode ? 'Yes' : 'No'} | Categories: {profile.blocked_categories.join(', ') || 'none'}
+                          </Text>
+                          {profile.custom_domains.length > 0 && (
+                            <Text style={{ fontSize: 11, color: palette.textSecondary }} numberOfLines={1}>
+                              Custom: {profile.custom_domains.join(', ')}
+                            </Text>
+                          )}
+                        </View>
+                      ))
+                    ) : (
+                      <View style={{ paddingVertical: spacing[16], alignItems: 'center', gap: spacing[12] }}>
+                        <Text style={{ color: palette.textSecondary, fontSize: 13, textAlign: 'center' }}>
+                          No profiles configured yet.
+                        </Text>
+                        <Button
+                          variant="secondary"
+                          onPress={() => seedProfilesMutation.mutate()}
+                          style={{ minWidth: 150 }}
+                        >
+                          {seedProfilesMutation.isPending ? 'Seeding...' : 'Seed Default Profiles'}
+                        </Button>
+                      </View>
+                    )}
+                  </ScrollView>
+                )}
+
+                <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: spacing[4] }}>
+                  <Button
+                    variant="primary"
+                    onPress={() => {
+                      setEditingProfile(null);
+                      setEditorName('');
+                      setEditorDuration(25);
+                      setEditorCategories([]);
+                      setEditorCustomDomains([]);
+                      setEditorStrict(false);
+                      setProfileEditorVisible(true);
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    + Create New Profile
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onPress={() => setProfilesModalVisible(false)}
+                    style={{ flex: 1 }}
+                  >
+                    Close
+                  </Button>
+                </View>
+              </View>
+            </View>
+          </Modal>
+
+          {/* Profile Editor Modal (Create/Edit) */}
+          <Modal
+            visible={profileEditorVisible}
+            animationType="slide"
+            transparent
+            onRequestClose={() => setProfileEditorVisible(false)}
+          >
+            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: spacing[16] }}>
+              <View style={{ width: '100%', maxHeight: '90%', backgroundColor: '#FFF7F8', borderRadius: radius.lg, borderWidth: 1.5, borderColor: palette.danger, padding: spacing[16], gap: spacing[12] }}>
+                <Text style={{ fontSize: 15, fontWeight: '800', color: palette.danger }}>
+                  {editingProfile ? `EDIT PROFILE: ${editingProfile.name}` : 'CREATE NEW FOCUS PROFILE'}
+                </Text>
+
+                <ScrollView style={{ flexGrow: 0, maxHeight: 400 }} nestedScrollEnabled>
+                  <View style={{ gap: spacing[12] }}>
+                    <View style={{ gap: spacing[4] }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Profile Name:</Text>
+                      <TextInput
+                        style={{
+                          borderColor: 'rgba(232, 77, 114, 0.25)',
+                          borderWidth: 1.5,
+                          borderRadius: radius.md,
+                          color: palette.textPrimary,
+                          paddingHorizontal: spacing[12],
+                          paddingVertical: 8,
+                          fontSize: 13,
+                          backgroundColor: '#FFFFFF',
+                        }}
+                        placeholder="e.g. Exam Prep"
+                        value={editorName}
+                        onChangeText={setEditorName}
+                      />
+                    </View>
+
+                    <View style={{ gap: spacing[4] }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Default Duration (Minutes):</Text>
+                      <TextInput
+                        style={{
+                          borderColor: 'rgba(232, 77, 114, 0.25)',
+                          borderWidth: 1.5,
+                          borderRadius: radius.md,
+                          color: palette.textPrimary,
+                          paddingHorizontal: spacing[12],
+                          paddingVertical: 8,
+                          fontSize: 13,
+                          backgroundColor: '#FFFFFF',
+                        }}
+                        keyboardType="numeric"
+                        value={String(editorDuration)}
+                        onChangeText={(val) => setEditorDuration(parseInt(val, 10) || 0)}
+                      />
+                    </View>
+
+                    <View style={{ gap: spacing[8] }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Categories to Block:</Text>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[8] }}>
+                        {['social', 'video', 'gaming', 'shopping', 'news'].map((cat) => {
+                          const isSelected = editorCategories.includes(cat);
+                          return (
+                            <Pressable
+                              key={cat}
+                              onPress={() => {
+                                if (isSelected) {
+                                  setEditorCategories(editorCategories.filter(c => c !== cat));
+                                } else {
+                                  setEditorCategories([...editorCategories, cat]);
+                                }
+                              }}
+                              style={{
+                                backgroundColor: isSelected ? 'rgba(232, 77, 114, 0.12)' : 'transparent',
+                                borderColor: isSelected ? palette.danger : 'rgba(232, 77, 114, 0.25)',
+                                borderWidth: 1.5,
+                                borderRadius: radius.sm,
+                                paddingHorizontal: spacing[8],
+                                paddingVertical: 6,
+                              }}
+                            >
+                              <Text style={{ color: isSelected ? palette.danger : palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                                {cat.toUpperCase()}
+                              </Text>
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    </View>
+
+                    <View style={{ gap: spacing[4] }}>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Custom Domains (comma separated):</Text>
+                      <TextInput
+                        style={{
+                          borderColor: 'rgba(232, 77, 114, 0.25)',
+                          borderWidth: 1.5,
+                          borderRadius: radius.md,
+                          color: palette.textPrimary,
+                          paddingHorizontal: spacing[12],
+                          paddingVertical: 8,
+                          fontSize: 13,
+                          backgroundColor: '#FFFFFF',
+                        }}
+                        placeholder="e.g. domain1.com, domain2.com"
+                        value={editorCustomDomains.join(', ')}
+                        onChangeText={(val) => {
+                          const list = val.split(',').map(d => d.trim()).filter(d => d.length > 0);
+                          setEditorCustomDomains(list);
+                        }}
+                      />
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing[4] }}>
+                      <View style={{ flex: 1, marginRight: spacing[8] }}>
+                        <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>Strict Mode</Text>
+                        <Text style={{ color: palette.textSecondary, fontSize: 11 }}>Lock the session strict options.</Text>
+                      </View>
+                      <Switch
+                        value={editorStrict}
+                        onValueChange={setEditorStrict}
+                        trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
+                        thumbColor="#ffffff"
+                      />
+                    </View>
+                  </View>
+                </ScrollView>
+
+                <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: spacing[4] }}>
+                  <Button
+                    variant="primary"
+                    onPress={async () => {
+                      try {
+                        if (editingProfile) {
+                          await focusProfilesService.updateProfile(
+                            editingProfile.id,
+                            editorName,
+                            editorDuration,
+                            editorCategories,
+                            editorStrict,
+                            editorCustomDomains
+                          );
+                          if (selectedProfileId === editingProfile.id) {
+                            setDurationMinutes(editorDuration);
+                            setBlockedCategories(editorCategories);
+                            setCustomDomains(editorCustomDomains);
+                            setStrictMode(editorStrict);
+                          }
+                        } else {
+                          const newId = await focusProfilesService.createProfile(
+                            editorName,
+                            editorDuration,
+                            editorCategories,
+                            editorStrict,
+                            editorCustomDomains
+                          );
+                          setSelectedProfileId(newId);
+                          setDurationMinutes(editorDuration);
+                          setBlockedCategories(editorCategories);
+                          setCustomDomains(editorCustomDomains);
+                          setStrictMode(editorStrict);
+                        }
+                        void profilesQuery.refetch();
+                        setProfileEditorVisible(false);
+                      } catch (e: any) {
+                        Alert.alert('Save Failed', e.message);
+                      }
+                    }}
+                    style={{ flex: 1 }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onPress={() => setProfileEditorVisible(false)}
+                    style={{ flex: 1 }}
+                  >
+                    Cancel
+                  </Button>
+                </View>
               </View>
             </View>
           </Modal>

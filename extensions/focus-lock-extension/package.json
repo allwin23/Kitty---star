@@ -1,0 +1,21 @@
+{
+  "name": "focus-lock-extension",
+  "version": "1.0.0",
+  "description": "Focus Lock Decoupled Cross-Browser Extension",
+  "scripts": {
+    "build": "esbuild background/index.ts --bundle --outfile=dist/background/index.js --platform=browser --format=esm --target=chrome100 && esbuild ui/popup.ts --bundle --outfile=dist/ui/popup.js --platform=browser --format=esm --target=chrome100",
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.8"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.269",
+    "@types/jest": "^29.5.12",
+    "esbuild": "^0.20.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.3"
+  }
+}
