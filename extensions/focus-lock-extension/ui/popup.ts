@@ -9,20 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeView = document.getElementById("active-view")!;
   const completedView = document.getElementById("completed-view")!;
   const authFooter = document.getElementById("auth-footer")!;
+  const syncInfoBlock = document.getElementById("sync-info-block")!;
 
   const loginBtn = document.getElementById("login-btn")!;
-  const startBtn = document.getElementById("start-btn")!;
   const stopBtn = document.getElementById("stop-btn")!;
   const restartBtn = document.getElementById("restart-btn")!;
   const signoutLink = document.getElementById("signout-link")!;
 
   const emailInput = document.getElementById("email") as HTMLInputElement;
   const passwordInput = document.getElementById("password") as HTMLInputElement;
-  const durationInput = document.getElementById("duration") as HTMLInputElement;
-  const customDomainsInput = document.getElementById("custom-domains") as HTMLInputElement;
   const timerDisplay = document.getElementById("timer-display")!;
   const blockedListDesc = document.getElementById("blocked-list-desc")!;
   const userDisplay = document.getElementById("user-display")!;
+
+  const profileEmailDisplay = document.getElementById("profile-email-display")!;
+  const studyEmailDisplay = document.getElementById("study-email-display")!;
+  const exceptionStatusDisplay = document.getElementById("exception-status-display")!;
 
   let timerInterval: any = null;
 
@@ -36,6 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
   supabase.auth.getSession().then(({ data }) => {
     handleAuthState(data.session);
   });
+
+  // Listen for storage updates (e.g. from background worker sync) to refresh info in real-time
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local') {
+        updateUI();
+      }
+    });
+  }
 
   loginBtn.addEventListener("click", () => {
     const email = emailInput.value.trim();
@@ -71,40 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((err) => alert("Error logging out: " + err.message));
   });
 
-  startBtn.addEventListener("click", () => {
-    const durationMinutes = parseInt(durationInput.value, 10);
-    
-    // Read selected category checkboxes
-    const categoryCheckboxes = document.querySelectorAll('input[name="category"]:checked') as NodeListOf<HTMLInputElement>;
-    const blockedCategories: string[] = Array.from(categoryCheckboxes).map(cb => cb.value);
-
-    // Read custom domains
-    const customDomains = customDomainsInput.value
-      .split(",")
-      .map(d => d.trim().toLowerCase())
-      .filter(d => d.length > 0);
-
-    if (isNaN(durationMinutes) || durationMinutes < 1) {
-      alert("Please enter a valid duration.");
-      return;
-    }
-
-    if (blockedCategories.length === 0 && customDomains.length === 0) {
-      alert("Please select at least one category or add a custom domain to block.");
-      return;
-    }
-
-    adapter.sendMessage({ type: "START_SESSION", durationMinutes, blockedCategories, customDomains })
-      .then((response) => {
-        if (response && response.success) {
-          updateUI();
-        } else {
-          alert("Error starting session: " + (response?.error || "unknown"));
-        }
-      })
-      .catch((err) => alert("Communication error: " + err.message));
-  });
-
   stopBtn.addEventListener("click", () => {
     adapter.sendMessage({ type: "STOP_SESSION" })
       .then((response) => {
@@ -134,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // User is authenticated
       loginView.style.display = "none";
       authFooter.style.display = "block";
+      syncInfoBlock.style.display = "block";
       userDisplay.textContent = `Signed in as: ${session.user.email}`;
       updateUI();
     } else {
@@ -143,6 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
       activeView.style.display = "none";
       completedView.style.display = "none";
       authFooter.style.display = "none";
+      syncInfoBlock.style.display = "none";
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
@@ -150,7 +129,30 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function updateSyncInfo() {
+    try {
+      const profileEmail = await adapter.getProfileEmail();
+      const studyEmail = (await adapter.getStorage("studyEmail")) || "";
+
+      profileEmailDisplay.textContent = profileEmail || "Not logged into Chrome";
+      studyEmailDisplay.textContent = studyEmail || "Not configured on mobile";
+
+      if (profileEmail && studyEmail && profileEmail.trim().toLowerCase() === studyEmail.trim().toLowerCase()) {
+        exceptionStatusDisplay.textContent = "🟢 ACTIVE (YouTube Allowed)";
+        (exceptionStatusDisplay as HTMLElement).style.color = "#047857";
+      } else {
+        exceptionStatusDisplay.textContent = "🔴 INACTIVE (YouTube Blocked)";
+        (exceptionStatusDisplay as HTMLElement).style.color = "#C73A57";
+      }
+    } catch (e) {
+      console.error("[Popup] Failed to load sync info:", e);
+    }
+  }
+
   function updateUI() {
+    // Refresh sync info whenever UI updates
+    void updateSyncInfo();
+
     adapter.sendMessage({ type: "GET_SESSION" })
       .then((response) => {
         if (response && response.success && response.session) {
