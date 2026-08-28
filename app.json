@@ -22,7 +22,13 @@
       "permissions": [
         "android.permission.RECORD_AUDIO",
         "android.permission.CAMERA",
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.PACKAGE_USAGE_STATS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
+        "android.permission.QUERY_ALL_PACKAGES",
+        "android.permission.VIBRATE"
       ]
     },
     "web": {
@@ -33,7 +39,8 @@
       "expo-notifications",
       "expo-secure-store",
       "expo-image-picker",
-      "expo-camera"
+      "expo-camera",
+      "./withAppBlockingService.js"
     ],
     "extra": {
       "router": {},
