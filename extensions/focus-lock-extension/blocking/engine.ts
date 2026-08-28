@@ -81,8 +81,8 @@ export class CoreFocusEngine {
     }
   }
 
-  async startFocusSession(durationMinutes: number, blockedCategories: string[], customDomains: string[], strictMode = false, sessionId: string | null = null) {
-    const endsAt = Date.now() + durationMinutes * 60 * 1000;
+  async startFocusSession(durationMinutes: number, blockedCategories: string[], customDomains: string[], strictMode = false, sessionId: string | null = null, absoluteEndsAt: number | null = null) {
+    const endsAt = absoluteEndsAt || (Date.now() + durationMinutes * 60 * 1000);
     await this.adapter.setStorage("active", true);
     await this.adapter.setStorage("endsAt", endsAt);
     await this.adapter.setStorage("blockedCategories", blockedCategories);
@@ -113,12 +113,12 @@ export class CoreFocusEngine {
   }
 
   // Cancelling the session (called when user presses Stop)
-  async cancelFocusSession() {
+  async cancelFocusSession(force = false) {
     const active = await this.adapter.getStorage("active") || false;
     const endsAt = await this.adapter.getStorage("endsAt") || 0;
     const strictMode = await this.adapter.getStorage("strictMode") || false;
 
-    if (strictMode && active && endsAt > Date.now()) {
+    if (!force && strictMode && active && endsAt > Date.now()) {
       throw new Error("Strict Mode is active: Focus session cannot be cancelled.");
     }
 

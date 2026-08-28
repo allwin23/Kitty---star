@@ -20,11 +20,40 @@ engine.init()
 // Setup startup listeners (idempotent, as engine already calls checkAndRestoreSession)
 chrome.runtime.onStartup.addListener(() => {
   void engine.checkAndRestoreSession();
+  setupSyncAlarm();
 });
 
 chrome.runtime.onInstalled.addListener(() => {
   void engine.checkAndRestoreSession();
+  setupSyncAlarm();
 });
+
+function setupSyncAlarm() {
+  if (typeof chrome !== 'undefined' && chrome.alarms) {
+    chrome.alarms.create("focus_sync_poll", { periodInMinutes: 1 });
+    console.log("[Background] Scheduled focus_sync_poll alarm (1 min period).");
+  }
+}
+
+// Listen to alarms to run background database sync
+if (typeof chrome !== 'undefined' && chrome.alarms) {
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === "focus_sync_poll") {
+      console.log("[Background] Sync poll alarm fired. Fetching latest session...");
+      void syncManager.syncLatestSession();
+    }
+  });
+}
+
+// Wake up and sync on page navigation to prevent bypasses when worker is asleep
+if (typeof chrome !== 'undefined' && chrome.tabs) {
+  chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'loading' && tab.url) {
+      console.log("[Background] Tab load detected. Triggering database sync check...");
+      void syncManager.syncLatestSession();
+    }
+  });
+}
 
 // Setup message routing
 adapter.onMessage((message, sendResponse) => {

@@ -227,10 +227,11 @@ export class SyncManager {
       // Reconcile and apply
       const localState = await this.engine.getSessionState();
       
-      // Idempotency: skip if already active, endsAt matches, and categories/domains are equal
+      // Idempotency: skip if already active, endsAt matches, strict mode matches, and categories/domains are equal
       const isAlreadyMatching = 
         localState.active &&
         localState.sessionId === session.id &&
+        localState.strictMode === (session.strict_mode || false) &&
         Math.abs(localState.endsAt - endsAtMs) < 2000 && // allow small round-trip millisecond difference
         JSON.stringify(localState.blockedCategories.sort()) === JSON.stringify(categories.sort()) &&
         JSON.stringify(localState.customDomains.sort()) === JSON.stringify(customDomains.sort());
@@ -243,7 +244,8 @@ export class SyncManager {
           categories,
           customDomains,
           session.strict_mode || false,
-          session.id
+          session.id,
+          endsAtMs
         );
       }
     } else if (session.status === 'completed' || isExpired) {
@@ -259,7 +261,7 @@ export class SyncManager {
       if (!localState.active || !localState.sessionId || localState.sessionId === session.id) {
         console.log("[SyncManager] Remote session cancelled. Cancelling locally.");
         try {
-          await this.engine.cancelFocusSession();
+          await this.engine.cancelFocusSession(true); // force cancel remote action
         } catch (err: any) {
           console.warn("[SyncManager] Remote cancellation ignored due to Strict Mode lock:", err.message);
         }
