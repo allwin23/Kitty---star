@@ -6,14 +6,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Modal, Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -62,18 +55,18 @@ function usePalette() {
 // ─── 12 Icon-Specific Bespoke Micro-Animations ───────────────────────────────
 
 export type AchievementAnimType =
-  | 'flame'       // 🔥 Rapid Ignition & Rising Heat Flickers
-  | 'trophy'      // 🏆 Triumph Golden Lift & Victory Sway
-  | 'target'      // 🎯 Radar Sweep & Lock-in Reticle Snap
-  | 'star'        // ⭐ Twinkling Starburst Spin & Pop
-  | 'award'       // 💝 Double Heartbeat Thump & Gentle Float
-  | 'check'       // ✅ Seal Stamp Elastic Bounce & Checkmark Spin
-  | 'clock'       // ⏱️ Step Ticking Pendulum Swing
-  | 'droplets'    // 💧 Liquid Drop Fall, Splash & Squish
-  | 'book'        // 📖 Book Page Flip & Open Flutter
-  | 'zap'         // ⚡ Electric Thunder Bolt Tremor & Flash
-  | 'crown'       // 👑 Royal Majesty Levitation
-  | 'secret';     // ❓ Mystery Curiosity Hover
+  | 'flame' // 🔥 Rapid Ignition & Rising Heat Flickers
+  | 'trophy' // 🏆 Triumph Golden Lift & Victory Sway
+  | 'target' // 🎯 Radar Sweep & Lock-in Reticle Snap
+  | 'star' // ⭐ Twinkling Starburst Spin & Pop
+  | 'award' // 💝 Double Heartbeat Thump & Gentle Float
+  | 'check' // ✅ Seal Stamp Elastic Bounce & Checkmark Spin
+  | 'clock' // ⏱️ Step Ticking Pendulum Swing
+  | 'droplets' // 💧 Liquid Drop Fall, Splash & Squish
+  | 'book' // 📖 Book Page Flip & Open Flutter
+  | 'zap' // ⚡ Electric Thunder Bolt Tremor & Flash
+  | 'crown' // 👑 Royal Majesty Levitation
+  | 'secret'; // ❓ Mystery Curiosity Hover
 
 export function ContextualAchievementIcon({
   code = '',
@@ -159,10 +152,10 @@ export function ContextualAchievementIcon({
             withTiming(-4, { duration: 160 }),
             withTiming(1, { duration: 140 }),
             withTiming(0, { duration: 200 }),
-            withTiming(0, { duration: 1000 })
+            withTiming(0, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         translateX.value = withRepeat(
           withSequence(
@@ -171,10 +164,10 @@ export function ContextualAchievementIcon({
             withTiming(-1, { duration: 100 }),
             withTiming(1, { duration: 100 }),
             withTiming(0, { duration: 150 }),
-            withTiming(0, { duration: 1250 })
+            withTiming(0, { duration: 1250 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -182,10 +175,10 @@ export function ContextualAchievementIcon({
             withTiming(0.9, { duration: 180 }),
             withTiming(1.18, { duration: 180 }),
             withTiming(1, { duration: 250 }),
-            withTiming(1, { duration: 1000 })
+            withTiming(1, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -194,7 +187,7 @@ export function ContextualAchievementIcon({
         rotation.value = withRepeat(
           withTiming(360, { duration: 5500, easing: Easing.linear }),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -202,10 +195,10 @@ export function ContextualAchievementIcon({
             withTiming(0.92, { duration: 300 }),
             withTiming(1.15, { duration: 350 }),
             withTiming(1.0, { duration: 400 }),
-            withTiming(1.0, { duration: 2000 })
+            withTiming(1.0, { duration: 2000 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -217,19 +210,19 @@ export function ContextualAchievementIcon({
             withTiming(1.08, { duration: 140 }),
             withTiming(1.28, { duration: 160 }),
             withTiming(1.0, { duration: 300 }),
-            withTiming(1.0, { duration: 1400 })
+            withTiming(1.0, { duration: 1400 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(-5, { duration: 400, easing: Easing.out(Easing.quad) }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1380 })
+            withTiming(0, { duration: 1380 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -240,30 +233,30 @@ export function ContextualAchievementIcon({
             withTiming(4, { duration: 140 }),
             withTiming(-6, { duration: 280, easing: Easing.out(Easing.back(3)) }),
             withTiming(0, { duration: 200 }),
-            withTiming(0, { duration: 1600 })
+            withTiming(0, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         rotation.value = withRepeat(
           withSequence(
             withTiming(20, { duration: 200 }),
             withTiming(-10, { duration: 200 }),
             withTiming(0, { duration: 200 }),
-            withTiming(0, { duration: 1600 })
+            withTiming(0, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
             withTiming(1.3, { duration: 220 }),
             withTiming(0.95, { duration: 200 }),
             withTiming(1, { duration: 200 }),
-            withTiming(1, { duration: 1600 })
+            withTiming(1, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -276,19 +269,19 @@ export function ContextualAchievementIcon({
             withTiming(-14, { duration: 300, easing: Easing.out(Easing.exp) }),
             withTiming(14, { duration: 300, easing: Easing.out(Easing.exp) }),
             withTiming(0, { duration: 300 }),
-            withTiming(0, { duration: 900 })
+            withTiming(0, { duration: 900 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(3, { duration: 200 }),
             withTiming(0, { duration: 200 }),
-            withTiming(0, { duration: 1900 })
+            withTiming(0, { duration: 1900 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -299,30 +292,30 @@ export function ContextualAchievementIcon({
             withTiming(7, { duration: 300, easing: Easing.in(Easing.quad) }),
             withTiming(-8, { duration: 350, easing: Easing.out(Easing.quad) }),
             withTiming(0, { duration: 250 }),
-            withTiming(0, { duration: 1300 })
+            withTiming(0, { duration: 1300 }),
           ),
           -1,
-          false
+          false,
         );
         scaleX.value = withRepeat(
           withSequence(
             withTiming(1.35, { duration: 280 }),
             withTiming(0.85, { duration: 250 }),
             withTiming(1, { duration: 250 }),
-            withTiming(1, { duration: 1420 })
+            withTiming(1, { duration: 1420 }),
           ),
           -1,
-          false
+          false,
         );
         scaleY.value = withRepeat(
           withSequence(
             withTiming(0.8, { duration: 280 }),
             withTiming(1.25, { duration: 250 }),
             withTiming(1, { duration: 250 }),
-            withTiming(1, { duration: 1420 })
+            withTiming(1, { duration: 1420 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -335,19 +328,19 @@ export function ContextualAchievementIcon({
             withTiming(-10, { duration: 350 }),
             withTiming(10, { duration: 350 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1100 })
+            withTiming(0, { duration: 1100 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(-5, { duration: 450 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1200 })
+            withTiming(0, { duration: 1200 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -360,10 +353,10 @@ export function ContextualAchievementIcon({
             withTiming(-4, { duration: 50 }),
             withTiming(4, { duration: 50 }),
             withTiming(0, { duration: 80 }),
-            withTiming(0, { duration: 1600 })
+            withTiming(0, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -371,10 +364,10 @@ export function ContextualAchievementIcon({
             withTiming(0.85, { duration: 80 }),
             withTiming(1.2, { duration: 100 }),
             withTiming(1, { duration: 120 }),
-            withTiming(1, { duration: 1600 })
+            withTiming(1, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         opacity.value = withRepeat(
           withSequence(
@@ -382,10 +375,10 @@ export function ContextualAchievementIcon({
             withTiming(1.0, { duration: 50 }),
             withTiming(0.5, { duration: 50 }),
             withTiming(1.0, { duration: 100 }),
-            withTiming(1.0, { duration: 1650 })
+            withTiming(1.0, { duration: 1650 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -396,10 +389,10 @@ export function ContextualAchievementIcon({
             withTiming(45, { duration: 400, easing: Easing.inOut(Easing.back(1.5)) }),
             withTiming(-45, { duration: 450, easing: Easing.inOut(Easing.back(1.5)) }),
             withTiming(0, { duration: 350 }),
-            withTiming(0, { duration: 1000 })
+            withTiming(0, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -407,10 +400,10 @@ export function ContextualAchievementIcon({
             withTiming(0.9, { duration: 350 }),
             withTiming(1.2, { duration: 350 }),
             withTiming(1, { duration: 400 }),
-            withTiming(1, { duration: 700 })
+            withTiming(1, { duration: 700 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -419,27 +412,24 @@ export function ContextualAchievementIcon({
         translateY.value = withRepeat(
           withSequence(
             withTiming(-9, { duration: 900, easing: Easing.inOut(Easing.quad) }),
-            withTiming(0, { duration: 900, easing: Easing.inOut(Easing.quad) })
+            withTiming(0, { duration: 900, easing: Easing.inOut(Easing.quad) }),
           ),
           -1,
-          false
+          false,
         );
         rotation.value = withRepeat(
           withSequence(
             withTiming(-12, { duration: 600, easing: Easing.inOut(Easing.quad) }),
             withTiming(12, { duration: 600, easing: Easing.inOut(Easing.quad) }),
-            withTiming(0, { duration: 600 })
+            withTiming(0, { duration: 600 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
-          withSequence(
-            withTiming(1.18, { duration: 900 }),
-            withTiming(1.0, { duration: 900 })
-          ),
+          withSequence(withTiming(1.18, { duration: 900 }), withTiming(1.0, { duration: 900 })),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -452,19 +442,19 @@ export function ContextualAchievementIcon({
             withTiming(-8, { duration: 250 }),
             withTiming(8, { duration: 250 }),
             withTiming(0, { duration: 300 }),
-            withTiming(0, { duration: 1200 })
+            withTiming(0, { duration: 1200 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(-5, { duration: 500 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1300 })
+            withTiming(0, { duration: 1300 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -476,10 +466,10 @@ export function ContextualAchievementIcon({
             withTiming(-10, { duration: 450, easing: Easing.out(Easing.back(2.5)) }),
             withTiming(2, { duration: 350 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1200 })
+            withTiming(0, { duration: 1200 }),
           ),
           -1,
-          false
+          false,
         );
         rotation.value = withRepeat(
           withSequence(
@@ -488,20 +478,20 @@ export function ContextualAchievementIcon({
             withTiming(-9, { duration: 220 }),
             withTiming(9, { duration: 220 }),
             withTiming(0, { duration: 300 }),
-            withTiming(0, { duration: 1400 })
+            withTiming(0, { duration: 1400 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
             withTiming(1.3, { duration: 450 }),
             withTiming(0.95, { duration: 350 }),
             withTiming(1, { duration: 400 }),
-            withTiming(1, { duration: 1400 })
+            withTiming(1, { duration: 1400 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -550,7 +540,11 @@ export function CategoryPill({ category }: { category: AchievementCategory }) {
         gap: 4,
       }}
     >
-      <ContextualAchievementIcon customIcon={isAward ? Heart : Award} customColor={iconColor} size={12} />
+      <ContextualAchievementIcon
+        customIcon={isAward ? Heart : Award}
+        customColor={iconColor}
+        size={12}
+      />
       <Text style={{ fontSize: 11, fontWeight: '800', color: '#2A1D22' }}>{label}</Text>
     </View>
   );
@@ -574,8 +568,7 @@ export function AchievementSummaryCard({
   latestAchievement,
 }: AchievementSummaryCardProps) {
   const palette = usePalette();
-  const completionPct =
-    totalBadges > 0 ? Math.round((unlockedCount / totalBadges) * 100) : 0;
+  const completionPct = totalBadges > 0 ? Math.round((unlockedCount / totalBadges) * 100) : 0;
 
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard]}>
@@ -600,16 +593,12 @@ export function AchievementSummaryCard({
           </View>
 
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '800', fontSize: 22, color: '#FF9F1C' }}>
-              Lvl {level}
-            </Text>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: '#FF9F1C' }}>Lvl {level}</Text>
             <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Level</Text>
           </View>
 
           <View style={{ alignItems: 'center', minWidth: 70 }}>
-            <Text style={{ fontWeight: '800', fontSize: 22, color: '#EC4899' }}>
-              {xp}
-            </Text>
+            <Text style={{ fontWeight: '800', fontSize: 22, color: '#EC4899' }}>{xp}</Text>
             <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '800' }}>Total XP</Text>
           </View>
         </View>
@@ -648,7 +637,16 @@ export function AchievementSummaryCard({
               borderColor: 'rgba(250, 215, 224, 0.90)',
             }}
           >
-            <View style={{ width: 34, height: 34, borderRadius: 10, backgroundColor: 'rgba(232, 77, 114, 0.12)', alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: 10,
+                backgroundColor: 'rgba(232, 77, 114, 0.12)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <ContextualAchievementIcon code={latestAchievement.achievements.code} size={20} />
             </View>
             <View style={{ flex: 1 }}>
@@ -705,17 +703,20 @@ export function AchievementCard({ item, onPress }: AchievementCardProps) {
 
           <View style={{ flex: 1, gap: 2 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-              <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>
-                {ach.name}
-              </Text>
+              <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>{ach.name}</Text>
               <CategoryPill category={category} />
             </View>
 
-            <Text style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }} numberOfLines={2}>
+            <Text
+              style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }}
+              numberOfLines={2}
+            >
               {ach.description}
             </Text>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 3 }}>
+            <View
+              style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 3 }}
+            >
               <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
                 +{xpReward} XP
               </Text>
@@ -759,7 +760,9 @@ export function BadgeCard({ badge, unlocked, unlockedAt, onPress }: BadgeCardPro
           minHeight: 130,
         }}
       >
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        >
           <View
             style={{
               width: 40,
@@ -771,7 +774,12 @@ export function BadgeCard({ badge, unlocked, unlockedAt, onPress }: BadgeCardPro
             }}
           >
             {isSecret && !unlocked ? (
-              <ContextualAchievementIcon code="secret_badge" customIcon={HelpCircle} customColor="#2A1D22" size={22} />
+              <ContextualAchievementIcon
+                code="secret_badge"
+                customIcon={HelpCircle}
+                customColor="#2A1D22"
+                size={22}
+              />
             ) : (
               <ContextualAchievementIcon code={badge.code} size={22} />
             )}
@@ -783,7 +791,10 @@ export function BadgeCard({ badge, unlocked, unlockedAt, onPress }: BadgeCardPro
           {isSecret && !unlocked ? 'Secret Badge' : badge.name}
         </Text>
 
-        <Text style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }} numberOfLines={2}>
+        <Text
+          style={{ color: '#2A1D22', fontSize: 12, lineHeight: 16, fontWeight: '600' }}
+          numberOfLines={2}
+        >
           {isSecret && !unlocked ? 'Keep exploring to discover how to unlock.' : badge.description}
         </Text>
 
@@ -795,7 +806,9 @@ export function BadgeCard({ badge, unlocked, unlockedAt, onPress }: BadgeCardPro
               color: unlocked ? '#16a34a' : '#2A1D22',
             }}
           >
-            {unlocked ? `Unlocked ${unlockedAt ? format(new Date(unlockedAt), 'dd MMM') : ''}` : 'Locked'}
+            {unlocked
+              ? `Unlocked ${unlockedAt ? format(new Date(unlockedAt), 'dd MMM') : ''}`
+              : 'Locked'}
           </Text>
         </View>
       </View>
@@ -829,17 +842,26 @@ export function AchievementHistoryItem({ item, onPress }: AchievementHistoryItem
           paddingVertical: spacing.xs,
         }}
       >
-        <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(232, 77, 114, 0.12)', alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            width: 38,
+            height: 38,
+            borderRadius: 19,
+            backgroundColor: 'rgba(232, 77, 114, 0.12)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <ContextualAchievementIcon code={ach.code} size={20} />
         </View>
         <View style={{ flex: 1, gap: 2 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
-              {ach.name}
-            </Text>
+            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>{ach.name}</Text>
             <CategoryPill category={category} />
           </View>
-          <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '600' }}>{ach.description}</Text>
+          <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '600' }}>
+            {ach.description}
+          </Text>
         </View>
         <View style={{ alignItems: 'flex-end', gap: 2 }}>
           <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
@@ -857,7 +879,10 @@ export function AchievementHistoryItem({ item, onPress }: AchievementHistoryItem
 // ─── AchievementDetail Modal ───────────────────────────────────────────────────
 
 export interface AchievementDetailModalProps {
-  item: UserAchievementWithDetails | (AchievementRow & { unlocked?: boolean; unlockedAt?: string }) | null;
+  item:
+    | UserAchievementWithDetails
+    | (AchievementRow & { unlocked?: boolean; unlockedAt?: string })
+    | null;
   visible: boolean;
   onClose: () => void;
 }
@@ -871,7 +896,7 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
 
   if (!ach) return null;
 
-  const unlocked = 'unlocked_at' in item ? true : (item as any).unlocked ?? false;
+  const unlocked = 'unlocked_at' in item ? true : ((item as any).unlocked ?? false);
   const unlockedAt = 'unlocked_at' in item ? item.unlocked_at : (item as any).unlockedAt;
 
   const category = getAchievementCategory(ach.code);
@@ -919,14 +944,24 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
 
           {/* Badge Title & Category */}
           <View style={{ alignItems: 'center', gap: 4 }}>
-            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
+            <Text
+              style={{ color: '#2A1D22', fontWeight: '800', fontSize: 18, textAlign: 'center' }}
+            >
               {ach.name}
             </Text>
             <CategoryPill category={category} />
           </View>
 
           {/* Description */}
-          <Text style={{ color: '#2A1D22', textAlign: 'center', fontSize: 13, lineHeight: 18, fontWeight: '600' }}>
+          <Text
+            style={{
+              color: '#2A1D22',
+              textAlign: 'center',
+              fontSize: 13,
+              lineHeight: 18,
+              fontWeight: '600',
+            }}
+          >
             {ach.description}
           </Text>
 
@@ -957,7 +992,9 @@ export function AchievementDetailModal({ item, visible, onClose }: AchievementDe
 
             {unlocked && unlockedAt ? (
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Unlocked Date</Text>
+                <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>
+                  Unlocked Date
+                </Text>
                 <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>
                   {format(new Date(unlockedAt), 'dd MMMM yyyy')}
                 </Text>
@@ -1011,19 +1048,27 @@ export function PartnerAwardCard({ award, isSent }: PartnerAwardCardProps) {
 
         <View style={{ flex: 1, gap: 2 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>
-              {award.title}
-            </Text>
+            <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 15 }}>{award.title}</Text>
             <CategoryPill category="partner_award" />
           </View>
 
           {award.message ? (
-            <Text style={{ color: '#2A1D22', fontSize: 13, fontStyle: 'italic', fontWeight: '600', marginTop: 2 }}>
+            <Text
+              style={{
+                color: '#2A1D22',
+                fontSize: 13,
+                fontStyle: 'italic',
+                fontWeight: '600',
+                marginTop: 2,
+              }}
+            >
               &quot;{award.message}&quot;
             </Text>
           ) : null}
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 4 }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 4 }}
+          >
             <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
               +{award.xp_bonus || 50} XP Bonus
             </Text>
@@ -1090,7 +1135,12 @@ export function PartnerAwardSection({
 export interface CreatePartnerAwardModalProps {
   visible: boolean;
   onClose: () => void;
-  onSend: (data: { title: string; message: string; icon: string; xp_bonus: number }) => Promise<void>;
+  onSend: (data: {
+    title: string;
+    message: string;
+    icon: string;
+    xp_bonus: number;
+  }) => Promise<void>;
   isSending?: boolean;
 }
 
@@ -1145,9 +1195,7 @@ export function CreatePartnerAwardModal({
           </Text>
 
           <View style={{ gap: 4 }}>
-            <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>
-              Award Title
-            </Text>
+            <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>Award Title</Text>
             <Input
               value={title}
               onChangeText={setTitle}

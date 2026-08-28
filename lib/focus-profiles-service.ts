@@ -20,7 +20,8 @@ export const focusProfilesService = {
 
     const { data: profiles, error } = await db
       .from('focus_profiles')
-      .select(`
+      .select(
+        `
         id,
         user_id,
         name,
@@ -28,7 +29,8 @@ export const focusProfilesService = {
         strict_mode,
         focus_profile_categories (category_id),
         focus_profile_custom_sites (domain)
-      `)
+      `,
+      )
       .eq('user_id', user.id)
       .order('name', { ascending: true });
 
@@ -53,7 +55,7 @@ export const focusProfilesService = {
     durationMinutes: number,
     blockedCategories: string[],
     strictMode: boolean,
-    customDomains: string[]
+    customDomains: string[],
   ): Promise<string> {
     const user = useAuthStore.getState().user;
     if (!user) throw new Error('User not authenticated');
@@ -61,11 +63,11 @@ export const focusProfilesService = {
     // Validation
     if (!name.trim()) throw new Error('Profile name is required');
     if (durationMinutes < 1) throw new Error('Duration must be at least 1 minute');
-    
+
     // Domain validation
     const cleanDomains = customDomains
-      .map(d => d.trim().toLowerCase())
-      .filter(d => {
+      .map((d) => d.trim().toLowerCase())
+      .filter((d) => {
         if (!d) return false;
         const regex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!regex.test(d)) throw new Error(`Invalid domain name: ${d}`);
@@ -93,7 +95,7 @@ export const focusProfilesService = {
 
     // 2. Insert categories
     if (blockedCategories.length > 0) {
-      const rows = blockedCategories.map(cat => ({
+      const rows = blockedCategories.map((cat) => ({
         profile_id: profileId,
         category_id: cat,
       }));
@@ -106,7 +108,7 @@ export const focusProfilesService = {
 
     // 3. Insert custom sites
     if (cleanDomains.length > 0) {
-      const rows = cleanDomains.map(dom => ({
+      const rows = cleanDomains.map((dom) => ({
         profile_id: profileId,
         domain: dom,
       }));
@@ -126,7 +128,7 @@ export const focusProfilesService = {
     durationMinutes: number,
     blockedCategories: string[],
     strictMode: boolean,
-    customDomains: string[]
+    customDomains: string[],
   ): Promise<void> {
     const user = useAuthStore.getState().user;
     if (!user) throw new Error('User not authenticated');
@@ -136,8 +138,8 @@ export const focusProfilesService = {
     if (durationMinutes < 1) throw new Error('Duration must be at least 1 minute');
 
     const cleanDomains = customDomains
-      .map(d => d.trim().toLowerCase())
-      .filter(d => {
+      .map((d) => d.trim().toLowerCase())
+      .filter((d) => {
         if (!d) return false;
         const regex = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!regex.test(d)) throw new Error(`Invalid domain name: ${d}`);
@@ -161,7 +163,7 @@ export const focusProfilesService = {
     // 2. Refresh categories
     await db.from('focus_profile_categories').delete().eq('profile_id', profileId);
     if (blockedCategories.length > 0) {
-      const rows = blockedCategories.map(cat => ({
+      const rows = blockedCategories.map((cat) => ({
         profile_id: profileId,
         category_id: cat,
       }));
@@ -172,7 +174,7 @@ export const focusProfilesService = {
     // 3. Refresh custom sites
     await db.from('focus_profile_custom_sites').delete().eq('profile_id', profileId);
     if (cleanDomains.length > 0) {
-      const rows = cleanDomains.map(dom => ({
+      const rows = cleanDomains.map((dom) => ({
         profile_id: profileId,
         domain: dom,
       }));

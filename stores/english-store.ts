@@ -200,8 +200,8 @@ export const useEnglishStore = create<EnglishState>()(
           state.syncUser(userId);
         }
       },
-    }
-  )
+    },
+  ),
 );
 
 // Subscribe to auth changes to dynamically sync the English store for the logged-in user

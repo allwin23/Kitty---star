@@ -1,19 +1,22 @@
 // YouTube Account verification content script
 
-(function() {
+(function () {
   // Send message to background to see if focus lock is active and what the study email is
-  chrome.runtime.sendMessage({ type: "CHECK_YOUTUBE_SESSION" }, (response) => {
+  chrome.runtime.sendMessage({ type: 'CHECK_YOUTUBE_SESSION' }, (response) => {
     if (chrome.runtime.lastError) {
-      console.warn("[FocusLock] Communication with background worker failed:", chrome.runtime.lastError.message);
+      console.warn(
+        '[FocusLock] Communication with background worker failed:',
+        chrome.runtime.lastError.message,
+      );
       return;
     }
 
     if (response && response.active) {
-      const studyEmail = (response.studyEmail || "").trim().toLowerCase();
-      
+      const studyEmail = (response.studyEmail || '').trim().toLowerCase();
+
       // If no study email is configured, we must block YouTube by default during focus session
       if (!studyEmail) {
-        showBlockedOverlay("Study account is not configured in settings.");
+        showBlockedOverlay('Study account is not configured in settings.');
         return;
       }
 
@@ -21,7 +24,7 @@
       applyLoadingStyle();
 
       let verified = false;
-      let detectedEmail = "";
+      let detectedEmail = '';
       let attempts = 0;
       const maxAttempts = 15; // 15 attempts * 200ms = 3 seconds
 
@@ -29,7 +32,7 @@
       const handleMessage = (event: MessageEvent) => {
         if (event.source !== window || !event.data) return;
         if (event.data.type === 'YT_EMAIL_EXTRACTED') {
-          const ytEmail = (event.data.email || "").trim().toLowerCase();
+          const ytEmail = (event.data.email || '').trim().toLowerCase();
           detectedEmail = ytEmail;
           if (ytEmail === studyEmail) {
             verified = true;
@@ -47,9 +50,9 @@
         attempts++;
 
         // 1. Authoritative check: does the HTML contain the study email string?
-        const pageHtml = document.documentElement.innerHTML || "";
+        const pageHtml = document.documentElement.innerHTML || '';
         if (pageHtml.toLowerCase().includes(studyEmail)) {
-          console.log("[FocusLock] Study email found in page HTML source.");
+          console.log('[FocusLock] Study email found in page HTML source.');
           verified = true;
           unblockPage();
           clearInterval(interval);
@@ -67,8 +70,12 @@
         if (attempts >= maxAttempts) {
           clearInterval(interval);
           window.removeEventListener('message', handleMessage);
-          console.log("[FocusLock] Verification timed out. Locking YouTube.");
-          showBlockedOverlay(`You must be logged in with your study email (${studyEmail}) to access YouTube.`, studyEmail, detectedEmail || "Logged Out");
+          console.log('[FocusLock] Verification timed out. Locking YouTube.');
+          showBlockedOverlay(
+            `You must be logged in with your study email (${studyEmail}) to access YouTube.`,
+            studyEmail,
+            detectedEmail || 'Logged Out',
+          );
         }
       }, 200);
     }
@@ -99,7 +106,7 @@
     removeOverlay();
   }
 
-  function showBlockedOverlay(reason: string, studyEmail: string = "", currentEmail: string = "") {
+  function showBlockedOverlay(reason: string, studyEmail: string = '', currentEmail: string = '') {
     removeLoadingStyle();
 
     if (!overlayElement) {
@@ -127,7 +134,8 @@
       text-align: center;
     `;
 
-    const accountDetailsHtml = studyEmail ? `
+    const accountDetailsHtml = studyEmail
+      ? `
       <div style="margin-top: 8px; padding: 12px; background: rgba(232, 77, 114, 0.05); border-radius: 8px; text-align: left; font-size: 12px; display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box;">
         <div style="display: flex; justify-content: space-between;">
           <span style="color: #66545B; font-weight: 600;">Required Email:</span>
@@ -135,10 +143,11 @@
         </div>
         <div style="display: flex; justify-content: space-between;">
           <span style="color: #66545B; font-weight: 600;">Active Account:</span>
-          <strong style="color: #C73A57; word-break: break-all;">${currentEmail || "Logged Out"}</strong>
+          <strong style="color: #C73A57; word-break: break-all;">${currentEmail || 'Logged Out'}</strong>
         </div>
       </div>
-    ` : '';
+    `
+      : '';
 
     overlayElement.innerHTML = `
       <div style="background: #FFFFFF; border: 2px solid rgba(232, 77, 114, 0.4); border-radius: 16px; padding: 32px; max-width: 400px; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 16px; align-items: center;">

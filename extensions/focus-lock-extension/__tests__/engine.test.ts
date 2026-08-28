@@ -69,17 +69,20 @@ describe('BlockingRuleManager Unit Tests', () => {
 
   test('resolveDomains resolves categories correctly', () => {
     const domains = manager.resolveDomains(['social'], []);
-    const expected = PREDEFINED_CATEGORIES.find(c => c.id === 'social')?.defaultDomains || [];
+    const expected = PREDEFINED_CATEGORIES.find((c) => c.id === 'social')?.defaultDomains || [];
     expect(domains).toEqual(expected);
   });
 
   test('resolveDomains merges multiple categories and custom domains without duplicates', () => {
-    const domains = manager.resolveDomains(['social', 'video'], ['custom-test.com', '  YOUTUBE.COM  ']);
-    
+    const domains = manager.resolveDomains(
+      ['social', 'video'],
+      ['custom-test.com', '  YOUTUBE.COM  '],
+    );
+
     expect(domains).toContain('facebook.com'); // social
-    expect(domains).toContain('youtube.com');  // video / custom casing
+    expect(domains).toContain('youtube.com'); // video / custom casing
     expect(domains).toContain('custom-test.com'); // custom domain
-    
+
     // Check uniqueness
     const duplicates = domains.filter((item, index) => domains.indexOf(item) !== index);
     expect(duplicates.length).toBe(0);
@@ -191,7 +194,7 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
   test('Critical error in adapter triggers fail-safe and disables blocks', async () => {
     // Force adapter to throw error on storage retrieval
     adapter.getStorage = async () => {
-      throw new Error("Disk read failure");
+      throw new Error('Disk read failure');
     };
 
     // Apply pre-existing dynamic rules
@@ -215,7 +218,7 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
       ['video'],
       [],
       adapter.profileEmail,
-      'student@university.edu'
+      'student@university.edu',
     );
     // YouTube should be blocked because the profile does not match the study email
     expect(domains).toContain('youtube.com');
@@ -226,7 +229,7 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
       ['video'],
       [],
       adapter.profileEmail,
-      'student@university.edu'
+      'student@university.edu',
     );
     // YouTube should be excluded from the blocked domains
     expect(domains).not.toContain('youtube.com');
@@ -243,10 +246,10 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
 
     test('cancelFocusSession throws error and preserves rules if strict session is active', async () => {
       await engine.startFocusSession(25, ['social'], [], true);
-      
+
       // Attempt cancel should reject
       await expect(engine.cancelFocusSession()).rejects.toThrow(
-        "Strict Mode is active: Focus session cannot be cancelled."
+        'Strict Mode is active: Focus session cannot be cancelled.',
       );
 
       // Verify session state and rule blocks are preserved
@@ -259,7 +262,7 @@ describe('CoreFocusEngine Phase 3 Unit Tests', () => {
     test('cancelFocusSession is allowed if strict session has expired', async () => {
       // Start short focus session
       await engine.startFocusSession(25, ['social'], [], true);
-      
+
       // Mock expiration by setting endsAt to past
       await adapter.setStorage('endsAt', Date.now() - 1000);
 

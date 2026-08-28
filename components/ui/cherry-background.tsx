@@ -12,7 +12,12 @@ export function CherryBackground() {
       <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
         <Defs>
           {/* Large Grid Square (15% of viewport width) */}
-          <Pattern id="notebookGrid" width={gridSize} height={gridSize} patternUnits="userSpaceOnUse">
+          <Pattern
+            id="notebookGrid"
+            width={gridSize}
+            height={gridSize}
+            patternUnits="userSpaceOnUse"
+          >
             <Path
               d={`M ${gridSize} 0 L 0 0 0 ${gridSize}`}
               fill="none"
@@ -32,4 +37,3 @@ export function CherryBackground() {
     </View>
   );
 }
-

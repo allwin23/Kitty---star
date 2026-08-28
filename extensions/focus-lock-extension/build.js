@@ -5,16 +5,13 @@ const path = require('path');
 // Function to parse .env file
 function loadEnv() {
   const env = {};
-  const paths = [
-    path.join(__dirname, '.env'),
-    path.join(__dirname, '../../.env')
-  ];
+  const paths = [path.join(__dirname, '.env'), path.join(__dirname, '../../.env')];
 
   for (const p of paths) {
     if (fs.existsSync(p)) {
       console.log(`[Build] Loading environment from ${p}`);
       const content = fs.readFileSync(p, 'utf-8');
-      content.split('\n').forEach(line => {
+      content.split('\n').forEach((line) => {
         const match = line.match(/^\s*([\w.-]+)\s*=\s*(.*)?\s*$/);
         if (match) {
           const key = match[1];
@@ -43,7 +40,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 const define = {
   'process.env.SUPABASE_URL': JSON.stringify(supabaseUrl),
-  'process.env.SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey)
+  'process.env.SUPABASE_ANON_KEY': JSON.stringify(supabaseAnonKey),
 };
 
 console.log('[Build] Building extension with definitions:', define);
@@ -56,7 +53,7 @@ Promise.all([
     platform: 'browser',
     format: 'esm',
     target: 'chrome100',
-    define
+    define,
   }),
   esbuild.build({
     entryPoints: ['ui/popup.ts'],
@@ -65,7 +62,7 @@ Promise.all([
     platform: 'browser',
     format: 'esm',
     target: 'chrome100',
-    define
+    define,
   }),
   esbuild.build({
     entryPoints: ['content/youtube.ts'],
@@ -74,8 +71,10 @@ Promise.all([
     platform: 'browser',
     format: 'esm',
     target: 'chrome100',
-    define
+    define,
+  }),
+])
+  .then(() => {
+    console.log('⚡ Build complete!');
   })
-]).then(() => {
-  console.log('⚡ Build complete!');
-}).catch(() => process.exit(1));
+  .catch(() => process.exit(1));

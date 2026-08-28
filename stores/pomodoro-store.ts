@@ -229,6 +229,6 @@ export const usePomodoroStore = create<PomodoroState>()(
           }
         }
       },
-    }
-  )
+    },
+  ),
 );

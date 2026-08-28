@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { Button, Card, HeaderTitleCard, Screen } from '@/components/ui';
@@ -24,7 +18,6 @@ import { palette, radius, spacing, typography } from '@/theme';
 
 export default function CompanionScreen() {
   const router = useRouter();
-
 
   const [mascotState, setMascotState] = useState<CompanionMascotState>(
     companionMascotService.getMascotState(),
@@ -82,15 +75,12 @@ export default function CompanionScreen() {
                 ⚡ Live Event Simulator
               </Text>
               <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                Tap any event below to dispatch real-time events to the synchronized Companion Mascot & Bulletin Board!
+                Tap any event below to dispatch real-time events to the synchronized Companion
+                Mascot & Bulletin Board!
               </Text>
 
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
-                <Button
-                  onPress={() =>
-                    triggerTestEvent('XPEarned', 'normal', { xpAmount: 50 })
-                  }
-                >
+                <Button onPress={() => triggerTestEvent('XPEarned', 'normal', { xpAmount: 50 })}>
                   ⭐ +50 XP
                 </Button>
 
@@ -105,33 +95,23 @@ export default function CompanionScreen() {
                   👥 Partner Done (Physics)
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('PomodoroComplete', 'high')}
-                >
+                <Button onPress={() => triggerTestEvent('PomodoroComplete', 'high')}>
                   🍅 Pomodoro Complete
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('WaterBreak', 'normal')}
-                >
+                <Button onPress={() => triggerTestEvent('WaterBreak', 'normal')}>
                   💧 Water Break
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('DailyGoalAchieved', 'high')}
-                >
+                <Button onPress={() => triggerTestEvent('DailyGoalAchieved', 'high')}>
                   🎯 Daily Goal Achieved
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('GiftUnlocked', 'high')}
-                >
+                <Button onPress={() => triggerTestEvent('GiftUnlocked', 'high')}>
                   🎁 Gift Unlocked
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('StreakSaved', 'high', { streakDays: 7 })}
-                >
+                <Button onPress={() => triggerTestEvent('StreakSaved', 'high', { streakDays: 7 })}>
                   🔥 Streak Saved (7d)
                 </Button>
 
@@ -146,26 +126,22 @@ export default function CompanionScreen() {
                 </Button>
 
                 <Button
-                  onPress={() => triggerTestEvent('AchievementEarned', 'high', { badgeTitle: 'Master Scholar' })}
+                  onPress={() =>
+                    triggerTestEvent('AchievementEarned', 'high', { badgeTitle: 'Master Scholar' })
+                  }
                 >
                   🏆 Achievement Earned
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('WelcomeBack', 'normal')}
-                >
+                <Button onPress={() => triggerTestEvent('WelcomeBack', 'normal')}>
                   👋 Welcome Back
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('GoodNight', 'normal')}
-                >
+                <Button onPress={() => triggerTestEvent('GoodNight', 'normal')}>
                   🌙 Good Night
                 </Button>
 
-                <Button
-                  onPress={() => triggerTestEvent('MissionFailed', 'normal')}
-                >
+                <Button onPress={() => triggerTestEvent('MissionFailed', 'normal')}>
                   💔 Mission Failed
                 </Button>
               </View>
@@ -199,7 +175,13 @@ export default function CompanionScreen() {
                         paddingVertical: spacing.xs,
                       }}
                     >
-                      <Text style={{ color: active ? palette.primaryText : palette.text, fontSize: 13, fontWeight: '700' }}>
+                      <Text
+                        style={{
+                          color: active ? palette.primaryText : palette.text,
+                          fontSize: 13,
+                          fontWeight: '700',
+                        }}
+                      >
                         {s.label}
                       </Text>
                     </Pressable>
@@ -208,7 +190,14 @@ export default function CompanionScreen() {
               </View>
 
               {/* Personality Modes */}
-              <Text style={{ color: palette.text, fontWeight: '600', fontSize: 14, marginTop: spacing.xs }}>
+              <Text
+                style={{
+                  color: palette.text,
+                  fontWeight: '600',
+                  fontSize: 14,
+                  marginTop: spacing.xs,
+                }}
+              >
                 Companion Personality Mode
               </Text>
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
@@ -227,7 +216,13 @@ export default function CompanionScreen() {
                         paddingVertical: spacing.xs,
                       }}
                     >
-                      <Text style={{ color: active ? palette.primaryText : palette.text, fontSize: 13, fontWeight: '700' }}>
+                      <Text
+                        style={{
+                          color: active ? palette.primaryText : palette.text,
+                          fontSize: 13,
+                          fontWeight: '700',
+                        }}
+                      >
                         {p.label}
                       </Text>
                     </Pressable>

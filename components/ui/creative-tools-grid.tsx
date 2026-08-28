@@ -116,10 +116,10 @@ function AnimatedToolIcon({ icon: Icon, delayOffset }: { icon: LucideIcon; delay
           withTiming(-8, { duration: 350, easing: Easing.inOut(Easing.quad) }),
           withTiming(8, { duration: 350, easing: Easing.inOut(Easing.quad) }),
           withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
-          withTiming(0, { duration: 1500 }) // pause before next cycle
+          withTiming(0, { duration: 1500 }), // pause before next cycle
         ),
         -1,
-        false
+        false,
       );
 
       // Pattern 2: Pulse Scale Breathing
@@ -130,10 +130,10 @@ function AnimatedToolIcon({ icon: Icon, delayOffset }: { icon: LucideIcon; delay
           withTiming(0.95, { duration: 350, easing: Easing.inOut(Easing.quad) }),
           withTiming(1.15, { duration: 350, easing: Easing.inOut(Easing.quad) }),
           withTiming(1, { duration: 500 }),
-          withTiming(1, { duration: 1200 })
+          withTiming(1, { duration: 1200 }),
         ),
         -1,
-        false
+        false,
       );
 
       // Pattern 3: Floating Vertical Bounce
@@ -144,10 +144,10 @@ function AnimatedToolIcon({ icon: Icon, delayOffset }: { icon: LucideIcon; delay
           withTiming(2, { duration: 300, easing: Easing.inOut(Easing.quad) }),
           withTiming(-3, { duration: 300, easing: Easing.inOut(Easing.quad) }),
           withTiming(0, { duration: 450 }),
-          withTiming(0, { duration: 1350 })
+          withTiming(0, { duration: 1350 }),
         ),
         -1,
-        false
+        false,
       );
     }, delayOffset);
 

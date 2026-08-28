@@ -27,10 +27,22 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 
 import { submissionService } from '@/services/backend';
-import { getProofImageUrl, getReviewDeadline, isSubmissionExpired } from '@/services/planner-read.service';
+import {
+  getProofImageUrl,
+  getReviewDeadline,
+  isSubmissionExpired,
+} from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
-import { Card, ErrorState, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
+import {
+  Card,
+  ErrorState,
+  HeaderTitleCard,
+  Loading,
+  NotificationBadge,
+  ProofViewerModal,
+  Screen,
+} from '@/components/ui';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import type { TodoTask } from '@/features/accountability/todo-list';
@@ -42,7 +54,12 @@ type SubmissionWithRelations = {
   submitted_at: string;
   status: 'pending' | 'approved' | 'rejected';
   remark: string | null;
-  submission_proofs: { id: string; image_url: string; caption: string | null; task_id: string | null }[];
+  submission_proofs: {
+    id: string;
+    image_url: string;
+    caption: string | null;
+    task_id: string | null;
+  }[];
   current_plans: {
     id: string;
     date: string;
@@ -67,7 +84,9 @@ export default function ReviewScreen() {
 
   const [reviewRemark, setReviewRemark] = useState('');
   const [proofUrls, setProofUrls] = useState<Record<string, string>>({});
-  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(null);
+  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(
+    null,
+  );
 
   // Fetch submission details with proofs and plan tasks
   const submissionQ = useQuery({
@@ -76,12 +95,14 @@ export default function ReviewScreen() {
       if (!submissionId) return null;
       const { data, error } = await supabase
         .from('daily_submissions')
-        .select(`
+        .select(
+          `
           *,
           submission_proofs(*),
           current_plans(*, current_tasks(*)),
           profiles:user_id(full_name)
-        `)
+        `,
+        )
         .eq('id', submissionId)
         .single();
       if (error) throw error;
@@ -125,12 +146,18 @@ export default function ReviewScreen() {
   useFocusEffect(
     useCallback(() => {
       void submissionQ.refetch();
-    }, [submissionQ])
+    }, [submissionQ]),
   );
 
   // Review mutation
   const reviewMutation = useMutation({
-    mutationFn: async ({ status, comment }: { status: 'approved' | 'rejected'; comment?: string }) => {
+    mutationFn: async ({
+      status,
+      comment,
+    }: {
+      status: 'approved' | 'rejected';
+      comment?: string;
+    }) => {
       if (!submissionId) throw new Error('No submission ID');
       await submissionService.review(submissionId, status, comment);
     },
@@ -141,7 +168,7 @@ export default function ReviewScreen() {
 
       if (variables.status === 'approved') {
         useGrowthAnimStore.getState().queueApproved();
-        useGrowthAnimStore.getState().queueXp(50);
+        useGrowthAnimStore.getState().queueXp(3);
       }
 
       CompanionBus.emit({
@@ -153,9 +180,9 @@ export default function ReviewScreen() {
       Alert.alert(
         variables.status === 'approved' ? 'Day Approved!' : 'Day Rejected',
         variables.status === 'approved'
-          ? 'You approved your partner\'s day. Stats updated!'
+          ? "You approved your partner's day. Stats updated!"
           : 'Submission marked as rejected.',
-        [{ text: 'OK', onPress: () => router.back() }]
+        [{ text: 'OK', onPress: () => router.back() }],
       );
     },
     onError: (e: Error) => Alert.alert('Review error', e.message),
@@ -189,7 +216,9 @@ export default function ReviewScreen() {
   const initialTasks = Array.isArray((initialPlanQ.data as any)?.initial_tasks)
     ? ((initialPlanQ.data as any).initial_tasks as any[]).slice().sort((a, b) => a.order - b.order)
     : [];
-  const currentTasks = (submission.current_plans?.current_tasks ?? []).slice().sort((a, b) => a.order - b.order);
+  const currentTasks = (submission.current_plans?.current_tasks ?? [])
+    .slice()
+    .sort((a, b) => a.order - b.order);
   const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
   const totalPomodoros = currentTasks.reduce((acc, t) => acc + (t.completed_pomodoros || 0), 0);
 
@@ -201,10 +230,14 @@ export default function ReviewScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header Row: Back Arrow + Dark Obsidian Glass Oval Title Card + Notification Badge */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
-                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>←</Text>
+                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>
+                  ←
+                </Text>
               </Pressable>
               <HeaderTitleCard title="Partner Review" showWavingHand={false} />
             </View>
@@ -233,12 +266,27 @@ export default function ReviewScreen() {
                   }}
                 >
                   <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '800' }}>
-                    ⏰ Review Deadline: {new Date(getReviewDeadline(submission.submitted_at)).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} (Auto-rejects if not reviewed)
+                    ⏰ Review Deadline:{' '}
+                    {new Date(getReviewDeadline(submission.submitted_at)).toLocaleString([], {
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}{' '}
+                    (Auto-rejects if not reviewed)
                   </Text>
                 </View>
               ) : null}
               {submission.remark ? (
-                <Text style={{ color: palette.textPrimary, fontSize: 14, marginTop: spacing.xs, fontStyle: 'italic', fontWeight: '500' }}>
+                <Text
+                  style={{
+                    color: palette.textPrimary,
+                    fontSize: 14,
+                    marginTop: spacing.xs,
+                    fontStyle: 'italic',
+                    fontWeight: '500',
+                  }}
+                >
                   &quot;{submission.remark}&quot;
                 </Text>
               ) : null}
@@ -269,16 +317,21 @@ export default function ReviewScreen() {
           {/* Initial Plan */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <Text style={styles.sectionTitleText}>
-                Initial Plan Snapshot
-              </Text>
+              <Text style={styles.sectionTitleText}>Initial Plan Snapshot</Text>
               {initialPlanQ.isLoading ? (
                 <Loading />
               ) : initialTasks.length === 0 ? (
                 <Text style={styles.cardSubText}>No initial plan snapshot available.</Text>
               ) : (
                 initialTasks.map((t: any) => (
-                  <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(250, 215, 224, 0.60)', paddingVertical: 6 }}>
+                  <View
+                    key={t.id}
+                    style={{
+                      borderBottomWidth: 1,
+                      borderBottomColor: 'rgba(250, 215, 224, 0.60)',
+                      paddingVertical: 6,
+                    }}
+                  >
                     <Text style={styles.itemTitleText}>{t.title}</Text>
                     <Text style={styles.cardSubText}>{t.estimated_minutes} min</Text>
                   </View>
@@ -290,10 +343,14 @@ export default function ReviewScreen() {
           {/* Final Todo & Proofs Grouped */}
           <View style={[glassCardStyle, styles.pinkGlassCard]}>
             <View style={{ gap: spacing.md }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={styles.sectionTitleText}>
-                  Final Plan & Task Proofs
-                </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={styles.sectionTitleText}>Final Plan & Task Proofs</Text>
                 <Text style={styles.badgeCountText}>
                   {completedCount}/{currentTasks.length} done
                 </Text>
@@ -301,7 +358,9 @@ export default function ReviewScreen() {
 
               <View style={{ gap: spacing.sm }}>
                 {currentTasks.map((task) => {
-                  const taskProofs = submission.submission_proofs.filter((p) => p.task_id === task.id);
+                  const taskProofs = submission.submission_proofs.filter(
+                    (p) => p.task_id === task.id,
+                  );
                   const isDone = task.status === 'completed';
 
                   return (
@@ -330,7 +389,9 @@ export default function ReviewScreen() {
                           }}
                         >
                           {isDone ? (
-                            <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>✓</Text>
+                            <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>
+                              ✓
+                            </Text>
                           ) : null}
                         </View>
 
@@ -346,8 +407,14 @@ export default function ReviewScreen() {
                             {task.title}
                           </Text>
                           <Text style={styles.cardSubText}>
-                            ⏳ Worked/Planned: <Text style={{ color: palette.cherryBloom, fontWeight: '800' }}>{task.completed_minutes || 0}/{task.estimated_minutes} min</Text> • 🍅 {task.completed_pomodoros || 0} pomodoros
-                            {(task.completed_minutes || 0) > task.estimated_minutes ? ` 🔥 (+${(task.completed_minutes || 0) - task.estimated_minutes}m overtime)` : ''}
+                            ⏳ Worked/Planned:{' '}
+                            <Text style={{ color: palette.cherryBloom, fontWeight: '800' }}>
+                              {task.completed_minutes || 0}/{task.estimated_minutes} min
+                            </Text>{' '}
+                            • 🍅 {task.completed_pomodoros || 0} pomodoros
+                            {(task.completed_minutes || 0) > task.estimated_minutes
+                              ? ` 🔥 (+${(task.completed_minutes || 0) - task.estimated_minutes}m overtime)`
+                              : ''}
                           </Text>
                         </View>
                       </View>
@@ -355,7 +422,9 @@ export default function ReviewScreen() {
                       {/* Task proof images gallery */}
                       {taskProofs.length > 0 ? (
                         <View style={{ marginTop: 6 }}>
-                          <Text style={[styles.cardSubText, { fontWeight: '700', marginBottom: 4 }]}>
+                          <Text
+                            style={[styles.cardSubText, { fontWeight: '700', marginBottom: 4 }]}
+                          >
                             TASK PROOF ({taskProofs.length})
                           </Text>
                           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
@@ -365,15 +434,33 @@ export default function ReviewScreen() {
                               return (
                                 <Pressable
                                   key={proof.id}
-                                  onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: task.title })}
+                                  onPress={() =>
+                                    signedUrl &&
+                                    setViewingProof({ url: signedUrl, caption: task.title })
+                                  }
                                 >
                                   {signedUrl ? (
                                     <Image
                                       source={{ uri: signedUrl }}
-                                      style={{ width: 64, height: 64, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.90)' }}
+                                      style={{
+                                        width: 64,
+                                        height: 64,
+                                        borderRadius: 8,
+                                        borderWidth: 1,
+                                        borderColor: 'rgba(250, 215, 224, 0.90)',
+                                      }}
                                     />
                                   ) : (
-                                    <View style={{ width: 64, height: 64, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
+                                    <View
+                                      style={{
+                                        width: 64,
+                                        height: 64,
+                                        borderRadius: 8,
+                                        backgroundColor: 'rgba(0,0,0,0.05)',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                      }}
+                                    >
                                       <ActivityIndicator size="small" color={palette.cherryBloom} />
                                     </View>
                                   )}
@@ -398,7 +485,9 @@ export default function ReviewScreen() {
           {generalProofs.length > 0 && (
             <View style={[glassCardStyle, styles.pinkGlassCard]}>
               <View style={{ gap: spacing.md }}>
-                <Text style={styles.sectionTitleText}>General Proof Images ({generalProofs.length})</Text>
+                <Text style={styles.sectionTitleText}>
+                  General Proof Images ({generalProofs.length})
+                </Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                   {generalProofs.map((proof) => {
                     void loadProofUrl(proof.image_url);
@@ -406,7 +495,9 @@ export default function ReviewScreen() {
                     return (
                       <Pressable
                         key={proof.id}
-                        onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: 'General Proof' })}
+                        onPress={() =>
+                          signedUrl && setViewingProof({ url: signedUrl, caption: 'General Proof' })
+                        }
                       >
                         {signedUrl ? (
                           <Image
@@ -414,7 +505,16 @@ export default function ReviewScreen() {
                             style={{ width: 72, height: 72, borderRadius: 8 }}
                           />
                         ) : (
-                          <View style={{ width: 72, height: 72, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
+                          <View
+                            style={{
+                              width: 72,
+                              height: 72,
+                              borderRadius: 8,
+                              backgroundColor: 'rgba(0,0,0,0.05)',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
                             <ActivityIndicator size="small" color={palette.cherryBloom} />
                           </View>
                         )}
@@ -432,7 +532,9 @@ export default function ReviewScreen() {
               <Text style={styles.sectionTitleText}>Review Decision</Text>
 
               {alreadyReviewed ? (
-                <View style={{ gap: spacing.xs, alignItems: 'center', paddingVertical: spacing.sm }}>
+                <View
+                  style={{ gap: spacing.xs, alignItems: 'center', paddingVertical: spacing.sm }}
+                >
                   <Text style={{ fontSize: 32 }}>
                     {submission.status === 'approved' ? '✅' : '❌'}
                   </Text>
@@ -440,19 +542,20 @@ export default function ReviewScreen() {
                     style={{
                       fontSize: 16,
                       fontWeight: '800',
-                      color: submission.status === 'approved' ? palette.cherryBloom : palette.danger,
+                      color:
+                        submission.status === 'approved' ? palette.cherryBloom : palette.danger,
                     }}
                   >
                     Submission {submission.status.toUpperCase()}
                   </Text>
-                  <Text style={styles.cardSubText}>
-                    You have already reviewed this day.
-                  </Text>
+                  <Text style={styles.cardSubText}>You have already reviewed this day.</Text>
                 </View>
               ) : (
                 <View style={{ gap: spacing.md }}>
                   <View style={{ gap: spacing.xs }}>
-                    <Text style={[styles.cardSubText, { fontWeight: '700' }]}>Optional Feedback Comment</Text>
+                    <Text style={[styles.cardSubText, { fontWeight: '700' }]}>
+                      Optional Feedback Comment
+                    </Text>
                     <TextInput
                       style={{
                         backgroundColor: 'rgba(255, 243, 245, 0.85)',
@@ -475,7 +578,9 @@ export default function ReviewScreen() {
 
                   <View style={{ flexDirection: 'row', gap: spacing.md }}>
                     <Pressable
-                      onPress={() => void reviewMutation.mutate({ status: 'approved', comment: reviewRemark })}
+                      onPress={() =>
+                        void reviewMutation.mutate({ status: 'approved', comment: reviewRemark })
+                      }
                       disabled={reviewMutation.isPending}
                       style={{
                         flex: 1,
@@ -497,7 +602,9 @@ export default function ReviewScreen() {
                     </Pressable>
 
                     <Pressable
-                      onPress={() => void reviewMutation.mutate({ status: 'rejected', comment: reviewRemark })}
+                      onPress={() =>
+                        void reviewMutation.mutate({ status: 'rejected', comment: reviewRemark })
+                      }
                       disabled={reviewMutation.isPending}
                       style={{
                         flex: 1,

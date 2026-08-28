@@ -41,7 +41,6 @@ export const palette = {
   statusDanger: '#D94C61',
 } as const;
 
-
 export const colors = {
   light: {
     background: '#F63E5F',
@@ -129,11 +128,41 @@ export const typography = {
   sm: { fontFamily: fonts.body, fontSize: 14, lineHeight: 20 },
   body: { fontFamily: fonts.body, fontSize: 16, lineHeight: 24 },
   md: { fontFamily: fonts.body, fontSize: 18, lineHeight: 26 },
-  title: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 20, lineHeight: 26, fontWeight: '500' as const },
-  heading: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 24, lineHeight: 30, fontWeight: '500' as const },
-  h2: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 28, lineHeight: 34, fontWeight: '500' as const },
-  h1: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 36, lineHeight: 42, fontWeight: '500' as const },
-  hero: { fontFamily: fonts.heading, fontStyle: 'italic' as const, fontSize: 48, lineHeight: 52, fontWeight: '500' as const },
+  title: {
+    fontFamily: fonts.heading,
+    fontStyle: 'italic' as const,
+    fontSize: 20,
+    lineHeight: 26,
+    fontWeight: '500' as const,
+  },
+  heading: {
+    fontFamily: fonts.heading,
+    fontStyle: 'italic' as const,
+    fontSize: 24,
+    lineHeight: 30,
+    fontWeight: '500' as const,
+  },
+  h2: {
+    fontFamily: fonts.heading,
+    fontStyle: 'italic' as const,
+    fontSize: 28,
+    lineHeight: 34,
+    fontWeight: '500' as const,
+  },
+  h1: {
+    fontFamily: fonts.heading,
+    fontStyle: 'italic' as const,
+    fontSize: 36,
+    lineHeight: 42,
+    fontWeight: '500' as const,
+  },
+  hero: {
+    fontFamily: fonts.heading,
+    fontStyle: 'italic' as const,
+    fontSize: 48,
+    lineHeight: 52,
+    fontWeight: '500' as const,
+  },
   caption: { fontFamily: fonts.body, fontSize: 12, lineHeight: 16 },
   accent: { fontFamily: fonts.accent, fontStyle: 'italic' as const },
   mascot: { fontFamily: fonts.mascot },
@@ -169,4 +198,3 @@ export const glassCardStyle = {
       } as any)
     : {}),
 } as const;
-

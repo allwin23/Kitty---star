@@ -3,16 +3,8 @@
   "name": "Focus Lock",
   "version": "1.0.0",
   "description": "Cross-device focus companion for Kitty & Star (Chromium Decoupled Edition)",
-  "permissions": [
-    "declarativeNetRequest",
-    "alarms",
-    "storage",
-    "identity",
-    "identity.email"
-  ],
-  "host_permissions": [
-    "<all_urls>"
-  ],
+  "permissions": ["declarativeNetRequest", "alarms", "storage", "identity", "identity.email"],
+  "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "dist/background/index.js",
     "type": "module"
@@ -22,12 +14,8 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "*://*.youtube.com/*"
-      ],
-      "js": [
-        "dist/content/youtube.js"
-      ],
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["dist/content/youtube.js"],
       "run_at": "document_start"
     }
   ]

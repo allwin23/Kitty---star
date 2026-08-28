@@ -35,14 +35,15 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
       {/* Frosted Focus Zone — only on web where backdrop-filter works */}
       {isGlass && Platform.OS === 'web' ? (
         <View
-          style={[
-            StyleSheet.absoluteFill,
-            { borderRadius: radius.card, overflow: 'hidden' },
-          ]}
+          style={[StyleSheet.absoluteFill, { borderRadius: radius.card, overflow: 'hidden' }]}
           pointerEvents="none"
         >
           {/* Top-left focus gradient zone */}
-          <Svg height="100%" width="100%" style={[StyleSheet.absoluteFill, { borderRadius: radius.card }]}>
+          <Svg
+            height="100%"
+            width="100%"
+            style={[StyleSheet.absoluteFill, { borderRadius: radius.card }]}
+          >
             <Defs>
               <LinearGradient id="cardFocusGradient" x1="0" y1="0" x2="1" y2="1">
                 <Stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.40" />
@@ -60,5 +61,3 @@ export function Card({ children, style, variant = 'glass' }: CardProps) {
     </View>
   );
 }
-
-

@@ -31,7 +31,16 @@ import {
   Zap,
 } from 'lucide-react-native';
 
-import { Button, Card, EmptyState, HeaderTitleCard, Input, Loading, NotificationBadge, Screen } from '@/components/ui';
+import {
+  Button,
+  Card,
+  EmptyState,
+  HeaderTitleCard,
+  Input,
+  Loading,
+  NotificationBadge,
+  Screen,
+} from '@/components/ui';
 import { useAuthStore, usePyqStore, usePyqQuestionsStore } from '@/stores';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
 import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
@@ -74,7 +83,7 @@ export default function PYQScreen() {
   const [selectedSubject, setSelectedSubject] = useState<string>('All');
   const [isImportVisible, setIsImportVisible] = useState<boolean>(false);
   const [pastedJson, setPastedJson] = useState<string>('');
-  
+
   // Config states
   const [numQuestions, setNumQuestions] = useState<number>(10);
   const [timerDuration, setTimerDuration] = useState<number>(15); // in minutes
@@ -83,11 +92,15 @@ export default function PYQScreen() {
 
   // Active test states
   const [activeAttemptId, setActiveAttemptId] = useState<string | null>(null);
-  const [testQuestions, setTestQuestions] = useState<(Question & { shuffledOptions: string[]; correctText: string })[]>([]);
+  const [testQuestions, setTestQuestions] = useState<
+    (Question & { shuffledOptions: string[]; correctText: string })[]
+  >([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
-  const [userAnswers, setUserAnswers] = useState<Record<string, { selected: string | null; timeSpent: number }>>({});
+  const [userAnswers, setUserAnswers] = useState<
+    Record<string, { selected: string | null; timeSpent: number }>
+  >({});
   const [secondsRemaining, setSecondsRemaining] = useState<number>(0);
-  
+
   // Results & review states
   const [finishedAttemptId, setFinishedAttemptId] = useState<string | null>(null);
   const [reviewAttempt, setReviewAttempt] = useState<PYQAttemptWithAnswers | null>(null);
@@ -128,13 +141,13 @@ export default function PYQScreen() {
     useCallback(() => {
       void statsQ.refetch();
       void historyQ.refetch();
-    }, [])
+    }, []),
   );
 
   // Combine static local JSON data with custom uploaded questions
   // and filter out any deleted subjects
   const allQuestions = [...questionsData, ...customQuestions].filter(
-    (q) => !deletedSubjects.some((ds) => ds.toLowerCase() === q.subject.toLowerCase())
+    (q) => !deletedSubjects.some((ds) => ds.toLowerCase() === q.subject.toLowerCase()),
   ) as Question[];
 
   // Derive all unique subjects from the combined questions pool dynamically
@@ -189,7 +202,7 @@ export default function PYQScreen() {
 
       // Emit Companion Presentation & Notification Engine events
       const score = Math.round(data.accuracy || data.score || 80);
-      const xpEarned = 50;
+      const xpEarned = 3;
       useGrowthAnimStore.getState().queueXp(xpEarned);
       CompanionBus.emit({
         eventType: 'XPEarned',
@@ -227,7 +240,7 @@ export default function PYQScreen() {
 
   const handleSelectSubject = (subj: string) => {
     setSelectedSubject(subj);
-    
+
     // Calculate total questions in pool for this subject
     let pool = allQuestions;
     if (subj !== 'All') {
@@ -261,13 +274,17 @@ export default function PYQScreen() {
     }
 
     // Shuffle questions
-    let selected = [...unused].sort(() => 0.5 - Math.random()).slice(0, Math.min(numQuestions, unused.length));
+    let selected = [...unused]
+      .sort(() => 0.5 - Math.random())
+      .slice(0, Math.min(numQuestions, unused.length));
 
     // Fill up if limit is greater than unused
     if (selected.length < numQuestions && pool.length > selected.length) {
       const needed = numQuestions - selected.length;
       const remainingPool = pool.filter((q) => !selected.map((s) => s.id).includes(q.id));
-      const extra = [...remainingPool].sort(() => 0.5 - Math.random()).slice(0, Math.min(needed, remainingPool.length));
+      const extra = [...remainingPool]
+        .sort(() => 0.5 - Math.random())
+        .slice(0, Math.min(needed, remainingPool.length));
       selected.push(...extra);
       wasReset = true;
     }
@@ -276,7 +293,7 @@ export default function PYQScreen() {
     const testPrep = selected.map((q) => {
       const originalOptions = q.options;
       const correctText = originalOptions[q.answer - 1];
-      
+
       let shuffledOptions = [...originalOptions];
       if (shuffleOptions) {
         shuffledOptions = shuffledOptions.sort(() => 0.5 - Math.random());
@@ -290,7 +307,9 @@ export default function PYQScreen() {
     });
 
     // Shuffle questions order if toggled
-    const finalQuestions = shuffleQuestions ? [...testPrep].sort(() => 0.5 - Math.random()) : testPrep;
+    const finalQuestions = shuffleQuestions
+      ? [...testPrep].sort(() => 0.5 - Math.random())
+      : testPrep;
 
     if (finalQuestions.length === 0) {
       Alert.alert('No questions available', 'Please try another subject.');
@@ -325,13 +344,23 @@ export default function PYQScreen() {
 
       // Check format of first element
       const first = parsed[0];
-      if (first && (typeof first.question !== 'string' || !Array.isArray(first.options) || typeof first.answer !== 'number')) {
-        Alert.alert('Invalid Format', 'Each question object must have at least: question (string), options (array of strings), and answer (number, e.g. 1-indexed option number).');
+      if (
+        first &&
+        (typeof first.question !== 'string' ||
+          !Array.isArray(first.options) ||
+          typeof first.answer !== 'number')
+      ) {
+        Alert.alert(
+          'Invalid Format',
+          'Each question object must have at least: question (string), options (array of strings), and answer (number, e.g. 1-indexed option number).',
+        );
         return;
       }
 
       // Helper to match subject name case-insensitively with existing static subjects
-      const existingSubjects = Array.from(new Set((questionsData as Question[]).map((q) => q.subject)));
+      const existingSubjects = Array.from(
+        new Set((questionsData as Question[]).map((q) => q.subject)),
+      );
       const findMatchingSubjectCase = (subjectName: string) => {
         const trimmed = subjectName.trim();
         const match = existingSubjects.find((s) => s.toLowerCase() === trimmed.toLowerCase());
@@ -345,7 +374,10 @@ export default function PYQScreen() {
         return {
           id: item.id || `custom-${Date.now()}-${idx}`,
           year: typeof item.year === 'number' ? item.year : new Date().getFullYear(),
-          subject: typeof item.subject === 'string' ? findMatchingSubjectCase(item.subject) : 'Custom Subject',
+          subject:
+            typeof item.subject === 'string'
+              ? findMatchingSubjectCase(item.subject)
+              : 'Custom Subject',
           topic: typeof item.topic === 'string' ? item.topic.trim() : 'General',
           question: String(item.question).trim(),
           options: Array.isArray(item.options) ? item.options.map(String) : [],
@@ -481,17 +513,23 @@ export default function PYQScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ gap: spacing[24], paddingBottom: 120 }}>
             {/* Header Row with Oval Title Card */}
-            <HeaderTitleCard
-              title="PYQ Practice"
-              showWavingHand={false}
-            />
+            <HeaderTitleCard title="PYQ Practice" showWavingHand={false} />
 
             {/* Aggregated stats */}
             {stats && (
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.sm }}>
-                  <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Your PYQ Stats</Text>
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, justifyContent: 'space-between' }}>
+                  <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
+                    Your PYQ Stats
+                  </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      gap: spacing.md,
+                      justifyContent: 'space-between',
+                    }}
+                  >
                     {[
                       { label: 'Total Tests', value: stats.total_tests, color: palette.danger },
                       { label: 'Questions', value: stats.total_questions, color: '#2A1D22' },
@@ -503,7 +541,9 @@ export default function PYQScreen() {
                         <Text style={{ fontWeight: '800', fontSize: 18, color: s.color }}>
                           {s.value}
                         </Text>
-                        <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>{s.label}</Text>
+                        <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>
+                          {s.label}
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -513,16 +553,24 @@ export default function PYQScreen() {
 
             {/* Dynamic Subjects List — Compact Horizontal Cards with Deletion Support */}
             <View style={{ gap: spacing.xs }}>
-              <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Select Subject</Text>
-              
+              <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
+                Select Subject
+              </Text>
+
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
                 {/* All Subjects Card */}
                 <Pressable
                   onPress={() => handleSelectSubject('All')}
-                  style={[styles.subjectCard, { backgroundColor: palette.cherryBloom, borderColor: palette.cherryBloom }]}
+                  style={[
+                    styles.subjectCard,
+                    { backgroundColor: palette.cherryBloom, borderColor: palette.cherryBloom },
+                  ]}
                 >
                   <BookOpen size={18} color="#FFFFFF" strokeWidth={2.4} />
-                  <Text style={{ fontWeight: '800', color: '#FFFFFF', fontSize: 13, flex: 1 }} numberOfLines={1}>
+                  <Text
+                    style={{ fontWeight: '800', color: '#FFFFFF', fontSize: 13, flex: 1 }}
+                    numberOfLines={1}
+                  >
                     All Subjects
                   </Text>
                 </Pressable>
@@ -544,7 +592,10 @@ export default function PYQScreen() {
                       style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 6 }}
                     >
                       <Book size={17} color="#D94C61" strokeWidth={2.2} />
-                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13, flex: 1 }} numberOfLines={1}>
+                      <Text
+                        style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13, flex: 1 }}
+                        numberOfLines={1}
+                      >
                         {subj}
                       </Text>
                     </Pressable>
@@ -589,7 +640,9 @@ export default function PYQScreen() {
                 }}
               >
                 <Sparkles size={18} color="#FFFFFF" strokeWidth={2.4} />
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                <Text
+                  style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}
+                >
                   {isImportVisible ? 'Close JSON Paste Area' : 'Import Custom PYQ JSON'}
                 </Text>
               </View>
@@ -597,14 +650,34 @@ export default function PYQScreen() {
 
             {/* Paste JSON Content Area */}
             {isImportVisible && (
-              <Card style={{ padding: spacing.md, gap: spacing.md, borderColor: palette.cherryBloom, borderWidth: 1.5 }}>
+              <Card
+                style={{
+                  padding: spacing.md,
+                  gap: spacing.md,
+                  borderColor: palette.cherryBloom,
+                  borderWidth: 1.5,
+                }}
+              >
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>Paste PYQ Questions JSON</Text>
-                  <Text style={{ fontSize: 11, color: '#66545B', fontWeight: '600', lineHeight: 15 }}>
+                  <Text style={{ fontWeight: '800', fontSize: 15, color: '#2A1D22' }}>
+                    Paste PYQ Questions JSON
+                  </Text>
+                  <Text
+                    style={{ fontSize: 11, color: '#66545B', fontWeight: '600', lineHeight: 15 }}
+                  >
                     Open your questions JSON file, copy the entire array text, and paste it below.
                   </Text>
-                  <Text style={{ fontSize: 10, color: palette.danger, fontWeight: '700', fontStyle: 'italic' }}>
-                    {'Example Format: [{"id":"1","year":2026,"subject":"Chemistry","topic":"Acids","question":"What is HCl?","options":["Acid","Base"],"answer":1}]'}
+                  <Text
+                    style={{
+                      fontSize: 10,
+                      color: palette.danger,
+                      fontWeight: '700',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    {
+                      'Example Format: [{"id":"1","year":2026,"subject":"Chemistry","topic":"Acids","question":"What is HCl?","options":["Acid","Base"],"answer":1}]'
+                    }
                   </Text>
                 </View>
 
@@ -635,7 +708,9 @@ export default function PYQScreen() {
                         borderColor: 'rgba(255, 255, 255, 0.20)',
                       }}
                     >
-                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Import Questions</Text>
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
+                        Import Questions
+                      </Text>
                     </View>
                   </Pressable>
 
@@ -660,7 +735,9 @@ export default function PYQScreen() {
                         borderColor: 'rgba(18, 18, 24, 0.15)',
                       }}
                     >
-                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Cancel</Text>
+                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
+                        Cancel
+                      </Text>
                     </View>
                   </Pressable>
                 </View>
@@ -688,7 +765,10 @@ export default function PYQScreen() {
               <Pressable
                 onPress={() => {
                   clearUsedQuestionIds();
-                  Alert.alert('Pool reset', 'All question repeat history has been cleared for the next tests.');
+                  Alert.alert(
+                    'Pool reset',
+                    'All question repeat history has been cleared for the next tests.',
+                  );
                 }}
                 style={styles.resetButton}
               >
@@ -701,20 +781,32 @@ export default function PYQScreen() {
 
             {/* History Feed */}
             <View style={{ gap: spacing.sm }}>
-              <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Attempt History</Text>
+              <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
+                Attempt History
+              </Text>
               {history.length === 0 ? (
-                <EmptyState title="No attempts yet" description="Your completed tests will show up here." />
+                <EmptyState
+                  title="No attempts yet"
+                  description="Your completed tests will show up here."
+                />
               ) : (
                 <View style={{ gap: spacing.sm }}>
                   {history.map((h) => (
                     <View key={h.id} style={[glassCardStyle, styles.pinkGlassCard]}>
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
                         <View style={{ gap: 2, flex: 1 }}>
                           <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }}>
                             {h.set_name}
                           </Text>
                           <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600' }}>
-                            {new Date(h.submitted_at!).toLocaleDateString()} • {h.correct} / {h.correct + h.wrong + h.unanswered} Correct
+                            {new Date(h.submitted_at!).toLocaleDateString()} • {h.correct} /{' '}
+                            {h.correct + h.wrong + h.unanswered} Correct
                           </Text>
                         </View>
 
@@ -727,27 +819,40 @@ export default function PYQScreen() {
                             paddingVertical: 8,
                           }}
                         >
-                          <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>Review</Text>
+                          <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>
+                            Review
+                          </Text>
                         </Pressable>
                       </View>
                     </View>
                   ))}
 
                   {/* Pagination */}
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm, marginTop: spacing.xs }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      gap: spacing.sm,
+                      marginTop: spacing.xs,
+                    }}
+                  >
                     <Pressable
                       disabled={historyPage <= 1}
                       onPress={() => setHistoryPage((p) => p - 1)}
                       style={[styles.outlineBtn, { opacity: historyPage <= 1 ? 0.5 : 1 }]}
                     >
-                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>Previous</Text>
+                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>
+                        Previous
+                      </Text>
                     </Pressable>
                     <Pressable
                       disabled={history.length < 5}
                       onPress={() => setHistoryPage((p) => p + 1)}
                       style={[styles.outlineBtn, { opacity: history.length < 5 ? 0.5 : 1 }]}
                     >
-                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>Next Page</Text>
+                      <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>
+                        Next Page
+                      </Text>
                     </Pressable>
                   </View>
                 </View>
@@ -791,7 +896,9 @@ export default function PYQScreen() {
               <View style={{ gap: spacing.md }}>
                 {/* Number of questions selector */}
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>Number of Questions: {numQuestions}</Text>
+                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
+                    Number of Questions: {numQuestions}
+                  </Text>
                   <View style={{ flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap' }}>
                     {[5, 10, 15, 20, 25].map((num) => {
                       if (num > pool.length && num > 5) return null;
@@ -803,12 +910,18 @@ export default function PYQScreen() {
                           style={[
                             styles.chip,
                             {
-                              borderColor: isSel ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
-                              backgroundColor: isSel ? palette.cherryBloom : 'rgba(255, 255, 255, 0.85)',
+                              borderColor: isSel
+                                ? palette.cherryBloom
+                                : 'rgba(250, 215, 224, 0.90)',
+                              backgroundColor: isSel
+                                ? palette.cherryBloom
+                                : 'rgba(255, 255, 255, 0.85)',
                             },
                           ]}
                         >
-                          <Text style={{ fontWeight: '800', color: isSel ? '#FFFFFF' : '#2A1D22' }}>{num}</Text>
+                          <Text style={{ fontWeight: '800', color: isSel ? '#FFFFFF' : '#2A1D22' }}>
+                            {num}
+                          </Text>
                         </Pressable>
                       );
                     })}
@@ -817,7 +930,9 @@ export default function PYQScreen() {
 
                 {/* Timer Duration selector */}
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>Timer Duration: {timerDuration} Minutes</Text>
+                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
+                    Timer Duration: {timerDuration} Minutes
+                  </Text>
                   <View style={{ flexDirection: 'row', gap: spacing.xs, flexWrap: 'wrap' }}>
                     {[1, 5, 10, 15, 20, 30].map((mins) => {
                       const isSel = timerDuration === mins;
@@ -828,8 +943,12 @@ export default function PYQScreen() {
                           style={[
                             styles.chip,
                             {
-                              borderColor: isSel ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
-                              backgroundColor: isSel ? palette.cherryBloom : 'rgba(255, 255, 255, 0.85)',
+                              borderColor: isSel
+                                ? palette.cherryBloom
+                                : 'rgba(250, 215, 224, 0.90)',
+                              backgroundColor: isSel
+                                ? palette.cherryBloom
+                                : 'rgba(255, 255, 255, 0.85)',
                             },
                           ]}
                         >
@@ -843,14 +962,30 @@ export default function PYQScreen() {
                 </View>
 
                 {/* Shuffle options */}
-                <View style={[styles.switchRow, { borderBottomColor: 'rgba(250, 215, 224, 0.60)' }]}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>Shuffle Questions</Text>
-                  <Switch value={shuffleQuestions} onValueChange={setShuffleQuestions} trackColor={{ false: '#E5D8DC', true: palette.cherryBloom }} />
+                <View
+                  style={[styles.switchRow, { borderBottomColor: 'rgba(250, 215, 224, 0.60)' }]}
+                >
+                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
+                    Shuffle Questions
+                  </Text>
+                  <Switch
+                    value={shuffleQuestions}
+                    onValueChange={setShuffleQuestions}
+                    trackColor={{ false: '#E5D8DC', true: palette.cherryBloom }}
+                  />
                 </View>
 
-                <View style={[styles.switchRow, { borderBottomColor: 'rgba(250, 215, 224, 0.60)' }]}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>Shuffle Options</Text>
-                  <Switch value={shuffleOptions} onValueChange={setShuffleOptions} trackColor={{ false: '#E5D8DC', true: palette.cherryBloom }} />
+                <View
+                  style={[styles.switchRow, { borderBottomColor: 'rgba(250, 215, 224, 0.60)' }]}
+                >
+                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
+                    Shuffle Options
+                  </Text>
+                  <Switch
+                    value={shuffleOptions}
+                    onValueChange={setShuffleOptions}
+                    trackColor={{ false: '#E5D8DC', true: palette.cherryBloom }}
+                  />
                 </View>
 
                 {/* Action Buttons: High contrast */}
@@ -866,11 +1001,10 @@ export default function PYQScreen() {
                     </Text>
                   </Pressable>
 
-                  <Pressable
-                    onPress={() => setViewState('home')}
-                    style={styles.outlineBtn}
-                  >
-                    <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Cancel</Text>
+                  <Pressable onPress={() => setViewState('home')} style={styles.outlineBtn}>
+                    <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
+                      Cancel
+                    </Text>
                   </Pressable>
                 </View>
               </View>
@@ -908,21 +1042,59 @@ export default function PYQScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ gap: spacing.md, paddingBottom: 120 }}>
             {/* Header / Timer */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14 }}>
                 Question {currentQuestionIndex + 1} of {testQuestions.length}
               </Text>
-              <View style={[styles.timerBadge, { backgroundColor: 'rgba(255, 243, 245, 0.90)', borderColor: 'rgba(250, 215, 224, 0.90)' }]}>
-                <Clock size={15} color={secondsRemaining < 60 ? palette.danger : '#2A1D22'} strokeWidth={2.4} />
-                <Text style={{ color: secondsRemaining < 60 ? palette.danger : '#2A1D22', fontWeight: '800', fontSize: 14 }}>
+              <View
+                style={[
+                  styles.timerBadge,
+                  {
+                    backgroundColor: 'rgba(255, 243, 245, 0.90)',
+                    borderColor: 'rgba(250, 215, 224, 0.90)',
+                  },
+                ]}
+              >
+                <Clock
+                  size={15}
+                  color={secondsRemaining < 60 ? palette.danger : '#2A1D22'}
+                  strokeWidth={2.4}
+                />
+                <Text
+                  style={{
+                    color: secondsRemaining < 60 ? palette.danger : '#2A1D22',
+                    fontWeight: '800',
+                    fontSize: 14,
+                  }}
+                >
                   {formatTime(secondsRemaining)}
                 </Text>
               </View>
             </View>
 
             {/* Progress Bar */}
-            <View style={{ height: 8, backgroundColor: 'rgba(250, 215, 224, 0.60)', borderRadius: radius.full, overflow: 'hidden' }}>
-              <View style={{ width: `${progressPct}%`, height: '100%', backgroundColor: palette.cherryBloom, borderRadius: radius.full }} />
+            <View
+              style={{
+                height: 8,
+                backgroundColor: 'rgba(250, 215, 224, 0.60)',
+                borderRadius: radius.full,
+                overflow: 'hidden',
+              }}
+            >
+              <View
+                style={{
+                  width: `${progressPct}%`,
+                  height: '100%',
+                  backgroundColor: palette.cherryBloom,
+                  borderRadius: radius.full,
+                }}
+              />
             </View>
 
             {/* Question Card */}
@@ -962,13 +1134,34 @@ export default function PYQScreen() {
                         style={[
                           styles.optionButton,
                           {
-                            borderColor: isSelected ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
-                            backgroundColor: isSelected ? 'rgba(232, 77, 114, 0.14)' : 'rgba(255, 255, 255, 0.85)',
+                            borderColor: isSelected
+                              ? palette.cherryBloom
+                              : 'rgba(250, 215, 224, 0.90)',
+                            backgroundColor: isSelected
+                              ? 'rgba(232, 77, 114, 0.14)'
+                              : 'rgba(255, 255, 255, 0.85)',
                           },
                         ]}
                       >
-                        <View style={[styles.optionDot, { borderColor: isSelected ? palette.cherryBloom : '#2A1D22', backgroundColor: isSelected ? palette.cherryBloom : 'transparent' }]} />
-                        <Text style={{ color: '#2A1D22', flex: 1, fontSize: 14, fontWeight: isSelected ? '800' : '600' }}>{option}</Text>
+                        <View
+                          style={[
+                            styles.optionDot,
+                            {
+                              borderColor: isSelected ? palette.cherryBloom : '#2A1D22',
+                              backgroundColor: isSelected ? palette.cherryBloom : 'transparent',
+                            },
+                          ]}
+                        />
+                        <Text
+                          style={{
+                            color: '#2A1D22',
+                            flex: 1,
+                            fontSize: 14,
+                            fontWeight: isSelected ? '800' : '600',
+                          }}
+                        >
+                          {option}
+                        </Text>
                       </Pressable>
                     );
                   })}
@@ -977,11 +1170,21 @@ export default function PYQScreen() {
             </View>
 
             {/* Bottom Navigation Buttons: High Contrast */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm, marginTop: spacing.sm }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                gap: spacing.sm,
+                marginTop: spacing.sm,
+              }}
+            >
               <Pressable
                 disabled={currentQuestionIndex === 0}
                 onPress={handlePrev}
-                style={[styles.outlineBtn, { flex: 1, opacity: currentQuestionIndex === 0 ? 0.4 : 1 }]}
+                style={[
+                  styles.outlineBtn,
+                  { flex: 1, opacity: currentQuestionIndex === 0 ? 0.4 : 1 },
+                ]}
               >
                 <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Previous</Text>
               </Pressable>
@@ -1033,10 +1236,14 @@ export default function PYQScreen() {
             <View style={[glassCardStyle, styles.pinkGlassCard]}>
               <View style={{ gap: 4, alignItems: 'center' }}>
                 <CheckCircle2 size={32} color="#16a34a" strokeWidth={2.4} />
-                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16, textAlign: 'center' }}>
+                <Text
+                  style={{ color: '#2A1D22', fontWeight: '800', fontSize: 16, textAlign: 'center' }}
+                >
                   Evaluation Finalized
                 </Text>
-                <Text style={{ color: '#66545B', fontSize: 13, fontWeight: '600', textAlign: 'center' }}>
+                <Text
+                  style={{ color: '#66545B', fontSize: 13, fontWeight: '600', textAlign: 'center' }}
+                >
                   Your attempt has been successfully evaluated.
                 </Text>
               </View>
@@ -1045,14 +1252,25 @@ export default function PYQScreen() {
             {/* Summary score card */}
             <View style={[glassCardStyle, styles.pinkGlassCard]}>
               <View style={{ gap: spacing.md, alignItems: 'center' }}>
-                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>OVERALL ACCURACY</Text>
+                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>
+                  OVERALL ACCURACY
+                </Text>
                 <Text style={{ fontSize: 54, fontWeight: '800', color: palette.danger }}>
                   {attempt.accuracy}%
                 </Text>
 
-                <View style={{ height: 1, backgroundColor: 'rgba(250, 215, 224, 0.70)', width: '100%' }} />
+                <View
+                  style={{ height: 1, backgroundColor: 'rgba(250, 215, 224, 0.70)', width: '100%' }}
+                />
 
-                <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between', paddingHorizontal: spacing.sm }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    width: '100%',
+                    justifyContent: 'space-between',
+                    paddingHorizontal: spacing.sm,
+                  }}
+                >
                   {[
                     { label: 'Correct', value: attempt.correct, color: '#16a34a' },
                     { label: 'Wrong', value: attempt.wrong, color: palette.danger },
@@ -1062,18 +1280,23 @@ export default function PYQScreen() {
                       <Text style={{ fontWeight: '800', fontSize: 20, color: s.color }}>
                         {s.value}
                       </Text>
-                      <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>{s.label}</Text>
+                      <Text style={{ color: '#2A1D22', fontSize: 11, fontWeight: '700' }}>
+                        {s.label}
+                      </Text>
                     </View>
                   ))}
                 </View>
 
-                <View style={{ height: 1, backgroundColor: 'rgba(250, 215, 224, 0.70)', width: '100%' }} />
+                <View
+                  style={{ height: 1, backgroundColor: 'rgba(250, 215, 224, 0.70)', width: '100%' }}
+                />
 
                 <View style={{ width: '100%', gap: spacing.xs }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                     <Clock size={14} color="#2A1D22" strokeWidth={2.2} />
                     <Text style={{ color: '#2A1D22', fontSize: 13, fontWeight: '700' }}>
-                      Time Taken: {Math.floor(attempt.time_taken_seconds / 60)}m {attempt.time_taken_seconds % 60}s
+                      Time Taken: {Math.floor(attempt.time_taken_seconds / 60)}m{' '}
+                      {attempt.time_taken_seconds % 60}s
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -1096,11 +1319,8 @@ export default function PYQScreen() {
                   Review Detailed Answers
                 </Text>
               </Pressable>
-              
-              <Pressable
-                onPress={() => setViewState('home')}
-                style={styles.outlineBtn}
-              >
+
+              <Pressable onPress={() => setViewState('home')} style={styles.outlineBtn}>
                 <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>
                   Return to PYQ Home
                 </Text>
@@ -1121,7 +1341,9 @@ export default function PYQScreen() {
     if (!currentReviewAnswer) return null;
 
     // Load original question details from local dataset
-    const originalQ = (questionsData as Question[]).find((q) => q.id === currentReviewAnswer.question_id);
+    const originalQ = (questionsData as Question[]).find(
+      (q) => q.id === currentReviewAnswer.question_id,
+    );
     if (!originalQ) return null;
 
     const isSkipped = currentReviewAnswer.selected_option === null;
@@ -1144,7 +1366,13 @@ export default function PYQScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ gap: spacing.md, paddingBottom: 120 }}>
             {/* Header navigation */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 13 }}>
                 Question Review {reviewIndex + 1} of {answers.length}
               </Text>
@@ -1152,12 +1380,26 @@ export default function PYQScreen() {
                 style={[
                   styles.timerBadge,
                   {
-                    backgroundColor: isCorrect ? '#f0fdf4' : isSkipped ? 'rgba(255, 243, 245, 0.85)' : '#fef2f2',
-                    borderColor: isCorrect ? '#bbf7d0' : isSkipped ? 'rgba(250, 215, 224, 0.90)' : '#fecaca',
+                    backgroundColor: isCorrect
+                      ? '#f0fdf4'
+                      : isSkipped
+                        ? 'rgba(255, 243, 245, 0.85)'
+                        : '#fef2f2',
+                    borderColor: isCorrect
+                      ? '#bbf7d0'
+                      : isSkipped
+                        ? 'rgba(250, 215, 224, 0.90)'
+                        : '#fecaca',
                   },
                 ]}
               >
-                <Text style={{ color: isCorrect ? '#16a34a' : isSkipped ? '#66545B' : palette.danger, fontWeight: '800', fontSize: 13 }}>
+                <Text
+                  style={{
+                    color: isCorrect ? '#16a34a' : isSkipped ? '#66545B' : palette.danger,
+                    fontWeight: '800',
+                    fontSize: 13,
+                  }}
+                >
                   {isCorrect ? 'Correct' : isSkipped ? 'Skipped' : 'Incorrect'}
                 </Text>
               </View>
@@ -1222,13 +1464,29 @@ export default function PYQScreen() {
                           style={[
                             styles.optionDot,
                             {
-                              borderColor: isCorrectOption ? '#16a34a' : isUserSelection ? palette.danger : '#2A1D22',
-                              backgroundColor: isCorrectOption ? '#16a34a' : isUserSelection ? palette.danger : 'transparent',
+                              borderColor: isCorrectOption
+                                ? '#16a34a'
+                                : isUserSelection
+                                  ? palette.danger
+                                  : '#2A1D22',
+                              backgroundColor: isCorrectOption
+                                ? '#16a34a'
+                                : isUserSelection
+                                  ? palette.danger
+                                  : 'transparent',
                             },
                           ]}
                         />
-                        <Text style={{ color: '#2A1D22', flex: 1, fontSize: 14, fontWeight: isCorrectOption || isUserSelection ? '800' : '600' }}>
-                          {option} {isCorrectOption && ' (Correct Option)'} {isUserSelection && !isCorrect && ' (Your Selection)'}
+                        <Text
+                          style={{
+                            color: '#2A1D22',
+                            flex: 1,
+                            fontSize: 14,
+                            fontWeight: isCorrectOption || isUserSelection ? '800' : '600',
+                          }}
+                        >
+                          {option} {isCorrectOption && ' (Correct Option)'}{' '}
+                          {isUserSelection && !isCorrect && ' (Your Selection)'}
                         </Text>
                       </View>
                     );
@@ -1236,19 +1494,41 @@ export default function PYQScreen() {
                 </View>
 
                 {/* Explanation text */}
-                <View style={{ backgroundColor: 'rgba(255, 255, 255, 0.85)', padding: spacing.md, borderRadius: radius.md, marginTop: spacing.xs, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.90)' }}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14, marginBottom: 4 }}>
+                <View
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                    padding: spacing.md,
+                    borderRadius: radius.md,
+                    marginTop: spacing.xs,
+                    borderWidth: 1,
+                    borderColor: 'rgba(250, 215, 224, 0.90)',
+                  }}
+                >
+                  <Text
+                    style={{ fontWeight: '800', color: '#2A1D22', fontSize: 14, marginBottom: 4 }}
+                  >
                     Explanation
                   </Text>
-                  <Text style={{ color: '#2A1D22', fontSize: 13, lineHeight: 18, fontWeight: '600' }}>
-                    The correct answer is Option {originalQ.answer} (&quot;{originalQ.options[originalQ.answer - 1]}&quot;). {originalQ.topic} explains this choice.
+                  <Text
+                    style={{ color: '#2A1D22', fontSize: 13, lineHeight: 18, fontWeight: '600' }}
+                  >
+                    The correct answer is Option {originalQ.answer} (&quot;
+                    {originalQ.options[originalQ.answer - 1]}&quot;). {originalQ.topic} explains
+                    this choice.
                   </Text>
                 </View>
               </View>
             </View>
 
             {/* Bottom Actions: High Contrast */}
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: spacing.sm, marginTop: spacing.sm }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                gap: spacing.sm,
+                marginTop: spacing.sm,
+              }}
+            >
               <Pressable
                 disabled={reviewIndex === 0}
                 onPress={handlePrevReview}
@@ -1257,14 +1537,22 @@ export default function PYQScreen() {
                 <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Previous</Text>
               </Pressable>
 
-              <Pressable onPress={() => setViewState('home')} style={[styles.primaryBtn, { flex: 1.5 }]}>
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Return Home</Text>
+              <Pressable
+                onPress={() => setViewState('home')}
+                style={[styles.primaryBtn, { flex: 1.5 }]}
+              >
+                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
+                  Return Home
+                </Text>
               </Pressable>
 
               <Pressable
                 disabled={reviewIndex === answers.length - 1}
                 onPress={handleNextReview}
-                style={[styles.outlineBtn, { flex: 1, opacity: reviewIndex === answers.length - 1 ? 0.4 : 1 }]}
+                style={[
+                  styles.outlineBtn,
+                  { flex: 1, opacity: reviewIndex === answers.length - 1 ? 0.4 : 1 },
+                ]}
               >
                 <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 14 }}>Next</Text>
               </Pressable>

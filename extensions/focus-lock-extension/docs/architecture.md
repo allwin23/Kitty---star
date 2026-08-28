@@ -39,16 +39,19 @@ Focus Lock is organized into four distinct modules:
 ```
 
 ### 1.1 Focus Lock Engine
-* **File:** [`blocking/engine.ts`](../blocking/engine.ts)
-* **Responsibility:** Pure business logic. Controls session state, evaluates timer expirations, compiles list domains, and dictates whether blocking rules should be active or inactive. It is completely isolated and does not interact with global namespaces like `chrome` or `window`.
+
+- **File:** [`blocking/engine.ts`](../blocking/engine.ts)
+- **Responsibility:** Pure business logic. Controls session state, evaluates timer expirations, compiles list domains, and dictates whether blocking rules should be active or inactive. It is completely isolated and does not interact with global namespaces like `chrome` or `window`.
 
 ### 1.2 Browser Adapter
-* **File:** [`blocking/adapter.ts`](../blocking/adapter.ts)
-* **Responsibility:** A clean boundary encapsulating browser hardware calls (`chrome.declarativeNetRequest`, `chrome.alarms`, `chrome.storage.local`, and `chrome.runtime`).
-* **Implementation:** The `ChromiumAdapter` maps these APIs for Chrome, Microsoft Edge, and Brave. If support for other browser engines (like Safari or Firefox) is needed later, a new adapter class is simply plugged in without changing the core engine.
+
+- **File:** [`blocking/adapter.ts`](../blocking/adapter.ts)
+- **Responsibility:** A clean boundary encapsulating browser hardware calls (`chrome.declarativeNetRequest`, `chrome.alarms`, `chrome.storage.local`, and `chrome.runtime`).
+- **Implementation:** The `ChromiumAdapter` maps these APIs for Chrome, Microsoft Edge, and Brave. If support for other browser engines (like Safari or Firefox) is needed later, a new adapter class is simply plugged in without changing the core engine.
 
 ### 1.3 Supabase Layer
-* **Responsibility:** Connection management, authenticated fetches, and channel broadcast hooks. Does not leak sql details to the core engine.
+
+- **Responsibility:** Connection management, authenticated fetches, and channel broadcast hooks. Does not leak sql details to the core engine.
 
 ---
 

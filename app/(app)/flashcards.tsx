@@ -93,7 +93,7 @@ export default function FlashcardsScreen() {
   // Spaced repetition review states
   const [reviewMode, setReviewMode] = useState<boolean>(false);
   const [reviewSessionCards, setReviewSessionCards] = useState<
-    ({ type: 'builtin' | 'user'; card: BuiltInCard | UserFlashcard })[]
+    { type: 'builtin' | 'user'; card: BuiltInCard | UserFlashcard }[]
   >([]);
   const [currentReviewIndex, setCurrentReviewIndex] = useState<number>(0);
   const [revealed, setRevealed] = useState<boolean>(false);
@@ -130,7 +130,7 @@ export default function FlashcardsScreen() {
       void collectionsQ.refetch();
       void cardsQ.refetch();
       void statsQ.refetch();
-    }, [])
+    }, []),
   );
 
   // Quit Session Handler
@@ -302,8 +302,7 @@ export default function FlashcardsScreen() {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       cards = cards.filter(
-        (c) =>
-          c.question.toLowerCase().includes(query) || c.answer.toLowerCase().includes(query)
+        (c) => c.question.toLowerCase().includes(query) || c.answer.toLowerCase().includes(query),
       );
     }
 
@@ -338,7 +337,7 @@ export default function FlashcardsScreen() {
         const newPrefix = [...currentPath, folderInputName.trim()].join('/');
 
         const targetCollections = collections.filter(
-          (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/')
+          (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/'),
         );
 
         for (const col of targetCollections) {
@@ -366,21 +365,24 @@ export default function FlashcardsScreen() {
           style: 'destructive',
           onPress: async () => {
             const targetCols = collections.filter(
-              (c) => c.title === fullFolderPath || c.title.startsWith(fullFolderPath + '/')
+              (c) => c.title === fullFolderPath || c.title.startsWith(fullFolderPath + '/'),
             );
             for (const col of targetCols) {
               await deleteCollectionMutation.mutateAsync(col.id);
             }
           },
         },
-      ]
+      ],
     );
   };
 
   // Card Operations
   const handleOpenCreateCard = () => {
     if (currentPath.length === 0) {
-      Alert.alert('Cannot Create Card', 'Please enter or create a folder before adding flashcards.');
+      Alert.alert(
+        'Cannot Create Card',
+        'Please enter or create a folder before adding flashcards.',
+      );
       return;
     }
     setCardMode('create');
@@ -462,7 +464,10 @@ export default function FlashcardsScreen() {
       if (!card) return;
 
       if (destCollectionId === 'root') {
-        Alert.alert('Invalid Move', 'Cards cannot reside in the Root directory. Move them into a folder.');
+        Alert.alert(
+          'Invalid Move',
+          'Cards cannot reside in the Root directory. Move them into a folder.',
+        );
         return;
       }
 
@@ -487,7 +492,7 @@ export default function FlashcardsScreen() {
       }
 
       const targetCollections = collections.filter(
-        (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/')
+        (c) => c.title === oldPrefix || c.title.startsWith(oldPrefix + '/'),
       );
 
       for (const col of targetCollections) {
@@ -513,22 +518,18 @@ export default function FlashcardsScreen() {
   const getBuiltInTopics = () => {
     if (!selectedBuiltInSubject) return [];
     return Array.from(
-      new Set(
-        builtInCards
-          .filter((c) => c.subject === selectedBuiltInSubject)
-          .map((c) => c.topic)
-      )
+      new Set(builtInCards.filter((c) => c.subject === selectedBuiltInSubject).map((c) => c.topic)),
     );
   };
   const getBuiltInActiveCards = () => {
     if (!selectedBuiltInSubject || !selectedBuiltInTopic) return [];
     return builtInCards.filter(
-      (c) => c.subject === selectedBuiltInSubject && c.topic === selectedBuiltInTopic
+      (c) => c.subject === selectedBuiltInSubject && c.topic === selectedBuiltInTopic,
     );
   };
 
   const handleStartReviewSession = (
-    cards: ({ type: 'builtin' | 'user'; card: BuiltInCard | UserFlashcard })[]
+    cards: { type: 'builtin' | 'user'; card: BuiltInCard | UserFlashcard }[],
   ) => {
     if (cards.length === 0) return;
     const shuffled = [...cards].sort(() => 0.5 - Math.random());
@@ -564,7 +565,7 @@ export default function FlashcardsScreen() {
     const scheduled = userCards.filter((c) => c.flashcard_schedule);
     if (scheduled.length === 0) return 100;
     const correctSchedules = scheduled.filter(
-      (c) => c.flashcard_schedule && c.flashcard_schedule.ease_factor > 1.8
+      (c) => c.flashcard_schedule && c.flashcard_schedule.ease_factor > 1.8,
     );
     return Math.round((correctSchedules.length / scheduled.length) * 100);
   };
@@ -585,29 +586,50 @@ export default function FlashcardsScreen() {
     const sessionAccuracy =
       totalSessionCards > 0
         ? Math.round(
-            ((reviewStats.hard + reviewStats.good + reviewStats.easy) / totalSessionCards) * 100
+            ((reviewStats.hard + reviewStats.good + reviewStats.easy) / totalSessionCards) * 100,
           )
         : 100;
 
     return (
       <Screen>
-        <ScrollView contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ paddingTop: spacing.md, paddingBottom: 120 }}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.summaryHeader}>
             <HeaderTitleCard title="Review Complete" showWavingHand={false} />
-            <Text style={{ color: '#66545B', fontSize: 14, fontWeight: '600', textAlign: 'center', marginTop: 4 }}>
+            <Text
+              style={{
+                color: '#66545B',
+                fontSize: 14,
+                fontWeight: '600',
+                textAlign: 'center',
+                marginTop: 4,
+              }}
+            >
               Fantastic job. Spaced repetition works best when practiced daily.
             </Text>
           </View>
 
-          <View style={[glassCardStyle, styles.pinkGlassCard, { marginBottom: spacing.md, gap: spacing.md }]}>
+          <View
+            style={[
+              glassCardStyle,
+              styles.pinkGlassCard,
+              { marginBottom: spacing.md, gap: spacing.md },
+            ]}
+          >
             <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
               Today&apos;s Session Stats
             </Text>
 
             <View style={styles.summaryStatsRow}>
               <View style={styles.summaryStatItem}>
-                <Text style={[styles.statValue, { color: palette.danger }]}>{totalSessionCards}</Text>
-                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>Cards Revised</Text>
+                <Text style={[styles.statValue, { color: palette.danger }]}>
+                  {totalSessionCards}
+                </Text>
+                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>
+                  Cards Revised
+                </Text>
               </View>
               <View style={styles.summaryStatItem}>
                 <Text style={[styles.statValue, { color: '#16a34a' }]}>{sessionAccuracy}%</Text>
@@ -617,13 +639,17 @@ export default function FlashcardsScreen() {
                 <Text style={[styles.statValue, { color: '#FF9F1C' }]}>
                   {userStats?.current_streak ?? 0}
                 </Text>
-                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>Day Streak</Text>
+                <Text style={{ fontSize: 12, color: '#2A1D22', fontWeight: '700' }}>
+                  Day Streak
+                </Text>
               </View>
             </View>
 
             <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)' }]} />
 
-            <Text style={{ fontWeight: '800', fontSize: 14, color: '#2A1D22' }}>Rating Breakdowns</Text>
+            <Text style={{ fontWeight: '800', fontSize: 14, color: '#2A1D22' }}>
+              Rating Breakdowns
+            </Text>
 
             <View style={{ gap: spacing.xs }}>
               {[
@@ -632,8 +658,17 @@ export default function FlashcardsScreen() {
                 { label: 'Hard (Requires early retry)', count: reviewStats.hard, color: '#F59E0B' },
                 { label: 'Again (Failed retention)', count: reviewStats.again, color: '#EF4444' },
               ].map((item) => (
-                <View key={item.label} style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#2A1D22', fontSize: 13, fontWeight: '700' }}>{item.label}</Text>
+                <View
+                  key={item.label}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={{ color: '#2A1D22', fontSize: 13, fontWeight: '700' }}>
+                    {item.label}
+                  </Text>
                   <Text style={{ fontWeight: '800', color: item.color }}>{item.count}</Text>
                 </View>
               ))}
@@ -641,10 +676,7 @@ export default function FlashcardsScreen() {
           </View>
 
           <View style={{ gap: spacing.sm }}>
-            <Pressable
-              onPress={handleQuitSession}
-              style={styles.primaryBtn}
-            >
+            <Pressable onPress={handleQuitSession} style={styles.primaryBtn}>
               <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
                 Finish Session
               </Text>
@@ -666,14 +698,25 @@ export default function FlashcardsScreen() {
 
     return (
       <Screen>
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'space-between', paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            paddingBottom: 120,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Top Bar: Black Component Card */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.xs }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: spacing.xs,
+            }}
+          >
             <HeaderTitleCard title="Review Session" showWavingHand={false} />
-            <Pressable
-              style={styles.quitBtn}
-              onPress={handleQuitSession}
-            >
+            <Pressable style={styles.quitBtn} onPress={handleQuitSession}>
               <Text style={{ color: '#FFFFFF', fontSize: 13, fontWeight: '800' }}>Quit</Text>
             </Pressable>
           </View>
@@ -682,7 +725,16 @@ export default function FlashcardsScreen() {
           <ReviewProgress current={currentReviewIndex + 1} total={reviewSessionCards.length} />
 
           {/* Centered Flashcard Frame */}
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%', paddingVertical: spacing.sm, minHeight: 260 }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              paddingVertical: spacing.sm,
+              minHeight: 260,
+            }}
+          >
             <FlashcardViewer
               front={frontText}
               back={backText}
@@ -695,7 +747,15 @@ export default function FlashcardsScreen() {
           {/* Rate Controls */}
           {revealed && (
             <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
-              <Text style={{ textAlign: 'center', color: '#2A1D22', fontSize: 13, fontWeight: '800', marginBottom: 4 }}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  color: '#2A1D22',
+                  fontSize: 13,
+                  fontWeight: '800',
+                  marginBottom: 4,
+                }}
+              >
                 How well did you remember?
               </Text>
               <ReviewButtons onRate={handleRateCard} />
@@ -741,7 +801,9 @@ export default function FlashcardsScreen() {
                   borderColor: isAct ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
                 }}
               >
-                <Text style={{ fontWeight: '800', color: isAct ? '#FFFFFF' : '#2A1D22', fontSize: 12 }}>
+                <Text
+                  style={{ fontWeight: '800', color: isAct ? '#FFFFFF' : '#2A1D22', fontSize: 12 }}
+                >
                   {t.label}
                 </Text>
               </Pressable>
@@ -762,8 +824,10 @@ export default function FlashcardsScreen() {
               {/* Statistics Card */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>Your Retention Stats</Text>
-                  
+                  <Text style={{ fontWeight: '800', fontSize: 16, color: '#2A1D22' }}>
+                    Your Retention Stats
+                  </Text>
+
                   <View style={styles.statsGrid}>
                     <View style={styles.statsCardCol}>
                       <Text style={[styles.statsValueMain, { color: palette.danger }]}>
@@ -791,14 +855,28 @@ export default function FlashcardsScreen() {
                     </View>
                   </View>
 
-                  <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)' }]} />
+                  <View
+                    style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)' }]}
+                  />
 
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '700' }}>
-                      XP Level: <Text style={{ color: palette.danger, fontWeight: '800' }}>Level {userStats?.level ?? 1}</Text>
+                      XP Level:{' '}
+                      <Text style={{ color: palette.danger, fontWeight: '800' }}>
+                        Level {userStats?.level ?? 1}
+                      </Text>
                     </Text>
                     <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '700' }}>
-                      Total XP: <Text style={{ color: palette.danger, fontWeight: '800' }}>{userStats?.xp ?? 0} XP</Text>
+                      Total XP:{' '}
+                      <Text style={{ color: palette.danger, fontWeight: '800' }}>
+                        {userStats?.xp ?? 0} XP
+                      </Text>
                     </Text>
                   </View>
                 </View>
@@ -814,18 +892,45 @@ export default function FlashcardsScreen() {
               {!selectedBuiltInSubject ? (
                 /* 1. Subjects Selection */
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16, marginBottom: spacing.xs }}>Subjects</Text>
+                  <Text
+                    style={{
+                      fontWeight: '800',
+                      color: '#2A1D22',
+                      fontSize: 16,
+                      marginBottom: spacing.xs,
+                    }}
+                  >
+                    Subjects
+                  </Text>
                   {builtInSubjects.length === 0 ? (
-                    <View style={[glassCardStyle, styles.pinkGlassCard, { alignItems: 'center', padding: spacing.lg, gap: spacing.sm }]}>
-                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>All Custom Flashcards</Text>
-                      <Text style={{ color: '#66545B', fontSize: 13, textAlign: 'center', lineHeight: 18 }}>
-                        Default pre-made cards have been removed. Switch to "My Flashcards" tab to create your own custom folders and cards!
+                    <View
+                      style={[
+                        glassCardStyle,
+                        styles.pinkGlassCard,
+                        { alignItems: 'center', padding: spacing.lg, gap: spacing.sm },
+                      ]}
+                    >
+                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>
+                        All Custom Flashcards
+                      </Text>
+                      <Text
+                        style={{
+                          color: '#66545B',
+                          fontSize: 13,
+                          textAlign: 'center',
+                          lineHeight: 18,
+                        }}
+                      >
+                        Default pre-made cards have been removed. Switch to "My Flashcards" tab to
+                        create your own custom folders and cards!
                       </Text>
                       <Pressable
                         onPress={() => setActiveTab('user')}
                         style={[styles.primaryBtn, { marginTop: spacing.xs }]}
                       >
-                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>Go to My Flashcards</Text>
+                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
+                          Go to My Flashcards
+                        </Text>
                       </Pressable>
                     </View>
                   ) : (
@@ -845,20 +950,30 @@ export default function FlashcardsScreen() {
               ) : !selectedBuiltInTopic ? (
                 /* 2. Topics Selection */
                 <View style={{ gap: spacing.md }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>{selectedBuiltInSubject} topics</Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>
+                      {selectedBuiltInSubject} topics
+                    </Text>
                     <Pressable
                       onPress={() => setSelectedBuiltInSubject(null)}
                       style={styles.outlineBtn}
                     >
-                      <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Back</Text>
+                      <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>
+                        Back
+                      </Text>
                     </Pressable>
                   </View>
 
                   <View style={{ gap: spacing.xs }}>
                     {getBuiltInTopics().map((topic) => {
                       const count = builtInCards.filter(
-                        (c) => c.subject === selectedBuiltInSubject && c.topic === topic
+                        (c) => c.subject === selectedBuiltInSubject && c.topic === topic,
                       ).length;
                       return (
                         <TopicCard
@@ -874,10 +989,20 @@ export default function FlashcardsScreen() {
               ) : (
                 /* 3. Cards list in selected topic */
                 <View style={{ gap: spacing.md }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <View style={{ flex: 1, marginRight: spacing.sm }}>
-                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>{selectedBuiltInTopic}</Text>
-                      <Text style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}>
+                      <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 16 }}>
+                        {selectedBuiltInTopic}
+                      </Text>
+                      <Text
+                        style={{ color: '#66545B', fontSize: 12, fontWeight: '600', marginTop: 2 }}
+                      >
                         {getBuiltInActiveCards().length} flashcards in this topic
                       </Text>
                     </View>
@@ -886,18 +1011,22 @@ export default function FlashcardsScreen() {
                         onPress={() => setSelectedBuiltInTopic(null)}
                         style={styles.outlineBtn}
                       >
-                        <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>Back</Text>
+                        <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '800' }}>
+                          Back
+                        </Text>
                       </Pressable>
                       <Pressable
                         onPress={() =>
                           handleStartReviewSession(
-                            getBuiltInActiveCards().map((card) => ({ type: 'builtin', card }))
+                            getBuiltInActiveCards().map((card) => ({ type: 'builtin', card })),
                           )
                         }
                         style={styles.primaryBtn}
                       >
                         <Zap size={14} color="#FFFFFF" strokeWidth={2.4} />
-                        <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '800' }}>Review</Text>
+                        <Text style={{ color: '#FFFFFF', fontSize: 12, fontWeight: '800' }}>
+                          Review
+                        </Text>
                       </Pressable>
                     </View>
                   </View>
@@ -930,19 +1059,15 @@ export default function FlashcardsScreen() {
 
             {/* Folder Actions row */}
             <View style={{ flexDirection: 'row', gap: spacing.xs, marginBottom: spacing.sm }}>
-              <Pressable
-                onPress={handleOpenCreateFolder}
-                style={styles.outlineBtn}
-              >
+              <Pressable onPress={handleOpenCreateFolder} style={styles.outlineBtn}>
                 <FolderPlus size={15} color="#2A1D22" strokeWidth={2.2} />
-                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>Create Folder</Text>
+                <Text style={{ color: '#2A1D22', fontWeight: '800', fontSize: 13 }}>
+                  Create Folder
+                </Text>
               </Pressable>
               <Pressable
                 onPress={handleOpenCreateCard}
-                style={[
-                  styles.primaryBtn,
-                  currentPath.length === 0 && { opacity: 0.5 },
-                ]}
+                style={[styles.primaryBtn, currentPath.length === 0 && { opacity: 0.5 }]}
               >
                 <Plus size={15} color="#FFFFFF" strokeWidth={2.4} />
                 <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>Add Card</Text>
@@ -963,7 +1088,14 @@ export default function FlashcardsScreen() {
                 {/* Render nested Subfolders */}
                 {subfolders.length > 0 && (
                   <View style={{ gap: spacing.xs }}>
-                    <Text style={{ fontWeight: '800', fontSize: 12, color: '#2A1D22', letterSpacing: 0.5 }}>
+                    <Text
+                      style={{
+                        fontWeight: '800',
+                        fontSize: 12,
+                        color: '#2A1D22',
+                        letterSpacing: 0.5,
+                      }}
+                    >
                       FOLDERS
                     </Text>
                     {subfolders.map((sub) => (
@@ -988,7 +1120,14 @@ export default function FlashcardsScreen() {
 
                 {/* Render Flashcards at current depth */}
                 <View style={{ gap: spacing.xs }}>
-                  <Text style={{ fontWeight: '800', fontSize: 12, color: '#2A1D22', letterSpacing: 0.5 }}>
+                  <Text
+                    style={{
+                      fontWeight: '800',
+                      fontSize: 12,
+                      color: '#2A1D22',
+                      letterSpacing: 0.5,
+                    }}
+                  >
                     FLASHCARDS ({cards.length})
                   </Text>
 
@@ -1040,10 +1179,7 @@ export default function FlashcardsScreen() {
             />
 
             <View style={{ flexDirection: 'row', gap: spacing.sm, justifyContent: 'flex-end' }}>
-              <Pressable
-                style={styles.outlineBtn}
-                onPress={() => setFolderModalVisible(false)}
-              >
+              <Pressable style={styles.outlineBtn} onPress={() => setFolderModalVisible(false)}>
                 <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
               </Pressable>
               <Pressable style={styles.primaryBtn} onPress={handleSubmitFolder}>

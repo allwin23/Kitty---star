@@ -53,50 +53,50 @@ You must return a JSON response with the following keys:
 `;
 
     const responseSchema = {
-      type: "object",
+      type: 'object',
       properties: {
-        overallFeedback: { type: "string" },
+        overallFeedback: { type: 'string' },
         grammarMistakes: {
-          type: "array",
+          type: 'array',
           items: {
-            type: "object",
+            type: 'object',
             properties: {
-              original: { type: "string" },
-              correction: { type: "string" },
-              explanation: { type: "string" }
+              original: { type: 'string' },
+              correction: { type: 'string' },
+              explanation: { type: 'string' },
             },
-            required: ["original", "correction", "explanation"]
-          }
+            required: ['original', 'correction', 'explanation'],
+          },
         },
         vocabularySuggestions: {
-          type: "array",
+          type: 'array',
           items: {
-            type: "object",
+            type: 'object',
             properties: {
-              word: { type: "string" },
-              suggestion: { type: "string" }
+              word: { type: 'string' },
+              suggestion: { type: 'string' },
             },
-            required: ["word", "suggestion"]
-          }
+            required: ['word', 'suggestion'],
+          },
         },
-        improvedParagraph: { type: "string" },
+        improvedParagraph: { type: 'string' },
         wordsUsedCorrectly: {
-          type: "array",
-          items: { type: "string" }
+          type: 'array',
+          items: { type: 'string' },
         },
         wordsUsedIncorrectly: {
-          type: "array",
-          items: { type: "string" }
-        }
+          type: 'array',
+          items: { type: 'string' },
+        },
       },
       required: [
-        "overallFeedback",
-        "grammarMistakes",
-        "vocabularySuggestions",
-        "improvedParagraph",
-        "wordsUsedCorrectly",
-        "wordsUsedIncorrectly"
-      ]
+        'overallFeedback',
+        'grammarMistakes',
+        'vocabularySuggestions',
+        'improvedParagraph',
+        'wordsUsedCorrectly',
+        'wordsUsedIncorrectly',
+      ],
     };
 
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;

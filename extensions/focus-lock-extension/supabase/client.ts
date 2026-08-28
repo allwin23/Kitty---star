@@ -8,8 +8,8 @@ declare const process: {
   };
 };
 
-export const SUPABASE_URL = process.env.SUPABASE_URL || "https://your-project-id.supabase.co";
-export const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "your-anon-public-key";
+export const SUPABASE_URL = process.env.SUPABASE_URL || 'https://your-project-id.supabase.co';
+export const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'your-anon-public-key';
 
 const chromeStorageAdapter = {
   getItem: async (key: string): Promise<string | null> => {
@@ -28,7 +28,7 @@ const chromeStorageAdapter = {
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
       await chrome.storage.local.remove(key);
     }
-  }
+  },
 };
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
@@ -36,6 +36,6 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     storage: chromeStorageAdapter,
     persistSession: true,
     autoRefreshToken: true,
-    detectSessionInUrl: false
-  }
+    detectSessionInUrl: false,
+  },
 });

@@ -3,7 +3,15 @@ import { Alert, Platform, ScrollView, Text, View } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 
-import { Button, Card, CreativeToolsGrid, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import {
+  Button,
+  Card,
+  CreativeToolsGrid,
+  HeaderTitleCard,
+  Loading,
+  NotificationBadge,
+  Screen,
+} from '@/components/ui';
 import { GrowthStatsAnimatedCard } from '@/components/growth-stats-animated-card';
 import { CompanionStage } from '@/features/companion/components/companion-stage';
 import { notificationService, reportService, testingService } from '@/services/backend';
@@ -36,7 +44,7 @@ export default function HomeScreen() {
       return () => {
         setIsFocused(false);
       };
-    }, [statsQ])
+    }, [statsQ]),
   );
 
   const stats = statsQ.data as {
@@ -64,7 +72,10 @@ export default function HomeScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotFeed });
       void queryClient.invalidateQueries({ queryKey: queryKeys.mascotUnread });
-      if (notification.type === 'submission_approved' || notification.type === 'submission_rejected') {
+      if (
+        notification.type === 'submission_approved' ||
+        notification.type === 'submission_rejected'
+      ) {
         void queryClient.invalidateQueries({ queryKey: ['reports'] });
         void queryClient.invalidateQueries({ queryKey: ['current-plan'] });
         void queryClient.invalidateQueries({ queryKey: ['initial-plan'] });
@@ -86,7 +97,9 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <HeaderTitleCard
               title={`Hello, ${profile?.full_name?.split(' ')[0] ?? 'there'}`}
               subtitle={user?.email ?? undefined}
@@ -108,19 +121,34 @@ export default function HomeScreen() {
           {/* Quick Companion Features & Tools */}
           <Card>
             <View style={{ gap: spacing[12] }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '800',
+                  color: palette.danger,
+                  letterSpacing: 0.8,
+                  textTransform: 'uppercase',
+                }}
+              >
                 STUDY SPACE & TOOLS
               </Text>
               <CreativeToolsGrid />
             </View>
           </Card>
 
-
           {/* Developer testing tools */}
           {__DEV__ && (
             <Card>
               <View style={{ gap: spacing[12] }}>
-                <Text style={{ fontSize: 13, fontWeight: '700', color: palette.danger, letterSpacing: 0.5, textTransform: 'uppercase' }}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '700',
+                    color: palette.danger,
+                    letterSpacing: 0.5,
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Developer Testing Tools
                 </Text>
                 <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18 }}>
@@ -131,7 +159,8 @@ export default function HomeScreen() {
                   size="sm"
                   onPress={async () => {
                     const title = 'Reset all data?';
-                    const msg = 'This will delete all daily plans, tasks, submissions, reports, notifications and reset stats to 0.';
+                    const msg =
+                      'This will delete all daily plans, tasks, submissions, reports, notifications and reset stats to 0.';
                     const confirmed =
                       Platform.OS === 'web'
                         ? window.confirm(`${title}\n\n${msg}`)
@@ -176,4 +205,3 @@ export default function HomeScreen() {
     </Screen>
   );
 }
-

@@ -40,11 +40,25 @@ import {
   Laptop,
 } from 'lucide-react-native';
 
-import { Button, Card, EmptyState, ErrorState, HeaderTitleCard, Loading, Screen } from '@/components/ui';
+import {
+  Button,
+  Card,
+  EmptyState,
+  ErrorState,
+  HeaderTitleCard,
+  Loading,
+  Screen,
+} from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { getCurrentPlan } from '@/services/planner-read.service';
 import { pomodoroService, plannerService } from '@/services/backend';
-import { useAuthStore, usePomodoroStore, useAppBlockStore, useChromeBlockerStore, type PomodoroSessionType } from '@/stores';
+import {
+  useAuthStore,
+  usePomodoroStore,
+  useAppBlockStore,
+  useChromeBlockerStore,
+  type PomodoroSessionType,
+} from '@/stores';
 import { focusLockSyncService } from '@/lib/focus-lock-sync';
 import { focusProfilesService, type FocusProfile } from '@/lib/focus-profiles-service';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
@@ -57,7 +71,7 @@ import { todayIso } from '@/lib/supabase-helpers';
 const scheduleLocalFinishNotification = async (
   taskTitle: string,
   sessionType: PomodoroSessionType,
-  seconds: number
+  seconds: number,
 ) => {
   try {
     if (Platform.OS === 'web') return null;
@@ -67,8 +81,7 @@ const scheduleLocalFinishNotification = async (
       if (req.status !== 'granted') return null;
     }
 
-    const title =
-      sessionType === 'focus' ? '🍅 Pomodoro Focus Complete!' : '☕ Break Finished!';
+    const title = sessionType === 'focus' ? '🍅 Pomodoro Focus Complete!' : '☕ Break Finished!';
     const body =
       sessionType === 'focus'
         ? `Great job! You finished your focus session for "${taskTitle}".`
@@ -207,7 +220,7 @@ export default function PomodoroScreen() {
     useCallback(() => {
       void currentPlanQ.refetch();
       usePomodoroStore.getState().syncBackgroundTime();
-    }, [])
+    }, []),
   );
 
   const currentPlan = currentPlanQ.data as {
@@ -224,9 +237,7 @@ export default function PomodoroScreen() {
     }[];
   } | null;
 
-  const currentTasks = (currentPlan?.current_tasks ?? [])
-    .slice()
-    .sort((a, b) => a.order - b.order);
+  const currentTasks = (currentPlan?.current_tasks ?? []).slice().sort((a, b) => a.order - b.order);
 
   // Get store values
   const {
@@ -254,7 +265,8 @@ export default function PomodoroScreen() {
     syncBackgroundTime,
   } = usePomodoroStore();
 
-  const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } = useAppBlockStore();
+  const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } =
+    useAppBlockStore();
 
   const {
     isChromeSyncEnabled,
@@ -298,11 +310,41 @@ export default function PomodoroScreen() {
   const seedProfilesMutation = useMutation({
     mutationFn: async () => {
       const defaults = [
-        { name: 'Deep Work', duration: 45, categories: ['social', 'video'], strict: true, domains: [] },
-        { name: 'Coding', duration: 50, categories: ['social', 'shopping'], strict: false, domains: ['github.com'] },
-        { name: 'Study', duration: 30, categories: ['social', 'gaming', 'shopping'], strict: false, domains: [] },
-        { name: 'Reading', duration: 20, categories: ['social', 'video', 'news'], strict: false, domains: [] },
-        { name: 'Exam', duration: 60, categories: ['social', 'video', 'gaming', 'shopping', 'news'], strict: true, domains: [] },
+        {
+          name: 'Deep Work',
+          duration: 45,
+          categories: ['social', 'video'],
+          strict: true,
+          domains: [],
+        },
+        {
+          name: 'Coding',
+          duration: 50,
+          categories: ['social', 'shopping'],
+          strict: false,
+          domains: ['github.com'],
+        },
+        {
+          name: 'Study',
+          duration: 30,
+          categories: ['social', 'gaming', 'shopping'],
+          strict: false,
+          domains: [],
+        },
+        {
+          name: 'Reading',
+          duration: 20,
+          categories: ['social', 'video', 'news'],
+          strict: false,
+          domains: [],
+        },
+        {
+          name: 'Exam',
+          duration: 60,
+          categories: ['social', 'video', 'gaming', 'shopping', 'news'],
+          strict: true,
+          domains: [],
+        },
       ];
 
       for (const item of defaults) {
@@ -311,13 +353,13 @@ export default function PomodoroScreen() {
           item.duration,
           item.categories,
           item.strict,
-          item.domains
+          item.domains,
         );
       }
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['focus_profiles'] });
-    }
+    },
   });
 
   // Check permissions & load apps when blocker settings modal is visible
@@ -368,7 +410,13 @@ export default function PomodoroScreen() {
   useEffect(() => {
     if (Platform.OS !== 'android' || !NativeModules.AppBlocker) return;
 
-    if (isBlockerEnabled && isRunning && !isPaused && sessionType === 'focus' && blockedPackages.length > 0) {
+    if (
+      isBlockerEnabled &&
+      isRunning &&
+      !isPaused &&
+      sessionType === 'focus' &&
+      blockedPackages.length > 0
+    ) {
       NativeModules.AppBlocker.startBlockingService(blockedPackages);
     } else {
       NativeModules.AppBlocker.stopBlockingService();
@@ -460,7 +508,9 @@ export default function PomodoroScreen() {
       if (!targetPlan) throw new Error('No active plan found for today.');
       if (sessionType === 'focus' && !selectedTaskId && targetPlan.current_tasks.length > 0) {
         // Auto-fallback to first task if none explicitly selected
-        const firstTask = targetPlan.current_tasks.find((t) => t.status !== 'completed') || targetPlan.current_tasks[0];
+        const firstTask =
+          targetPlan.current_tasks.find((t) => t.status !== 'completed') ||
+          targetPlan.current_tasks[0];
         if (firstTask) setSelectedTaskId(firstTask.id);
       }
 
@@ -473,7 +523,8 @@ export default function PomodoroScreen() {
 
       const result = await pomodoroService.complete({
         planId: targetPlan.id,
-        taskId: sessionType === 'focus' ? selectedTaskId || targetPlan.current_tasks[0]?.id : undefined,
+        taskId:
+          sessionType === 'focus' ? selectedTaskId || targetPlan.current_tasks[0]?.id : undefined,
         duration: loggedDuration,
         sessionType,
         startedAt: pStartedAt,
@@ -499,7 +550,7 @@ export default function PomodoroScreen() {
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
       const mins = Math.max(1, durationMinutes);
       useGrowthAnimStore.getState().queuePomodoro();
-      useGrowthAnimStore.getState().queueXp(mins * 2);
+      useGrowthAnimStore.getState().queueXp(2);
       if (user?.id) {
         EventBus.emit({
           type: sessionType === 'focus' ? 'SessionEnded' : 'BreakReminder',
@@ -508,7 +559,7 @@ export default function PomodoroScreen() {
           data: {
             taskTitle: activeTask?.title || 'Study Task',
             duration: mins,
-            xpEarned: mins * 2,
+            xpEarned: 2,
           },
         });
       }
@@ -523,8 +574,8 @@ export default function PomodoroScreen() {
         sessionType === 'focus'
           ? 'Focus session logged!'
           : sessionType === 'short_break'
-          ? 'Short break finished!'
-          : 'Long break finished!';
+            ? 'Short break finished!'
+            : 'Long break finished!';
 
       if (Platform.OS === 'web') {
         window.alert(`Nice job! ${typeLabel}`);
@@ -570,7 +621,7 @@ export default function PomodoroScreen() {
         setCompleting(false);
       }
     },
-    [completing, completeMutation]
+    [completing, completeMutation],
   );
 
   // Tick timer seconds every second
@@ -633,13 +684,16 @@ export default function PomodoroScreen() {
           durationMinutes,
           blockedCategories,
           strictMode,
-          customDomains
+          customDomains,
         );
       } catch (err: any) {
         if (Platform.OS === 'web') {
           window.alert(`Could not sync session to desktop browser: ${err.message}`);
         } else {
-          Alert.alert('Focus Sync Failed', `Could not sync session to desktop browser: ${err.message}`);
+          Alert.alert(
+            'Focus Sync Failed',
+            `Could not sync session to desktop browser: ${err.message}`,
+          );
         }
         return; // Aborts the timer start so no false indication occurs!
       }
@@ -651,7 +705,7 @@ export default function PomodoroScreen() {
     const notifId = await scheduleLocalFinishNotification(
       activeTask?.title || 'Study Session',
       sessionType,
-      timerSeconds
+      timerSeconds,
     );
     setScheduledNotifId(notifId);
   };
@@ -669,14 +723,15 @@ export default function PomodoroScreen() {
     const notifId = await scheduleLocalFinishNotification(
       activeTask?.title || 'Study Session',
       sessionType,
-      timerSeconds
+      timerSeconds,
     );
     setScheduledNotifId(notifId);
   };
 
   const handleReset = async () => {
     if (sessionType === 'focus' && isChromeSyncEnabled && strictMode) {
-      const msg = 'Strict Mode is active: You cannot cancel or discard this focus session until the timer expires.';
+      const msg =
+        'Strict Mode is active: You cannot cancel or discard this focus session until the timer expires.';
       if (Platform.OS === 'web') {
         window.alert(msg);
       } else {
@@ -749,7 +804,14 @@ export default function PomodoroScreen() {
   if (!currentPlan) {
     return (
       <Screen centered>
-        <View style={{ gap: spacing[16], alignItems: 'center', width: '100%', paddingHorizontal: spacing[24] }}>
+        <View
+          style={{
+            gap: spacing[16],
+            alignItems: 'center',
+            width: '100%',
+            paddingHorizontal: spacing[24],
+          }}
+        >
           <EmptyState
             title="No active plan started"
             description="You must start today's plan on the Plan tab before you can use the Pomodoro timer."
@@ -765,7 +827,14 @@ export default function PomodoroScreen() {
   if (currentTasks.length === 0) {
     return (
       <Screen centered>
-        <View style={{ gap: spacing[16], alignItems: 'center', width: '100%', paddingHorizontal: spacing[24] }}>
+        <View
+          style={{
+            gap: spacing[16],
+            alignItems: 'center',
+            width: '100%',
+            paddingHorizontal: spacing[24],
+          }}
+        >
           <EmptyState
             title="No tasks in plan"
             description="Add some tasks on the Plan tab first so you have something to focus on."
@@ -779,7 +848,10 @@ export default function PomodoroScreen() {
   }
 
   const totalDurationSecs = Math.max(1, durationMinutes * 60);
-  const progressPct = Math.min(100, Math.max(0, ((totalDurationSecs - timerSeconds) / totalDurationSecs) * 100));
+  const progressPct = Math.min(
+    100,
+    Math.max(0, ((totalDurationSecs - timerSeconds) / totalDurationSecs) * 100),
+  );
 
   return (
     <Screen>
@@ -794,17 +866,20 @@ export default function PomodoroScreen() {
 
             {/* Background running mini banner */}
             {isRunning && !isFullScreen && (
-              <Pressable
-                onPress={() => setFullScreen(true)}
-                style={styles.runningBanner}
-              >
+              <Pressable onPress={() => setFullScreen(true)} style={styles.runningBanner}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 }}>
                   <View style={styles.livePulseDot} />
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
                       Timer Running in Background ({formatTime(timerSeconds)})
                     </Text>
-                    <Text style={{ color: 'rgba(255, 255, 255, 0.75)', fontSize: 11, fontWeight: '600' }}>
+                    <Text
+                      style={{
+                        color: 'rgba(255, 255, 255, 0.75)',
+                        fontSize: 11,
+                        fontWeight: '600',
+                      }}
+                    >
                       Tap to open full-screen mode & keep screen active
                     </Text>
                   </View>
@@ -817,18 +892,14 @@ export default function PomodoroScreen() {
               {(['focus', 'short_break', 'long_break'] as PomodoroSessionType[]).map((type) => {
                 const isActive = sessionType === type;
                 const IconComponent =
-                  type === 'focus'
-                    ? Timer
-                    : type === 'short_break'
-                    ? Coffee
-                    : Sun;
+                  type === 'focus' ? Timer : type === 'short_break' ? Coffee : Sun;
 
                 const labelText =
                   type === 'focus'
                     ? 'Focus'
                     : type === 'short_break'
-                    ? 'Short Break'
-                    : 'Long Break';
+                      ? 'Short Break'
+                      : 'Long Break';
 
                 return (
                   <Pressable
@@ -869,7 +940,14 @@ export default function PomodoroScreen() {
               {sessionType === 'focus' && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <Target size={16} color={palette.danger} strokeWidth={2.4} />
-                  <Text style={{ color: palette.textSecondary, fontSize: 14, fontWeight: '600', textAlign: 'center' }}>
+                  <Text
+                    style={{
+                      color: palette.textSecondary,
+                      fontSize: 14,
+                      fontWeight: '600',
+                      textAlign: 'center',
+                    }}
+                  >
                     {activeTask
                       ? `Focusing on: "${activeTask.title}"`
                       : 'Select a task below to start focusing'}
@@ -893,7 +971,15 @@ export default function PomodoroScreen() {
                 {formatTime(timerSeconds)}
               </Text>
               {isRunning && sessionType === 'focus' && strictMode && (
-                <Text style={{ color: palette.danger, fontSize: 12, fontWeight: '700', textAlign: 'center', marginTop: 4 }}>
+                <Text
+                  style={{
+                    color: palette.danger,
+                    fontSize: 12,
+                    fontWeight: '700',
+                    textAlign: 'center',
+                    marginTop: 4,
+                  }}
+                >
                   🔒 Strict Blocker Mode Active
                 </Text>
               )}
@@ -901,15 +987,25 @@ export default function PomodoroScreen() {
           </Card>
 
           {/* Session Controls (Moved outside of the Card!) */}
-          <View style={{ flexDirection: 'row', gap: spacing[12], justifyContent: 'center', marginTop: spacing[16], marginBottom: spacing[8] }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: spacing[12],
+              justifyContent: 'center',
+              marginTop: spacing[16],
+              marginBottom: spacing[8],
+            }}
+          >
             {!isRunning ? (
               <Pressable
                 disabled={sessionType === 'focus' && !selectedTaskId}
                 onPress={handleStart}
                 style={({ pressed }) => ({
                   alignSelf: 'center',
-                  opacity: (sessionType === 'focus' && !selectedTaskId) ? 0.5 : pressed ? 0.88 : 1,
-                  transform: [{ scale: pressed && !(sessionType === 'focus' && !selectedTaskId) ? 0.97 : 1 }],
+                  opacity: sessionType === 'focus' && !selectedTaskId ? 0.5 : pressed ? 0.88 : 1,
+                  transform: [
+                    { scale: pressed && !(sessionType === 'focus' && !selectedTaskId) ? 0.97 : 1 },
+                  ],
                 })}
               >
                 <View
@@ -927,7 +1023,9 @@ export default function PomodoroScreen() {
                   }}
                 >
                   <Play size={18} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Start Session</Text>
+                  <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>
+                    Start Session
+                  </Text>
                 </View>
               </Pressable>
             ) : (
@@ -956,7 +1054,9 @@ export default function PomodoroScreen() {
                       }}
                     >
                       <Play size={16} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
-                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>Resume</Text>
+                      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 14 }}>
+                        Resume
+                      </Text>
                     </View>
                   </Pressable>
                 ) : (
@@ -983,7 +1083,9 @@ export default function PomodoroScreen() {
                       }}
                     >
                       <Pause size={16} color={palette.danger} strokeWidth={2.4} />
-                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 14 }}>Pause</Text>
+                      <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 14 }}>
+                        Pause
+                      </Text>
                     </View>
                   </Pressable>
                 )}
@@ -1023,9 +1125,7 @@ export default function PomodoroScreen() {
             <View style={{ gap: spacing[12] }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <Clock size={16} color={palette.danger} strokeWidth={2.4} />
-                <Text style={styles.sectionHeaderTitle}>
-                  SELECT SESSION DURATION
-                </Text>
+                <Text style={styles.sectionHeaderTitle}>SELECT SESSION DURATION</Text>
               </View>
 
               <View style={{ flexDirection: 'row', gap: spacing[8], flexWrap: 'wrap' }}>
@@ -1058,21 +1158,23 @@ export default function PomodoroScreen() {
             </View>
           </Card>
 
-
-
-
-
           {/* Glass Card for Today's Focus Tasks Header & Description */}
           <Card>
             <View style={{ gap: spacing[8] }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <CheckSquare size={18} color={palette.danger} strokeWidth={2.4} />
-                <Text style={styles.sectionHeaderTitle}>
-                  TODAY'S FOCUS TASKS
-                </Text>
+                <Text style={styles.sectionHeaderTitle}>TODAY'S FOCUS TASKS</Text>
               </View>
-              <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
-                Select a task to allocate your focus session. Tasks update automatically when study time is logged.
+              <Text
+                style={{
+                  color: palette.textSecondary,
+                  fontSize: 13,
+                  lineHeight: 18,
+                  fontWeight: '500',
+                }}
+              >
+                Select a task to allocate your focus session. Tasks update automatically when study
+                time is logged.
               </Text>
             </View>
           </Card>
@@ -1134,11 +1236,20 @@ export default function PomodoroScreen() {
                   >
                     <View style={{ gap: spacing[8] }}>
                       {/* Title & Badge */}
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
                         <Text
                           style={[
                             styles.taskTitle,
-                            isCompleted && { textDecorationLine: 'line-through', color: palette.textSecondary },
+                            isCompleted && {
+                              textDecorationLine: 'line-through',
+                              color: palette.textSecondary,
+                            },
                           ]}
                           numberOfLines={1}
                         >
@@ -1164,11 +1275,25 @@ export default function PomodoroScreen() {
                       </View>
 
                       {/* Pomodoro stats details */}
-                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginTop: 2,
+                        }}
+                      >
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                           <Timer size={14} color={palette.danger} strokeWidth={2.2} />
-                          <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
-                            {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} ({compMins}/{estMins}m)
+                          <Text
+                            style={{
+                              fontSize: 13,
+                              color: palette.textSecondary,
+                              fontWeight: '600',
+                            }}
+                          >
+                            {completedPomodoros} session{completedPomodoros === 1 ? '' : 's'} (
+                            {compMins}/{estMins}m)
                           </Text>
                         </View>
 
@@ -1182,7 +1307,13 @@ export default function PomodoroScreen() {
                         ) : !isCompleted && remainingMins > 0 ? (
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                             <Clock size={13} color={palette.textSecondary} strokeWidth={2} />
-                            <Text style={{ fontSize: 13, color: palette.textSecondary, fontWeight: '600' }}>
+                            <Text
+                              style={{
+                                fontSize: 13,
+                                color: palette.textSecondary,
+                                fontWeight: '600',
+                              }}
+                            >
                               {remainingMins}m remaining
                             </Text>
                           </View>
@@ -1197,12 +1328,24 @@ export default function PomodoroScreen() {
                       </View>
 
                       {/* Progress Bar */}
-                      <View style={{ height: 6, backgroundColor: 'rgba(250, 215, 224, 0.7)', borderRadius: radius.full, marginTop: 4, overflow: 'hidden' }}>
+                      <View
+                        style={{
+                          height: 6,
+                          backgroundColor: 'rgba(250, 215, 224, 0.7)',
+                          borderRadius: radius.full,
+                          marginTop: 4,
+                          overflow: 'hidden',
+                        }}
+                      >
                         <View
                           style={{
                             width: `${taskProgressPct}%`,
                             height: '100%',
-                            backgroundColor: isCompleted ? '#10B981' : overtimeMins > 0 ? '#F59E0B' : palette.danger,
+                            backgroundColor: isCompleted
+                              ? '#10B981'
+                              : overtimeMins > 0
+                                ? '#F59E0B'
+                                : palette.danger,
                             borderRadius: radius.full,
                           }}
                         />
@@ -1223,10 +1366,7 @@ export default function PomodoroScreen() {
         <View style={styles.fullScreenContainer}>
           {/* Top Header Bar */}
           <View style={styles.fullScreenHeaderRow}>
-            <Pressable
-              onPress={handleRunInBackground}
-              style={styles.runInBackgroundBtnTop}
-            >
+            <Pressable onPress={handleRunInBackground} style={styles.runInBackgroundBtnTop}>
               <ArrowLeft size={16} color="#FFFFFF" strokeWidth={2.4} />
               <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>
                 Run in Background
@@ -1238,8 +1378,20 @@ export default function PomodoroScreen() {
           <View style={styles.fullScreenCenterContent}>
             {/* Session Type Pill */}
             <View style={styles.fullScreenSessionPill}>
-              <Text style={{ color: '#E84D72', fontSize: 12, fontWeight: '800', letterSpacing: 1.2, textTransform: 'uppercase' }}>
-                {sessionType === 'focus' ? '🍅 FOCUS SESSION' : sessionType === 'short_break' ? '☕ SHORT BREAK' : '🌴 LONG BREAK'}
+              <Text
+                style={{
+                  color: '#E84D72',
+                  fontSize: 12,
+                  fontWeight: '800',
+                  letterSpacing: 1.2,
+                  textTransform: 'uppercase',
+                }}
+              >
+                {sessionType === 'focus'
+                  ? '🍅 FOCUS SESSION'
+                  : sessionType === 'short_break'
+                    ? '☕ SHORT BREAK'
+                    : '🌴 LONG BREAK'}
               </Text>
             </View>
 
@@ -1255,13 +1407,30 @@ export default function PomodoroScreen() {
 
             {/* Live LED Status & Subtitle */}
             <View style={styles.liveLedRow}>
-              <View style={[styles.livePulseDot, { backgroundColor: isPaused ? '#F59E0B' : '#10B981' }]} />
-              <Text style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: 12, fontWeight: '800', letterSpacing: 1.2 }}>
+              <View
+                style={[styles.livePulseDot, { backgroundColor: isPaused ? '#F59E0B' : '#10B981' }]}
+              />
+              <Text
+                style={{
+                  color: 'rgba(255, 255, 255, 0.85)',
+                  fontSize: 12,
+                  fontWeight: '800',
+                  letterSpacing: 1.2,
+                }}
+              >
                 {isPaused ? 'TIMER PAUSED' : 'LIVE TIMER RUNNING'}
               </Text>
             </View>
             {sessionType === 'focus' && strictMode && (
-              <Text style={{ color: '#F43F5E', fontSize: 13, fontWeight: '800', letterSpacing: 1.2, marginTop: 8 }}>
+              <Text
+                style={{
+                  color: '#F43F5E',
+                  fontSize: 13,
+                  fontWeight: '800',
+                  letterSpacing: 1.2,
+                  marginTop: 8,
+                }}
+              >
                 🔒 STRICT MODE LOCKED
               </Text>
             )}
@@ -1276,18 +1445,36 @@ export default function PomodoroScreen() {
           <View style={styles.fullScreenBottomContainer}>
             <View style={{ flexDirection: 'row', gap: 12 }}>
               {isPaused ? (
-                <Pressable onPress={handleResume} style={[styles.fsMainActionBtn, { backgroundColor: palette.cherryBloom }]}>
+                <Pressable
+                  onPress={handleResume}
+                  style={[styles.fsMainActionBtn, { backgroundColor: palette.cherryBloom }]}
+                >
                   <Play size={20} color="#FFFFFF" fill="#FFFFFF" strokeWidth={2} />
                   <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Resume</Text>
                 </Pressable>
               ) : (
-                <Pressable onPress={handlePause} style={[styles.fsMainActionBtn, { backgroundColor: 'rgba(255, 243, 245, 0.95)', borderColor: 'rgba(232, 77, 114, 0.40)', borderWidth: 1.5 }]}>
+                <Pressable
+                  onPress={handlePause}
+                  style={[
+                    styles.fsMainActionBtn,
+                    {
+                      backgroundColor: 'rgba(255, 243, 245, 0.95)',
+                      borderColor: 'rgba(232, 77, 114, 0.40)',
+                      borderWidth: 1.5,
+                    },
+                  ]}
+                >
                   <Pause size={20} color={palette.danger} strokeWidth={2.4} />
-                  <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>Pause</Text>
+                  <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 16 }}>
+                    Pause
+                  </Text>
                 </Pressable>
               )}
 
-              <Pressable onPress={handleReset} style={[styles.fsMainActionBtn, { backgroundColor: palette.danger }]}>
+              <Pressable
+                onPress={handleReset}
+                style={[styles.fsMainActionBtn, { backgroundColor: palette.danger }]}
+              >
                 <RotateCcw size={20} color="#FFFFFF" strokeWidth={2.2} />
                 <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16 }}>Reset</Text>
               </Pressable>

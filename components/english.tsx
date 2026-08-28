@@ -76,8 +76,8 @@ export function VocabularyCard({
                   backgroundColor: isLearned
                     ? 'rgba(209, 250, 229, 0.4)'
                     : pressed
-                    ? 'rgba(250, 215, 224, 0.5)'
-                    : 'rgba(255, 243, 245, 0.75)',
+                      ? 'rgba(250, 215, 224, 0.5)'
+                      : 'rgba(255, 243, 245, 0.75)',
                 },
               ]}
               onPress={() => onSelectWord(w)}
@@ -120,7 +120,9 @@ export function VocabularyCard({
                     style={({ pressed }) => [
                       styles.learnBtn,
                       {
-                        backgroundColor: pressed ? 'rgba(232, 77, 114, 0.22)' : 'rgba(232, 77, 114, 0.12)',
+                        backgroundColor: pressed
+                          ? 'rgba(232, 77, 114, 0.22)'
+                          : 'rgba(232, 77, 114, 0.12)',
                       },
                     ]}
                   >
@@ -145,7 +147,13 @@ interface WordDetailProps {
   isMarking: boolean;
 }
 
-export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking }: WordDetailProps) {
+export function WordDetail({
+  word,
+  isLearned,
+  onClose,
+  onMarkLearned,
+  isMarking,
+}: WordDetailProps) {
   if (!word) return null;
 
   return (
@@ -174,8 +182,12 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
             <View style={styles.detailSection}>
               <Text style={styles.sectionHeading}>Example Sentence</Text>
               <View style={styles.quoteBox}>
-                <Text style={[styles.detailBody, { fontStyle: 'italic', color: palette.textPrimary }]}>
-                  {"\""}{word.example}{"\""}
+                <Text
+                  style={[styles.detailBody, { fontStyle: 'italic', color: palette.textPrimary }]}
+                >
+                  {'"'}
+                  {word.example}
+                  {'"'}
                 </Text>
               </View>
             </View>
@@ -187,8 +199,21 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
                   <Text style={styles.sectionHeading}>Synonyms</Text>
                   <View style={styles.tagsContainer}>
                     {word.synonyms.map((s) => (
-                      <View key={s} style={[styles.tag, { backgroundColor: 'rgba(232, 77, 114, 0.08)', borderColor: 'rgba(232, 77, 114, 0.25)' }]}>
-                        <Text style={{ fontSize: 13, color: palette.textPrimary, fontWeight: '600' }}>{s}</Text>
+                      <View
+                        key={s}
+                        style={[
+                          styles.tag,
+                          {
+                            backgroundColor: 'rgba(232, 77, 114, 0.08)',
+                            borderColor: 'rgba(232, 77, 114, 0.25)',
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={{ fontSize: 13, color: palette.textPrimary, fontWeight: '600' }}
+                        >
+                          {s}
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -200,8 +225,19 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
                   <Text style={styles.sectionHeading}>Antonyms</Text>
                   <View style={styles.tagsContainer}>
                     {word.antonyms.map((a) => (
-                      <View key={a} style={[styles.tag, { backgroundColor: 'rgba(217, 76, 97, 0.10)', borderColor: 'rgba(217, 76, 97, 0.30)' }]}>
-                        <Text style={{ fontSize: 13, color: '#B91C1C', fontWeight: '600' }}>{a}</Text>
+                      <View
+                        key={a}
+                        style={[
+                          styles.tag,
+                          {
+                            backgroundColor: 'rgba(217, 76, 97, 0.10)',
+                            borderColor: 'rgba(217, 76, 97, 0.30)',
+                          },
+                        ]}
+                      >
+                        <Text style={{ fontSize: 13, color: '#B91C1C', fontWeight: '600' }}>
+                          {a}
+                        </Text>
                       </View>
                     ))}
                   </View>
@@ -227,7 +263,11 @@ export function WordDetail({ word, isLearned, onClose, onMarkLearned, isMarking 
                 }}
                 style={{ width: '100%' }}
               >
-                {isMarking ? <ActivityIndicator size="small" color="#FFF" /> : 'Mark as Learned (+XP)'}
+                {isMarking ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  'Mark as Learned (+XP)'
+                )}
               </Button>
             )}
           </View>
@@ -268,9 +308,7 @@ export function GrammarQuestion({
     <Card style={styles.quizCard}>
       {/* Header Info */}
       <View style={styles.quizHeader}>
-        <Text style={styles.topicBadge}>
-          {question.topic}
-        </Text>
+        <Text style={styles.topicBadge}>{question.topic}</Text>
         <Text style={styles.progressText}>
           {questionNumber} of {totalQuestions}
         </Text>
@@ -279,10 +317,7 @@ export function GrammarQuestion({
       {/* Progress Bar */}
       <View style={styles.progressBarBg}>
         <View
-          style={[
-            styles.progressBarFill,
-            { width: `${(questionNumber / totalQuestions) * 100}%` },
-          ]}
+          style={[styles.progressBarFill, { width: `${(questionNumber / totalQuestions) * 100}%` }]}
         />
       </View>
 
@@ -303,8 +338,8 @@ export function GrammarQuestion({
                   backgroundColor: isSelected
                     ? 'rgba(240, 115, 146, 0.15)'
                     : pressed
-                    ? 'rgba(250, 215, 224, 0.5)'
-                    : 'rgba(255, 243, 245, 0.75)',
+                      ? 'rgba(250, 215, 224, 0.5)'
+                      : 'rgba(255, 243, 245, 0.75)',
                 },
               ]}
               onPress={() => onSelectOption(idx)}
@@ -341,11 +376,7 @@ export function GrammarQuestion({
             <Text style={{ color: palette.danger, fontWeight: '700' }}>Previous</Text>
           </View>
         </Button>
-        <Button
-          variant="primary"
-          style={styles.navBtn}
-          onPress={onNext}
-        >
+        <Button variant="primary" style={styles.navBtn} onPress={onNext}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={{ color: '#FFFFFF', fontWeight: '700' }}>
               {questionNumber === totalQuestions ? 'Finish Quiz' : 'Next'}
@@ -382,8 +413,8 @@ export function QuizResult({
   const accuracy = total > 0 ? Math.round((correctCount / total) * 100) : 0;
 
   React.useEffect(() => {
-    useGrowthAnimStore.getState().queueXp(score || 25);
-  }, [score]);
+    useGrowthAnimStore.getState().queueXp(2);
+  }, []);
 
   return (
     <ScrollView style={styles.resultContainer} showsVerticalScrollIndicator={false}>
@@ -392,9 +423,7 @@ export function QuizResult({
           <Trophy size={48} color={palette.danger} strokeWidth={2} />
         </View>
         <Text style={styles.resultTitle}>Quiz Completed</Text>
-        <Text style={styles.resultScoreText}>
-          Accuracy: {accuracy}%
-        </Text>
+        <Text style={styles.resultScoreText}>Accuracy: {accuracy}%</Text>
 
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
@@ -424,7 +453,13 @@ export function QuizResult({
         const isUserCorrect = selected === correctIndex;
 
         return (
-          <Card key={q.id} style={[styles.reviewQuestionCard, { borderColor: isUserCorrect ? '#10B981' : '#EF4444' }]}>
+          <Card
+            key={q.id}
+            style={[
+              styles.reviewQuestionCard,
+              { borderColor: isUserCorrect ? '#10B981' : '#EF4444' },
+            ]}
+          >
             <Text style={styles.reviewHeader}>
               Question {idx + 1} ({q.topic})
             </Text>
@@ -446,11 +481,21 @@ export function QuizResult({
                 }
 
                 return (
-                  <View key={oIdx} style={[styles.reviewOptionItem, { borderColor: borderC, backgroundColor: bgC }]}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Text style={[styles.reviewOptionText, { flex: 1 }]}>
-                        {option}
-                      </Text>
+                  <View
+                    key={oIdx}
+                    style={[
+                      styles.reviewOptionItem,
+                      { borderColor: borderC, backgroundColor: bgC },
+                    ]}
+                  >
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <Text style={[styles.reviewOptionText, { flex: 1 }]}>{option}</Text>
                       {isCorrectOption ? (
                         <CheckCircle2 size={16} color="#10B981" strokeWidth={2.4} />
                       ) : isUserSelected ? (
@@ -463,10 +508,19 @@ export function QuizResult({
             </View>
 
             <View style={styles.explanationBox}>
-              <Text style={{ fontWeight: '800', fontSize: 13, color: palette.textPrimary, marginBottom: 2 }}>
+              <Text
+                style={{
+                  fontWeight: '800',
+                  fontSize: 13,
+                  color: palette.textPrimary,
+                  marginBottom: 2,
+                }}
+              >
                 Explanation:
               </Text>
-              <Text style={{ fontSize: 13, color: palette.textSecondary, lineHeight: 18 }}>{q.explanation}</Text>
+              <Text style={{ fontSize: 13, color: palette.textSecondary, lineHeight: 18 }}>
+                {q.explanation}
+              </Text>
             </View>
           </Card>
         );
@@ -534,7 +588,9 @@ export function WritingEditor({
                 ) : (
                   <Clock size={13} color={palette.textSecondary} strokeWidth={2} />
                 )}
-                <Text style={[styles.checkText, { color: used ? '#047857' : palette.textSecondary }]}>
+                <Text
+                  style={[styles.checkText, { color: used ? '#047857' : palette.textSecondary }]}
+                >
                   {w.word}
                 </Text>
               </View>
@@ -575,7 +631,11 @@ export function WritingEditor({
         </View>
       )}
 
-      <Button disabled={!canSubmit || isLoading} onPress={onSubmit} style={{ marginTop: spacing.md }}>
+      <Button
+        disabled={!canSubmit || isLoading}
+        onPress={onSubmit}
+        style={{ marginTop: spacing.md }}
+      >
         {isLoading ? (
           <ActivityIndicator size="small" color="#FFF" />
         ) : (
@@ -596,7 +656,11 @@ interface GeminiFeedbackCardProps {
   onClear: () => void;
 }
 
-export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: GeminiFeedbackCardProps) {
+export function GeminiFeedbackCard({
+  evaluation,
+  originalParagraph,
+  onClear,
+}: GeminiFeedbackCardProps) {
   if (!evaluation) return null;
 
   return (
@@ -611,11 +675,21 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
 
         <View style={styles.usageGrid}>
           <View style={styles.usageBox}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: '#047857', marginBottom: spacing.xs }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '800',
+                color: '#047857',
+                marginBottom: spacing.xs,
+              }}
+            >
               Words Used Correctly
             </Text>
             {evaluation.wordsUsedCorrectly?.map((w) => (
-              <View key={w} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+              <View
+                key={w}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}
+              >
                 <Check size={13} color="#047857" strokeWidth={2.4} />
                 <Text style={styles.usedOkText}>{w}</Text>
               </View>
@@ -626,17 +700,29 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
           </View>
 
           <View style={styles.usageBox}>
-            <Text style={{ fontSize: 13, fontWeight: '800', color: '#B91C1C', marginBottom: spacing.xs }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: '800',
+                color: '#B91C1C',
+                marginBottom: spacing.xs,
+              }}
+            >
               Words Used Incorrectly
             </Text>
             {evaluation.wordsUsedIncorrectly?.map((w) => (
-              <View key={w} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+              <View
+                key={w}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}
+              >
                 <X size={13} color="#B91C1C" strokeWidth={2.4} />
                 <Text style={styles.usedBadText}>{w}</Text>
               </View>
             ))}
             {(!evaluation.wordsUsedIncorrectly || evaluation.wordsUsedIncorrectly.length === 0) && (
-              <Text style={{ fontSize: 12, color: '#10B981', fontStyle: 'italic', fontWeight: '600' }}>
+              <Text
+                style={{ fontSize: 12, color: '#10B981', fontStyle: 'italic', fontWeight: '600' }}
+              >
                 None! All 5 correctly used.
               </Text>
             )}
@@ -648,7 +734,9 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
       <Card style={styles.feedbackSectionCard}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <FileText size={18} color={palette.textPrimary} strokeWidth={2.4} />
-          <Text style={[styles.sectionHeaderTitle, { color: palette.textPrimary }]}>ORIGINAL PARAGRAPH</Text>
+          <Text style={[styles.sectionHeaderTitle, { color: palette.textPrimary }]}>
+            ORIGINAL PARAGRAPH
+          </Text>
         </View>
         <Text style={styles.originalParaText}>{originalParagraph}</Text>
 
@@ -656,7 +744,9 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Sparkles size={18} color="#047857" strokeWidth={2.4} />
-          <Text style={[styles.sectionHeaderTitle, { color: '#047857' }]}>IMPROVED PARAGRAPH (BY GEMINI)</Text>
+          <Text style={[styles.sectionHeaderTitle, { color: '#047857' }]}>
+            IMPROVED PARAGRAPH (BY GEMINI)
+          </Text>
         </View>
         <Text style={styles.improvedParaText}>{evaluation.improvedParagraph}</Text>
       </Card>
@@ -674,8 +764,16 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
                 <Text style={styles.mistakeIndex}>Correction {index + 1}</Text>
               </View>
               <View style={styles.mistakeDiff}>
-                <Text style={styles.mistakeOriginal}>- {"\""}{m.original}{"\""}</Text>
-                <Text style={styles.mistakeCorrection}>+ {"\""}{m.correction}{"\""}</Text>
+                <Text style={styles.mistakeOriginal}>
+                  - {'"'}
+                  {m.original}
+                  {'"'}
+                </Text>
+                <Text style={styles.mistakeCorrection}>
+                  + {'"'}
+                  {m.correction}
+                  {'"'}
+                </Text>
               </View>
               <Text style={styles.mistakeExplanation}>{m.explanation}</Text>
             </View>
@@ -711,11 +809,20 @@ export function GeminiFeedbackCard({ evaluation, originalParagraph, onClear }: G
 // 9. StatisticsCard
 interface StatisticsCardProps {
   vocabStats: { today_words: number; total_words: number; current_streak: number } | null;
-  grammarStats: { today_questions: number; today_correct: number; total_questions: number; accuracy: number } | null;
+  grammarStats: {
+    today_questions: number;
+    today_correct: number;
+    total_questions: number;
+    accuracy: number;
+  } | null;
   writingCompleted: boolean;
 }
 
-export function StatisticsCard({ vocabStats, grammarStats, writingCompleted }: StatisticsCardProps) {
+export function StatisticsCard({
+  vocabStats,
+  grammarStats,
+  writingCompleted,
+}: StatisticsCardProps) {
   return (
     <View style={{ gap: spacing.md }}>
       <Card style={styles.statsCard}>
@@ -728,16 +835,28 @@ export function StatisticsCard({ vocabStats, grammarStats, writingCompleted }: S
           <Text style={styles.statsSectionLabel}>VOCABULARY</Text>
           <View style={styles.gridStats}>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.today_words ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Learned Today</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>
+                {vocabStats?.today_words ?? 0}
+              </Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Learned Today
+              </Text>
             </View>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.total_words ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Total Learned</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>
+                {vocabStats?.total_words ?? 0}
+              </Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Total Learned
+              </Text>
             </View>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: palette.danger }]}>{vocabStats?.current_streak ?? 0}d</Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Streak</Text>
+              <Text style={[styles.gridValue, { color: palette.danger }]}>
+                {vocabStats?.current_streak ?? 0}d
+              </Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Streak
+              </Text>
             </View>
           </View>
         </View>
@@ -748,18 +867,28 @@ export function StatisticsCard({ vocabStats, grammarStats, writingCompleted }: S
           <Text style={styles.statsSectionLabel}>GRAMMAR</Text>
           <View style={styles.gridStats}>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: '#047857' }]}>{grammarStats?.today_questions ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Solved Today</Text>
+              <Text style={[styles.gridValue, { color: '#047857' }]}>
+                {grammarStats?.today_questions ?? 0}
+              </Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Solved Today
+              </Text>
             </View>
             <View style={styles.gridStatItem}>
-              <Text style={[styles.gridValue, { color: '#047857' }]}>{grammarStats?.total_questions ?? 0}</Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Total Solved</Text>
+              <Text style={[styles.gridValue, { color: '#047857' }]}>
+                {grammarStats?.total_questions ?? 0}
+              </Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Total Solved
+              </Text>
             </View>
             <View style={styles.gridStatItem}>
               <Text style={[styles.gridValue, { color: '#047857' }]}>
                 {grammarStats?.accuracy ? Math.round(Number(grammarStats.accuracy)) : 0}%
               </Text>
-              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>Accuracy</Text>
+              <Text style={{ fontSize: 12, color: palette.textSecondary, fontWeight: '500' }}>
+                Accuracy
+              </Text>
             </View>
           </View>
         </View>

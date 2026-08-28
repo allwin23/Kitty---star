@@ -11,7 +11,15 @@
  * Auto-start: If today has a draft but no plan, auto-duplicate into plans on mount.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Pressable, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
+import {
+  Alert,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { format, addDays } from 'date-fns';
@@ -44,13 +52,17 @@ import { TodoList, type TodoTask } from '@/features/accountability/todo-list';
 import { PomodoroModal } from '@/features/accountability/pomodoro-modal';
 import { glassCardStyle, palette, radius, spacing, typography } from '@/theme';
 
-
 const getTodayStr = () => format(new Date(), 'yyyy-MM-dd');
-const getTomorrowStr = (dateStr: string) => format(addDays(new Date(dateStr + 'T00:00:00'), 1), 'yyyy-MM-dd');
+const getTomorrowStr = (dateStr: string) =>
+  format(addDays(new Date(dateStr + 'T00:00:00'), 1), 'yyyy-MM-dd');
 
 function SectionTitle({ children }: { children: string }) {
   return (
-    <Text style={{ color: palette.textPrimary, fontSize: 18, fontWeight: '800', letterSpacing: -0.2 }}>{children}</Text>
+    <Text
+      style={{ color: palette.textPrimary, fontSize: 18, fontWeight: '800', letterSpacing: -0.2 }}
+    >
+      {children}
+    </Text>
   );
 }
 
@@ -95,8 +107,8 @@ export default function AccountabilityScreen() {
   });
 
   const partnerProfile = partnerProfileQ.data;
-  const partnerName = partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
-
+  const partnerName =
+    partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
 
   // ─── My Queries ─────────────────────────────────────────────────────────────
 
@@ -110,9 +122,13 @@ export default function AccountabilityScreen() {
     id: string;
     status: 'editing' | 'submitted';
     current_tasks: {
-      id: string; title: string; estimated_minutes: number;
-      completed_minutes: number; completed_pomodoros: number;
-      status: 'pending' | 'completed'; order: number;
+      id: string;
+      title: string;
+      estimated_minutes: number;
+      completed_minutes: number;
+      completed_pomodoros: number;
+      status: 'pending' | 'completed';
+      order: number;
     }[];
   } | null;
 
@@ -159,7 +175,7 @@ export default function AccountabilityScreen() {
       checkMidnightRefresh();
       void currentPlanQ.refetch();
       void todayReportQ.refetch();
-    }, [checkMidnightRefresh, currentPlanQ, todayReportQ])
+    }, [checkMidnightRefresh, currentPlanQ, todayReportQ]),
   );
 
   // ─── Auto-start: duplicate today's draft into plans ─────────────────────────
@@ -170,7 +186,9 @@ export default function AccountabilityScreen() {
         return await plannerService.createDailyPlans(today);
       } catch (e: any) {
         // Fallback: create default draft if needed and retry plan creation
-        await plannerService.createDraft(today, [{ title: 'Daily Focus Session', estimated_minutes: 25 }]);
+        await plannerService.createDraft(today, [
+          { title: 'Daily Focus Session', estimated_minutes: 25 },
+        ]);
         return await plannerService.createDailyPlans(today);
       }
     },
@@ -209,7 +227,15 @@ export default function AccountabilityScreen() {
       autoStartRef.current = true;
       void startDayMutation.mutateAsync();
     }
-  }, [currentPlan, currentPlanQ.isLoading, hasTodayDraftTasks, todayDraftQ.isLoading, hasTodayReport, todayReportQ.isLoading, startDayMutation]);
+  }, [
+    currentPlan,
+    currentPlanQ.isLoading,
+    hasTodayDraftTasks,
+    todayDraftQ.isLoading,
+    hasTodayReport,
+    todayReportQ.isLoading,
+    startDayMutation,
+  ]);
 
   // ─── Partner Queries ────────────────────────────────────────────────────────
 
@@ -251,7 +277,9 @@ export default function AccountabilityScreen() {
   }, [invalidateAll]);
 
   // Realtime: subscribe to partner's changes (plans, tasks, submissions) for live visibility
-  const partnerChannelRef = useRef<ReturnType<typeof plannerService.subscribeToPartnerChanges> | null>(null);
+  const partnerChannelRef = useRef<ReturnType<
+    typeof plannerService.subscribeToPartnerChanges
+  > | null>(null);
   const partnerId = profile?.partner_id;
   useEffect(() => {
     if (!partnerId) return;
@@ -281,7 +309,11 @@ export default function AccountabilityScreen() {
   // ─── Draft / Prior Planning mutations (always for TOMORROW) ─────────────────
 
   const draftTasks: TodoTask[] = (
-    (draftQ.data as { draft_tasks?: { id: string; title: string; estimated_minutes: number; order: number }[] } | null)?.draft_tasks ?? []
+    (
+      draftQ.data as {
+        draft_tasks?: { id: string; title: string; estimated_minutes: number; order: number }[];
+      } | null
+    )?.draft_tasks ?? []
   )
     .slice()
     .sort((a, b) => a.order - b.order)
@@ -297,13 +329,18 @@ export default function AccountabilityScreen() {
   });
 
   const handleDraftAdd = async (title: string, minutes: number) => {
-    const current = draftTasks.map((t) => ({ title: t.title, estimated_minutes: t.estimated_minutes }));
+    const current = draftTasks.map((t) => ({
+      title: t.title,
+      estimated_minutes: t.estimated_minutes,
+    }));
     await saveDraftMutation.mutateAsync([...current, { title, estimated_minutes: minutes }]);
   };
 
   const handleDraftEdit = async (task: TodoTask, title: string, minutes: number) => {
     const updated = draftTasks.map((t) =>
-      t.id === task.id ? { title, estimated_minutes: minutes } : { title: t.title, estimated_minutes: t.estimated_minutes }
+      t.id === task.id
+        ? { title, estimated_minutes: minutes }
+        : { title: t.title, estimated_minutes: t.estimated_minutes },
     );
     await saveDraftMutation.mutateAsync(updated);
   };
@@ -348,7 +385,11 @@ export default function AccountabilityScreen() {
   const handleTaskEdit = async (task: TodoTask, title: string, minutes: number) => {
     setSavingTaskId(task.id);
     try {
-      await plannerService.updateTask(task.id, { title, estimated_minutes: minutes, order: task.order });
+      await plannerService.updateTask(task.id, {
+        title,
+        estimated_minutes: minutes,
+        order: task.order,
+      });
       void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
     } finally {
       setSavingTaskId(null);
@@ -391,9 +432,13 @@ export default function AccountabilityScreen() {
     status: 'editing' | 'submitted';
     user_id: string;
     current_tasks: {
-      id: string; title: string; estimated_minutes: number;
-      completed_minutes: number; completed_pomodoros: number;
-      status: 'pending' | 'completed'; order: number;
+      id: string;
+      title: string;
+      estimated_minutes: number;
+      completed_minutes: number;
+      completed_pomodoros: number;
+      status: 'pending' | 'completed';
+      order: number;
     }[];
   } | null;
 
@@ -428,7 +473,9 @@ export default function AccountabilityScreen() {
     <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={() => void onRefresh()} />
+        }
       >
         <View style={{ gap: spacing.lg, paddingBottom: 160 }}>
           {/* Header */}
@@ -440,21 +487,32 @@ export default function AccountabilityScreen() {
           {/* ─── Section 1: Prior Planning (ALWAYS Tomorrow) ─── */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <SectionTitle>{"Prior Planning"}</SectionTitle>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <SectionTitle>{'Prior Planning'}</SectionTitle>
                 <Text style={{ color: palette.mutedText, fontSize: 12 }}>
                   For tomorrow ({tomorrowFormatted})
                 </Text>
               </View>
 
               <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                {"Plan tomorrow\u2019s tasks. At midnight, this becomes your Initial Plan snapshot and today\u2019s task list."}
+                {
+                  'Plan tomorrow\u2019s tasks. At midnight, this becomes your Initial Plan snapshot and today\u2019s task list.'
+                }
               </Text>
 
               {draftQ.isLoading ? (
                 <Loading />
               ) : draftQ.error ? (
-                <ErrorState error={(draftQ.error as Error).message} onRetry={() => void draftQ.refetch()} />
+                <ErrorState
+                  error={(draftQ.error as Error).message}
+                  onRetry={() => void draftQ.refetch()}
+                />
               ) : (
                 <TodoList
                   tasks={draftTasks}
@@ -466,7 +524,7 @@ export default function AccountabilityScreen() {
               )}
 
               {saveDraftMutation.isPending ? (
-                <Text style={{ color: palette.mutedText, fontSize: 12 }}>{"Saving\u2026"}</Text>
+                <Text style={{ color: palette.mutedText, fontSize: 12 }}>{'Saving\u2026'}</Text>
               ) : null}
             </View>
           </Card>
@@ -476,7 +534,8 @@ export default function AccountabilityScreen() {
             <View style={{ gap: spacing.md }}>
               <SectionTitle>My Initial Plan</SectionTitle>
               <Text style={{ color: palette.mutedText, fontSize: 13 }}>
-                Read-only snapshot from your prior planning. Your partner compares this against your submission.
+                Read-only snapshot from your prior planning. Your partner compares this against your
+                submission.
               </Text>
 
               {initialPlanQ.isLoading || startDayMutation.isPending ? (
@@ -492,8 +551,8 @@ export default function AccountabilityScreen() {
                     title="No initial plan"
                     description={
                       currentPlan
-                        ? "No initial plan snapshot was created for today."
-                        : "You didn\u2019t set prior planning for today. Start an empty day to add tasks now."
+                        ? 'No initial plan snapshot was created for today.'
+                        : 'You didn\u2019t set prior planning for today. Start an empty day to add tasks now.'
                     }
                   />
                 </View>
@@ -529,7 +588,9 @@ export default function AccountabilityScreen() {
                   paddingHorizontal: 16,
                 }}
               >
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                <Text
+                  style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}
+                >
                   {startEmptyDayMutation.isPending ? 'Starting...' : 'Start Empty Day'}
                 </Text>
               </View>
@@ -539,8 +600,14 @@ export default function AccountabilityScreen() {
           {/* ─── Section 3: My Today Tasks ─── */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <SectionTitle>{"My Today\u2019s Tasks"}</SectionTitle>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <SectionTitle>{'My Today\u2019s Tasks'}</SectionTitle>
                 {currentPlan?.status === 'submitted' ? (
                   <Text
                     style={{
@@ -569,7 +636,10 @@ export default function AccountabilityScreen() {
               ) : todayReport ? (
                 <View style={{ gap: spacing.sm }}>
                   <TodoList
-                    tasks={(Array.isArray(todayReport.report_tasks) ? todayReport.report_tasks : []).map((t: any) => ({
+                    tasks={(Array.isArray(todayReport.report_tasks)
+                      ? todayReport.report_tasks
+                      : []
+                    ).map((t: any) => ({
                       id: t.id,
                       title: t.title,
                       estimated_minutes: t.estimated_minutes,
@@ -581,8 +651,10 @@ export default function AccountabilityScreen() {
                   />
                   <View
                     style={{
-                      backgroundColor: todayReport.approval_status === 'approved' ? '#f0fdf4' : '#fef2f2',
-                      borderColor: todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
+                      backgroundColor:
+                        todayReport.approval_status === 'approved' ? '#f0fdf4' : '#fef2f2',
+                      borderColor:
+                        todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
                       borderRadius: radius.md,
                       borderWidth: 1,
                       padding: spacing.sm,
@@ -667,7 +739,9 @@ export default function AccountabilityScreen() {
                   paddingHorizontal: 16,
                 }}
               >
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
+                <Text
+                  style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}
+                >
                   {startDayMutation.isPending ? 'Starting Today...' : "🚀 Start Today's Plan"}
                 </Text>
               </View>
@@ -707,8 +781,12 @@ export default function AccountabilityScreen() {
                 }}
               >
                 <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-                <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                  {currentPlan.status === 'submitted' ? 'View Submission & Proofs \u2192' : 'Submit To Partner \u2192'}
+                <Text
+                  style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}
+                >
+                  {currentPlan.status === 'submitted'
+                    ? 'View Submission & Proofs \u2192'
+                    : 'Submit To Partner \u2192'}
                 </Text>
               </View>
             </Pressable>
@@ -717,11 +795,19 @@ export default function AccountabilityScreen() {
           {/* ─── Section 4: Partner's Live Tasks ─── */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
                 <SectionTitle>{`${partnerName}'s Today Tasks`}</SectionTitle>
                 {partnerPlan ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-                    <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#34d399' }} />
+                    <View
+                      style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#34d399' }}
+                    />
                     <Text style={{ color: palette.mutedText, fontSize: 12 }}>
                       {partnerCompletedCount}/{partnerTasks.length} done
                     </Text>
@@ -789,7 +875,9 @@ export default function AccountabilityScreen() {
                       }}
                     >
                       <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '800' }}>
-                        ⏰ Review Deadline: {format(getReviewDeadline(partnerSub.submitted_at), 'dd MMM, 11:00 a')} (Auto-rejects if unreviewed)
+                        ⏰ Review Deadline:{' '}
+                        {format(getReviewDeadline(partnerSub.submitted_at), 'dd MMM, 11:00 a')}{' '}
+                        (Auto-rejects if unreviewed)
                       </Text>
                     </View>
                   ) : null}
@@ -799,8 +887,8 @@ export default function AccountabilityScreen() {
                         partnerSub.status === 'pending'
                           ? palette.primary
                           : partnerSub.status === 'approved'
-                          ? 'green'
-                          : palette.danger,
+                            ? 'green'
+                            : palette.danger,
                       fontWeight: '600',
                       textTransform: 'capitalize',
                     }}
@@ -809,7 +897,7 @@ export default function AccountabilityScreen() {
                   </Text>
                   {(partnerSub.current_plans?.current_tasks ?? []).slice(0, 3).map((t, i) => (
                     <Text key={i} style={{ color: palette.mutedText, fontSize: 13 }}>
-                      {"\u00B7"} {t.title} {t.status === 'completed' ? '\u2713' : ''}
+                      {'\u00B7'} {t.title} {t.status === 'completed' ? '\u2713' : ''}
                     </Text>
                   ))}
                   {partnerSub.status === 'pending' ? (
@@ -830,8 +918,12 @@ export default function AccountabilityScreen() {
           </Card>
 
           {/* Reports History link */}
-          <Button variant="white" size="lg" onPress={() => router.push('/(app)/accountability/reports')}>
-            {"View Report History \u2192"}
+          <Button
+            variant="white"
+            size="lg"
+            onPress={() => router.push('/(app)/accountability/reports')}
+          >
+            {'View Report History \u2192'}
           </Button>
         </View>
       </ScrollView>

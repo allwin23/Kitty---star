@@ -87,9 +87,14 @@ export function Flashcard({
         <Text style={{ color: '#2A1D22', fontSize: 15, fontWeight: '700' }} numberOfLines={3}>
           {question}
         </Text>
-        
-        <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)', marginVertical: spacing.xs }]} />
-        
+
+        <View
+          style={[
+            styles.divider,
+            { backgroundColor: 'rgba(250, 215, 224, 0.90)', marginVertical: spacing.xs },
+          ]}
+        />
+
         <Text style={[styles.cardLabel, { color: palette.danger }]}>ANSWER</Text>
         <Text style={{ color: '#66545B', fontSize: 14, fontWeight: '600' }} numberOfLines={3}>
           {answer}
@@ -136,7 +141,10 @@ export function FolderCard({
 }) {
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard, styles.folderCardRow]}>
-      <Pressable style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }} onPress={onPress}>
+      <Pressable
+        style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+        onPress={onPress}
+      >
         <Folder size={22} color="#D94C61" strokeWidth={2.2} />
         <View style={{ flex: 1 }}>
           <Text style={{ fontWeight: '800', color: '#2A1D22', fontSize: 15 }} numberOfLines={1}>
@@ -176,11 +184,20 @@ export function FolderBreadcrumb({
 }) {
   return (
     <View style={styles.breadcrumbContainer}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.breadcrumbScroll}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.breadcrumbScroll}
+      >
         <Pressable onPress={() => onNavigate([])} style={styles.breadcrumbItem}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Home size={14} color="#D94C61" strokeWidth={2.2} />
-            <Text style={[styles.breadcrumbText, { color: '#D94C61', fontWeight: currentPath.length === 0 ? '800' : '600' }]}>
+            <Text
+              style={[
+                styles.breadcrumbText,
+                { color: '#D94C61', fontWeight: currentPath.length === 0 ? '800' : '600' },
+              ]}
+            >
               Root
             </Text>
           </View>
@@ -234,7 +251,17 @@ export function FlashcardViewer({
 }) {
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard, styles.viewerCard]}>
-      <View style={{ position: 'absolute', top: spacing.md, left: spacing.md, right: spacing.md, flexDirection: 'row', justifyContent: 'space-between', zIndex: 10 }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: spacing.md,
+          left: spacing.md,
+          right: spacing.md,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          zIndex: 10,
+        }}
+      >
         <View style={styles.badge}>
           <BookOpen size={12} color="#D94C61" strokeWidth={2.2} />
           <Text style={{ color: '#D94C61', fontSize: 11, fontWeight: '800' }}>
@@ -246,17 +273,51 @@ export function FlashcardViewer({
       <View style={styles.cardContent}>
         {!revealed ? (
           <View style={styles.faceContainer}>
-            <Text style={{ color: '#2A1D22', fontSize: 20, fontWeight: '800', textAlign: 'center', lineHeight: 28 }}>
+            <Text
+              style={{
+                color: '#2A1D22',
+                fontSize: 20,
+                fontWeight: '800',
+                textAlign: 'center',
+                lineHeight: 28,
+              }}
+            >
               {front}
             </Text>
           </View>
         ) : (
           <View style={styles.faceContainer}>
-            <Text style={{ color: '#66545B', fontSize: 15, fontWeight: '600', textAlign: 'center', marginBottom: spacing.md }}>
+            <Text
+              style={{
+                color: '#66545B',
+                fontSize: 15,
+                fontWeight: '600',
+                textAlign: 'center',
+                marginBottom: spacing.md,
+              }}
+            >
               {front}
             </Text>
-            <View style={[styles.divider, { backgroundColor: 'rgba(250, 215, 224, 0.90)', width: 140, alignSelf: 'center', marginBottom: spacing.md }]} />
-            <Text style={{ color: palette.danger, fontSize: 20, fontWeight: '800', textAlign: 'center', lineHeight: 28 }}>
+            <View
+              style={[
+                styles.divider,
+                {
+                  backgroundColor: 'rgba(250, 215, 224, 0.90)',
+                  width: 140,
+                  alignSelf: 'center',
+                  marginBottom: spacing.md,
+                },
+              ]}
+            />
+            <Text
+              style={{
+                color: palette.danger,
+                fontSize: 20,
+                fontWeight: '800',
+                textAlign: 'center',
+                lineHeight: 28,
+              }}
+            >
               {back}
             </Text>
           </View>
@@ -266,9 +327,7 @@ export function FlashcardViewer({
       {!revealed && (
         <Pressable style={styles.revealBtn} onPress={onReveal}>
           <Eye size={18} color="#FFFFFF" strokeWidth={2.4} />
-          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
-            Reveal Answer
-          </Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>Reveal Answer</Text>
         </Pressable>
       )}
     </View>
@@ -283,19 +342,31 @@ export function ReviewButtons({
 }) {
   return (
     <View style={styles.reviewButtonsRow}>
-      <Pressable style={[styles.rateButton, { backgroundColor: '#EF4444' }]} onPress={() => onRate('again')}>
+      <Pressable
+        style={[styles.rateButton, { backgroundColor: '#EF4444' }]}
+        onPress={() => onRate('again')}
+      >
         <RotateCcw size={14} color="#FFFFFF" strokeWidth={2.4} />
         <Text style={styles.rateButtonText}>Again</Text>
       </Pressable>
-      <Pressable style={[styles.rateButton, { backgroundColor: '#F59E0B' }]} onPress={() => onRate('hard')}>
+      <Pressable
+        style={[styles.rateButton, { backgroundColor: '#F59E0B' }]}
+        onPress={() => onRate('hard')}
+      >
         <HelpCircle size={14} color="#FFFFFF" strokeWidth={2.4} />
         <Text style={styles.rateButtonText}>Hard</Text>
       </Pressable>
-      <Pressable style={[styles.rateButton, { backgroundColor: '#3B82F6' }]} onPress={() => onRate('good')}>
+      <Pressable
+        style={[styles.rateButton, { backgroundColor: '#3B82F6' }]}
+        onPress={() => onRate('good')}
+      >
         <CheckCircle2 size={14} color="#FFFFFF" strokeWidth={2.4} />
         <Text style={styles.rateButtonText}>Good</Text>
       </Pressable>
-      <Pressable style={[styles.rateButton, { backgroundColor: '#10B981' }]} onPress={() => onRate('easy')}>
+      <Pressable
+        style={[styles.rateButton, { backgroundColor: '#10B981' }]}
+        onPress={() => onRate('easy')}
+      >
         <Sparkles size={14} color="#FFFFFF" strokeWidth={2.4} />
         <Text style={styles.rateButtonText}>Easy</Text>
       </Pressable>
@@ -304,27 +375,24 @@ export function ReviewButtons({
 }
 
 // 6. ReviewProgress component — Light Rose Glass Pink Carded
-export function ReviewProgress({
-  current,
-  total,
-}: {
-  current: number;
-  total: number;
-}) {
+export function ReviewProgress({ current, total }: { current: number; total: number }) {
   const percent = total > 0 ? (current / total) * 100 : 0;
 
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard, styles.progressContainer]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-        <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '800' }}>
-          Session Progress
-        </Text>
+        <Text style={{ fontSize: 13, color: '#2A1D22', fontWeight: '800' }}>Session Progress</Text>
         <Text style={{ fontSize: 13, color: palette.danger, fontWeight: '800' }}>
           {current} / {total} Cards
         </Text>
       </View>
       <View style={[styles.progressBarBg, { backgroundColor: 'rgba(250, 215, 224, 0.60)' }]}>
-        <View style={[styles.progressBarFill, { backgroundColor: palette.cherryBloom, width: `${percent}%` }]} />
+        <View
+          style={[
+            styles.progressBarFill,
+            { backgroundColor: palette.cherryBloom, width: `${percent}%` },
+          ]}
+        />
       </View>
     </View>
   );
@@ -343,14 +411,31 @@ export function DueTodayCard({
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard, styles.dueCard]}>
       <View style={{ alignItems: 'center', gap: spacing.sm }}>
-        <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(232, 77, 114, 0.14)', alignItems: 'center', justifyContent: 'center' }}>
+        <View
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 28,
+            backgroundColor: 'rgba(232, 77, 114, 0.14)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <Sparkles size={28} color="#D94C61" strokeWidth={2.2} />
         </View>
 
         <Text style={{ fontSize: 22, fontWeight: '800', color: '#2A1D22' }}>
           {dueCount} Cards Due Today
         </Text>
-        <Text style={{ fontSize: 13, color: '#66545B', fontWeight: '600', textAlign: 'center', paddingHorizontal: spacing.sm }}>
+        <Text
+          style={{
+            fontSize: 13,
+            color: '#66545B',
+            fontWeight: '600',
+            textAlign: 'center',
+            paddingHorizontal: spacing.sm,
+          }}
+        >
           Revising daily items guarantees memory retention. Only due items require your focus today.
         </Text>
 
@@ -367,9 +452,7 @@ export function DueTodayCard({
           onPress={onStartReview}
         >
           <Play size={18} color="#FFFFFF" strokeWidth={2.4} />
-          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>
-            Start Review
-          </Text>
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 15 }}>Start Review</Text>
         </Pressable>
       </View>
     </View>
@@ -461,34 +544,58 @@ export function FlashcardEditor({
           </Text>
 
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>FRONT SIDE (Question)</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>
+              FRONT SIDE (Question)
+            </Text>
             <TextInput
               value={front}
               onChangeText={onChangeFront}
               placeholder="Enter Question (Front side)..."
               multiline
-              style={[styles.modalInput, { height: 90, borderColor: 'rgba(250, 215, 224, 0.90)', color: '#2A1D22', backgroundColor: 'rgba(255, 255, 255, 0.85)' }]}
+              style={[
+                styles.modalInput,
+                {
+                  height: 90,
+                  borderColor: 'rgba(250, 215, 224, 0.90)',
+                  color: '#2A1D22',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                },
+              ]}
               placeholderTextColor="#66545B"
             />
           </View>
 
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>BACK SIDE (Answer)</Text>
+            <Text style={{ fontSize: 12, fontWeight: '800', color: '#2A1D22' }}>
+              BACK SIDE (Answer)
+            </Text>
             <TextInput
               value={back}
               onChangeText={onChangeBack}
               placeholder="Enter Answer (Back side)..."
               multiline
-              style={[styles.modalInput, { height: 90, borderColor: 'rgba(250, 215, 224, 0.90)', color: '#2A1D22', backgroundColor: 'rgba(255, 255, 255, 0.85)' }]}
+              style={[
+                styles.modalInput,
+                {
+                  height: 90,
+                  borderColor: 'rgba(250, 215, 224, 0.90)',
+                  color: '#2A1D22',
+                  backgroundColor: 'rgba(255, 255, 255, 0.85)',
+                },
+              ]}
               placeholderTextColor="#66545B"
             />
           </View>
 
-          <View style={{ flexDirection: 'row', gap: spacing.sm, justifyContent: 'flex-end', marginTop: spacing.xs }}>
-            <Pressable
-              style={styles.outlineBtn}
-              onPress={onCancel}
-            >
+          <View
+            style={{
+              flexDirection: 'row',
+              gap: spacing.sm,
+              justifyContent: 'flex-end',
+              marginTop: spacing.xs,
+            }}
+          >
+            <Pressable style={styles.outlineBtn} onPress={onCancel}>
               <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
             </Pressable>
             <Pressable style={styles.primaryBtn} onPress={onSave}>
@@ -520,7 +627,13 @@ export function FolderSelectorModal({
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View style={styles.modalOverlay}>
-        <View style={[glassCardStyle, styles.pinkGlassCard, { width: '85%', maxHeight: '70%', gap: spacing.md }]}>
+        <View
+          style={[
+            glassCardStyle,
+            styles.pinkGlassCard,
+            { width: '85%', maxHeight: '70%', gap: spacing.md },
+          ]}
+        >
           <Text style={{ fontWeight: '800', fontSize: 18, color: '#2A1D22' }}>
             Move {targetType === 'card' ? 'Flashcard' : 'Folder'}
           </Text>
@@ -537,7 +650,10 @@ export function FolderSelectorModal({
                   styles.selectFolderItem,
                   {
                     borderColor: 'rgba(250, 215, 224, 0.90)',
-                    backgroundColor: currentFolderId === 'root' ? 'rgba(232, 77, 114, 0.14)' : 'rgba(255, 255, 255, 0.85)',
+                    backgroundColor:
+                      currentFolderId === 'root'
+                        ? 'rgba(232, 77, 114, 0.14)'
+                        : 'rgba(255, 255, 255, 0.85)',
                   },
                 ]}
               >
@@ -557,7 +673,10 @@ export function FolderSelectorModal({
                       styles.selectFolderItem,
                       {
                         borderColor: 'rgba(250, 215, 224, 0.90)',
-                        backgroundColor: currentFolderId === folder.id ? 'rgba(232, 77, 114, 0.14)' : 'rgba(255, 255, 255, 0.85)',
+                        backgroundColor:
+                          currentFolderId === folder.id
+                            ? 'rgba(232, 77, 114, 0.14)'
+                            : 'rgba(255, 255, 255, 0.85)',
                       },
                     ]}
                   >
@@ -571,11 +690,15 @@ export function FolderSelectorModal({
             </View>
           </ScrollView>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.sm, marginTop: spacing.xs }}>
-            <Pressable
-              style={styles.outlineBtn}
-              onPress={onCancel}
-            >
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              gap: spacing.sm,
+              marginTop: spacing.xs,
+            }}
+          >
+            <Pressable style={styles.outlineBtn} onPress={onCancel}>
               <Text style={{ color: '#2A1D22', fontWeight: '800' }}>Cancel</Text>
             </Pressable>
           </View>

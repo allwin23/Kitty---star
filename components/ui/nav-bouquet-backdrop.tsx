@@ -33,37 +33,37 @@ function FloatingParticle({
     translateY.value = withRepeat(
       withSequence(
         withTiming(-3, { duration: duration / 2, easing: Easing.inOut(Easing.quad) }),
-        withTiming(3, { duration: duration / 2, easing: Easing.inOut(Easing.quad) })
+        withTiming(3, { duration: duration / 2, easing: Easing.inOut(Easing.quad) }),
       ),
       -1,
-      true
+      true,
     );
 
     translateX.value = withRepeat(
       withSequence(
         withTiming(3, { duration: duration * 0.7, easing: Easing.inOut(Easing.sin) }),
-        withTiming(-3, { duration: duration * 0.7, easing: Easing.inOut(Easing.sin) })
+        withTiming(-3, { duration: duration * 0.7, easing: Easing.inOut(Easing.sin) }),
       ),
       -1,
-      true
+      true,
     );
 
     opacity.value = withRepeat(
       withSequence(
         withTiming(0.52, { duration: duration * 0.4 }),
-        withTiming(0.18, { duration: duration * 0.6 })
+        withTiming(0.18, { duration: duration * 0.6 }),
       ),
       -1,
-      true
+      true,
     );
 
     scale.value = withRepeat(
       withSequence(
         withTiming(baseScale * 1.1, { duration: duration * 0.5 }),
-        withTiming(baseScale * 0.9, { duration: duration * 0.5 })
+        withTiming(baseScale * 0.9, { duration: duration * 0.5 }),
       ),
       -1,
-      true
+      true,
     );
   }, [translateY, translateX, opacity, scale, duration, baseScale]);
 
@@ -77,7 +77,9 @@ function FloatingParticle({
   }));
 
   return (
-    <Animated.View style={[styles.particle, { left: `${initialX}%`, top: initialY }, animatedStyle]}>
+    <Animated.View
+      style={[styles.particle, { left: `${initialX}%`, top: initialY }, animatedStyle]}
+    >
       {type === 'heart' && (
         <Svg width="11" height="11" viewBox="0 0 24 24" fill="none">
           <Path

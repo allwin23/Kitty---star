@@ -12,7 +12,15 @@ type FormFieldProps = TextInputProps & {
 export function FormField({ error, label, ...inputProps }: FormFieldProps) {
   return (
     <View style={{ gap: spacing[4] }}>
-      <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.4 }}>
+      <Text
+        style={{
+          color: palette.textPrimary,
+          fontWeight: '700',
+          fontSize: 13,
+          textTransform: 'uppercase',
+          letterSpacing: 0.4,
+        }}
+      >
         {label}
       </Text>
       <Input {...inputProps} />
@@ -20,4 +28,3 @@ export function FormField({ error, label, ...inputProps }: FormFieldProps) {
     </View>
   );
 }
-

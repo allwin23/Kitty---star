@@ -23,7 +23,15 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Award, Trophy } from 'lucide-react-native';
 
-import { Card, EmptyState, ErrorState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import {
+  Card,
+  EmptyState,
+  ErrorState,
+  HeaderTitleCard,
+  Loading,
+  NotificationBadge,
+  Screen,
+} from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
@@ -64,7 +72,9 @@ export default function AchievementsScreen() {
   const [showAwardModal, setShowAwardModal] = useState(false);
   const [isSendingAward, setIsSendingAward] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<
-    UserAchievementWithDetails | (AchievementRow & { unlocked?: boolean; unlockedAt?: string }) | null
+    | UserAchievementWithDetails
+    | (AchievementRow & { unlocked?: boolean; unlockedAt?: string })
+    | null
   >(null);
 
   // ── Partner resolution ──────────────────────────────────────────────────────
@@ -120,7 +130,8 @@ export default function AchievementsScreen() {
   const partnerReceivedAwardsQ = useQuery({
     queryKey: ['partner-awards', 'received', partnerId ?? ''],
     queryFn: () => achievementService.getReceivedPartnerAwards(partnerId!),
-    enabled: (activeTab === 'partner_achievements' || activeTab === 'my_achievements') && !!partnerId,
+    enabled:
+      (activeTab === 'partner_achievements' || activeTab === 'my_achievements') && !!partnerId,
   });
 
   // ── Realtime Subscription ──────────────────────────────────────────────────
@@ -137,14 +148,10 @@ export default function AchievementsScreen() {
 
     const awardsChannel = supabase
       .channel(`partner-awards-sync:${user.id}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'partner_awards' },
-        () => {
-          void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
-          void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
-        },
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'partner_awards' }, () => {
+        void queryClient.invalidateQueries({ queryKey: ['partner-awards'] });
+        void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
+      })
       .subscribe();
 
     return () => {
@@ -153,7 +160,12 @@ export default function AchievementsScreen() {
     };
   }, [user, queryClient]);
 
-  const handleSendAward = async (data: { title: string; message: string; icon: string; xp_bonus: number }) => {
+  const handleSendAward = async (data: {
+    title: string;
+    message: string;
+    icon: string;
+    xp_bonus: number;
+  }) => {
     if (!partnerId) return;
     setIsSendingAward(true);
     try {
@@ -197,8 +209,7 @@ export default function AchievementsScreen() {
 
   // ── Handlers ───────────────────────────────────────────────────────────────
 
-  const isRefreshing =
-    myUnlockedQ.isFetching || userStatsQ.isFetching || allBadgesQ.isFetching;
+  const isRefreshing = myUnlockedQ.isFetching || userStatsQ.isFetching || allBadgesQ.isFetching;
 
   const handleRefresh = useCallback(() => {
     void myUnlockedQ.refetch();
@@ -210,7 +221,16 @@ export default function AchievementsScreen() {
       void partnerStatsQ.refetch();
       void partnerReceivedAwardsQ.refetch();
     }
-  }, [myUnlockedQ, userStatsQ, allBadgesQ, myReceivedAwardsQ, partnerId, partnerUnlockedQ, partnerStatsQ, partnerReceivedAwardsQ]);
+  }, [
+    myUnlockedQ,
+    userStatsQ,
+    allBadgesQ,
+    myReceivedAwardsQ,
+    partnerId,
+    partnerUnlockedQ,
+    partnerStatsQ,
+    partnerReceivedAwardsQ,
+  ]);
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -218,21 +238,57 @@ export default function AchievementsScreen() {
     <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
       >
         <View style={{ gap: spacing[24], paddingBottom: 120, position: 'relative' }}>
           {/* Chaotic Trophy Watermarks Background Layer */}
           <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-            <Trophy size={72} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: 80, right: -15, transform: [{ rotate: '24deg' }] }} />
-            <Award size={64} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: 320, left: -20, transform: [{ rotate: '-32deg' }] }} />
-            <Trophy size={80} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: 620, right: -18, transform: [{ rotate: '-20deg' }] }} />
-            <Award size={68} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', bottom: 40, left: -14, transform: [{ rotate: '18deg' }] }} />
+            <Trophy
+              size={72}
+              color="rgba(232, 77, 114, 0.08)"
+              style={{
+                position: 'absolute',
+                top: 80,
+                right: -15,
+                transform: [{ rotate: '24deg' }],
+              }}
+            />
+            <Award
+              size={64}
+              color="rgba(232, 77, 114, 0.08)"
+              style={{
+                position: 'absolute',
+                top: 320,
+                left: -20,
+                transform: [{ rotate: '-32deg' }],
+              }}
+            />
+            <Trophy
+              size={80}
+              color="rgba(232, 77, 114, 0.07)"
+              style={{
+                position: 'absolute',
+                top: 620,
+                right: -18,
+                transform: [{ rotate: '-20deg' }],
+              }}
+            />
+            <Award
+              size={68}
+              color="rgba(232, 77, 114, 0.08)"
+              style={{
+                position: 'absolute',
+                bottom: 40,
+                left: -14,
+                transform: [{ rotate: '18deg' }],
+              }}
+            />
           </View>
 
           {/* Header Row: Compact Oval Black Card + Notification Badge */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <HeaderTitleCard title="Achievements" showWavingHand={false} />
             <NotificationBadge />
           </View>
@@ -342,7 +398,8 @@ export default function AchievementsScreen() {
                         Partner Summary
                       </Text>
                       <Text style={{ color: '#2A1D22', fontSize: 12, fontWeight: '700' }}>
-                        Level {partnerStats?.level ?? 1} · {partnerStats?.xp ?? 0} XP · {partnerUnlocked.length} Unlocked Badges
+                        Level {partnerStats?.level ?? 1} · {partnerStats?.xp ?? 0} XP ·{' '}
+                        {partnerUnlocked.length} Unlocked Badges
                       </Text>
                     </View>
                   </View>
@@ -428,7 +485,13 @@ export default function AchievementsScreen() {
               {allBadgesQ.isLoading ? (
                 <Loading />
               ) : (
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   {allBadges
                     .filter((badge) => {
                       const isUnlocked = unlockedBadgeIds.has(badge.id);
@@ -446,9 +509,7 @@ export default function AchievementsScreen() {
                           unlocked={isUnlocked}
                           unlockedAt={unlockedItem?.unlocked_at}
                           onPress={() =>
-                            setSelectedDetail(
-                              unlockedItem ?? { ...badge, unlocked: false },
-                            )
+                            setSelectedDetail(unlockedItem ?? { ...badge, unlocked: false })
                           }
                         />
                       );

@@ -32,10 +32,24 @@ export default function ResetPasswordScreen() {
         <Card style={{ gap: spacing[24], paddingVertical: spacing[32] }}>
           <View style={{ alignItems: 'center', gap: spacing[8] }}>
             <Text style={{ fontSize: 44 }}>🔐🌸</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: palette.textPrimary,
+                letterSpacing: -0.3,
+              }}
+            >
               New Password
             </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+            <Text
+              style={{
+                color: palette.textSecondary,
+                fontSize: 14,
+                textAlign: 'center',
+                lineHeight: 20,
+              }}
+            >
               Set a strong password for your study companion account (at least 8 characters).
             </Text>
           </View>
@@ -73,7 +87,14 @@ export default function ResetPasswordScreen() {
           />
 
           {message ? (
-            <Text style={{ color: palette.cherryBloom, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+            <Text
+              style={{
+                color: palette.cherryBloom,
+                fontSize: 13,
+                textAlign: 'center',
+                fontWeight: '600',
+              }}
+            >
               {message}
             </Text>
           ) : null}
@@ -86,4 +107,3 @@ export default function ResetPasswordScreen() {
     </Screen>
   );
 }
-

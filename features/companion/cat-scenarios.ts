@@ -9,7 +9,7 @@ export interface CatScenario {
   imageKey: string;
   imageUri?: string; // High-res generated or fallback URI
   validFromHour?: number; // e.g. 13 for 1 PM
-  validToHour?: number;   // e.g. 14 for 2 PM
+  validToHour?: number; // e.g. 14 for 2 PM
 }
 
 export const CAT_SCENARIOS: Record<string, CatScenario> = {

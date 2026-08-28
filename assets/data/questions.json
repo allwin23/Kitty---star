@@ -5,12 +5,7 @@
     "subject": "Microbiology",
     "topic": "Virology",
     "question": "A patient hailing from Delhi presents with fever, arthralgia, and extensive petechial rash for 3 days. Lab investigations revealed a hemoglobin of 9 g/ dL, a white blood cell count of 9000 cells/mm3, a platelet count of 20000 cells/mm3, and a prolonged bleeding time. The clotting time was normal. What is the most likely diagnosis?",
-    "options": [
-      "Dengue",
-      "Malaria",
-      "Scrub typhus",
-      "Typhoid"
-    ],
+    "options": ["Dengue", "Malaria", "Scrub typhus", "Typhoid"],
     "answer": 1
   },
   {
@@ -33,12 +28,7 @@
     "subject": "Microbiology",
     "topic": "Parasitology",
     "question": "A lady from West Rajasthan presented with an ulcer surrounded by erythema on the right leg. Microscopy of the biopsy from the edge of the ulcer showed organisms with dark staining nuclei and kinetoplast. What is the most likely causative agent?",
-    "options": [
-      "Leishmania tropica",
-      "Babesia",
-      "Trypanosoma",
-      "Histoplasma"
-    ],
+    "options": ["Leishmania tropica", "Babesia", "Trypanosoma", "Histoplasma"],
     "answer": 1
   },
   {
@@ -61,12 +51,7 @@
     "subject": "Microbiology",
     "topic": "Parasitology",
     "question": "Infection with Clonorchis sinensis is associated with an increased risk of__?",
-    "options": [
-      "Cervical cancer",
-      "Cholangiocarcinoma",
-      "Gastric carcinoma",
-      "Bladder carcinoma"
-    ],
+    "options": ["Cervical cancer", "Cholangiocarcinoma", "Gastric carcinoma", "Bladder carcinoma"],
     "answer": 2
   },
   {
@@ -145,12 +130,7 @@
     "subject": "Microbiology",
     "topic": "Systemic Bacteriology",
     "question": "A man presents with a history of dysuria and urethral discharge after having unprotected sexual intercourse. Gram-staining of the purulent discharge is seen in the following image. What is the treatment of choice for this infection?",
-    "options": [
-      "Erythromycin",
-      "Azithromycin",
-      "Ceftriaxone",
-      "Penicillin G"
-    ],
+    "options": ["Erythromycin", "Azithromycin", "Ceftriaxone", "Penicillin G"],
     "answer": 3,
     "image": "23q11.jpeg"
   },
@@ -160,12 +140,7 @@
     "subject": "Radiology",
     "topic": "Head & Neck Imaging",
     "question": "A 2-month-old infant is brought to the OPD with a parietal swelling present since birth. The X-ray image is given below. What could be the probable diagnosis?",
-    "options": [
-      "Subgaleal hematoma",
-      "Cephalhematoma",
-      "Caput succedaneum",
-      "Enecephalocele"
-    ],
+    "options": ["Subgaleal hematoma", "Cephalhematoma", "Caput succedaneum", "Enecephalocele"],
     "answer": 2,
     "image": "23q12.jpeg"
   },
@@ -175,12 +150,7 @@
     "subject": "Radiology",
     "topic": "Genitourinary Radiology",
     "question": "A patient presented with abdominal pain and sterile pyuria, and the x-ray showed the following features. What is the likely diagnosis?",
-    "options": [
-      "Putty kidney",
-      "Nephrocalcinosis",
-      "Staghorn calculus",
-      "Psoas calcification"
-    ],
+    "options": ["Putty kidney", "Nephrocalcinosis", "Staghorn calculus", "Psoas calcification"],
     "answer": 1,
     "image": "23q13.jpeg"
   },
@@ -205,12 +175,7 @@
     "subject": "Anatomy",
     "topic": "Head and Neck",
     "question": "A student had his jaw locked while yawning. Which of the following muscles is attached to the articular disc of the temporomandibular joint?",
-    "options": [
-      "Lateral pterygoid",
-      "Temporalis",
-      "Medial pterygoid",
-      "Masseter"
-    ],
+    "options": ["Lateral pterygoid", "Temporalis", "Medial pterygoid", "Masseter"],
     "answer": 1
   },
   {
@@ -234,12 +199,7 @@
     "subject": "Anatomy",
     "topic": "Thorax",
     "question": "A defect in which of the following aortic arches causes the defect shown in the image?",
-    "options": [
-      "4th right",
-      "4th left",
-      "6th right",
-      "6th left"
-    ],
+    "options": ["4th right", "4th left", "6th right", "6th left"],
     "answer": 4,
     "image": "23q17.jpeg"
   },
@@ -306,12 +266,7 @@
     "subject": "Biochemistry",
     "topic": "Carbohydrate Metabolism",
     "question": "A young boy presents to the OPD with hypoglycemia and muscle cramps, on exertion or while playing. Then he becomes normal after resting for a while. These episodes are recurrent after a period of activity. He has decreased serum lactate and glucose levels. Which of the following diseases is he most likely to be suffering from?",
-    "options": [
-      "McArdle disease",
-      "Hers disease",
-      "Cori's disease",
-      "Andersen disease"
-    ],
+    "options": ["McArdle disease", "Hers disease", "Cori's disease", "Andersen disease"],
     "answer": 1
   },
   {
@@ -362,12 +317,7 @@
     "subject": "Biochemistry",
     "topic": "Vitamins",
     "question": "A child was bought with pedal edema and cheilosis. Cardiomegaly was present. What is the vitamin deficiency associated with this clinical presentation?",
-    "options": [
-      "Riboflavin",
-      "Thiamine",
-      "Pyridoxine",
-      "Niacin"
-    ],
+    "options": ["Riboflavin", "Thiamine", "Pyridoxine", "Niacin"],
     "answer": 2
   },
   {
@@ -390,12 +340,7 @@
     "subject": "Biochemistry",
     "topic": "Enzymes",
     "question": "A child presents with erythematous scaly patches in the perioral region, mucosal ulcers, and impaired epithelial wound healing. The most likely mineral deficiency associated with this condition is?",
-    "options": [
-      "Iron deficiency",
-      "Zinc deficiency",
-      "Calcium deficiency",
-      "Copper deficiency"
-    ],
+    "options": ["Iron deficiency", "Zinc deficiency", "Calcium deficiency", "Copper deficiency"],
     "answer": 2
   },
   {
@@ -432,12 +377,7 @@
     "subject": "Biochemistry",
     "topic": "Amino Acids and Proteins Chemistry",
     "question": "An infant is brought by his parents with complaints that his urine turns black on standing. Which of the following metabolic disorders is likely?",
-    "options": [
-      "Phenylketonuria",
-      "Alkaptonuria",
-      "Homocystinuria",
-      "Maple syrup urine disease"
-    ],
+    "options": ["Phenylketonuria", "Alkaptonuria", "Homocystinuria", "Maple syrup urine disease"],
     "answer": 2
   },
   {
@@ -446,12 +386,7 @@
     "subject": "Biochemistry",
     "topic": "Vitamins",
     "question": "A child presents with thinning of hair and scaling of the scalp. On taking further history, it is found that she consumes raw eggs in her diet regularly. The given manifestations are due to the deficiency of which of the following vitamins?",
-    "options": [
-      "Niacin",
-      "Pyridoxine",
-      "Biotin",
-      "Thiamine"
-    ],
+    "options": ["Niacin", "Pyridoxine", "Biotin", "Thiamine"],
     "answer": 3
   },
   {
@@ -460,12 +395,7 @@
     "subject": "Biochemistry",
     "topic": "Lipid Metabolism",
     "question": "A child presents with mental retardation, bone pain, and inability to walk. On funduscopic examination, a cherry red spot is seen. There is no organomegaly. What is the most likely diagnosis?",
-    "options": [
-      "Tay-Sachs disease",
-      "Niemann-Pick disease",
-      "Hurler syndrome",
-      "Gaucher disease"
-    ],
+    "options": ["Tay-Sachs disease", "Niemann-Pick disease", "Hurler syndrome", "Gaucher disease"],
     "answer": 1
   },
   {
@@ -474,12 +404,7 @@
     "subject": "Ophthalmology",
     "topic": "Neuro Ophthalmology",
     "question": "A female presents with loss of vision in the right halves of both eyes. Where is the lesion located in the optic pathway?",
-    "options": [
-      "Left optic tract",
-      "Optic radiation",
-      "Optic chiasma",
-      "Right optic tract"
-    ],
+    "options": ["Left optic tract", "Optic radiation", "Optic chiasma", "Right optic tract"],
     "answer": 1
   },
   {
@@ -503,12 +428,7 @@
     "subject": "Ophthalmology",
     "topic": "Sclera",
     "question": "A 5-year-old boy presents with a small nodule on the sclera as shown in the image below. What is the likely diagnosis?",
-    "options": [
-      "Pterygium",
-      "Pinguecula",
-      "Dermolipoma",
-      "Dermoid"
-    ],
+    "options": ["Pterygium", "Pinguecula", "Dermolipoma", "Dermoid"],
     "answer": 4,
     "image": "23q36.jpeg"
   },
@@ -518,12 +438,7 @@
     "subject": "Ophthalmology",
     "topic": "Cornea",
     "question": "The eye examination of a 20-year-old male shows a golden ring on the iris. What is the next investigation to diagnose the condition?",
-    "options": [
-      "Alpha-1-antitrypsin",
-      "Alpha-fetoprotein",
-      "Serum iron",
-      "Serum ceruloplasmin"
-    ],
+    "options": ["Alpha-1-antitrypsin", "Alpha-fetoprotein", "Serum iron", "Serum ceruloplasmin"],
     "answer": 4
   },
   {
@@ -604,12 +519,7 @@
     "subject": "Surgery",
     "topic": "Plastic Surgery",
     "question": "A patient presents to the clinic with the lesion given in the image. He had a traumatic injury to the chest one year ago. What is the most likely diagnosis?",
-    "options": [
-      "Hemangioma",
-      "Hypertrophic scar",
-      "Keloid",
-      "Neurofibroma"
-    ],
+    "options": ["Hemangioma", "Hypertrophic scar", "Keloid", "Neurofibroma"],
     "answer": 3,
     "image": "23q43.jpeg"
   },
@@ -633,12 +543,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "A patient was brought to the ER following a road traffic accident. On examination, the patient opens his eyes to a painful stimulus, speaks inappropriately, and withdraws his limbs to a painful stimulus. What is his GCS score?",
-    "options": [
-      "E2V2M3",
-      "E3V3M3",
-      "E2V3M4",
-      "E3V2M2"
-    ],
+    "options": ["E2V2M3", "E3V3M3", "E2V3M4", "E3V2M2"],
     "answer": 3
   },
   {
@@ -676,12 +581,7 @@
     "subject": "Dermatology",
     "topic": "Miscellaneous Disorders",
     "question": "A lady developed a skin reaction, as shown in the image, after using a hair dye. Which of the following chemicals is responsible for this condition?",
-    "options": [
-      "Pollen",
-      "Chromates",
-      "Balsam of Peru",
-      "p-Phenylenediamine"
-    ],
+    "options": ["Pollen", "Chromates", "Balsam of Peru", "p-Phenylenediamine"],
     "answer": 4,
     "image": "23q48.jpeg"
   },
@@ -734,12 +634,7 @@
     "subject": "Dermatology",
     "topic": "Sexually Transmitted Infections",
     "question": "A young woman complains of a painless ulcer in the genital area. It is associated with non-tender inguinal lymphadenopathy. What is the most likely diagnosis?",
-    "options": [
-      "Chancroid",
-      "Syphilis",
-      "Herpes genitalis",
-      "Granuloma inguinale"
-    ],
+    "options": ["Chancroid", "Syphilis", "Herpes genitalis", "Granuloma inguinale"],
     "answer": 2
   },
   {
@@ -748,12 +643,7 @@
     "subject": "Dermatology",
     "topic": "Miscellaneous Disorders",
     "question": "Which of the following is associated with the clinical condition shown in the image?",
-    "options": [
-      "Cataract",
-      "Glaucoma",
-      "Malignant melanoma",
-      "Basal cell carcinoma"
-    ],
+    "options": ["Cataract", "Glaucoma", "Malignant melanoma", "Basal cell carcinoma"],
     "answer": 3,
     "image": "23q53.jpeg"
   },
@@ -763,12 +653,7 @@
     "subject": "Anaesthesia",
     "topic": "Pre-Anaesthetic Evaluation",
     "question": "Which of the following is the drug of choice for preoperative antibiotic prophylaxis in a patient undergoing cardiac surgery?",
-    "options": [
-      "Penicillin G",
-      "Erythromycin",
-      "Azithromycin",
-      "Cefazolin"
-    ],
+    "options": ["Penicillin G", "Erythromycin", "Azithromycin", "Cefazolin"],
     "answer": 4
   },
   {
@@ -792,12 +677,7 @@
     "subject": "Surgery",
     "topic": "Endocrine Surgery",
     "question": "A woman presented with a BIRADS-5 breast lesion. Which of the following is a good prognostic factor for this lesion?",
-    "options": [
-      "BRCA-1 positive",
-      "p53 positive",
-      "ER positive",
-      "High Ki-67"
-    ],
+    "options": ["BRCA-1 positive", "p53 positive", "ER positive", "High Ki-67"],
     "answer": 3
   },
   {
@@ -835,12 +715,7 @@
     "subject": "ENT",
     "topic": "Ear",
     "question": "A female patient with hearing loss is examined and is found to be Rinne negative at 256 Hz and 512 Hz, while Rinne positive at 1024 Hz. What is the expected air conduction and bone conduction gap?",
-    "options": [
-      "30-45 dB",
-      "15-30 dB",
-      "45-60 dB",
-      ">60 dB"
-    ],
+    "options": ["30-45 dB", "15-30 dB", "45-60 dB", ">60 dB"],
     "answer": 1
   },
   {
@@ -849,12 +724,7 @@
     "subject": "Surgery",
     "topic": "Hepatobiliary Pancreatic Surgery",
     "question": "A patient presented with right hypochondriac pain. He had an episode of diarrhea 1 week prior. CT scan of the abdomen reveals a liver abscess of around 25 ccs. What is the next step in management?",
-    "options": [
-      "PAIR",
-      "Surgery",
-      "Medical therapy",
-      "Percutaneous drainage"
-    ],
+    "options": ["PAIR", "Surgery", "Medical therapy", "Percutaneous drainage"],
     "answer": 3
   },
   {
@@ -863,12 +733,7 @@
     "subject": "Orthopaedics",
     "topic": "Pediatric Orthopedics",
     "question": "A child was brought with bony deformities, as shown in the radiograph below. It could be due to the deficiency of which of the following?",
-    "options": [
-      "Vitamin A",
-      "Vitamin D",
-      "Vitamin K",
-      "Vitamin C"
-    ],
+    "options": ["Vitamin A", "Vitamin D", "Vitamin K", "Vitamin C"],
     "answer": 2,
     "image": "23q61.jpeg"
   },
@@ -908,12 +773,7 @@
     "subject": "Pharmacology",
     "topic": "Antimicrobials : Anti Bacterial Drugs",
     "question": "A bronchial asthma patient on inhalational steroids presented with white patchy lesions on the tongue and buccal mucosa. What is the drug that can be used to treat this condition?",
-    "options": [
-      "Clotrimazole",
-      "Griseofulvin",
-      "Terbinafine",
-      "Flucytosine"
-    ],
+    "options": ["Clotrimazole", "Griseofulvin", "Terbinafine", "Flucytosine"],
     "answer": 1
   },
   {
@@ -936,12 +796,7 @@
     "subject": "Pharmacology",
     "topic": "General Pharmacology",
     "question": "A pregnant woman with a history of bronchial asthma is in the third stage of labor. Which drugs should be avoided in managing postpartum hemorrhage in this mother?",
-    "options": [
-      "Carboprost",
-      "Oxytocin",
-      "Dinoprostone",
-      "Methyl ergometrine"
-    ],
+    "options": ["Carboprost", "Oxytocin", "Dinoprostone", "Methyl ergometrine"],
     "answer": 1
   },
   {
@@ -950,12 +805,7 @@
     "subject": "Orthopaedics",
     "topic": "Peripheral Nerve Injuries",
     "question": "In which of the following nerve injuries is the instrument shown below used?",
-    "options": [
-      "Radial nerve",
-      "Median nerve",
-      "Ulnar nerve",
-      "Volkmann's ischemic contracture"
-    ],
+    "options": ["Radial nerve", "Median nerve", "Ulnar nerve", "Volkmann's ischemic contracture"],
     "answer": 1,
     "image": "23q67.jpeg"
   },
@@ -965,12 +815,7 @@
     "subject": "Pharmacology",
     "topic": "CVS Pharmacology",
     "question": "Name the drug that acts on both the marked areas.",
-    "options": [
-      "Sacubitril",
-      "Omapatrilat",
-      "Losartan",
-      "Nesiritide"
-    ],
+    "options": ["Sacubitril", "Omapatrilat", "Losartan", "Nesiritide"],
     "answer": 2,
     "image": "23q68.jpeg"
   },
@@ -1009,12 +854,7 @@
     "subject": "Pharmacology",
     "topic": "CVS Pharmacology",
     "question": "A patient with a previous history of myocardial infarction and ventricular arrhythmia is on treatment for a few months. He developed fatigue, dyspnea, and weight gain. He had also developed pulmonary fibrosis. Which of the following drugs is responsible for the side effects mentioned above?",
-    "options": [
-      "Amiodarone",
-      "Atenolol",
-      "Aspirin",
-      "Spironolactone"
-    ],
+    "options": ["Amiodarone", "Atenolol", "Aspirin", "Spironolactone"],
     "answer": 1
   },
   {
@@ -1023,12 +863,7 @@
     "subject": "Surgery",
     "topic": "Gastrointestinal Surgery",
     "question": "A 5-year-old child was admitted to the hospital for prolapsing rectal mass and painless rectal bleeding. Histopathological examination reveals enlarged and inflamed glands filled with mucin. What is the likely diagnosis?",
-    "options": [
-      "Adenoma",
-      "Choristoma",
-      "Hamartoma",
-      "Carcinoma"
-    ],
+    "options": ["Adenoma", "Choristoma", "Hamartoma", "Carcinoma"],
     "answer": 3
   },
   {
@@ -1065,12 +900,7 @@
     "subject": "Surgery",
     "topic": "Plastic Surgery",
     "question": "Identify the given condition.",
-    "options": [
-      "Venous ulcer",
-      "Malignant ulcer",
-      "Arterial ulcer",
-      "Trophic ulcer"
-    ],
+    "options": ["Venous ulcer", "Malignant ulcer", "Arterial ulcer", "Trophic ulcer"],
     "answer": 4,
     "image": "23q75.jpeg"
   },
@@ -1080,12 +910,7 @@
     "subject": "Pharmacology",
     "topic": "Autacoids",
     "question": "A patient with recurrent gout attacks was started on a therapy that inhibits uric acid synthesis. His symptoms were reduced after therapy. Which drug was he started on?",
-    "options": [
-      "Probenecid",
-      "Colchicine",
-      "Diclofenac",
-      "Allopurinol"
-    ],
+    "options": ["Probenecid", "Colchicine", "Diclofenac", "Allopurinol"],
     "answer": 4
   },
   {
@@ -1094,12 +919,7 @@
     "subject": "Pharmacology",
     "topic": "Drugs Affecting Blood and Blood formation",
     "question": "A patient with a malignancy is undergoing chemotherapy. The platelet counts were reduced after the previous cycle of chemotherapy. Which of the following drugs can be used to treat this patient?",
-    "options": [
-      "Oprelvekin (IL-11)",
-      "Filgrastim",
-      "Erythropoietin",
-      "Amifostine"
-    ],
+    "options": ["Oprelvekin (IL-11)", "Filgrastim", "Erythropoietin", "Amifostine"],
     "answer": 1
   },
   {
@@ -1151,12 +971,7 @@
     "subject": "Psychiatry",
     "topic": "Schizophrenia Spectrum and Other Psychotic  Disorders",
     "question": "A schizophrenic patient was prescribed drug A after he did not respond to haloperidol and thioridazine. He now presents with excessive salivation, an increase in blood glucose, and hyperlipidemia. What is drug A?",
-    "options": [
-      "Ziprasidone",
-      "Risperidone",
-      "Clozapine",
-      "Aripiprazole"
-    ],
+    "options": ["Ziprasidone", "Risperidone", "Clozapine", "Aripiprazole"],
     "answer": 3
   },
   {
@@ -1165,12 +980,7 @@
     "subject": "Orthopaedics",
     "topic": "Orthopedics Oncology",
     "question": "The given image is an x-ray of a 22-year-old female. What is the probable diagnosis?",
-    "options": [
-      "Chondroblastoma",
-      "Osteochondroma",
-      "Giant cell tumor",
-      "Aneurysmal bone cyst"
-    ],
+    "options": ["Chondroblastoma", "Osteochondroma", "Giant cell tumor", "Aneurysmal bone cyst"],
     "answer": 3,
     "image": "23q82.jpeg"
   },
@@ -1195,12 +1005,7 @@
     "subject": "Surgery",
     "topic": "Cardiothoracic Vascular Surgery",
     "question": "A patient with varicose veins complains of eczema over the same region. What is the stage of the clinical classification according to the CEAP guidelines? CEAP-Clinical-Aetiology-Anatomy- Pathophysiology classification of chronic venous disorders",
-    "options": [
-      "C2",
-      "C3",
-      "C4a",
-      "C4b"
-    ],
+    "options": ["C2", "C3", "C4a", "C4b"],
     "answer": 3
   },
   {
@@ -1209,12 +1014,7 @@
     "subject": "Surgery",
     "topic": "Neurosurgery",
     "question": "A patient comes to the casualty with a severe headache. His BP was found to be 160/100 mmHg. CT scan revealed a subarachnoid hemorrhage. What is the next best step in the management of this patient?",
-    "options": [
-      "Nimodipine",
-      "Angiography",
-      "Surgery",
-      "Fibrinolytic therapy"
-    ],
+    "options": ["Nimodipine", "Angiography", "Surgery", "Fibrinolytic therapy"],
     "answer": 2
   },
   {
@@ -1223,12 +1023,7 @@
     "subject": "Physiology",
     "topic": "General Physiology",
     "question": "A man was brought to the emergency after suddenly becoming unconscious while working in the field. On examination, his temperature was 105 degrees Fahrenheit, and his skin turgor was decreased. Which of the following would not be seen in the patient?",
-    "options": [
-      "Tachypnea",
-      "Hypotension",
-      "Sweating",
-      "Red hot skin"
-    ],
+    "options": ["Tachypnea", "Hypotension", "Sweating", "Red hot skin"],
     "answer": 3
   },
   {
@@ -1266,12 +1061,7 @@
     "subject": "Surgery",
     "topic": "Endocrine Surgery",
     "question": "A 23-year-old male patient presents with midline swelling in the neck. The swelling moves with deglutition and protrusion of the tongue. What is the likely diagnosis?",
-    "options": [
-      "Brachial cyst",
-      "Thyroglossal cyst",
-      "Plunging ranula",
-      "Dermoid cyst"
-    ],
+    "options": ["Brachial cyst", "Thyroglossal cyst", "Plunging ranula", "Dermoid cyst"],
     "answer": 2
   },
   {
@@ -1353,12 +1143,7 @@
     "subject": "Psychiatry",
     "topic": "Neurotic, Stress-Related and Somatoform Disorders",
     "question": "A 25-year-old female reported symptoms of anxiety, palpitations, sweating, breathlessness, chest pain, and a feeling of impending doom. She recalls having experienced 5-6 similar episodes in the past 6 months, each episode lasting for about 20-30 minutes. What is the likely diagnosis?",
-    "options": [
-      "Depression",
-      "Panic disorder",
-      "Generalized anxiety disorder",
-      "Phobia"
-    ],
+    "options": ["Depression", "Panic disorder", "Generalized anxiety disorder", "Phobia"],
     "answer": 2
   },
   {
@@ -1382,12 +1167,7 @@
     "subject": "Medicine",
     "topic": "Nephrology / Kidney Disease",
     "question": "A patient with hyperkalemia and elevated urea levels underwent dialysis. Towards the end of the session, she became drowsy and had a sudden seizure episode. On examination, the patient was hypotensive. What is the treatment for this condition?",
-    "options": [
-      "Bumetanide",
-      "Ethacrynic acid",
-      "Nesiritide",
-      "IV Mannitol"
-    ],
+    "options": ["Bumetanide", "Ethacrynic acid", "Nesiritide", "IV Mannitol"],
     "answer": 4
   },
   {
@@ -1396,12 +1176,7 @@
     "subject": "Medicine",
     "topic": "Endocrinology",
     "question": "A female patient presents to the emergency department with severe restlessness, palpitations, and tremors. She is a known case of bronchial asthma. On examination, the neck looks swollen. Blood pressure is elevated, and tachycardia is noted. ECG shows atrial fibrillation. Which of the following drugs is used for immediate management in this patient?",
-    "options": [
-      "Diltiazem",
-      "Propranolol",
-      "Esmolol",
-      "Propylthiouracil"
-    ],
+    "options": ["Diltiazem", "Propranolol", "Esmolol", "Propylthiouracil"],
     "answer": 1
   },
   {
@@ -1510,12 +1285,7 @@
     "subject": "Medicine",
     "topic": "Neurology",
     "question": "A patient is brought to the OPD by his wife, complaining about difficulty expressing emotions and not participating in daily activities. On examination, resting tremors and rigidity are noted. Given the possible diagnosis, which part of the brain is affected in this patient?",
-    "options": [
-      "Basal ganglia",
-      "Hippocampus",
-      "Cerebellum",
-      "Premotor cortex"
-    ],
+    "options": ["Basal ganglia", "Hippocampus", "Cerebellum", "Premotor cortex"],
     "answer": 1
   },
   {
@@ -1651,12 +1421,7 @@
     "subject": "PSM",
     "topic": "Nutrition and Health",
     "question": "In a village, it is observed that several farmers have crossed gait and use a stick for support to stand up and walk. Due to poor yield from farms, they consume meals containing rice and pulses only. Supplementing their diet with which of the following vitamins could have prevented this?",
-    "options": [
-      "Vitamin A",
-      "Vitamin D",
-      "Vitamin C",
-      "Vitamin B"
-    ],
+    "options": ["Vitamin A", "Vitamin D", "Vitamin C", "Vitamin B"],
     "answer": 3
   },
   {
@@ -1693,12 +1458,7 @@
     "subject": "Pediatrics",
     "topic": "Infectious Diseases",
     "question": "A child presents with fever and a rash spreading from the face, behind cheeks, and buccal mucosa to other body parts. On examination, Koplik's spot is present. What is the likely diagnosis?",
-    "options": [
-      "Measles",
-      "Rubella",
-      "Varicella",
-      "Mumps"
-    ],
+    "options": ["Measles", "Rubella", "Varicella", "Mumps"],
     "answer": 1
   },
   {
@@ -1721,12 +1481,7 @@
     "subject": "Pediatrics",
     "topic": "Infectious Diseases",
     "question": "A 3-week-old infant presents with a cough and sore throat. The mother reports that the infant develops a paroxysm of cough followed by apnea. The total leucocyte count is >50,000 cells/μL. Which of the following drugs will you prescribe for this patient?",
-    "options": [
-      "Azithromycin",
-      "Amoxicillin",
-      "Cotrimoxazole",
-      "Clarithromycin"
-    ],
+    "options": ["Azithromycin", "Amoxicillin", "Cotrimoxazole", "Clarithromycin"],
     "answer": 1
   },
   {
@@ -1735,12 +1490,7 @@
     "subject": "PSM",
     "topic": "Health Care of The Community in India",
     "question": "A 30-week primigravida complaints of reduced vision at night. She has been avoiding papaya, mango, and other fruits throughout her pregnancy as she thinks they could be abortifacients. It is the primary duty of which of the following workers to provide counseling and information to the patient?",
-    "options": [
-      "ANM",
-      "AWW",
-      "Trained birth attendant",
-      "ASHA"
-    ],
+    "options": ["ANM", "AWW", "Trained birth attendant", "ASHA"],
     "answer": 4
   },
   {
@@ -1764,12 +1514,7 @@
     "subject": "PSM",
     "topic": "Communicable and Non-communicable Diseases",
     "question": "A 22-year-old female comes to the STI clinic with minimal vaginal discharge. On speculum examination, erosions are seen on the cervix. Which of the following kit should be given to this patient?",
-    "options": [
-      "Green",
-      "Red",
-      "Grey",
-      "Yellow"
-    ],
+    "options": ["Green", "Red", "Grey", "Yellow"],
     "answer": 3
   },
   {
@@ -1807,12 +1552,7 @@
     "subject": "PSM",
     "topic": "Vaccines and Cold Chain",
     "question": "In a 10-year-old school child, which of the following vaccines is given as a part of the school immunization program?",
-    "options": [
-      "Measles vaccine",
-      "Rotavirus vaccine",
-      "TT/Td vaccine",
-      "Hepatitis B vaccine"
-    ],
+    "options": ["Measles vaccine", "Rotavirus vaccine", "TT/Td vaccine", "Hepatitis B vaccine"],
     "answer": 3
   },
   {
@@ -1849,12 +1589,7 @@
     "subject": "PSM",
     "topic": "Nutrition and Health",
     "question": "A poor farmer with a history of successive crop failure develops progressive spastic paraparesis, signs of upper motor neuron paralysis, and gait instability. Name the toxin responsible for this condition.",
-    "options": [
-      "Aflatoxin",
-      "Beta-oxalyl-amino-alanine",
-      "Ergot alkaloids",
-      "Fusarium toxin"
-    ],
+    "options": ["Aflatoxin", "Beta-oxalyl-amino-alanine", "Ergot alkaloids", "Fusarium toxin"],
     "answer": 2
   },
   {
@@ -1905,12 +1640,7 @@
     "subject": "Medicine",
     "topic": "Neurology",
     "question": "A patient who is a known case of hypertension on multiple anti-hypertensive medications came to OPD. His ECG finding is given below. Which of the following drugs is responsible for the ECG finding?",
-    "options": [
-      "Prazosin",
-      "Metoprolol",
-      "Hydrochlorothiazide",
-      "Spironolactone"
-    ],
+    "options": ["Prazosin", "Metoprolol", "Hydrochlorothiazide", "Spironolactone"],
     "answer": 4,
     "image": "23q134.jpeg"
   },
@@ -1963,12 +1693,7 @@
     "subject": "Medicine",
     "topic": "Rheumatology / Connective Tissue Disorder",
     "question": "A chronic alcoholic patient presents with acute pain and swelling of the left great toe. There is no history of trauma. Synovial fluid analysis shows raised leukocytes. Lab investigations show normal serum uric acid levels. What is the most likely diagnosis?",
-    "options": [
-      "Pseudogout",
-      "Acute gout",
-      "Reactive arthritis",
-      "Septic arthritis"
-    ],
+    "options": ["Pseudogout", "Acute gout", "Reactive arthritis", "Septic arthritis"],
     "answer": 2
   },
   {
@@ -1991,12 +1716,7 @@
     "subject": "Pharmacology",
     "topic": "General Pharmacology",
     "question": "A patient given digoxin started having side effects like nausea and vomiting. The serum concentration of digoxin was 4 mg/dL. The plasma therapeutic range is 1 mg/dL. If the half-life of digoxin is 40 hours, how long should one wait before resuming the treatment?",
-    "options": [
-      "40 hours",
-      "80 hours",
-      "120 hours",
-      "140-180 hours"
-    ],
+    "options": ["40 hours", "80 hours", "120 hours", "140-180 hours"],
     "answer": 2
   },
   {
@@ -2062,12 +1782,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "For which of the following procedures in the given OT list, can you preferably do a hysteroscopy?",
-    "options": [
-      "Tubal ligation",
-      "Asherman syndrome",
-      "Endocervical polyp",
-      "Subserosal fibroid"
-    ],
+    "options": ["Tubal ligation", "Asherman syndrome", "Endocervical polyp", "Subserosal fibroid"],
     "answer": 2
   },
   {
@@ -2076,12 +1791,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Obstetrics",
     "question": "A primigravida presents to you with anemia early in her pregnancy. She is 7 weeks pregnant as seen on ultrasound. Her hemoglobin level is 9 g/dL. When should the iron supplements be started for her?",
-    "options": [
-      "10 to 12 weeks",
-      "8 to 10 weeks",
-      "After 14 weeks",
-      "After 20 weeks"
-    ],
+    "options": ["10 to 12 weeks", "8 to 10 weeks", "After 14 weeks", "After 20 weeks"],
     "answer": 2
   },
   {
@@ -2119,12 +1829,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "A 50-year-old woman presents with foul-smelling bloody discharge per vagina mixed with mucous. On examination, a necrotizing growth is seen in the cervix with lateral parametrium involvement. What is the management for this patient?",
-    "options": [
-      "Chemotherapy",
-      "Brachytherapy",
-      "Chemoradiation",
-      "Surgery"
-    ],
+    "options": ["Chemotherapy", "Brachytherapy", "Chemoradiation", "Surgery"],
     "answer": 3
   },
   {
@@ -2133,12 +1838,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "A 28-year-old woman with a history of multiple sexual partners presents with lower abdominal pain for 1 month. She experiences minimal discharge and complaints of intermenstrual bleeding. What is the most likely cause?",
-    "options": [
-      "Herpes simplex",
-      "Genital tuberculosis",
-      "Candida",
-      "Neisseria gonorrhoea"
-    ],
+    "options": ["Herpes simplex", "Genital tuberculosis", "Candida", "Neisseria gonorrhoea"],
     "answer": 2
   },
   {
@@ -2204,12 +1904,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "During a hysteroscopic removal of a submucosal fibroid, a fluid deficit of 2000 mL is estimated in a patient. What is the immediate complication of this?",
-    "options": [
-      "Acute tubular necrosis",
-      "DIC",
-      "Pulmonary edema",
-      "Thromboembolism"
-    ],
+    "options": ["Acute tubular necrosis", "DIC", "Pulmonary edema", "Thromboembolism"],
     "answer": 3
   },
   {
@@ -2289,12 +1984,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Obstetrics",
     "question": "A pregnant woman comes to the clinic. She already has twins by normal delivery. Which of the following is the correct representation of her obstetric score?",
-    "options": [
-      "G3P2",
-      "G3P1",
-      "G2P1",
-      "G2P2"
-    ],
+    "options": ["G3P2", "G3P1", "G2P1", "G2P2"],
     "answer": 3
   },
   {
@@ -2303,12 +1993,7 @@
     "subject": "Surgery",
     "topic": "Gastrointestinal Surgery",
     "question": "A patient presents with sudden onset of hematemesis. He has been taking aspirin for his arthritis and drinks alcohol occasionally. He gives a history of occasional abdominal pain. On examination, there is no abdominal mass or tenderness. What is the likely diagnosis?",
-    "options": [
-      "Mallory-Weiss tear",
-      "Esophagitis",
-      "Peptic ulcer",
-      "Esophageal varices"
-    ],
+    "options": ["Mallory-Weiss tear", "Esophagitis", "Peptic ulcer", "Esophageal varices"],
     "answer": 3
   },
   {
@@ -2331,12 +2016,7 @@
     "subject": "Surgery",
     "topic": "Oncology",
     "question": "A 40-year-old male patient presents with a swelling that has been slowly growing in the past 2 years. On examination, it was variable in consistency and fully mobile. What is the most likely diagnosis?",
-    "options": [
-      "Dermoid cyst",
-      "Parotid tumor",
-      "Sebaceous cyst",
-      "Cervical lymph node"
-    ],
+    "options": ["Dermoid cyst", "Parotid tumor", "Sebaceous cyst", "Cervical lymph node"],
     "answer": 2,
     "image": "23q164.jpeg"
   },
@@ -2389,12 +2069,7 @@
     "subject": "Anatomy",
     "topic": "Lower Limb",
     "question": "Injury at which of the following marked sites causes failure of dorsiflexion?",
-    "options": [
-      "3",
-      "2",
-      "1",
-      "4"
-    ],
+    "options": ["3", "2", "1", "4"],
     "answer": 1,
     "image": "23q168.jpeg"
   },
@@ -2433,12 +2108,7 @@
     "subject": "Forensic Medicine",
     "topic": "Forensic Thanatology",
     "question": "The method of autopsy carried out en masse to remove from tongue to prostate is.",
-    "options": [
-      "Virchow technique",
-      "Rokitansky technique",
-      "Ghon technique",
-      "Letulle technique"
-    ],
+    "options": ["Virchow technique", "Rokitansky technique", "Ghon technique", "Letulle technique"],
     "answer": 4
   },
   {
@@ -2447,12 +2117,7 @@
     "subject": "Forensic Medicine",
     "topic": "Forensic Thanatology",
     "question": "A 42-year-old HIV-positive patient died, and his body was brought for post-mortem. The method of autopsy to be done is___",
-    "options": [
-      "Ghon technique",
-      "Letulle technique",
-      "Virchow technique",
-      "Rokitansky technique"
-    ],
+    "options": ["Ghon technique", "Letulle technique", "Virchow technique", "Rokitansky technique"],
     "answer": 4
   },
   {
@@ -2489,12 +2154,7 @@
     "subject": "Forensic Medicine",
     "topic": "Sexual Jurisprudence",
     "question": "A 10-year-old male child came to the casualty with difficulty in walking and pain in the perianal region. On subjecting the specimen from the perianal region to a test, it produces yellow needle-shaped rhombic crystals with picric acid. What is the test done?",
-    "options": [
-      "Barberio test",
-      "Florence test",
-      "Teichmann test",
-      "Acid phosphatase test"
-    ],
+    "options": ["Barberio test", "Florence test", "Teichmann test", "Acid phosphatase test"],
     "answer": 1
   },
   {
@@ -2503,12 +2163,7 @@
     "subject": "Ophthalmology",
     "topic": "Optics",
     "question": "Which of the following refractive errors is associated with the image given below?",
-    "options": [
-      "Presbyopia",
-      "Astigmatism",
-      "Hypermetropia",
-      "Myopia"
-    ],
+    "options": ["Presbyopia", "Astigmatism", "Hypermetropia", "Myopia"],
     "answer": 2,
     "image": "23q176.jpeg"
   },
@@ -2532,12 +2187,7 @@
     "subject": "Forensic Medicine",
     "topic": "Forensic Toxicology",
     "question": "A patient was brought to casualty with seizures. He had multiple episodes and was taking herbal medicines for the same. He was conscious in between the episodes. During the episodes, he had arching of his back. What is the likely cause?",
-    "options": [
-      "Strychnine",
-      "Ricinus",
-      "Nerium odorum",
-      "Datura"
-    ],
+    "options": ["Strychnine", "Ricinus", "Nerium odorum", "Datura"],
     "answer": 1
   },
   {
@@ -2561,12 +2211,7 @@
     "subject": "Ophthalmology",
     "topic": "Optics",
     "question": "A 60-year-old patient complains of decreased distant vision but now he does not use spectacles for near vision. The image of his ocular examination is given below. What is this type of refractive error called?",
-    "options": [
-      "Index myopia",
-      "Axial myopia",
-      "Curvatural myopia",
-      "Positional myopia"
-    ],
+    "options": ["Index myopia", "Axial myopia", "Curvatural myopia", "Positional myopia"],
     "answer": 1,
     "image": "23q180.jpeg"
   },
@@ -2705,12 +2350,7 @@
     "subject": "Forensic Medicine",
     "topic": "Forensic Toxicology",
     "question": "A farmer was sleeping in the field, and he felt a sting on his leg. He saw something moving away quickly. He then got drowsy and was taken to the hospital. He developed pain around the site and continued to bleed profusely from the wound site. The wound became red with blisters. Which of the following is the most likely cause?",
-    "options": [
-      "Viper",
-      "Cobra",
-      "Wasp bite",
-      "Scorpion"
-    ],
+    "options": ["Viper", "Cobra", "Wasp bite", "Scorpion"],
     "answer": 1
   },
   {
@@ -2805,12 +2445,7 @@
     "subject": "Pathology",
     "topic": "Platelets and Blood Transfusion",
     "question": "A 25-year-old male presented with low hemoglobin, platelet count of 25,000/mL, gum bleeding, and raised PT & aPTT. The image of his peripheral smear is given below. What is the likely diagnosis?",
-    "options": [
-      "AML with t(8;21)",
-      "AML with inv(16)",
-      "AML with t(15;17)",
-      "AML with t(11;22)"
-    ],
+    "options": ["AML with t(8;21)", "AML with inv(16)", "AML with t(15;17)", "AML with t(11;22)"],
     "answer": 3,
     "image": "23q197.jpeg"
   },
@@ -2834,12 +2469,7 @@
     "subject": "Pathology",
     "topic": "Respiratory System",
     "question": "A chronic smoker who worked in a cement factory for 20 years developed mesothelioma. The association is likely to be due to ________.",
-    "options": [
-      "Silicosis",
-      "Asbestosis",
-      "Coal workers' pneumoconiosis",
-      "Bagassosis"
-    ],
+    "options": ["Silicosis", "Asbestosis", "Coal workers' pneumoconiosis", "Bagassosis"],
     "answer": 2
   },
   {
@@ -2855,8 +2485,7 @@
       "Recommended dietary allowance"
     ],
     "answer": 4
-  }
-,
+  },
   {
     "id": "22q1",
     "year": 2022,
@@ -2892,12 +2521,7 @@
     "subject": "Anatomy",
     "topic": "Histology",
     "question": "Identify the given structure?",
-    "options": [
-      "Lymph node",
-      "Glomerulus",
-      "Spleen",
-      "Pancreatic islet cells"
-    ],
+    "options": ["Lymph node", "Glomerulus", "Spleen", "Pancreatic islet cells"],
     "answer": 4,
     "image": "22q3.jpeg"
   },
@@ -2907,12 +2531,7 @@
     "subject": "Anaesthesia",
     "topic": "Oxygen Therapy and Airway",
     "question": "Identify the mask in the image used for patients with COVID-19 injection.",
-    "options": [
-      "Venturi mask",
-      "Hudson mask",
-      "Nebuliser",
-      "Non-rebreathing mask"
-    ],
+    "options": ["Venturi mask", "Hudson mask", "Nebuliser", "Non-rebreathing mask"],
     "answer": 4,
     "image": "22q4.jpeg"
   },
@@ -2936,12 +2555,7 @@
     "subject": "Dermatology",
     "topic": "Sexually Transmitted Infections",
     "question": "A patient presents to you with multiple anogenital warts. The biopsy of these lesions showed squamous atypia. Which of the following human papillomavirus types are considered high-risk?",
-    "options": [
-      "HPV 2",
-      "HPV 18",
-      "HPV 6",
-      "HPV 11"
-    ],
+    "options": ["HPV 2", "HPV 18", "HPV 6", "HPV 11"],
     "answer": 2,
     "image": "22q6.jpeg"
   },
@@ -2966,12 +2580,7 @@
     "subject": "ENT",
     "topic": "Ear",
     "question": "Identify the structure given in the image.",
-    "options": [
-      "Malleus",
-      "Incus",
-      "Stapes",
-      "Vomer"
-    ],
+    "options": ["Malleus", "Incus", "Stapes", "Vomer"],
     "answer": 2,
     "image": "22q8.jpeg"
   },
@@ -2995,12 +2604,7 @@
     "subject": "Forensic Medicine",
     "topic": "Toxicology - General",
     "question": "A patient came with complaints of hair loss. His wife mentions that she has noticed some behavioral changes. The doctor notices a loss of eyebrows on the lateral side. He then concludes by examining the nails. What is the type of poisoning in this case?",
-    "options": [
-      "Thallium",
-      "Arsenic",
-      "Mercury",
-      "Lead"
-    ],
+    "options": ["Thallium", "Arsenic", "Mercury", "Lead"],
     "answer": 1
   },
   {
@@ -3024,12 +2628,7 @@
     "subject": "Medicine",
     "topic": "Neurology",
     "question": "A female patient presents to you with a unilateral headache. It is associated with nausea, photophobia, and phonophobia. What is the drug of choice for acute management?",
-    "options": [
-      "Flunarizine",
-      "Sumatriptan",
-      "Propranolol",
-      "Topiramate"
-    ],
+    "options": ["Flunarizine", "Sumatriptan", "Propranolol", "Topiramate"],
     "answer": 2
   },
   {
@@ -3038,12 +2637,7 @@
     "subject": "Medicine",
     "topic": "Rheumatology / Connective Tissue Disorder",
     "question": "A patient presents to you with fever, night sweats, ptosis, and bilateral facial nerve palsy. Investigations showed leukocytosis and bilateral hilar lymphadenopathy. Which of the following is the most likely diagnosis?",
-    "options": [
-      "Sarcoidosis",
-      "Tuberculosis",
-      "Lymphoma",
-      "Hypersensitive pneumonitis"
-    ],
+    "options": ["Sarcoidosis", "Tuberculosis", "Lymphoma", "Hypersensitive pneumonitis"],
     "answer": 1
   },
   {
@@ -3066,12 +2660,7 @@
     "subject": "Medicine",
     "topic": "Liver",
     "question": "A patient presents to the emergency department with a history of ingestion of ten tablets of paracetamol. He has developed oliguria and liver function tests show deranged values. Which of the following can be used in the management of this condition?",
-    "options": [
-      "N-acetylcysteine",
-      "Dopamine",
-      "Ursodeoxycholic acid",
-      "Furosemide"
-    ],
+    "options": ["N-acetylcysteine", "Dopamine", "Ursodeoxycholic acid", "Furosemide"],
     "answer": 1
   },
   {
@@ -3137,12 +2726,7 @@
     "subject": "Medicine",
     "topic": "Endocrinology",
     "question": "Which of the following is not seen in MEN 2B syndrome?",
-    "options": [
-      "Megacolon",
-      "Parathyroid adenoma",
-      "Mucosal neuroma",
-      "Marfanoid habitus"
-    ],
+    "options": ["Megacolon", "Parathyroid adenoma", "Mucosal neuroma", "Marfanoid habitus"],
     "answer": 2
   },
   {
@@ -3166,12 +2750,7 @@
     "subject": "Microbiology",
     "topic": "Parasitology",
     "question": "Microfilariae with sheathed tail and two nuclei at the tail is suggestive of?",
-    "options": [
-      "Wuchereria bancrofti",
-      "Brugia malayi",
-      "Loa loa",
-      "Onchocerca volvulus"
-    ],
+    "options": ["Wuchereria bancrofti", "Brugia malayi", "Loa loa", "Onchocerca volvulus"],
     "answer": 2
   },
   {
@@ -3222,12 +2801,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "Identify the type of hymen shown in the image.",
-    "options": [
-      "Imperforate hymen",
-      "Semilunar hymen",
-      "Septate hymen",
-      "Annular hymen"
-    ],
+    "options": ["Imperforate hymen", "Semilunar hymen", "Septate hymen", "Annular hymen"],
     "answer": 3,
     "image": "22q26.jpeg"
   },
@@ -3266,12 +2840,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Gynecology",
     "question": "A 20 year old woman is evaluated for primary infertility. Hysterosalpingography was done and reveals the finding shown below. What is the anomaly seen in the image?",
-    "options": [
-      "Septate uterus",
-      "Uterine didelphys",
-      "Bicornuate uterus",
-      "Unicornuate uterus"
-    ],
+    "options": ["Septate uterus", "Uterine didelphys", "Bicornuate uterus", "Unicornuate uterus"],
     "answer": 1,
     "image": "22q29.jpeg"
   },
@@ -3366,12 +2935,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Obstetrics",
     "question": "Identify the blue – colored area shown in the image below",
-    "options": [
-      "Obstetric outlet",
-      "Anatomical outlet",
-      "Pelvic inlet",
-      "Midpelvis"
-    ],
+    "options": ["Obstetric outlet", "Anatomical outlet", "Pelvic inlet", "Midpelvis"],
     "answer": 4,
     "image": "22q36.jpeg"
   },
@@ -3451,12 +3015,7 @@
     "subject": "Gynaecology & Obstetrics",
     "topic": "Obstetrics",
     "question": "A primigravida at 22 weeks of gestation presents to you with profuse vaginal bleeding. Her blood pressure and glucose levels are within normal limits. Placental implantation at which of the following sites can cause this?",
-    "options": [
-      "Internal OS",
-      "Fallopian tube",
-      "Ovarian",
-      "Abdominal"
-    ],
+    "options": ["Internal OS", "Fallopian tube", "Ovarian", "Abdominal"],
     "answer": 1
   },
   {
@@ -3579,12 +3138,7 @@
     "subject": "Ophthalmology",
     "topic": "Sclera",
     "question": "A 35-year-old woman is diagnosed with rheumatoid arthritis. What associated complications are shown in the image?",
-    "options": [
-      "Scleromalacia perforans",
-      "Ciliary staphyloma",
-      "Coloboma",
-      "Malignant melanoma"
-    ],
+    "options": ["Scleromalacia perforans", "Ciliary staphyloma", "Coloboma", "Malignant melanoma"],
     "answer": 1,
     "image": "22q51.jpeg"
   },
@@ -3594,12 +3148,7 @@
     "subject": "Ophthalmology",
     "topic": "Cornea",
     "question": "What is the indication of this procedure?",
-    "options": [
-      "Keratoconus",
-      "Vogt’s limbal girdle",
-      "Keratoglobus",
-      "Corneal dystrophy"
-    ],
+    "options": ["Keratoconus", "Vogt’s limbal girdle", "Keratoglobus", "Corneal dystrophy"],
     "answer": 1,
     "image": "22q52.jpeg"
   },
@@ -3609,12 +3158,7 @@
     "subject": "Ophthalmology",
     "topic": "Retina",
     "question": "A 3-year-old boy presents with mental retardation and an inability to walk. The fundoscopy image is given below. What is the most likely diagnosis?",
-    "options": [
-      "Tay-Sachs disease",
-      "Hunter disease",
-      "Hurler syndrome",
-      "Gaucher disease"
-    ],
+    "options": ["Tay-Sachs disease", "Hunter disease", "Hurler syndrome", "Gaucher disease"],
     "answer": 1,
     "image": "22q53.jpeg"
   },
@@ -3654,12 +3198,7 @@
     "subject": "Orthopaedics",
     "topic": "Spine + Pelvis + Lower Limb Traumatology",
     "question": "A male patient presented with a bone fracture following a road traffic accident. After 2 days he developed dyspnea, petechiae involving the whole body, and a fall in oxygen saturation. What is the likely diagnosis?",
-    "options": [
-      "Fat embolism",
-      "Air embolism",
-      "Venous thromboembolism",
-      "Pulmonary hypertension"
-    ],
+    "options": ["Fat embolism", "Air embolism", "Venous thromboembolism", "Pulmonary hypertension"],
     "answer": 1
   },
   {
@@ -3668,12 +3207,7 @@
     "subject": "Orthopaedics",
     "topic": "Metabolic Disorders",
     "question": "An intrauterine scan at the 13th week of pregnancy showed a fetus with multiple long bone fractures. What is commonly associated with this finding ?",
-    "options": [
-      "Achondroplasia",
-      "Osteogenesis imperfecta",
-      "Cretinism",
-      "Marfan syndrome"
-    ],
+    "options": ["Achondroplasia", "Osteogenesis imperfecta", "Cretinism", "Marfan syndrome"],
     "answer": 2
   },
   {
@@ -3697,17 +3231,9 @@
     "subject": "Orthopaedics",
     "topic": "Bone and Joint Infections",
     "question": "A child with a history of recurrent respiratory infections presented with complaints of pain around the knee and a high fever. X – ray shows lytic and sclerotic bone. His peripheral blood smear is shown in the image below. Aspirate from the joint will most likely show:",
-    "options": [
-      "Staphylococcus aureus",
-      "Escherichia",
-      "Salmonella",
-      "Streptococcus"
-    ],
+    "options": ["Staphylococcus aureus", "Escherichia", "Salmonella", "Streptococcus"],
     "answer": 3,
-    "image": [
-      "22q59_1.jpeg",
-      "22q59_2.jpeg"
-    ]
+    "image": ["22q59_1.jpeg", "22q59_2.jpeg"]
   },
   {
     "id": "22q60",
@@ -3715,12 +3241,7 @@
     "subject": "Orthopaedics",
     "topic": "General + Upper Limb Traumatology",
     "question": "A boy falls on the left shoulder joint and presents to the emergency department with shoulder pain. His left elbow is flexed and is supported by the right hand. Which bone might be most likely fractured?",
-    "options": [
-      "1",
-      "2",
-      "3",
-      "4"
-    ],
+    "options": ["1", "2", "3", "4"],
     "answer": 1,
     "image": "22q60.jpeg"
   },
@@ -3774,12 +3295,7 @@
     "subject": "Anatomy",
     "topic": "Head and Neck",
     "question": "A patient presents with a unilateral throbbing headache, photophobia, and excessive lacrimation. He also complains of hemifacial pain on the clenching of teeth. On examination, pupillary reaction, light reflex, and accommodation reflex are normal. Which of the following marked nerves is involved in the above scenario?",
-    "options": [
-      "1",
-      "2",
-      "3",
-      "4"
-    ],
+    "options": ["1", "2", "3", "4"],
     "answer": 3,
     "image": "22q64.jpeg"
   },
@@ -3789,12 +3305,7 @@
     "subject": "Anaesthesia",
     "topic": "Neuromuscular Blockade",
     "question": "The image given below shows neuromuscular monitoring of the patient after anesthesia. What is the most commonly used nerve for monitoring?",
-    "options": [
-      "Ulnar nerve",
-      "Median nerve",
-      "Radial nerve",
-      "Metacarpal nerve"
-    ],
+    "options": ["Ulnar nerve", "Median nerve", "Radial nerve", "Metacarpal nerve"],
     "answer": 1,
     "image": "22q65.jpeg"
   },
@@ -3832,12 +3343,7 @@
     "subject": "Biochemistry",
     "topic": "Genetics",
     "question": "A single mutation in a nucleotide base pair resulting in a termination codon is known as ________?",
-    "options": [
-      "Missense mutation",
-      "Nonsense mutation",
-      "Stop mutation",
-      "Silent mutation"
-    ],
+    "options": ["Missense mutation", "Nonsense mutation", "Stop mutation", "Silent mutation"],
     "answer": 2
   },
   {
@@ -3846,12 +3352,7 @@
     "subject": "Biochemistry",
     "topic": "Introduction",
     "question": "DNA packing is done by which of the following?",
-    "options": [
-      "Histone",
-      "Glycoprotein",
-      "Nucleic acid",
-      "Adenine"
-    ],
+    "options": ["Histone", "Glycoprotein", "Nucleic acid", "Adenine"],
     "answer": 1
   },
   {
@@ -3874,12 +3375,7 @@
     "subject": "Biochemistry",
     "topic": "Vitamins",
     "question": "Which of the following enzyme activities can be estimated in red blood cells to diagnose vitamin B2 deficiency?",
-    "options": [
-      "Transketolase",
-      "Glutathione reductase",
-      "Kynureninase",
-      "Pyruvate dehydrogenase"
-    ],
+    "options": ["Transketolase", "Glutathione reductase", "Kynureninase", "Pyruvate dehydrogenase"],
     "answer": 2
   },
   {
@@ -3888,12 +3384,7 @@
     "subject": "Biochemistry",
     "topic": "Vitamins",
     "question": "The following is due to the deficiency of?",
-    "options": [
-      "Vitamin C",
-      "Vitamin A",
-      "Vitamin B",
-      "Vitamin E"
-    ],
+    "options": ["Vitamin C", "Vitamin A", "Vitamin B", "Vitamin E"],
     "answer": 2,
     "image": "22q72.jpeg"
   },
@@ -3903,12 +3394,7 @@
     "subject": "Biochemistry",
     "topic": "Carbohydrate Metabolism",
     "question": "A child presents to you with anemia, thrombocytopenia, and bony pain. On examination, hepatosplenomegaly was noticed. If light microscopy of bone marrow aspirate reveals “crumpled tissue paper” appearance, what is the enzyme defect?",
-    "options": [
-      "Glucocerebrosidase",
-      "Sphingomyelinase",
-      "Hexosaminidase",
-      "Glucose6-phosphatase"
-    ],
+    "options": ["Glucocerebrosidase", "Sphingomyelinase", "Hexosaminidase", "Glucose6-phosphatase"],
     "answer": 1
   },
   {
@@ -3917,12 +3403,7 @@
     "subject": "Biochemistry",
     "topic": "Oxidative Phosphorylation",
     "question": "The electron transport chain is a series of redox reactions that result in ATP synthesis. Which of the following is a cytochrome complex IV inhibitor?",
-    "options": [
-      "Cyanide",
-      "Carbon dioxide",
-      "Oligomycin",
-      "Ouabain"
-    ],
+    "options": ["Cyanide", "Carbon dioxide", "Oligomycin", "Ouabain"],
     "answer": 1
   },
   {
@@ -3946,12 +3427,7 @@
     "subject": "Dermatology",
     "topic": "Cutaneous Infections",
     "question": "A farmer presents you with a cauliflower-shaped mass on foot, which developed after a minor injury. Microscopy shows copper penny bodies. What is the most likely diagnosis?",
-    "options": [
-      "Chromoblastomycosis",
-      "Blastomycosis",
-      "Sporotrichosis",
-      "Phaeohyphomycosis"
-    ],
+    "options": ["Chromoblastomycosis", "Blastomycosis", "Sporotrichosis", "Phaeohyphomycosis"],
     "answer": 1
   },
   {
@@ -3960,12 +3436,7 @@
     "subject": "Dermatology",
     "topic": "Skin Appendages and their Disorders",
     "question": "Irregular pitting of nails with subungual hyperkeratosis is seen in ___________.",
-    "options": [
-      "Lichen planus",
-      "Psoriasis",
-      "Atopic dermatitis",
-      "Alopecia areata"
-    ],
+    "options": ["Lichen planus", "Psoriasis", "Atopic dermatitis", "Alopecia areata"],
     "answer": 2,
     "image": "22q77.jpeg"
   },
@@ -3990,12 +3461,7 @@
     "subject": "ENT",
     "topic": "Nose and Paranasal Sinuses",
     "question": "A post-COVID patient, who is a known diabetic, develops unilateral facial pain and loosening of teeth. Which investigation would you do to confirm the diagnosis of this patient?",
-    "options": [
-      "MRI",
-      "Biopsy with histopathologic examination",
-      "Serum ferritin",
-      "HbA1c"
-    ],
+    "options": ["MRI", "Biopsy with histopathologic examination", "Serum ferritin", "HbA1c"],
     "answer": 2
   },
   {
@@ -4004,12 +3470,7 @@
     "subject": "ENT",
     "topic": "Ear",
     "question": "A patient presents with the complaint of inability to close the eye, drooling of saliva, and deviation of the angle of the mouth. Which of the following nerves is most likely to be affected?",
-    "options": [
-      "Facial nerve",
-      "Trigeminal nerve",
-      "Oculomotor nerve",
-      "Glossopharyngeal nerve"
-    ],
+    "options": ["Facial nerve", "Trigeminal nerve", "Oculomotor nerve", "Glossopharyngeal nerve"],
     "answer": 1
   },
   {
@@ -4018,12 +3479,7 @@
     "subject": "ENT",
     "topic": "Pharynx",
     "question": "An adult man in a restaurant suddenly begins choking on his food. He is conscious. The following procedure was performed. Identify the procedure.",
-    "options": [
-      "Heimlich’s maneuver",
-      "Back slap",
-      "Chest thrust",
-      "Blind insertion of finger"
-    ],
+    "options": ["Heimlich’s maneuver", "Back slap", "Chest thrust", "Blind insertion of finger"],
     "answer": 1,
     "image": "22q81.jpeg"
   },
@@ -4033,12 +3489,7 @@
     "subject": "Pathology",
     "topic": "Hematology: Red Blood Cells",
     "question": "A child presents with recurrent chest infections and abdominal pain. There is a history of 1 blood transfusion in the past. On examination, he had icterus and mild splenomegaly. Electrophoresis shows increased HbA2, HbF, and S spike. What is the likely diagnosis?",
-    "options": [
-      "Beta thalassemia",
-      "HbC disease",
-      "Sickle cell disease",
-      "Acute coronary disease"
-    ],
+    "options": ["Beta thalassemia", "HbC disease", "Sickle cell disease", "Acute coronary disease"],
     "answer": 1
   },
   {
@@ -4062,12 +3513,7 @@
     "subject": "ENT",
     "topic": "Nose and Paranasal Sinuses",
     "question": "A patient comes with a history of asthma and sinusitis. On looking into his medical records, you notice this has been attributed to Samter’s triad. Which drug should be avoided in this patient?",
-    "options": [
-      "Cotrimoxazole",
-      "Co-amoxiclav",
-      "Aspirin",
-      "Chloramphenicol"
-    ],
+    "options": ["Cotrimoxazole", "Co-amoxiclav", "Aspirin", "Chloramphenicol"],
     "answer": 3
   },
   {
@@ -4090,12 +3536,7 @@
     "subject": "ENT",
     "topic": "Ear",
     "question": "A 70-year-old male patient presents with decreased hearing in higher frequencies. It was noted that the basilar membrane was affected. Which of the following structures lie near the affected structure?",
-    "options": [
-      "Modiolus",
-      "Stria vascularis",
-      "Oval window",
-      "Helicotrema"
-    ],
+    "options": ["Modiolus", "Stria vascularis", "Oval window", "Helicotrema"],
     "answer": 3
   },
   {
@@ -4119,12 +3560,7 @@
     "subject": "Pathology",
     "topic": "Hematology: Red Blood Cells",
     "question": "An elderly patient presents with anemia and hemoglobinuria. Investigations reveal increased lactate dehydrogenase (LDH). The peripheral smear image is given below. Which of the following physical examination findings can support the likely diagnosis?",
-    "options": [
-      "Splenomegaly",
-      "Frontal bossing",
-      "Mechanical second heart sound",
-      "Goitre"
-    ],
+    "options": ["Splenomegaly", "Frontal bossing", "Mechanical second heart sound", "Goitre"],
     "answer": 1,
     "image": "22q88.jpeg"
   },
@@ -4163,12 +3599,7 @@
     "subject": "Pathology",
     "topic": "Renal System",
     "question": "A patient underwent cystoscopy, which showed multiple yellow-white plaques in the trigone of the bladder. The histopathology image is given below. What is the diagnosis?",
-    "options": [
-      "Interstitial cystitis",
-      "Malakoplakia",
-      "Polypoid cystitis",
-      "Acute cystitis"
-    ],
+    "options": ["Interstitial cystitis", "Malakoplakia", "Polypoid cystitis", "Acute cystitis"],
     "answer": 2,
     "image": "22q91.jpeg"
   },
@@ -4178,12 +3609,7 @@
     "subject": "Forensic Medicine",
     "topic": "Forensic Traumatology",
     "question": "Identify the type of wound from the image.",
-    "options": [
-      "Defense wounds",
-      "Antemortem wound",
-      "Postmortem wound",
-      "Hesitation cuts"
-    ],
+    "options": ["Defense wounds", "Antemortem wound", "Postmortem wound", "Hesitation cuts"],
     "answer": 1,
     "image": "22q92.jpeg"
   },
@@ -4207,12 +3633,7 @@
     "subject": "Forensic Medicine",
     "topic": "Court of Law",
     "question": "A 45-year-old female patient is told about the benefits and complications of a hysterectomy, and she agrees to the procedure. What kind of consent is this?",
-    "options": [
-      "Informed consent",
-      "Implied consent",
-      "Opt-out",
-      "Passive consent"
-    ],
+    "options": ["Informed consent", "Implied consent", "Opt-out", "Passive consent"],
     "answer": 1
   },
   {
@@ -4235,12 +3656,7 @@
     "subject": "Forensic Medicine",
     "topic": "Asphyxial Deaths",
     "question": "A dead body is brought for evaluation. On post-mortem examination, a ligature completely encircled the neck, horizontal, and below the thyroid level was seen. There was no dribbling of saliva. What is the cause of death?",
-    "options": [
-      "Throttling",
-      "Ligature strangulation",
-      "Gagging",
-      "Hanging"
-    ],
+    "options": ["Throttling", "Ligature strangulation", "Gagging", "Hanging"],
     "answer": 2
   },
   {
@@ -4263,12 +3679,7 @@
     "subject": "Forensic Medicine",
     "topic": "Court of Law",
     "question": "During the court proceedings, the defense lawyer asks a leading question, which the prosecutor appeals against. The judge grants the appeal. Leading questions are not allowed in all of the following except?",
-    "options": [
-      "Re-examination",
-      "Cross-examination",
-      "Examination in chief",
-      "Dying declaration"
-    ],
+    "options": ["Re-examination", "Cross-examination", "Examination in chief", "Dying declaration"],
     "answer": 2
   },
   {
@@ -4292,12 +3703,7 @@
     "subject": "Pathology",
     "topic": "Hematology: White Blood Cells",
     "question": "A 56-year-old man presents with dragging pain in the abdomen. On examination, there is massive splenomegaly. Peripheral smear shows leukocytesis with increased myelocytes, metamyelocytes and basophils. Which of the following translocations is seen in this condition?",
-    "options": [
-      "t(9;22)",
-      "t(8;22)",
-      "t(15;17)",
-      "t(8;14)"
-    ],
+    "options": ["t(9;22)", "t(8;22)", "t(15;17)", "t(8;14)"],
     "answer": 1
   },
   {
@@ -4320,12 +3726,7 @@
     "subject": "Medicine",
     "topic": "Infections",
     "question": "A patient diagnosed to be retro-positive was started on highly active antiretroviral therapy (HAART). Which of the following can be used to monitor treatment efficacy?",
-    "options": [
-      "CD4+ T cell count",
-      "Viral load",
-      "p24 antigen",
-      "Viral serotype"
-    ],
+    "options": ["CD4+ T cell count", "Viral load", "p24 antigen", "Viral serotype"],
     "answer": 2
   },
   {
@@ -4363,12 +3764,7 @@
     "subject": "Medicine",
     "topic": "Cardiology",
     "question": "A patient on anti-depressants presented to you with hypotension. An ECG was done, which showed wide QRS complexes and right axis deviation. How will you manage this patient?",
-    "options": [
-      "Antiarrhythmics",
-      "Intravenous sodium bicarbonate",
-      "Propranolol",
-      "Phenytoin"
-    ],
+    "options": ["Antiarrhythmics", "Intravenous sodium bicarbonate", "Propranolol", "Phenytoin"],
     "answer": 2
   },
   {
@@ -4392,12 +3788,7 @@
     "subject": "Pediatrics",
     "topic": "Fluid and Electrolyte Disturbances",
     "question": "A 7 – year old boy presented with abdominal pain, vomiting, oliguria, and periorbital puffiness following chemotherapy. Investigations reveal hyperuricemia, raised creatinine levels, and hyperkalemia. What is the next best step in the management of this condition ?",
-    "options": [
-      "Hydration",
-      "Probenecid",
-      "Allopurinol",
-      "Rasburicase"
-    ],
+    "options": ["Hydration", "Probenecid", "Allopurinol", "Rasburicase"],
     "answer": 1
   },
   {
@@ -4406,12 +3797,7 @@
     "subject": "Pediatrics",
     "topic": "Pediatric Gastroenterology",
     "question": "A baby presented with abdominal pain. On examination, a mass is palpated in the right lumbar region. A barium enema is done, and the image is given below. What is the likely diagnosis?",
-    "options": [
-      "Intussusception",
-      "Volvulus",
-      "Duodenal atresia",
-      "Intestinal obstruction"
-    ],
+    "options": ["Intussusception", "Volvulus", "Duodenal atresia", "Intestinal obstruction"],
     "answer": 1,
     "image": "22q108.jpeg"
   },
@@ -4421,12 +3807,7 @@
     "subject": "Medicine",
     "topic": "Neurology",
     "question": "A female patient with a negative urine pregnancy test presents to you with galactorrhea. An MRI was done which revealed a large pituitary tumor. If the patient is not willing for surgery, which of the following is the best drug for treatment?",
-    "options": [
-      "Bromocriptine",
-      "Promethazine",
-      "Octreotide",
-      "Clozapine"
-    ],
+    "options": ["Bromocriptine", "Promethazine", "Octreotide", "Clozapine"],
     "answer": 1
   },
   {
@@ -4449,12 +3830,7 @@
     "subject": "Medicine",
     "topic": "Nephrology / Kidney Disease",
     "question": "A man on diuretics presents with weakness. An ECG was done which showed flat T waves and prominent U waves. What is the most likely diagnosis?",
-    "options": [
-      "Hypokalaemia",
-      "Hyperkalaemia",
-      "Hypomagnesemia",
-      "Hypernatremia"
-    ],
+    "options": ["Hypokalaemia", "Hyperkalaemia", "Hypomagnesemia", "Hypernatremia"],
     "answer": 1
   },
   {
@@ -4505,12 +3881,7 @@
     "subject": "Medicine",
     "topic": "Liver",
     "question": "A child presents to the emergency department with a history of ingestion of 10-20 ferrous sulphate tablets. Arterial blood gas revealed acidosis. Which of the following can be used in the management of this condition?",
-    "options": [
-      "Deferoxamine",
-      "Activated charcoal",
-      "Dimercaprol",
-      "Penicillamine"
-    ],
+    "options": ["Deferoxamine", "Activated charcoal", "Dimercaprol", "Penicillamine"],
     "answer": 1
   },
   {
@@ -4519,12 +3890,7 @@
     "subject": "Microbiology",
     "topic": "Immunology",
     "question": "A photographer who recently returned from Africa presents to the emergency department with abdominal pain, hepatomegaly, and hemorrhagic manifestations. He died despite treatment, and an autopsy revealed intranuclear Torres bodies in the liver. Which of the following vaccines with which strain could have prevented it?",
-    "options": [
-      "17D",
-      "Nakayama vaccine",
-      "Weigl’s vaccine",
-      "Jeryl Lynn strain"
-    ],
+    "options": ["17D", "Nakayama vaccine", "Weigl’s vaccine", "Jeryl Lynn strain"],
     "answer": 1
   },
   {
@@ -4618,12 +3984,7 @@
     "subject": "Microbiology",
     "topic": "Systemic Bacteriology",
     "question": "A diabetic truck driver presents to you with cough and breathlessness. A diagnosis of pneumonia was confirmed, and histopathological examination revealed dichotomous branching, as shown below. What is the likely causative agent?",
-    "options": [
-      "Rhizopus",
-      "Mucor",
-      "Candida",
-      "Aspergillus"
-    ],
+    "options": ["Rhizopus", "Mucor", "Candida", "Aspergillus"],
     "answer": 2,
     "image": "22q123.jpeg"
   },
@@ -4661,12 +4022,7 @@
     "subject": "Pediatrics",
     "topic": "Pediatric Neurology",
     "question": "A 10-month old infant was brought with complaints of jerking movement of limbs towards the body. On examination, there is a regression of developmental milestones. Electroencephalogram shows hypsarrhythmia. Which of the following is the drug of choice in this condition ?",
-    "options": [
-      "Phenytoin",
-      "Adrenocorticotropic hormone",
-      "Levetiracetam",
-      "Phenobarbitone"
-    ],
+    "options": ["Phenytoin", "Adrenocorticotropic hormone", "Levetiracetam", "Phenobarbitone"],
     "answer": 2
   },
   {
@@ -4732,12 +4088,7 @@
     "subject": "Physiology",
     "topic": "General Physiology",
     "question": "The image below depicts which of the following types of cell-to-cell signaling?",
-    "options": [
-      "Paracrine",
-      "Autocrine",
-      "Endocrine",
-      "Merocrine"
-    ],
+    "options": ["Paracrine", "Autocrine", "Endocrine", "Merocrine"],
     "answer": 1,
     "image": "22q131.jpeg"
   },
@@ -4777,12 +4128,7 @@
     "subject": "Physiology",
     "topic": "The Nervous System",
     "question": "A 65-year-old suffered from a stroke 2 days ago. He now presents with involuntary, violent, and flinging movements of the limbs on one side. What is the likely site of lesion in this patient?",
-    "options": [
-      "Subthalamic nuclei",
-      "Globus pallidus",
-      "Putamen",
-      "Caudate nucleus"
-    ],
+    "options": ["Subthalamic nuclei", "Globus pallidus", "Putamen", "Caudate nucleus"],
     "answer": 1
   },
   {
@@ -4819,12 +4165,7 @@
     "subject": "Radiology",
     "topic": "Basics of Radiology",
     "question": "Identify the image modality given below.",
-    "options": [
-      "Cerebral blood flow scan",
-      "PET CT",
-      "Sestamibi scan",
-      "Full body MDCT"
-    ],
+    "options": ["Cerebral blood flow scan", "PET CT", "Sestamibi scan", "Full body MDCT"],
     "answer": 2,
     "image": "22q137.jpeg"
   },
@@ -4834,12 +4175,7 @@
     "subject": "Radiology",
     "topic": "Thoracic Radiology",
     "question": "A patient is brought to the casualty following a road traffic accident. On examination, the patient is conscious, BP is 90/60 mm Hg, respiratory rate is 40 breaths per minute, and pulse rate is 120 bpm. The X ray is shown below. What is the next step in management?",
-    "options": [
-      "Chest tube insertion",
-      "Pericardiocentesis",
-      "Thoracotomy",
-      "Pleurodesis"
-    ],
+    "options": ["Chest tube insertion", "Pericardiocentesis", "Thoracotomy", "Pleurodesis"],
     "answer": 1,
     "image": "22q138.jpeg"
   },
@@ -4892,12 +4228,7 @@
     "subject": "Pediatrics",
     "topic": "Growth",
     "question": "Which of the following children are considered at risk babies ? 1. Baby with a birth weight of 2.5 kg 2. Baby on artificial feeds 3. Baby of working mother / single parent 4. Baby with weight <85% of expected weight 5. Birth order of 3 or more",
-    "options": [
-      "2,3",
-      "1,2,3,4",
-      "4,5",
-      "1,4"
-    ],
+    "options": ["2,3", "1,2,3,4", "4,5", "1,4"],
     "answer": 1
   },
   {
@@ -4906,12 +4237,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "A patient presented with blunt trauma to the abdomen. On evaluation, liver injury was noted, for which primary repair was done. Coagulation function was monitored intraoperatively, using the method shown below. What is the method used?",
-    "options": [
-      "Thromboeslastography",
-      "Plethysmography",
-      "Sonography",
-      "Elastography"
-    ],
+    "options": ["Thromboeslastography", "Plethysmography", "Sonography", "Elastography"],
     "answer": 1,
     "image": "22q143.jpeg"
   },
@@ -4965,12 +4291,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "A child had a history of stab injury on the anterior abdominal wall, and the image is shown below. The child is hemodynamically stable. Which will be the next course of treatment?",
-    "options": [
-      "Emergency laparotomy",
-      "Observation",
-      "Intravenous hydration",
-      "Wait and watch"
-    ],
+    "options": ["Emergency laparotomy", "Observation", "Intravenous hydration", "Wait and watch"],
     "answer": 1,
     "image": "22q147.jpeg"
   },
@@ -4980,12 +4301,7 @@
     "subject": "Pediatrics",
     "topic": "Musculoskeletal Disorders in Children",
     "question": "A male child presented with arthralgia and abdominal pain. On examination, there was palpable purpura over the lower limbs. There is a past history of upper respiratory tract infection prior to the onset of presenting symptoms. Which of the following is the treatment for this condition?",
-    "options": [
-      "Azathioprine",
-      "Methotrexate",
-      "Cyclosporine",
-      "Glucocorticoids"
-    ],
+    "options": ["Azathioprine", "Methotrexate", "Cyclosporine", "Glucocorticoids"],
     "answer": 4
   },
   {
@@ -5037,12 +4353,7 @@
     "subject": "Surgery",
     "topic": "Plastic Surgery",
     "question": "A male patient presented with a 0.3 cm nodule on the left nasolabial fold. It was excised, and a pathological examination was done. What is the diagnosis?",
-    "options": [
-      "Basal cell carcinoma",
-      "Melanoma",
-      "Squamous cell carcinoma",
-      "Nevus"
-    ],
+    "options": ["Basal cell carcinoma", "Melanoma", "Squamous cell carcinoma", "Nevus"],
     "answer": 1,
     "image": "22q152.jpeg"
   },
@@ -5052,12 +4363,7 @@
     "subject": "Pediatrics",
     "topic": "Pediatric Gastroenterology",
     "question": "A 10-year old child presents with diarrhea and weight loss. On examination, the height and weight are lesser than expected. Laboratory investigations were positive for class II HLA-DQ2. Which of the following will you advise the child ?",
-    "options": [
-      "Fat free diet",
-      "Lactose free diet",
-      "Low carbohydrate diet",
-      "Gluten free diet"
-    ],
+    "options": ["Fat free diet", "Lactose free diet", "Low carbohydrate diet", "Gluten free diet"],
     "answer": 4
   },
   {
@@ -5096,12 +4402,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "A young male patient with a history of a motor vehicle accident cannot pass urine. Blood is seen at the meatus. What is the most likely site of urethral injury?",
-    "options": [
-      "Bulbar urethra",
-      "Spongy urethra",
-      "Membranous urethra",
-      "Penile urethra"
-    ],
+    "options": ["Bulbar urethra", "Spongy urethra", "Membranous urethra", "Penile urethra"],
     "answer": 3,
     "image": "22q156.jpeg"
   },
@@ -5140,12 +4441,7 @@
     "subject": "Pharmacology",
     "topic": "Endocrine Pharmacology",
     "question": "Which of the following drugs is not likely to cause Pulmonary fibrosis?",
-    "options": [
-      "Metformin",
-      "Methotrexate",
-      "Bleomycin",
-      "Nitrofurantoin"
-    ],
+    "options": ["Metformin", "Methotrexate", "Bleomycin", "Nitrofurantoin"],
     "answer": 1
   },
   {
@@ -5184,12 +4480,7 @@
     "subject": "Pharmacology",
     "topic": "Drugs Affecting Blood and Blood formation",
     "question": "A patient with deep vein thrombosis was started on a new drug. After 2 days, he presented with the given finding. Which of the following drugs is implicated in causing the above condition?",
-    "options": [
-      "Warfarin",
-      "Heparin",
-      "Dabigatran",
-      "Rivarox"
-    ],
+    "options": ["Warfarin", "Heparin", "Dabigatran", "Rivarox"],
     "answer": 1,
     "image": "22q162.jpeg"
   },
@@ -5199,12 +4490,7 @@
     "subject": "Surgery",
     "topic": "Plastic Surgery",
     "question": "Calculate the percentage of burns in a preschool child shown in the image below",
-    "options": [
-      "15-20%",
-      "25-30%",
-      "35-40%",
-      "10-15%"
-    ],
+    "options": ["15-20%", "25-30%", "35-40%", "10-15%"],
     "answer": 2,
     "image": "22q163.jpeg"
   },
@@ -5214,12 +4500,7 @@
     "subject": "Pharmacology",
     "topic": "Anticancer Drugs",
     "question": "A patient undergoing chemotherapy was given an antiemetic, after which he developed symptoms like acute dystonia, bradykinesia, and tremors. Which of the following drugs would have caused these symptoms?",
-    "options": [
-      "Ondansetron",
-      "Metoclopramide",
-      "Meclizine",
-      "Scopolamine"
-    ],
+    "options": ["Ondansetron", "Metoclopramide", "Meclizine", "Scopolamine"],
     "answer": 2
   },
   {
@@ -5228,12 +4509,7 @@
     "subject": "Pharmacology",
     "topic": "CVS Pharmacology",
     "question": "A young patient started to take a weight loss medication that acts by inhibiting fat absorption from food. After a few weeks, she developed easy bruising and increased menstrual bleeding. Deficiency of which of the following vitamins is responsible for her condition?",
-    "options": [
-      "Vitamin E",
-      "Vitamin K",
-      "Vitamin B6",
-      "Vitamin D"
-    ],
+    "options": ["Vitamin E", "Vitamin K", "Vitamin B6", "Vitamin D"],
     "answer": 2
   },
   {
@@ -5242,12 +4518,7 @@
     "subject": "Surgery",
     "topic": "Head And Neck",
     "question": "A 32-year-old patient who is a chronic alcoholic presents with oral ulcers and a burning sensation. A picture of the oral cavity is given below. What is the most likely diagnosis?",
-    "options": [
-      "Leukoplakia",
-      "Erythroplakia",
-      "Submucosal fibrosis",
-      "Malakoplakia"
-    ],
+    "options": ["Leukoplakia", "Erythroplakia", "Submucosal fibrosis", "Malakoplakia"],
     "answer": 1,
     "image": "22q166.jpeg"
   },
@@ -5286,12 +4557,7 @@
     "subject": "Pharmacology",
     "topic": "CVS Pharmacology",
     "question": "A patient was brought to the emergency with a history of consumption of 8 tablets of digoxin. On examination he was unstable and his heart rate was 56 bpm. ECG showed a 3rd-degree heart block. What is the next step in the management of this patient?",
-    "options": [
-      "a.Antibody against digoxin",
-      "Lidocaine",
-      "c.DC cardioversion",
-      "d.Phenytoin"
-    ],
+    "options": ["a.Antibody against digoxin", "Lidocaine", "c.DC cardioversion", "d.Phenytoin"],
     "answer": 1
   },
   {
@@ -5300,12 +4566,7 @@
     "subject": "Pharmacology",
     "topic": "Renal Pharmacology",
     "question": "An elderly man, who is a known case of diabetic nephropathy, presented to the emergency with palpitations and chest discomfort. ECG showed tall T-waves. Laboratory investigations showed elevated potassium levels. Which of the following drugs will cause the shift of potassium back into the cell?",
-    "options": [
-      "Epinephrine",
-      "b.Glucagon",
-      "c.Atropine",
-      "d.Lactic acid"
-    ],
+    "options": ["Epinephrine", "b.Glucagon", "c.Atropine", "d.Lactic acid"],
     "answer": 1
   },
   {
@@ -5314,12 +4575,7 @@
     "subject": "Pharmacology",
     "topic": "Endocrine Pharmacology",
     "question": "A patient with a pituitary tumor that overproduced growth hormone underwent surgical removal of the tumor. The resection was found to be incomplete. What is the first-line treatment for this patient?",
-    "options": [
-      "Leuprolide",
-      "Goserelin",
-      "Nafarelin",
-      "Octreotide"
-    ],
+    "options": ["Leuprolide", "Goserelin", "Nafarelin", "Octreotide"],
     "answer": 4
   },
   {
@@ -5328,12 +4584,7 @@
     "subject": "Pharmacology",
     "topic": "Endocrine Pharmacology",
     "question": "A middle-aged male patient presents with protrusion of the chin, excessive sweating, impaired glucose tolerance, and enlargement of hands and feet. Which of the following is a growth hormone receptor antagonist used to treat this condition?",
-    "options": [
-      "Octreotide",
-      "Pegvisomant",
-      "Cabergoline",
-      "Olcegepant"
-    ],
+    "options": ["Octreotide", "Pegvisomant", "Cabergoline", "Olcegepant"],
     "answer": 2
   },
   {
@@ -5356,12 +4607,7 @@
     "subject": "Pharmacology",
     "topic": "Chemotherapy of Specific Microbial Diseases",
     "question": "A diabetic patient presented with rhinitis and facial swelling. An intranasal biopsy revealed the presence of broad-based aseptate hyphae with branching at right angle. Evidence of vascular invasion was present. What will be the drug of choice for this condition?",
-    "options": [
-      "Fluconazole",
-      "Amphotericin B",
-      "Ketoconazole",
-      "Griseofulvin"
-    ],
+    "options": ["Fluconazole", "Amphotericin B", "Ketoconazole", "Griseofulvin"],
     "answer": 2
   },
   {
@@ -5385,12 +4631,7 @@
     "subject": "Pharmacology",
     "topic": "Antimicrobials : Anti Bacterial Drugs",
     "question": "A tuberculosis patient on anti-tubercular treatment presents with a tingling sensation and paresthesia in the lower limbs. He is not a diabetic and occasionally consumes alcohol. Which of the following vitamins must be supplemented to this patient?",
-    "options": [
-      "Vitamin B6",
-      "Vitamin B12",
-      "Vitamin B2",
-      "Vitamin B3"
-    ],
+    "options": ["Vitamin B6", "Vitamin B12", "Vitamin B2", "Vitamin B3"],
     "answer": 1
   },
   {
@@ -5428,12 +4669,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "Identify the fluid shown below on the basis of composition: Na+ 131mmol/L Cl- 111 mmol/L Lactate 29 mmol/L K+ 5 mmol/L Ca2+ 2 mmol/L Total 279mOsm/L",
-    "options": [
-      "Haemaccel",
-      "Ringer lactate",
-      "Isolyte",
-      "Isolyte M"
-    ],
+    "options": ["Haemaccel", "Ringer lactate", "Isolyte", "Isolyte M"],
     "answer": 2
   },
   {
@@ -5442,12 +4678,7 @@
     "subject": "Pharmacology",
     "topic": "CVS Pharmacology",
     "question": "Which of the following is a PCSK9 inhibitor?",
-    "options": [
-      "Evolocumab",
-      "Ezetimibe",
-      "Bempedoic acid",
-      "Clofibrate"
-    ],
+    "options": ["Evolocumab", "Ezetimibe", "Bempedoic acid", "Clofibrate"],
     "answer": 1
   },
   {
@@ -5456,12 +4687,7 @@
     "subject": "Surgery",
     "topic": "Others",
     "question": "The image below shows a pressure sore. Which stage does this belong to?",
-    "options": [
-      "Stage 1",
-      "Stage 2",
-      "Stage 3",
-      "Stage 4"
-    ],
+    "options": ["Stage 1", "Stage 2", "Stage 3", "Stage 4"],
     "answer": 4,
     "image": "22q181.jpeg"
   },
@@ -5471,12 +4697,7 @@
     "subject": "Pharmacology",
     "topic": "CNS Pharmacology",
     "question": "An elderly man presents with rigidity and tremors. On examination, he has blank facial expressions. Which of the following drugs can be used to manage this condition?",
-    "options": [
-      "Clozapine",
-      "Donepezil",
-      "Selegiline",
-      "Haloperidol"
-    ],
+    "options": ["Clozapine", "Donepezil", "Selegiline", "Haloperidol"],
     "answer": 3
   },
   {
@@ -5485,12 +4706,7 @@
     "subject": "Surgery",
     "topic": "Gastrointestinal Surgery",
     "question": "Identify the most common site of an intraperitoneal abscess.",
-    "options": [
-      "Suprahepatic",
-      "Subhepatic",
-      "Left lobe of liver",
-      "Left side below diaphragm"
-    ],
+    "options": ["Suprahepatic", "Subhepatic", "Left lobe of liver", "Left side below diaphragm"],
     "answer": 2
   },
   {
@@ -5499,12 +4715,7 @@
     "subject": "Surgery",
     "topic": "Gastrointestinal Surgery",
     "question": "A man complained of recurrent discharge and pain due to lesions around the anus for 3 years. What is the diagnosis?",
-    "options": [
-      "Pilonidal sinus",
-      "Carbuncle",
-      "Boil",
-      "Fistula in ano"
-    ],
+    "options": ["Pilonidal sinus", "Carbuncle", "Boil", "Fistula in ano"],
     "answer": 4,
     "image": "22q184.jpeg"
   },
@@ -5528,12 +4739,7 @@
     "subject": "PSM",
     "topic": "Concept of Health and Disease",
     "question": "The average life expectancy for a woman in Japan is 87 years. Due to recent advances in testing for cervical cancer, there is an increase in life expectancy by 15 years. The healthcare utility value is 0.8. Which of the following can be calculated from the parameters given?",
-    "options": [
-      "HALE",
-      "DALY",
-      "DFLE",
-      "QALY"
-    ],
+    "options": ["HALE", "DALY", "DFLE", "QALY"],
     "answer": 4
   },
   {
@@ -5542,12 +4748,7 @@
     "subject": "PSM",
     "topic": "Allied Health Disciplines",
     "question": "You are working in a primary health center (PHC) situated in a high seismic zone. Which of the following will you do as part of preparedness for an emergency? 1. Disaster preparedness by making sure all financial and other resources are available 2. Increase public awareness through campaigns and loudspeakers 3. Conduct a simulation for the disaster and assess the response 4. Follow instructions given over the phone or radio by higher officials",
-    "options": [
-      "1,2,3,4",
-      "2,3,4",
-      "1,2,3",
-      "1,2,4"
-    ],
+    "options": ["1,2,3,4", "2,3,4", "1,2,3", "1,2,4"],
     "answer": 3
   },
   {
@@ -5584,12 +4785,7 @@
     "subject": "PSM",
     "topic": "National Health Programs",
     "question": "A male patient diagnosed with tuberculosis took complete treatment. Sputum examination was done after the completion of the intensive and the continuation phases. It was found to be negative. What is the status of the patient?",
-    "options": [
-      "Cured",
-      "Treatment completed",
-      "Lost to follow up",
-      "Treatment failed"
-    ],
+    "options": ["Cured", "Treatment completed", "Lost to follow up", "Treatment failed"],
     "answer": 1
   },
   {
@@ -5626,12 +4822,7 @@
     "subject": "PSM",
     "topic": "Allied Health Disciplines",
     "question": "How is a broken vaccine vial disposed of, according to biomedical waste management?",
-    "options": [
-      "Puncture proof blue bin",
-      "White container",
-      "Yellow container",
-      "Red container"
-    ],
+    "options": ["Puncture proof blue bin", "White container", "Yellow container", "Red container"],
     "answer": 1
   },
   {
@@ -5654,12 +4845,7 @@
     "subject": "PSM",
     "topic": "International Health",
     "question": "Which of the following agencies provides seed and manure in applied nutrition programs in schools?",
-    "options": [
-      "CARE",
-      "UNDP",
-      "UNICEF",
-      "WHO"
-    ],
+    "options": ["CARE", "UNDP", "UNICEF", "WHO"],
     "answer": 3
   },
   {
@@ -5682,12 +4868,7 @@
     "subject": "Dermatology",
     "topic": "Integrated Essentials",
     "question": "A patient presents with an anesthetic patch in the areas on the face, as shown in the image below. Which of the following nerves is the most commonly involved in this condition?",
-    "options": [
-      "Abducens nuclei",
-      "Facial nerve",
-      "Optic nerve",
-      "Trigeminal nerve"
-    ],
+    "options": ["Abducens nuclei", "Facial nerve", "Optic nerve", "Trigeminal nerve"],
     "answer": 2,
     "image": "22q197.jpeg"
   },
@@ -5726,12 +4907,7 @@
     "subject": "Microbiology",
     "topic": "Mycology",
     "question": "A patient with cervical lymphadenopathy and is found to be retropositive. A fungal culture depicts a velvety growth with red diffusible pigment on the underside, as shown below. Which is the most likely causative organism?",
-    "options": [
-      "Talaromyces marneffei",
-      "Blastomyces",
-      "Aspergillus",
-      "Pneumocystis jirovecii"
-    ],
+    "options": ["Talaromyces marneffei", "Blastomyces", "Aspergillus", "Pneumocystis jirovecii"],
     "answer": 1,
     "image": "22q200.jpeg"
   }

@@ -1,7 +1,4 @@
-import type {
-  CompanionEventType,
-  CompanionPersonalityMode,
-} from './types';
+import type { CompanionEventType, CompanionPersonalityMode } from './types';
 
 /** Dictionary of contextual message pools per event type */
 const MESSAGE_POOLS: Record<CompanionEventType, string[]> = {
@@ -10,7 +7,7 @@ const MESSAGE_POOLS: Record<CompanionEventType, string[]> = {
     'Ready to continue?',
     "Let's make today count.",
     'Good to see you again.',
-    'Back already? Let\'s crush it!',
+    "Back already? Let's crush it!",
   ],
   Login: [
     'Welcome back.',
@@ -54,9 +51,9 @@ const MESSAGE_POOLS: Record<CompanionEventType, string[]> = {
   ],
   DailyGoalAchieved: [
     'Daily targets smashed!',
-    '100% of today\'s plan complete!',
+    "100% of today's plan complete!",
     'Unstoppable daily momentum!',
-    'You mastered today\'s study plan.',
+    "You mastered today's study plan.",
   ],
   GiftUnlocked: [
     'Surprise! A mystery gift was unlocked.',
@@ -70,23 +67,20 @@ const MESSAGE_POOLS: Record<CompanionEventType, string[]> = {
   ],
   ExamTomorrow: [
     'Exam countdown: Stay calm & focused.',
-    'Final review time! You\'ve got this.',
-    'Trust your preparation for tomorrow\'s test.',
+    "Final review time! You've got this.",
+    "Trust your preparation for tomorrow's test.",
   ],
   MissionFailed: [
-    'Don\'t worry, every setback is a setup for a comeback.',
+    "Don't worry, every setback is a setup for a comeback.",
     'Reset and try again tomorrow!',
-    'Progress isn\'t always linear. Keep pushing.',
+    "Progress isn't always linear. Keep pushing.",
   ],
   AchievementEarned: [
     'Achievement unlocked: {badgeTitle}!',
     'New trophy added to your showcase!',
     'Milestone accomplished! Badge unlocked.',
   ],
-  ChallengeAccepted: [
-    'Challenge accepted! Show what you can do.',
-    'Game on! Focus mode engaged.',
-  ],
+  ChallengeAccepted: ['Challenge accepted! Show what you can do.', 'Game on! Focus mode engaged.'],
   FriendOnline: [
     '{partnerName} is online and studying now!',
     'Your study partner just checked in.',
@@ -103,25 +97,19 @@ const MESSAGE_POOLS: Record<CompanionEventType, string[]> = {
     'AI Coach has a personalized insight for you!',
     'Smart recommendation available in stats.',
   ],
-  GoodNight: [
-    'Good night! Sleep well and recharge.',
-    'Rest your brain for tomorrow\'s gains.',
-  ],
+  GoodNight: ['Good night! Sleep well and recharge.', "Rest your brain for tomorrow's gains."],
   LongStudy: [
-    'You\'ve been studying for a while. Take a breather!',
-    'Impressive stamina! Don\'t forget to stretch.',
+    "You've been studying for a while. Take a breather!",
+    "Impressive stamina! Don't forget to stretch.",
   ],
-  FocusMode: [
-    'Shh... Deep focus mode active.',
-    'Distractions off. Brain on.',
-  ],
+  FocusMode: ['Shh... Deep focus mode active.', 'Distractions off. Brain on.'],
   NoStudyToday: [
     'No study session logged yet today. Take 15 mins now!',
     'Keep your streak alive with a quick session.',
   ],
   Morning: [
     'Good morning! Stretch and start your day strong.',
-    'Rise and shine! Ready for today\'s study goal?',
+    "Rise and shine! Ready for today's study goal?",
   ],
 };
 
@@ -140,9 +128,10 @@ export class CompanionMessageGenerator {
 
     // Filter out messages shown recently
     const unusedMessages = pool.filter((msg: string) => !recentlyUsedMessages.has(msg));
-    const selectedTemplate = unusedMessages.length > 0
-      ? unusedMessages[Math.floor(Math.random() * unusedMessages.length)]
-      : pool[Math.floor(Math.random() * pool.length)];
+    const selectedTemplate =
+      unusedMessages.length > 0
+        ? unusedMessages[Math.floor(Math.random() * unusedMessages.length)]
+        : pool[Math.floor(Math.random() * pool.length)];
 
     // Interpolate placeholders: {xpAmount}, {partnerName}, {subject}, {taskTitle}, {streakDays}, {badgeTitle}
     const finalMessage = selectedTemplate.replace(/\{(\w+)\}/g, (_: string, key: string) => {

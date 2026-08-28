@@ -64,10 +64,11 @@ function PinkTextInput({ style, onFocus, onBlur, placeholderTextColor, ...props 
           paddingVertical: 8,
           fontSize: 14,
         },
-        Platform.OS === 'web' && ({
-          outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
-          outlineOffset: 1,
-        } as any),
+        Platform.OS === 'web' &&
+          ({
+            outline: focused ? `2px solid ${palette.cherryBloom}` : 'none',
+            outlineOffset: 1,
+          } as any),
         style,
       ]}
       {...props}
@@ -91,7 +92,7 @@ export function TodoList({
     const isNowDone = task.status !== 'completed';
     await onToggle?.(task);
     if (isNowDone) {
-      useGrowthAnimStore.getState().queueXp(15);
+      useGrowthAnimStore.getState().queueXp(2);
       CompanionBus.emit({
         eventType: 'DailyGoalAchieved',
         priority: 'high',
@@ -162,7 +163,14 @@ export function TodoList({
   return (
     <View style={{ gap: spacing[8] }}>
       {tasks.length === 0 ? (
-        <Text style={{ color: palette.textSecondary, textAlign: 'center', paddingVertical: spacing[12], fontSize: 13 }}>
+        <Text
+          style={{
+            color: palette.textSecondary,
+            textAlign: 'center',
+            paddingVertical: spacing[12],
+            fontSize: 13,
+          }}
+        >
           No tasks yet.
         </Text>
       ) : null}
@@ -225,7 +233,9 @@ export function TodoList({
                       paddingVertical: 8,
                     }}
                   >
-                    <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>
+                      Cancel
+                    </Text>
                   </Pressable>
                 </View>
               </View>
@@ -287,10 +297,24 @@ export function TodoList({
                   >
                     {task.title}
                   </Text>
-                  <View style={{ flexDirection: 'row', gap: spacing[8], marginTop: 2, flexWrap: 'wrap' }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: spacing[8],
+                      marginTop: 2,
+                      flexWrap: 'wrap',
+                    }}
+                  >
                     <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
-                      ⏳ {task.completed_minutes !== undefined ? `${task.completed_minutes}/${task.estimated_minutes}` : `${task.estimated_minutes}`} min
-                      {task.completed_minutes !== undefined && task.completed_minutes > task.estimated_minutes ? ` 🔥 (+${task.completed_minutes - task.estimated_minutes}m Overtime)` : ''}
+                      ⏳{' '}
+                      {task.completed_minutes !== undefined
+                        ? `${task.completed_minutes}/${task.estimated_minutes}`
+                        : `${task.estimated_minutes}`}{' '}
+                      min
+                      {task.completed_minutes !== undefined &&
+                      task.completed_minutes > task.estimated_minutes
+                        ? ` 🔥 (+${task.completed_minutes - task.estimated_minutes}m Overtime)`
+                        : ''}
                     </Text>
                     {showPomodoro && task.completed_pomodoros !== undefined ? (
                       <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '700' }}>
@@ -315,7 +339,11 @@ export function TodoList({
                           backgroundColor: palette.blush,
                         }}
                       >
-                        <Text style={{ fontSize: 12, color: palette.cherryBloom, fontWeight: '700' }}>Edit</Text>
+                        <Text
+                          style={{ fontSize: 12, color: palette.cherryBloom, fontWeight: '700' }}
+                        >
+                          Edit
+                        </Text>
                       </Pressable>
                     ) : null}
                     {!readOnly && onDelete ? (
@@ -328,7 +356,9 @@ export function TodoList({
                           backgroundColor: 'rgba(217, 76, 97, 0.12)',
                         }}
                       >
-                        <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '700' }}>Del</Text>
+                        <Text style={{ fontSize: 12, color: palette.danger, fontWeight: '700' }}>
+                          Del
+                        </Text>
                       </Pressable>
                     ) : null}
                   </View>
@@ -392,7 +422,11 @@ export function TodoList({
                   )}
                 </Pressable>
                 <Pressable
-                  onPress={() => { setAddOpen(false); setAddTitle(''); setAddMinutes('25'); }}
+                  onPress={() => {
+                    setAddOpen(false);
+                    setAddTitle('');
+                    setAddMinutes('25');
+                  }}
                   style={{
                     backgroundColor: palette.blush,
                     borderRadius: radius.button,
@@ -400,7 +434,9 @@ export function TodoList({
                     paddingVertical: 8,
                   }}
                 >
-                  <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>Cancel</Text>
+                  <Text style={{ color: palette.textSecondary, fontSize: 13, fontWeight: '600' }}>
+                    Cancel
+                  </Text>
                 </Pressable>
               </View>
             </View>
@@ -417,7 +453,9 @@ export function TodoList({
                 alignItems: 'center',
               }}
             >
-              <Text style={{ color: palette.cherryBloom, fontWeight: '700', fontSize: 14 }}>+ Add New Task</Text>
+              <Text style={{ color: palette.cherryBloom, fontWeight: '700', fontSize: 14 }}>
+                + Add New Task
+              </Text>
             </Pressable>
           )}
         </View>

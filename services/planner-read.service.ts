@@ -3,7 +3,9 @@ import { throwIfError } from '@/lib/supabase-helpers';
 
 /** Read the draft for a specific date (with tasks). Returns null if none. */
 export async function getDraft(date: string) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('planner_drafts')
@@ -16,7 +18,9 @@ export async function getDraft(date: string) {
 
 /** Read the initial plan snapshot for a date (with tasks). Returns null if none. */
 export async function getInitialPlan(date: string) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('initial_plans')
@@ -29,7 +33,9 @@ export async function getInitialPlan(date: string) {
 
 /** Get today's current plan with tasks. Returns null if not started. */
 export async function getCurrentPlan(date: string) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('current_plans')
@@ -67,7 +73,9 @@ export function getReviewDeadline(submittedAt: string | Date): Date {
 
 /** Get my most recent pending submission. Auto-rejects if deadline passed. */
 export async function getMySubmission(_date: string) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('daily_submissions')
@@ -99,11 +107,15 @@ export async function getMySubmission(_date: string) {
 
 /** Get partner's latest pending submission. Auto-rejects if deadline passed. */
 export async function getPartnerSubmission() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('daily_submissions')
-    .select('*, submission_proofs(*), current_plans(*, current_tasks(*)), profiles!daily_submissions_user_id_fkey(full_name, avatar_url)')
+    .select(
+      '*, submission_proofs(*), current_plans(*, current_tasks(*)), profiles!daily_submissions_user_id_fkey(full_name, avatar_url)',
+    )
     .eq('status', 'pending')
     .neq('user_id', user.id)
     .order('submitted_at', { ascending: false })
@@ -166,7 +178,9 @@ export async function getProofImageUrl(path: string): Promise<string | null> {
 
 /** Get the partner's current plan for a date (read-only, for live visibility). */
 export async function getPartnerCurrentPlan(date: string) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   // Get partner_id from profile
   const { data: profile } = await supabase
@@ -198,7 +212,9 @@ export async function getPartnerInitialPlan(partnerId: string, date: string) {
 
 /** Get the connected partner's profile information. */
 export async function getPartnerProfile() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data: profile } = await supabase
     .from('profiles')
@@ -214,4 +230,3 @@ export async function getPartnerProfile() {
     .maybeSingle();
   return throwIfError(data, error);
 }
-

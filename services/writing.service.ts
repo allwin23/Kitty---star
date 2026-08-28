@@ -48,7 +48,11 @@ function evaluateWritingLocally(vocabWords: string[], paragraph: string): Writin
     });
   }
 
-  if (!cleanParagraph.endsWith('.') && !cleanParagraph.endsWith('!') && !cleanParagraph.endsWith('?')) {
+  if (
+    !cleanParagraph.endsWith('.') &&
+    !cleanParagraph.endsWith('!') &&
+    !cleanParagraph.endsWith('?')
+  ) {
     grammarMistakes.push({
       original: cleanParagraph.slice(-10),
       correction: cleanParagraph.slice(-10) + '.',
@@ -61,13 +65,15 @@ function evaluateWritingLocally(vocabWords: string[], paragraph: string): Writin
     suggestion: `Try incorporating "${word}" into your next sentence to strengthen your vocabulary context.`,
   }));
 
-  const matchPct = vocabWords.length > 0 ? Math.round((wordsUsedCorrectly.length / vocabWords.length) * 100) : 100;
+  const matchPct =
+    vocabWords.length > 0 ? Math.round((wordsUsedCorrectly.length / vocabWords.length) * 100) : 100;
   let overallFeedback = `Great effort! You successfully integrated ${wordsUsedCorrectly.length} out of ${vocabWords.length} target vocabulary words (${matchPct}%).`;
   if (matchPct === 100) {
     overallFeedback = `Outstanding work! You integrated all ${vocabWords.length} target vocabulary words accurately in your paragraph.`;
   }
 
-  const improvedParagraph = cleanParagraph +
+  const improvedParagraph =
+    cleanParagraph +
     (wordsUsedIncorrectly.length > 0
       ? ` Furthermore, applying words like ${wordsUsedIncorrectly.join(', ')} elevates the depth of expression.`
       : '');
@@ -88,7 +94,7 @@ function evaluateWritingLocally(vocabWords: string[], paragraph: string): Writin
  */
 export async function evaluateWriting(
   vocabWords: string[],
-  paragraph: string
+  paragraph: string,
 ): Promise<WritingEvaluation> {
   try {
     const { data, error } = await supabase.functions.invoke('evaluate-writing', {

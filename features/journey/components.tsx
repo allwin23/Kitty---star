@@ -11,14 +11,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  ScrollView,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Modal, Pressable, ScrollView, Text, useColorScheme, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -64,13 +57,13 @@ function usePalette() {
 // ─── Contextual Unique Micro-Animated Icon Component ──────────────────────────
 
 export type JourneyIconType =
-  | 'zap'       // Thunder Electric Flash & Surge
-  | 'target'    // Radar Aim & Target Lock Pulse
-  | 'clock'     // Ticking Pendulum Clock Rhythm
-  | 'trophy'    // Champion Victory Lift & Winner Wobble
-  | 'gift'      // Mystery Box Rattle & Lid Wiggle
-  | 'star'      // Twinkling Star Sparkle Spin
-  | 'history';  // Compass Navigation Sway
+  | 'zap' // Thunder Electric Flash & Surge
+  | 'target' // Radar Aim & Target Lock Pulse
+  | 'clock' // Ticking Pendulum Clock Rhythm
+  | 'trophy' // Champion Victory Lift & Winner Wobble
+  | 'gift' // Mystery Box Rattle & Lid Wiggle
+  | 'star' // Twinkling Star Sparkle Spin
+  | 'history'; // Compass Navigation Sway
 
 export function ContextualJourneyIcon({
   icon: Icon,
@@ -99,10 +92,10 @@ export function ContextualJourneyIcon({
             withTiming(20, { duration: 90, easing: Easing.linear }),
             withTiming(-8, { duration: 80, easing: Easing.linear }),
             withTiming(0, { duration: 100 }),
-            withTiming(0, { duration: 1600 })
+            withTiming(0, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -110,10 +103,10 @@ export function ContextualJourneyIcon({
             withTiming(0.85, { duration: 70 }),
             withTiming(1.2, { duration: 90 }),
             withTiming(1, { duration: 150 }),
-            withTiming(1, { duration: 1600 })
+            withTiming(1, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         opacity.value = withRepeat(
           withSequence(
@@ -121,10 +114,10 @@ export function ContextualJourneyIcon({
             withTiming(1, { duration: 60 }),
             withTiming(0.6, { duration: 60 }),
             withTiming(1, { duration: 120 }),
-            withTiming(1, { duration: 1600 })
+            withTiming(1, { duration: 1600 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -134,17 +127,17 @@ export function ContextualJourneyIcon({
         rotation.value = withRepeat(
           withTiming(360, { duration: 6000, easing: Easing.linear }),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
             withTiming(1.2, { duration: 900, easing: Easing.inOut(Easing.ease) }),
             withTiming(0.95, { duration: 900, easing: Easing.inOut(Easing.ease) }),
             withTiming(1.1, { duration: 700, easing: Easing.inOut(Easing.ease) }),
-            withTiming(1, { duration: 700, easing: Easing.inOut(Easing.ease) })
+            withTiming(1, { duration: 700, easing: Easing.inOut(Easing.ease) }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -158,20 +151,20 @@ export function ContextualJourneyIcon({
             withTiming(-16, { duration: 350, easing: Easing.out(Easing.quad) }),
             withTiming(16, { duration: 350, easing: Easing.out(Easing.quad) }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1000 })
+            withTiming(0, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(-3, { duration: 400 }),
             withTiming(2, { duration: 400 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1300 })
+            withTiming(0, { duration: 1300 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -184,10 +177,10 @@ export function ContextualJourneyIcon({
             withTiming(2, { duration: 350, easing: Easing.inOut(Easing.quad) }),
             withTiming(-4, { duration: 300 }),
             withTiming(0, { duration: 400 }),
-            withTiming(0, { duration: 1200 })
+            withTiming(0, { duration: 1200 }),
           ),
           -1,
-          false
+          false,
         );
         rotation.value = withRepeat(
           withSequence(
@@ -196,20 +189,20 @@ export function ContextualJourneyIcon({
             withTiming(-6, { duration: 200 }),
             withTiming(6, { duration: 200 }),
             withTiming(0, { duration: 300 }),
-            withTiming(0, { duration: 1500 })
+            withTiming(0, { duration: 1500 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
             withTiming(1.25, { duration: 450 }),
             withTiming(0.98, { duration: 350 }),
             withTiming(1, { duration: 400 }),
-            withTiming(1, { duration: 1500 })
+            withTiming(1, { duration: 1500 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -225,19 +218,19 @@ export function ContextualJourneyIcon({
             withTiming(-2, { duration: 60 }),
             withTiming(2, { duration: 60 }),
             withTiming(0, { duration: 100 }),
-            withTiming(0, { duration: 1400 })
+            withTiming(0, { duration: 1400 }),
           ),
           -1,
-          false
+          false,
         );
         translateY.value = withRepeat(
           withSequence(
             withTiming(-4, { duration: 300, easing: Easing.out(Easing.quad) }),
             withTiming(0, { duration: 200 }),
-            withTiming(0, { duration: 1900 })
+            withTiming(0, { duration: 1900 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -250,10 +243,10 @@ export function ContextualJourneyIcon({
             withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
             withTiming(-45, { duration: 500, easing: Easing.inOut(Easing.quad) }),
             withTiming(0, { duration: 500, easing: Easing.inOut(Easing.quad) }),
-            withTiming(0, { duration: 1000 })
+            withTiming(0, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         scale.value = withRepeat(
           withSequence(
@@ -261,10 +254,10 @@ export function ContextualJourneyIcon({
             withTiming(0.9, { duration: 400 }),
             withTiming(1.15, { duration: 400 }),
             withTiming(1, { duration: 500 }),
-            withTiming(1, { duration: 700 })
+            withTiming(1, { duration: 700 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -279,10 +272,10 @@ export function ContextualJourneyIcon({
             withTiming(-10, { duration: 600, easing: Easing.inOut(Easing.quad) }),
             withTiming(10, { duration: 600, easing: Easing.inOut(Easing.quad) }),
             withTiming(0, { duration: 600 }),
-            withTiming(0, { duration: 1000 })
+            withTiming(0, { duration: 1000 }),
           ),
           -1,
-          false
+          false,
         );
         break;
       }
@@ -330,7 +323,9 @@ export function JourneyHeader({
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard]}>
       <View style={{ gap: spacing.md }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        >
           <View style={{ gap: 2 }}>
             <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
               {isPartnerView ? "Partner's Journey" : 'My XP Journey'}
@@ -370,11 +365,24 @@ export function JourneyHeader({
               gap: 4,
             }}
           >
-            <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(255, 190, 92, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 10,
+                backgroundColor: 'rgba(255, 190, 92, 0.15)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <ContextualJourneyIcon icon={Zap} type="zap" size={16} color="#FF9F1C" />
             </View>
-            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>+{todayXP}</Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Today</Text>
+            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>
+              +{todayXP}
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>
+              Today
+            </Text>
           </View>
 
           <View
@@ -389,11 +397,24 @@ export function JourneyHeader({
               gap: 4,
             }}
           >
-            <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(96, 165, 250, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 10,
+                backgroundColor: 'rgba(96, 165, 250, 0.15)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <ContextualJourneyIcon icon={Target} type="target" size={16} color="#3B82F6" />
             </View>
-            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>{nextMilestoneXP}</Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Next Target</Text>
+            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>
+              {nextMilestoneXP}
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>
+              Next Target
+            </Text>
           </View>
 
           <View
@@ -408,11 +429,24 @@ export function JourneyHeader({
               gap: 4,
             }}
           >
-            <View style={{ width: 28, height: 28, borderRadius: 10, backgroundColor: 'rgba(167, 139, 250, 0.15)', alignItems: 'center', justifyContent: 'center' }}>
+            <View
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 10,
+                backgroundColor: 'rgba(167, 139, 250, 0.15)',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <ContextualJourneyIcon icon={Clock} type="clock" size={16} color="#8B5CF6" />
             </View>
-            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>{remainingXP}</Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>Remaining</Text>
+            <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 14 }}>
+              {remainingXP}
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 10, fontWeight: '500' }}>
+              Remaining
+            </Text>
           </View>
         </View>
       </View>
@@ -437,13 +471,13 @@ export function JourneyProgressCard({ currentXP, prevXP, nextXP }: JourneyProgre
   return (
     <View style={[glassCardStyle, styles.pinkGlassCard]}>
       <View style={{ gap: spacing.xs }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+        >
           <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 14 }}>
             Progress to {nextXP} XP Milestone
           </Text>
-          <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 13 }}>
-            {pct}%
-          </Text>
+          <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 13 }}>{pct}%</Text>
         </View>
 
         <View
@@ -466,7 +500,14 @@ export function JourneyProgressCard({ currentXP, prevXP, nextXP }: JourneyProgre
           />
         </View>
 
-        <Text style={{ color: palette.textSecondary, fontSize: 11, textAlign: 'right', fontWeight: '500' }}>
+        <Text
+          style={{
+            color: palette.textSecondary,
+            fontSize: 11,
+            textAlign: 'right',
+            fontWeight: '500',
+          }}
+        >
           {nextXP - currentXP} XP needed to reach next checkpoint
         </Text>
       </View>
@@ -497,23 +538,11 @@ export function JourneyNode({
   const isClaimed = milestone.is_claimed;
   const isCurrentTarget = !isUnlocked && currentXP < milestone.required_xp;
 
-  const NodeIcon: LucideIcon = isClaimed
-    ? CheckCircle2
-    : isUnlocked
-      ? Trophy
-      : Gift;
+  const NodeIcon: LucideIcon = isClaimed ? CheckCircle2 : isUnlocked ? Trophy : Gift;
 
-  const iconType: JourneyIconType = isClaimed
-    ? 'star'
-    : isUnlocked
-      ? 'trophy'
-      : 'gift';
+  const iconType: JourneyIconType = isClaimed ? 'star' : isUnlocked ? 'trophy' : 'gift';
 
-  const iconColor = isClaimed
-    ? '#16a34a'
-    : isUnlocked
-      ? '#D94C61'
-      : '#66545B';
+  const iconColor = isClaimed ? '#16a34a' : isUnlocked ? '#D94C61' : '#66545B';
 
   return (
     <View style={{ alignItems: 'center', marginVertical: spacing.sm, position: 'relative' }}>
@@ -528,9 +557,7 @@ export function JourneyNode({
             marginBottom: 4,
           }}
         >
-          <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>
-            NEXT CHECKPOINT
-          </Text>
+          <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>NEXT CHECKPOINT</Text>
         </View>
       ) : null}
 
@@ -576,12 +603,16 @@ export function JourneyNode({
           ) : isUnlocked ? (
             <>
               <Award size={12} color={palette.danger} />
-              <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '700' }}>Unlocked</Text>
+              <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '700' }}>
+                Unlocked
+              </Text>
             </>
           ) : (
             <>
               <Lock size={12} color={palette.textSecondary} />
-              <Text style={{ color: palette.textSecondary, fontSize: 11, fontWeight: '500' }}>Mystery Reward</Text>
+              <Text style={{ color: palette.textSecondary, fontSize: 11, fontWeight: '500' }}>
+                Mystery Reward
+              </Text>
             </>
           )}
         </View>
@@ -647,9 +678,20 @@ export function LockedRewardCard({ milestone, currentXP }: LockedRewardCardProps
           Mystery Reward
         </Text>
 
-        <Text style={{ color: palette.textSecondary, textAlign: 'center', fontSize: 12, lineHeight: 16, fontWeight: '500' }}>
-          Unlocks automatically at <Text style={{ fontWeight: '800', color: palette.danger }}>{milestone.required_xp} XP</Text>.
-          {" Keep studying to reveal your partner's surprise!"}
+        <Text
+          style={{
+            color: palette.textSecondary,
+            textAlign: 'center',
+            fontSize: 12,
+            lineHeight: 16,
+            fontWeight: '500',
+          }}
+        >
+          Unlocks automatically at{' '}
+          <Text style={{ fontWeight: '800', color: palette.danger }}>
+            {milestone.required_xp} XP
+          </Text>
+          .{" Keep studying to reveal your partner's surprise!"}
         </Text>
 
         <View
@@ -700,11 +742,21 @@ export function UnlockedRewardCard({ milestone, onClaim, isClaiming }: UnlockedR
           <ContextualJourneyIcon icon={Trophy} type="trophy" size={28} color={palette.danger} />
         </View>
 
-        <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
+        <Text
+          style={{ color: palette.danger, fontWeight: '800', fontSize: 18, textAlign: 'center' }}
+        >
           {milestone.reward_title}
         </Text>
 
-        <Text style={{ color: palette.textSecondary, textAlign: 'center', fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
+        <Text
+          style={{
+            color: palette.textSecondary,
+            textAlign: 'center',
+            fontSize: 13,
+            lineHeight: 18,
+            fontWeight: '500',
+          }}
+        >
           {milestone.reward_description}
         </Text>
 
@@ -732,7 +784,8 @@ export function UnlockedRewardCard({ milestone, onClaim, isClaiming }: UnlockedR
           >
             <CheckCircle2 size={13} color="#16a34a" />
             <Text style={{ color: '#16a34a', fontWeight: '700', fontSize: 12 }}>
-              Claimed on {milestone.claimed_at ? format(new Date(milestone.claimed_at), 'dd MMM') : 'Record'}
+              Claimed on{' '}
+              {milestone.claimed_at ? format(new Date(milestone.claimed_at), 'dd MMM') : 'Record'}
             </Text>
           </View>
         ) : null}
@@ -785,7 +838,9 @@ export function RewardRevealModal({
             alignItems: 'center',
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: '800', color: palette.danger, letterSpacing: 1 }}>
+          <Text
+            style={{ fontSize: 12, fontWeight: '800', color: palette.danger, letterSpacing: 1 }}
+          >
             MILESTONE REWARD REVEALED
           </Text>
 
@@ -805,7 +860,14 @@ export function RewardRevealModal({
           </View>
 
           <View style={{ alignItems: 'center', gap: 4 }}>
-            <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 20, textAlign: 'center' }}>
+            <Text
+              style={{
+                color: palette.danger,
+                fontWeight: '800',
+                fontSize: 20,
+                textAlign: 'center',
+              }}
+            >
               {milestone.reward_title}
             </Text>
             <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
@@ -813,7 +875,15 @@ export function RewardRevealModal({
             </Text>
           </View>
 
-          <Text style={{ color: palette.textSecondary, textAlign: 'center', fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
+          <Text
+            style={{
+              color: palette.textSecondary,
+              textAlign: 'center',
+              fontSize: 13,
+              lineHeight: 18,
+              fontWeight: '500',
+            }}
+          >
             {`"${milestone.reward_description}"`}
           </Text>
 
@@ -907,7 +977,9 @@ export function PartnerRewardEditor({
             gap: spacing.md,
           }}
         >
-          <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 18, textAlign: 'center' }}>
+          <Text
+            style={{ color: palette.danger, fontWeight: '800', fontSize: 18, textAlign: 'center' }}
+          >
             Edit {milestone.required_xp} XP Surprise Reward
           </Text>
 
@@ -916,11 +988,7 @@ export function PartnerRewardEditor({
             <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
               Reward Title (Hidden until unlocked)
             </Text>
-            <Input
-              value={title}
-              onChangeText={setTitle}
-              placeholder="e.g. Weekend Movie Night"
-            />
+            <Input value={title} onChangeText={setTitle} placeholder="e.g. Weekend Movie Night" />
           </View>
 
           {/* Description Input */}

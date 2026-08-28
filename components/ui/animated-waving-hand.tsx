@@ -24,27 +24,21 @@ export function AnimatedWavingHand({ size = 26 }: { size?: number }) {
         withTiming(-10, { duration: 350, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
         withTiming(18, { duration: 350, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
         withTiming(0, { duration: 500, easing: Easing.bezier(0.25, 0.1, 0.25, 1) }),
-        withTiming(0, { duration: 1000 })
+        withTiming(0, { duration: 1000 }),
       ),
       -1,
-      true
+      true,
     );
 
     sparkleOpacity.value = withRepeat(
-      withSequence(
-        withTiming(0.9, { duration: 800 }),
-        withTiming(0.3, { duration: 800 })
-      ),
+      withSequence(withTiming(0.9, { duration: 800 }), withTiming(0.3, { duration: 800 })),
       -1,
-      true
+      true,
     );
   }, [rotation, sparkleOpacity]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { scale: scale.value },
-      { rotate: `${rotation.value}deg` },
-    ],
+    transform: [{ scale: scale.value }, { rotate: `${rotation.value}deg` }],
   }));
 
   const sparkleStyle = useAnimatedStyle(() => ({
@@ -55,20 +49,22 @@ export function AnimatedWavingHand({ size = 26 }: { size?: number }) {
   const handlePress = () => {
     scale.value = withSequence(
       withSpring(1.3, { damping: 6, stiffness: 200 }),
-      withSpring(1, { damping: 8, stiffness: 150 })
+      withSpring(1, { damping: 8, stiffness: 150 }),
     );
     rotation.value = withSequence(
       withTiming(-28, { duration: 120 }),
       withTiming(28, { duration: 120 }),
       withTiming(-20, { duration: 120 }),
       withTiming(20, { duration: 120 }),
-      withTiming(0, { duration: 200 })
+      withTiming(0, { duration: 200 }),
     );
   };
 
   return (
     <Pressable onPress={handlePress} style={{ alignItems: 'center', justifyContent: 'center' }}>
-      <Animated.View style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }]}>
+      <Animated.View
+        style={[{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }]}
+      >
         {/* Glow & Sparkle Backdrop */}
         <Animated.View
           style={[
@@ -114,7 +110,12 @@ export function AnimatedWavingHand({ size = 26 }: { size?: number }) {
               fill="rgba(255, 208, 123, 0.15)"
             />
             {/* Wrist Cuff Detail */}
-            <Path d="M6.5 20.5h11" stroke="url(#cuffGradient)" strokeWidth="2.5" strokeLinecap="round" />
+            <Path
+              d="M6.5 20.5h11"
+              stroke="url(#cuffGradient)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            />
           </Svg>
         </Animated.View>
       </Animated.View>

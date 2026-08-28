@@ -10,11 +10,27 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, useColorScheme, View } from 'react-native';
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useColorScheme,
+  View,
+} from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Gift } from 'lucide-react-native';
 
-import { Button, Card, EmptyState, HeaderTitleCard, Loading, NotificationBadge, Screen } from '@/components/ui';
+import {
+  Button,
+  Card,
+  EmptyState,
+  HeaderTitleCard,
+  Loading,
+  NotificationBadge,
+  Screen,
+} from '@/components/ui';
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
 import { useAuthStore } from '@/stores';
@@ -220,13 +236,13 @@ export default function JourneyScreen() {
     <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
       >
         <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header Row: Compact Oval Black Card + Notification Badge */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <HeaderTitleCard title="XP Journey" showWavingHand={false} />
             <NotificationBadge />
           </View>
@@ -262,7 +278,7 @@ export default function JourneyScreen() {
                     fontSize: 13,
                   }}
                 >
-                  {"My Journey Path"}
+                  {'My Journey Path'}
                 </Text>
               </Pressable>
 
@@ -295,8 +311,8 @@ export default function JourneyScreen() {
             <Loading />
           ) : !journey ? (
             <EmptyState
-              title={"Journey Not Initialized"}
-              description={"Start studying to initialize your lifetime XP Journey path."}
+              title={'Journey Not Initialized'}
+              description={'Start studying to initialize your lifetime XP Journey path.'}
             />
           ) : (
             <>
@@ -318,14 +334,71 @@ export default function JourneyScreen() {
               />
 
               {/* Duolingo-style Vertical Timeline Path with Chaotic Gift Watermarks */}
-              <View style={[glassCardStyle, { backgroundColor: 'rgba(255, 243, 245, 0.85)', borderColor: 'rgba(250, 215, 224, 0.90)', borderRadius: 24, padding: spacing[16], position: 'relative', overflow: 'hidden' }]}>
+              <View
+                style={[
+                  glassCardStyle,
+                  {
+                    backgroundColor: 'rgba(255, 243, 245, 0.85)',
+                    borderColor: 'rgba(250, 215, 224, 0.90)',
+                    borderRadius: 24,
+                    padding: spacing[16],
+                    position: 'relative',
+                    overflow: 'hidden',
+                  },
+                ]}
+              >
                 {/* Chaotic Gift Watermarks Layer */}
                 <View pointerEvents="none" style={StyleSheet.absoluteFill}>
-                  <Gift size={68} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: -12, left: -16, transform: [{ rotate: '-24deg' }] }} />
-                  <Gift size={84} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: '22%', right: -22, transform: [{ rotate: '32deg' }] }} />
-                  <Gift size={58} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', top: '48%', left: -18, transform: [{ rotate: '-36deg' }] }} />
-                  <Gift size={76} color="rgba(232, 77, 114, 0.07)" style={{ position: 'absolute', top: '70%', right: -14, transform: [{ rotate: '20deg' }] }} />
-                  <Gift size={62} color="rgba(232, 77, 114, 0.08)" style={{ position: 'absolute', bottom: -12, left: 20, transform: [{ rotate: '-16deg' }] }} />
+                  <Gift
+                    size={68}
+                    color="rgba(232, 77, 114, 0.08)"
+                    style={{
+                      position: 'absolute',
+                      top: -12,
+                      left: -16,
+                      transform: [{ rotate: '-24deg' }],
+                    }}
+                  />
+                  <Gift
+                    size={84}
+                    color="rgba(232, 77, 114, 0.07)"
+                    style={{
+                      position: 'absolute',
+                      top: '22%',
+                      right: -22,
+                      transform: [{ rotate: '32deg' }],
+                    }}
+                  />
+                  <Gift
+                    size={58}
+                    color="rgba(232, 77, 114, 0.08)"
+                    style={{
+                      position: 'absolute',
+                      top: '48%',
+                      left: -18,
+                      transform: [{ rotate: '-36deg' }],
+                    }}
+                  />
+                  <Gift
+                    size={76}
+                    color="rgba(232, 77, 114, 0.07)"
+                    style={{
+                      position: 'absolute',
+                      top: '70%',
+                      right: -14,
+                      transform: [{ rotate: '20deg' }],
+                    }}
+                  />
+                  <Gift
+                    size={62}
+                    color="rgba(232, 77, 114, 0.08)"
+                    style={{
+                      position: 'absolute',
+                      bottom: -12,
+                      left: 20,
+                      transform: [{ rotate: '-16deg' }],
+                    }}
+                  />
                 </View>
 
                 <View style={{ gap: spacing[16], alignItems: 'center' }}>
@@ -334,7 +407,14 @@ export default function JourneyScreen() {
                   </Text>
 
                   {viewingPartner ? (
-                    <Text style={{ color: palette.textSecondary, fontSize: 12, textAlign: 'center', fontWeight: '500' }}>
+                    <Text
+                      style={{
+                        color: palette.textSecondary,
+                        fontSize: 12,
+                        textAlign: 'center',
+                        fontWeight: '500',
+                      }}
+                    >
                       {`Tap "Edit Reward" on any node below to customize your partner's secret surprise for that milestone!`}
                     </Text>
                   ) : null}
@@ -356,7 +436,9 @@ export default function JourneyScreen() {
                               style={{
                                 width: 4,
                                 height: 28,
-                                backgroundColor: m.is_unlocked ? palette.cherryBloom : 'rgba(250, 215, 224, 0.90)',
+                                backgroundColor: m.is_unlocked
+                                  ? palette.cherryBloom
+                                  : 'rgba(250, 215, 224, 0.90)',
                               }}
                             />
                           ) : null}

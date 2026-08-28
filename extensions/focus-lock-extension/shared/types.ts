@@ -1,4 +1,5 @@
-export type FocusSessionStatus = 'IDLE' | 'STARTING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'RECOVERING';
+export type FocusSessionStatus =
+  'IDLE' | 'STARTING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'RECOVERING';
 
 export interface FocusSession {
   id: string;

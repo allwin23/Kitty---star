@@ -1,13 +1,14 @@
 import { create } from 'zustand';
 import { CAT_SCENARIOS, DYNAMIC_IDLE_POOL, type CatScenario } from './cat-scenarios';
+import urgeData from '@/urge.json';
 
 export interface CompanionQueueStore {
   activeScenario: CatScenario;
   queue: CatScenario[];
-  
+
   /** Push a scenario or event type into presentation queue */
   enqueueEvent: (eventType: string, customText?: { headline?: string; subtext?: string }) => void;
-  
+
   /** Advance to next queued scenario (filtering out expired time-based routine events) */
   nextScenario: () => void;
 
@@ -41,7 +42,12 @@ export function getDefaultTimeBasedScenario(): CatScenario {
   if (currentHour >= 17 && currentHour < 19) return CAT_SCENARIOS.RoutineEvening;
   if (currentHour >= 22 || currentHour < 5) return CAT_SCENARIOS.RoutineNight;
 
-  return CAT_SCENARIOS.IdleDefault;
+  const quotes = urgeData.motivation_quotes;
+  const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+  return {
+    ...CAT_SCENARIOS.IdleDefault,
+    subtext: `"${randomQuote}"`,
+  };
 }
 
 let idleIndex = 0;
@@ -81,8 +87,14 @@ export const useCompanionQueueStore = create<CompanionQueueStore>((set, get) => 
       if (routine.tag === '[ROUTINE]') {
         set({ activeScenario: routine });
       } else {
-        const nextIdle = DYNAMIC_IDLE_POOL[idleIndex % DYNAMIC_IDLE_POOL.length];
+        const template = DYNAMIC_IDLE_POOL[idleIndex % DYNAMIC_IDLE_POOL.length];
         idleIndex = (idleIndex + 1) % DYNAMIC_IDLE_POOL.length;
+        const quotes = urgeData.motivation_quotes;
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        const nextIdle = {
+          ...template,
+          subtext: `"${randomQuote}"`,
+        };
         set({ activeScenario: nextIdle });
       }
       return;
@@ -94,7 +106,9 @@ export const useCompanionQueueStore = create<CompanionQueueStore>((set, get) => 
       const candidate = currentQueue[nextIdx];
       if (candidate.tag === '[ROUTINE]' && !isRoutineValid(candidate)) {
         // Skip expired routine idle event
-        console.log(`[CompanionQueue] Automatically skipped expired routine: ${candidate.eventType}`);
+        console.log(
+          `[CompanionQueue] Automatically skipped expired routine: ${candidate.eventType}`,
+        );
         nextIdx++;
       } else {
         break;

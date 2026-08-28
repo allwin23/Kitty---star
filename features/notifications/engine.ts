@@ -81,7 +81,9 @@ export class NotificationEngine {
   }
 
   /** Core Event Processing Pipeline */
-  public static async processEvent(event: AppNotificationEventPayload): Promise<NotificationRecord | null> {
+  public static async processEvent(
+    event: AppNotificationEventPayload,
+  ): Promise<NotificationRecord | null> {
     try {
       const { type, userId, data = {}, priority: explicitPriority } = event;
       if (!userId) return null;
@@ -93,7 +95,9 @@ export class NotificationEngine {
       const content = generateNotificationContent(type, data);
       const category = event.category || content.category;
       if (!this.checkCategoryPreference(category, prefs)) {
-        console.log(`[NotificationEngine] Event ${type} blocked by user preference for category: ${category}`);
+        console.log(
+          `[NotificationEngine] Event ${type} blocked by user preference for category: ${category}`,
+        );
         return null;
       }
 
@@ -126,7 +130,9 @@ export class NotificationEngine {
 
       // 5. Anti-Spam Rate Limiter (Non-urgent events)
       if (priority !== 'urgent' && this.isRateLimited(userId)) {
-        console.log(`[NotificationEngine] Event ${type} suppressed due to hourly rate limiting (max ${MAX_NOTIFICATIONS_PER_HOUR}/hr)`);
+        console.log(
+          `[NotificationEngine] Event ${type} suppressed due to hourly rate limiting (max ${MAX_NOTIFICATIONS_PER_HOUR}/hr)`,
+        );
         return null;
       }
 
@@ -146,7 +152,9 @@ export class NotificationEngine {
 
       const aiDecision = AINotificationBrain.evaluate(type, aiContext, prefs.relevance_threshold);
       if (!aiDecision.shouldSend) {
-        console.log(`[NotificationEngine] Event ${type} suppressed by AI Brain score: ${aiDecision.relevanceScore} < ${prefs.relevance_threshold}. Reason: ${aiDecision.reason}`);
+        console.log(
+          `[NotificationEngine] Event ${type} suppressed by AI Brain score: ${aiDecision.relevanceScore} < ${prefs.relevance_threshold}. Reason: ${aiDecision.reason}`,
+        );
         return null;
       }
 
@@ -184,7 +192,10 @@ export class NotificationEngine {
       }
 
       // Channel B: Push Notification Dispatch (Lock screen)
-      if (prefs.push_enabled && (aiDecision.recommendedChannel === 'push' || aiDecision.recommendedChannel === 'both')) {
+      if (
+        prefs.push_enabled &&
+        (aiDecision.recommendedChannel === 'push' || aiDecision.recommendedChannel === 'both')
+      ) {
         await this.dispatchPushNotification({
           title: content.title,
           body: content.body,
@@ -226,7 +237,10 @@ export class NotificationEngine {
           body,
           data,
           sound: true,
-          priority: priority === 'urgent' || priority === 'high' ? Notifications.AndroidNotificationPriority.HIGH : Notifications.AndroidNotificationPriority.DEFAULT,
+          priority:
+            priority === 'urgent' || priority === 'high'
+              ? Notifications.AndroidNotificationPriority.HIGH
+              : Notifications.AndroidNotificationPriority.DEFAULT,
         },
         trigger: null, // Send immediately
       });
@@ -345,9 +359,12 @@ export class NotificationEngine {
   /** Fetch or initialize notification preferences from Supabase */
   public static async getUserPreferences(userId: string): Promise<NotificationPreferences> {
     try {
-      const { data, error } = await (supabase as any).rpc('get_or_create_notification_preferences', {
-        p_user_id: userId,
-      });
+      const { data, error } = await (supabase as any).rpc(
+        'get_or_create_notification_preferences',
+        {
+          p_user_id: userId,
+        },
+      );
 
       if (!error && data) {
         return data as unknown as NotificationPreferences;

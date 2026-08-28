@@ -52,7 +52,8 @@ export default function NotificationSettingsScreen() {
 
   const [testingPush, setTestingPush] = useState(false);
 
-  const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } = useAppBlockStore();
+  const { blockedPackages, isBlockerEnabled, setBlockedPackages, setBlockerEnabled } =
+    useAppBlockStore();
   const [apps, setApps] = useState<{ name: string; packageName: string }[]>([]);
   const [search, setSearch] = useState('');
   const [usagePermission, setUsagePermission] = useState(false);
@@ -97,11 +98,41 @@ export default function NotificationSettingsScreen() {
   const seedProfilesMutation = useMutation({
     mutationFn: async () => {
       const defaults = [
-        { name: 'Deep Work', duration: 45, categories: ['social', 'video'], strict: true, domains: [] },
-        { name: 'Coding', duration: 50, categories: ['social', 'shopping'], strict: false, domains: ['github.com'] },
-        { name: 'Study', duration: 30, categories: ['social', 'gaming', 'shopping'], strict: false, domains: [] },
-        { name: 'Reading', duration: 20, categories: ['social', 'video', 'news'], strict: false, domains: [] },
-        { name: 'Exam', duration: 60, categories: ['social', 'video', 'gaming', 'shopping', 'news'], strict: true, domains: [] },
+        {
+          name: 'Deep Work',
+          duration: 45,
+          categories: ['social', 'video'],
+          strict: true,
+          domains: [],
+        },
+        {
+          name: 'Coding',
+          duration: 50,
+          categories: ['social', 'shopping'],
+          strict: false,
+          domains: ['github.com'],
+        },
+        {
+          name: 'Study',
+          duration: 30,
+          categories: ['social', 'gaming', 'shopping'],
+          strict: false,
+          domains: [],
+        },
+        {
+          name: 'Reading',
+          duration: 20,
+          categories: ['social', 'video', 'news'],
+          strict: false,
+          domains: [],
+        },
+        {
+          name: 'Exam',
+          duration: 60,
+          categories: ['social', 'video', 'gaming', 'shopping', 'news'],
+          strict: true,
+          domains: [],
+        },
       ];
 
       for (const item of defaults) {
@@ -110,13 +141,13 @@ export default function NotificationSettingsScreen() {
           item.duration,
           item.categories,
           item.strict,
-          item.domains
+          item.domains,
         );
       }
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['focus_profiles'] });
-    }
+    },
   });
 
   useEffect(() => {
@@ -208,7 +239,10 @@ export default function NotificationSettingsScreen() {
       priority: 'high',
     });
 
-    Alert.alert('Notification Sent', 'A test notification was dispatched to your lock screen/device.');
+    Alert.alert(
+      'Notification Sent',
+      'A test notification was dispatched to your lock screen/device.',
+    );
     setTestingPush(false);
   };
 
@@ -229,7 +263,15 @@ export default function NotificationSettingsScreen() {
           paddingVertical: spacing.xs,
         }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1, paddingRight: spacing.md, gap: spacing.sm }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            flex: 1,
+            paddingRight: spacing.md,
+            gap: spacing.sm,
+          }}
+        >
           <View
             style={{
               width: 36,
@@ -276,7 +318,15 @@ export default function NotificationSettingsScreen() {
           {/* Section 1: Main Channels */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '800',
+                  color: palette.danger,
+                  letterSpacing: 0.8,
+                  textTransform: 'uppercase',
+                }}
+              >
                 DELIVERY CHANNELS
               </Text>
 
@@ -321,7 +371,15 @@ export default function NotificationSettingsScreen() {
           {/* Section 2: Categories */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '800',
+                  color: palette.danger,
+                  letterSpacing: 0.8,
+                  textTransform: 'uppercase',
+                }}
+              >
                 NOTIFICATION CATEGORIES
               </Text>
 
@@ -386,7 +444,15 @@ export default function NotificationSettingsScreen() {
           {/* Section 3: Quiet Hours & AI Threshold */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '800',
+                  color: palette.danger,
+                  letterSpacing: 0.8,
+                  textTransform: 'uppercase',
+                }}
+              >
                 QUIET HOURS & AI INTELLIGENCE
               </Text>
 
@@ -410,7 +476,9 @@ export default function NotificationSettingsScreen() {
                   }}
                 >
                   <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>Quiet Hours Start</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
+                      Quiet Hours Start
+                    </Text>
                     <TextInput
                       style={{
                         borderColor: 'rgba(250, 215, 224, 0.85)',
@@ -432,7 +500,9 @@ export default function NotificationSettingsScreen() {
                   </View>
 
                   <View style={{ flex: 1, gap: 4 }}>
-                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>Quiet Hours End</Text>
+                    <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '600' }}>
+                      Quiet Hours End
+                    </Text>
                     <TextInput
                       style={{
                         borderColor: 'rgba(250, 215, 224, 0.85)',
@@ -464,13 +534,19 @@ export default function NotificationSettingsScreen() {
                   </Text>
                 </View>
                 <Text style={{ color: palette.textSecondary, fontSize: 12, fontWeight: '500' }}>
-                  Current Threshold: {Math.round(preferences.relevance_threshold * 100)}% (Higher = Only important alerts)
+                  Current Threshold: {Math.round(preferences.relevance_threshold * 100)}% (Higher =
+                  Only important alerts)
                 </Text>
 
                 <View style={{ flexDirection: 'row', gap: spacing.xs, marginTop: spacing.xs }}>
                   {[0.4, 0.6, 0.8].map((th) => {
                     const selected = Math.abs(preferences.relevance_threshold - th) < 0.05;
-                    const label = th === 0.4 ? 'Low (More Alerts)' : th === 0.6 ? 'Balanced (Default)' : 'Strict (Only High)';
+                    const label =
+                      th === 0.4
+                        ? 'Low (More Alerts)'
+                        : th === 0.6
+                          ? 'Balanced (Default)'
+                          : 'Strict (Only High)';
                     return (
                       <Pressable
                         key={th}
@@ -485,7 +561,14 @@ export default function NotificationSettingsScreen() {
                           alignItems: 'center',
                         }}
                       >
-                        <Text style={{ color: selected ? '#FFFFFF' : palette.textPrimary, fontSize: 11, fontWeight: '800', textAlign: 'center' }}>
+                        <Text
+                          style={{
+                            color: selected ? '#FFFFFF' : palette.textPrimary,
+                            fontSize: 11,
+                            fontWeight: '800',
+                            textAlign: 'center',
+                          }}
+                        >
                           {label}
                         </Text>
                       </Pressable>
@@ -499,7 +582,13 @@ export default function NotificationSettingsScreen() {
           {Platform.OS === 'android' && (
             <Card>
               <View style={{ gap: spacing.md }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 }}>
                     <View
                       style={{
@@ -530,7 +619,7 @@ export default function NotificationSettingsScreen() {
                       if (val && (Platform.OS !== 'android' || !AppBlocker)) {
                         Alert.alert(
                           'Custom Build Required',
-                          'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK to test.'
+                          'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK to test.',
                         );
                         return;
                       }
@@ -558,7 +647,8 @@ export default function NotificationSettingsScreen() {
                           Required Permissions
                         </Text>
                         <Text style={{ color: '#B45309', fontSize: 12, lineHeight: 18 }}>
-                          To block other apps, Kitty & Star needs Usage Access (to check which app is open) and Display Over Other Apps (to block them).
+                          To block other apps, Kitty & Star needs Usage Access (to check which app
+                          is open) and Display Over Other Apps (to block them).
                         </Text>
 
                         {!usagePermission && (
@@ -567,7 +657,7 @@ export default function NotificationSettingsScreen() {
                               if (Platform.OS !== 'android' || !AppBlocker) {
                                 Alert.alert(
                                   'Custom Build Required',
-                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.'
+                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.',
                                 );
                                 return;
                               }
@@ -592,7 +682,7 @@ export default function NotificationSettingsScreen() {
                               if (Platform.OS !== 'android' || !AppBlocker) {
                                 Alert.alert(
                                   'Custom Build Required',
-                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.'
+                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.',
                                 );
                                 return;
                               }
@@ -615,7 +705,14 @@ export default function NotificationSettingsScreen() {
 
                     {usagePermission && overlayPermission && (
                       <>
-                        <Text style={{ color: palette.textPrimary, fontWeight: '800', fontSize: 13, marginTop: spacing.xs }}>
+                        <Text
+                          style={{
+                            color: palette.textPrimary,
+                            fontWeight: '800',
+                            fontSize: 13,
+                            marginTop: spacing.xs,
+                          }}
+                        >
                           Select Apps to Block
                         </Text>
 
@@ -637,16 +734,32 @@ export default function NotificationSettingsScreen() {
                         />
 
                         {loadingApps ? (
-                          <Text style={{ color: palette.textSecondary, fontSize: 12, fontStyle: 'italic', textAlign: 'center', marginVertical: spacing.md }}>
+                          <Text
+                            style={{
+                              color: palette.textSecondary,
+                              fontSize: 12,
+                              fontStyle: 'italic',
+                              textAlign: 'center',
+                              marginVertical: spacing.md,
+                            }}
+                          >
                             Loading installed apps...
                           </Text>
                         ) : (
                           <ScrollView
-                            style={{ maxHeight: 200, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.85)', borderRadius: radius.md, backgroundColor: '#FFFDFD' }}
+                            style={{
+                              maxHeight: 200,
+                              borderWidth: 1,
+                              borderColor: 'rgba(250, 215, 224, 0.85)',
+                              borderRadius: radius.md,
+                              backgroundColor: '#FFFDFD',
+                            }}
                             nestedScrollEnabled
                           >
                             {apps
-                              .filter((app) => app.name.toLowerCase().includes(search.toLowerCase()))
+                              .filter((app) =>
+                                app.name.toLowerCase().includes(search.toLowerCase()),
+                              )
                               .map((app) => {
                                 const isBlocked = blockedPackages.includes(app.packageName);
                                 return (
@@ -664,7 +777,13 @@ export default function NotificationSettingsScreen() {
                                     }}
                                   >
                                     <View style={{ flex: 1, marginRight: spacing.sm }}>
-                                      <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 13 }}>
+                                      <Text
+                                        style={{
+                                          color: palette.textPrimary,
+                                          fontWeight: '700',
+                                          fontSize: 13,
+                                        }}
+                                      >
                                         {app.name}
                                       </Text>
                                       <Text style={{ color: palette.textSecondary, fontSize: 11 }}>
@@ -684,7 +803,13 @@ export default function NotificationSettingsScreen() {
                                       }}
                                     >
                                       {isBlocked && (
-                                        <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '900' }}>
+                                        <Text
+                                          style={{
+                                            color: '#FFFFFF',
+                                            fontSize: 11,
+                                            fontWeight: '900',
+                                          }}
+                                        >
                                           ✓
                                         </Text>
                                       )}
@@ -692,15 +817,30 @@ export default function NotificationSettingsScreen() {
                                   </Pressable>
                                 );
                               })}
-                            {apps.filter((app) => app.name.toLowerCase().includes(search.toLowerCase())).length === 0 && (
-                              <Text style={{ color: palette.textSecondary, fontSize: 12, textAlign: 'center', padding: spacing.md }}>
+                            {apps.filter((app) =>
+                              app.name.toLowerCase().includes(search.toLowerCase()),
+                            ).length === 0 && (
+                              <Text
+                                style={{
+                                  color: palette.textSecondary,
+                                  fontSize: 12,
+                                  textAlign: 'center',
+                                  padding: spacing.md,
+                                }}
+                              >
                                 No apps found.
                               </Text>
                             )}
                           </ScrollView>
                         )}
 
-                        <Text style={{ color: palette.textSecondary, fontSize: 11, fontStyle: 'italic' }}>
+                        <Text
+                          style={{
+                            color: palette.textSecondary,
+                            fontSize: 11,
+                            fontStyle: 'italic',
+                          }}
+                        >
                           Selected: {blockedPackages.length} app(s) to block.
                         </Text>
                       </>
@@ -714,10 +854,24 @@ export default function NotificationSettingsScreen() {
           {/* Chrome Focus Lock Card */}
           <Card>
             <View style={{ gap: spacing.md }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
                   <Laptop size={18} color={palette.danger} strokeWidth={2.2} />
-                  <Text style={{ fontSize: 13, fontWeight: '800', color: palette.danger, letterSpacing: 0.8, textTransform: 'uppercase' }}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '800',
+                      color: palette.danger,
+                      letterSpacing: 0.8,
+                      textTransform: 'uppercase',
+                    }}
+                  >
                     CHROME FOCUS LOCK
                   </Text>
                 </View>
@@ -730,8 +884,16 @@ export default function NotificationSettingsScreen() {
                 />
               </View>
 
-              <Text style={{ color: palette.textSecondary, fontSize: 13, lineHeight: 18, fontWeight: '500' }}>
-                Sync focus session to your desktop browser extension (Chrome, Edge, Brave) to block distracting websites.
+              <Text
+                style={{
+                  color: palette.textSecondary,
+                  fontSize: 13,
+                  lineHeight: 18,
+                  fontWeight: '500',
+                }}
+              >
+                Sync focus session to your desktop browser extension (Chrome, Edge, Brave) to block
+                distracting websites.
               </Text>
 
               {isChromeSyncEnabled && (
@@ -757,8 +919,9 @@ export default function NotificationSettingsScreen() {
                       }}
                     >
                       <Text style={{ color: palette.textPrimary, fontSize: 13, fontWeight: '600' }}>
-                        {selectedProfileId 
-                          ? profilesQuery.data?.find(p => p.id === selectedProfileId)?.name || 'Custom Setup' 
+                        {selectedProfileId
+                          ? profilesQuery.data?.find((p) => p.id === selectedProfileId)?.name ||
+                            'Custom Setup'
                           : 'Custom Setup (No Profile Selected)'}
                       </Text>
                       <Text style={{ color: palette.danger, fontWeight: '800', fontSize: 12 }}>
@@ -815,13 +978,15 @@ export default function NotificationSettingsScreen() {
                             disabled={isRunning}
                             onPress={() => {
                               if (isSelected) {
-                                setBlockedCategories(blockedCategories.filter(c => c !== cat));
+                                setBlockedCategories(blockedCategories.filter((c) => c !== cat));
                               } else {
                                 setBlockedCategories([...blockedCategories, cat]);
                               }
                             }}
                             style={{
-                              backgroundColor: isSelected ? 'rgba(232, 77, 114, 0.12)' : 'transparent',
+                              backgroundColor: isSelected
+                                ? 'rgba(232, 77, 114, 0.12)'
+                                : 'transparent',
                               borderColor: isSelected ? palette.danger : 'rgba(232, 77, 114, 0.25)',
                               borderWidth: 1.5,
                               borderRadius: radius.sm,
@@ -829,7 +994,13 @@ export default function NotificationSettingsScreen() {
                               paddingVertical: 6,
                             }}
                           >
-                            <Text style={{ color: isSelected ? palette.danger : palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                            <Text
+                              style={{
+                                color: isSelected ? palette.danger : palette.textPrimary,
+                                fontWeight: '700',
+                                fontSize: 12,
+                              }}
+                            >
                               {cat.toUpperCase()}
                             </Text>
                           </Pressable>
@@ -859,14 +1030,24 @@ export default function NotificationSettingsScreen() {
                       placeholderTextColor={palette.textSecondary}
                       value={customDomains.join(', ')}
                       onChangeText={(val) => {
-                        const list = val.split(',').map(d => d.trim()).filter(d => d.length > 0);
+                        const list = val
+                          .split(',')
+                          .map((d) => d.trim())
+                          .filter((d) => d.length > 0);
                         setCustomDomains(list);
                       }}
                     />
                   </View>
 
                   {/* Strict Mode switch */}
-                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginTop: spacing.xs,
+                    }}
+                  >
                     <View style={{ flex: 1, marginRight: spacing.sm }}>
                       <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
                         Strict Mode
@@ -895,9 +1076,34 @@ export default function NotificationSettingsScreen() {
             transparent
             onRequestClose={() => setProfilesModalVisible(false)}
           >
-            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: spacing.md }}>
-              <View style={{ width: '100%', maxHeight: '80%', backgroundColor: '#FFF7F8', borderRadius: radius.lg, borderWidth: 1.5, borderColor: palette.danger, padding: spacing.md, gap: spacing.sm }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: spacing.md,
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  maxHeight: '80%',
+                  backgroundColor: '#FFF7F8',
+                  borderRadius: radius.lg,
+                  borderWidth: 1.5,
+                  borderColor: palette.danger,
+                  padding: spacing.md,
+                  gap: spacing.sm,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text style={{ fontSize: 16, fontWeight: '800', color: palette.danger }}>
                     MANAGE FOCUS PROFILES
                   </Text>
@@ -907,7 +1113,11 @@ export default function NotificationSettingsScreen() {
                 </View>
 
                 {profilesQuery.isLoading ? (
-                  <ActivityIndicator size="small" color={palette.danger} style={{ marginVertical: spacing.lg }} />
+                  <ActivityIndicator
+                    size="small"
+                    color={palette.danger}
+                    style={{ marginVertical: spacing.lg }}
+                  />
                 ) : (
                   <ScrollView style={{ flexGrow: 0, maxHeight: 350 }} nestedScrollEnabled>
                     {profilesQuery.data && profilesQuery.data.length > 0 ? (
@@ -924,8 +1134,20 @@ export default function NotificationSettingsScreen() {
                             gap: spacing.xs,
                           }}
                         >
-                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <Text style={{ fontWeight: '800', fontSize: 14, color: palette.textPrimary }}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontWeight: '800',
+                                fontSize: 14,
+                                color: palette.textPrimary,
+                              }}
+                            >
                               {profile.name}
                             </Text>
                             <View style={{ flexDirection: 'row', gap: spacing.xs }}>
@@ -945,7 +1167,9 @@ export default function NotificationSettingsScreen() {
                                   paddingVertical: 4,
                                 }}
                               >
-                                <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }}>SELECT</Text>
+                                <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '700' }}>
+                                  SELECT
+                                </Text>
                               </Pressable>
                               <Pressable
                                 onPress={() => {
@@ -966,7 +1190,11 @@ export default function NotificationSettingsScreen() {
                                   borderWidth: 1,
                                 }}
                               >
-                                <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '700' }}>EDIT</Text>
+                                <Text
+                                  style={{ color: palette.danger, fontSize: 11, fontWeight: '700' }}
+                                >
+                                  EDIT
+                                </Text>
                               </Pressable>
                               <Pressable
                                 onPress={() => {
@@ -988,9 +1216,9 @@ export default function NotificationSettingsScreen() {
                                           } catch (e: any) {
                                             Alert.alert('Error', e.message);
                                           }
-                                        }
-                                      }
-                                    ]
+                                        },
+                                      },
+                                    ],
                                   );
                                 }}
                                 style={{
@@ -1000,23 +1228,48 @@ export default function NotificationSettingsScreen() {
                                   paddingVertical: 4,
                                 }}
                               >
-                                <Text style={{ color: palette.textPrimary, fontSize: 11, fontWeight: '700' }}>DEL</Text>
+                                <Text
+                                  style={{
+                                    color: palette.textPrimary,
+                                    fontSize: 11,
+                                    fontWeight: '700',
+                                  }}
+                                >
+                                  DEL
+                                </Text>
                               </Pressable>
                             </View>
                           </View>
                           <Text style={{ fontSize: 12, color: palette.textSecondary }}>
-                            Duration: {profile.duration_minutes}m | Strict: {profile.strict_mode ? 'Yes' : 'No'} | Categories: {profile.blocked_categories.join(', ') || 'none'}
+                            Duration: {profile.duration_minutes}m | Strict:{' '}
+                            {profile.strict_mode ? 'Yes' : 'No'} | Categories:{' '}
+                            {profile.blocked_categories.join(', ') || 'none'}
                           </Text>
                           {profile.custom_domains.length > 0 && (
-                            <Text style={{ fontSize: 11, color: palette.textSecondary }} numberOfLines={1}>
+                            <Text
+                              style={{ fontSize: 11, color: palette.textSecondary }}
+                              numberOfLines={1}
+                            >
                               Custom: {profile.custom_domains.join(', ')}
                             </Text>
                           )}
                         </View>
                       ))
                     ) : (
-                      <View style={{ paddingVertical: spacing.md, alignItems: 'center', gap: spacing.sm }}>
-                        <Text style={{ color: palette.textSecondary, fontSize: 13, textAlign: 'center' }}>
+                      <View
+                        style={{
+                          paddingVertical: spacing.md,
+                          alignItems: 'center',
+                          gap: spacing.sm,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            color: palette.textSecondary,
+                            fontSize: 13,
+                            textAlign: 'center',
+                          }}
+                        >
                           No profiles configured yet.
                         </Text>
                         <Button
@@ -1066,16 +1319,39 @@ export default function NotificationSettingsScreen() {
             transparent
             onRequestClose={() => setProfileEditorVisible(false)}
           >
-            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center', padding: spacing.md }}>
-              <View style={{ width: '100%', maxHeight: '90%', backgroundColor: '#FFF7F8', borderRadius: radius.lg, borderWidth: 1.5, borderColor: palette.danger, padding: spacing.md, gap: spacing.sm }}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: spacing.md,
+              }}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  maxHeight: '90%',
+                  backgroundColor: '#FFF7F8',
+                  borderRadius: radius.lg,
+                  borderWidth: 1.5,
+                  borderColor: palette.danger,
+                  padding: spacing.md,
+                  gap: spacing.sm,
+                }}
+              >
                 <Text style={{ fontSize: 15, fontWeight: '800', color: palette.danger }}>
-                  {editingProfile ? `EDIT PROFILE: ${editingProfile.name}` : 'CREATE NEW FOCUS PROFILE'}
+                  {editingProfile
+                    ? `EDIT PROFILE: ${editingProfile.name}`
+                    : 'CREATE NEW FOCUS PROFILE'}
                 </Text>
 
                 <ScrollView style={{ flexGrow: 0, maxHeight: 400 }} nestedScrollEnabled>
                   <View style={{ gap: spacing.md }}>
                     <View style={{ gap: spacing.xs }}>
-                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Profile Name:</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>
+                        Profile Name:
+                      </Text>
                       <TextInput
                         style={{
                           borderColor: 'rgba(232, 77, 114, 0.25)',
@@ -1094,7 +1370,9 @@ export default function NotificationSettingsScreen() {
                     </View>
 
                     <View style={{ gap: spacing.xs }}>
-                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Default Duration (Minutes):</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>
+                        Default Duration (Minutes):
+                      </Text>
                       <TextInput
                         style={{
                           borderColor: 'rgba(232, 77, 114, 0.25)',
@@ -1113,7 +1391,9 @@ export default function NotificationSettingsScreen() {
                     </View>
 
                     <View style={{ gap: spacing.sm }}>
-                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Categories to Block:</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>
+                        Categories to Block:
+                      </Text>
                       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
                         {['social', 'video', 'gaming', 'shopping', 'news'].map((cat) => {
                           const isSelected = editorCategories.includes(cat);
@@ -1122,21 +1402,31 @@ export default function NotificationSettingsScreen() {
                               key={cat}
                               onPress={() => {
                                 if (isSelected) {
-                                  setEditorCategories(editorCategories.filter(c => c !== cat));
+                                  setEditorCategories(editorCategories.filter((c) => c !== cat));
                                 } else {
                                   setEditorCategories([...editorCategories, cat]);
                                 }
                               }}
                               style={{
-                                backgroundColor: isSelected ? 'rgba(232, 77, 114, 0.12)' : 'transparent',
-                                borderColor: isSelected ? palette.danger : 'rgba(232, 77, 114, 0.25)',
+                                backgroundColor: isSelected
+                                  ? 'rgba(232, 77, 114, 0.12)'
+                                  : 'transparent',
+                                borderColor: isSelected
+                                  ? palette.danger
+                                  : 'rgba(232, 77, 114, 0.25)',
                                 borderWidth: 1.5,
                                 borderRadius: radius.sm,
                                 paddingHorizontal: spacing.sm,
                                 paddingVertical: 6,
                               }}
                             >
-                              <Text style={{ color: isSelected ? palette.danger : palette.textPrimary, fontWeight: '700', fontSize: 12 }}>
+                              <Text
+                                style={{
+                                  color: isSelected ? palette.danger : palette.textPrimary,
+                                  fontWeight: '700',
+                                  fontSize: 12,
+                                }}
+                              >
                                 {cat.toUpperCase()}
                               </Text>
                             </Pressable>
@@ -1146,7 +1436,9 @@ export default function NotificationSettingsScreen() {
                     </View>
 
                     <View style={{ gap: spacing.xs }}>
-                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>Custom Domains (comma separated):</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: palette.textPrimary }}>
+                        Custom Domains (comma separated):
+                      </Text>
                       <TextInput
                         style={{
                           borderColor: 'rgba(232, 77, 114, 0.25)',
@@ -1161,16 +1453,32 @@ export default function NotificationSettingsScreen() {
                         placeholder="e.g. domain1.com, domain2.com"
                         value={editorCustomDomains.join(', ')}
                         onChangeText={(val) => {
-                          const list = val.split(',').map(d => d.trim()).filter(d => d.length > 0);
+                          const list = val
+                            .split(',')
+                            .map((d) => d.trim())
+                            .filter((d) => d.length > 0);
                           setEditorCustomDomains(list);
                         }}
                       />
                     </View>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: spacing.xs }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        marginTop: spacing.xs,
+                      }}
+                    >
                       <View style={{ flex: 1, marginRight: spacing.sm }}>
-                        <Text style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}>Strict Mode</Text>
-                        <Text style={{ color: palette.textSecondary, fontSize: 11 }}>Lock the session strict options.</Text>
+                        <Text
+                          style={{ color: palette.textPrimary, fontWeight: '700', fontSize: 12 }}
+                        >
+                          Strict Mode
+                        </Text>
+                        <Text style={{ color: palette.textSecondary, fontSize: 11 }}>
+                          Lock the session strict options.
+                        </Text>
                       </View>
                       <Switch
                         value={editorStrict}
@@ -1194,7 +1502,7 @@ export default function NotificationSettingsScreen() {
                             editorDuration,
                             editorCategories,
                             editorStrict,
-                            editorCustomDomains
+                            editorCustomDomains,
                           );
                           if (selectedProfileId === editingProfile.id) {
                             setDurationMinutes(editorDuration);
@@ -1208,7 +1516,7 @@ export default function NotificationSettingsScreen() {
                             editorDuration,
                             editorCategories,
                             editorStrict,
-                            editorCustomDomains
+                            editorCustomDomains,
                           );
                           setSelectedProfileId(newId);
                           setDurationMinutes(editorDuration);

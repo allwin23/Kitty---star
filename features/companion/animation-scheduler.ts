@@ -57,10 +57,7 @@ export class AnimationScheduler {
   /** Ingest an event, evaluate emotions, generate copy, and enqueue */
   private handleIncomingEvent(event: CompanionEventPayload) {
     const reaction = CompanionEmotionEngine.evaluateReaction(event.eventType);
-    const message = CompanionMessageGenerator.generateMessage(
-      event.eventType,
-      event.payload || {},
-    );
+    const message = CompanionMessageGenerator.generateMessage(event.eventType, event.payload || {});
 
     const iconMap: Record<string, string> = {
       XPEarned: '⭐',
@@ -121,7 +118,11 @@ export class AnimationScheduler {
       animation: event.animation || reaction.animation,
       emotion: reaction.emotion,
       voiceMood: event.voiceMood || reaction.voiceMood,
-      hasCelebration: event.eventType === 'AchievementEarned' || event.eventType === 'DailyGoalAchieved' || event.eventType === 'GiftUnlocked' || event.eventType === 'PomodoroComplete',
+      hasCelebration:
+        event.eventType === 'AchievementEarned' ||
+        event.eventType === 'DailyGoalAchieved' ||
+        event.eventType === 'GiftUnlocked' ||
+        event.eventType === 'PomodoroComplete',
       createdAt: Date.now(),
       expiresAt: Date.now() + 60000, // 60s expiration
     };

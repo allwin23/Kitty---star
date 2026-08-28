@@ -42,7 +42,6 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
     };
   }, []);
 
-
   const completeMutation = useMutation({
     mutationFn: (vars: { endedAt: string }) =>
       pomodoroService.complete({
@@ -122,7 +121,9 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
     completeMutation.mutate({ endedAt });
   };
 
-  const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+  const mins = Math.floor(secondsLeft / 60)
+    .toString()
+    .padStart(2, '0');
   const secs = (secondsLeft % 60).toString().padStart(2, '0');
 
   return (
@@ -150,7 +151,14 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
           ) : null}
 
           {/* Timer */}
-          <Text style={{ fontSize: 56, fontWeight: '700', color: palette.primary, fontVariant: ['tabular-nums'] }}>
+          <Text
+            style={{
+              fontSize: 56,
+              fontWeight: '700',
+              color: palette.primary,
+              fontVariant: ['tabular-nums'],
+            }}
+          >
             {mins}:{secs}
           </Text>
 
@@ -204,10 +212,7 @@ export function PomodoroModal({ visible, task, planId, onClose }: PomodoroModalP
                 </Pressable>
               ) : null}
 
-              <Pressable
-                onPress={onClose}
-                style={{ padding: spacing.sm, alignItems: 'center' }}
-              >
+              <Pressable onPress={onClose} style={{ padding: spacing.sm, alignItems: 'center' }}>
                 <Text style={{ color: palette.mutedText }}>Close</Text>
               </Pressable>
             </View>

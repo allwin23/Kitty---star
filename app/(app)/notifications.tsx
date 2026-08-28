@@ -16,6 +16,7 @@ import {
   CheckCheck,
   Droplets,
   Settings,
+  ShieldCheck,
   Trash2,
   Trophy,
   Users,
@@ -48,7 +49,7 @@ export default function NotificationsScreen() {
   useFocusEffect(
     useCallback(() => {
       void fetchNotifications();
-    }, [fetchNotifications])
+    }, [fetchNotifications]),
   );
 
   const handleRefresh = async () => {
@@ -96,7 +97,11 @@ export default function NotificationsScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={palette.danger} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={palette.danger}
+          />
         }
       >
         <View style={styles.container}>
@@ -109,16 +114,47 @@ export default function NotificationsScreen() {
               />
             </View>
 
-            {/* Quick Settings Button */}
-            <Pressable
-              onPress={() => router.push('/(app)/notifications-settings')}
-              style={styles.headerSettingsBtn}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Settings size={15} color={palette.danger} strokeWidth={2.2} />
-                <Text style={{ color: palette.danger, fontSize: 13, fontWeight: '800' }}>Settings</Text>
-              </View>
-            </Pressable>
+            <View style={{ gap: 6, alignItems: 'stretch' }}>
+              {/* Urge Control Button */}
+              <Pressable
+                onPress={() => router.push('/(app)/urge-control')}
+                style={styles.headerUrgeBtn}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <ShieldCheck size={13} color="#FFFFFF" strokeWidth={2.4} />
+                  <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: '800' }}>
+                    Urge Control
+                  </Text>
+                </View>
+              </Pressable>
+
+              {/* Quick Settings Button */}
+              <Pressable
+                onPress={() => router.push('/(app)/notifications-settings')}
+                style={styles.headerSettingsBtn}
+              >
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <Settings size={13} color={palette.danger} strokeWidth={2.2} />
+                  <Text style={{ color: palette.danger, fontSize: 11, fontWeight: '800' }}>
+                    Settings
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
           </View>
 
           {/* Action Toolbar */}
@@ -126,10 +162,7 @@ export default function NotificationsScreen() {
             <Pressable
               onPress={() => void markAllAsRead()}
               disabled={unreadCount === 0}
-              style={[
-                styles.actionBtn,
-                { opacity: unreadCount > 0 ? 1 : 0.5 },
-              ]}
+              style={[styles.actionBtn, { opacity: unreadCount > 0 ? 1 : 0.5 }]}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <CheckCheck size={16} color={palette.danger} strokeWidth={2.4} />
@@ -142,10 +175,7 @@ export default function NotificationsScreen() {
             <Pressable
               onPress={handleClearAll}
               disabled={notifications.length === 0}
-              style={[
-                styles.actionBtn,
-                { opacity: notifications.length > 0 ? 1 : 0.5 },
-              ]}
+              style={[styles.actionBtn, { opacity: notifications.length > 0 ? 1 : 0.5 }]}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Trash2 size={16} color={palette.danger} strokeWidth={2.4} />
@@ -157,7 +187,11 @@ export default function NotificationsScreen() {
           </View>
 
           {/* Filter Chips */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScroll}
+          >
             {filterChips.map((chip) => {
               const active = activeFilter === chip.id;
               const ChipIcon = chip.icon;
@@ -175,7 +209,11 @@ export default function NotificationsScreen() {
                   ]}
                 >
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <ChipIcon size={14} color={active ? '#FFFFFF' : palette.textPrimary} strokeWidth={2.2} />
+                    <ChipIcon
+                      size={14}
+                      color={active ? '#FFFFFF' : palette.textPrimary}
+                      strokeWidth={2.2}
+                    />
                     <Text
                       style={{
                         color: active ? '#FFFFFF' : palette.textPrimary,
@@ -239,7 +277,15 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
-    paddingVertical: 10,
+    paddingVertical: 8,
+  },
+  headerUrgeBtn: {
+    backgroundColor: palette.danger,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderWidth: 1,
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 8,
   },
   toolbarRow: {
     flexDirection: 'row',

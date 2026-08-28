@@ -7,14 +7,7 @@ import Animated, {
   withTiming,
   withSequence,
 } from 'react-native-reanimated';
-import {
-  Home,
-  CheckSquare,
-  Timer,
-  Compass,
-  BarChart2,
-  type LucideIcon,
-} from 'lucide-react-native';
+import { Home, CheckSquare, Timer, Compass, BarChart2, type LucideIcon } from 'lucide-react-native';
 
 import { palette } from '@/theme';
 
@@ -28,13 +21,7 @@ const iconMap: Record<string, LucideIcon> = {
   statistics: BarChart2,
 };
 
-export function AnimatedTabIcon({
-  name,
-  focused,
-}: {
-  name: TabType;
-  focused: boolean;
-}) {
+export function AnimatedTabIcon({ name, focused }: { name: TabType; focused: boolean }) {
   const IconComponent = iconMap[name] || Home;
 
   const scale = useSharedValue(1);

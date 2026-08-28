@@ -12,7 +12,7 @@ module.exports = function withAppBlockingService(config) {
 
     // Check if the service already exists
     const hasService = mainApplication.service.some(
-      (s) => s.$ && s.$['android:name'] === '.AppBlockingService'
+      (s) => s.$ && s.$['android:name'] === '.AppBlockingService',
     );
 
     if (!hasService) {
@@ -27,7 +27,8 @@ module.exports = function withAppBlockingService(config) {
           {
             $: {
               'android:name': 'android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE',
-              'android:value': 'Pomodoro app-blocking service to help users focus on studies by preventing access to banned apps.',
+              'android:value':
+                'Pomodoro app-blocking service to help users focus on studies by preventing access to banned apps.',
             },
           },
         ],

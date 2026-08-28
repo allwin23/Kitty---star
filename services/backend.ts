@@ -61,7 +61,9 @@ export const plannerService = {
   },
 
   async getCurrentPlan(date: string) {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
     const { data, error } = await supabase
       .from('current_plans')
@@ -124,7 +126,12 @@ export const plannerService = {
       .channel(channelId)
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'current_plans', filter: `user_id=eq.${partnerUserId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'current_plans',
+          filter: `user_id=eq.${partnerUserId}`,
+        },
         onChange,
       )
       .on(
@@ -139,7 +146,12 @@ export const plannerService = {
       )
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'daily_submissions', filter: `user_id=eq.${partnerUserId}` },
+        {
+          event: '*',
+          schema: 'public',
+          table: 'daily_submissions',
+          filter: `user_id=eq.${partnerUserId}`,
+        },
         onChange,
       )
       .subscribe();
@@ -229,7 +241,9 @@ export const reportService = {
   },
 
   async stats() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
     const { data, error } = await supabase
       .from('user_stats')
@@ -253,7 +267,12 @@ export const reportService = {
       .channel(channelId)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'daily_reports', filter: `user_id=eq.${userId}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'daily_reports',
+          filter: `user_id=eq.${userId}`,
+        },
         onChange,
       )
       .subscribe();
@@ -323,7 +342,6 @@ export const waterService = {
   },
 
   async logWater(input: WaterLogInput) {
-
     const parsed = waterLogSchema.parse(input);
     const { data, error } = await supabase.rpc('log_water', {
       p_amount_ml: parsed.amount_ml,
@@ -332,7 +350,9 @@ export const waterService = {
   },
 
   async getTodayStats() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return null;
     const today = todayIso();
     const { data, error } = await supabase
@@ -345,7 +365,9 @@ export const waterService = {
   },
 
   async getTodayLogs() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return [];
     const todayStr = todayIso();
     const startOfToday = `${todayStr}T00:00:00.000Z`;
@@ -361,7 +383,9 @@ export const waterService = {
   },
 
   async getWeeklyStats() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return [];
     const sevenDaysAgoStr = daysAgoIso(6);
     const { data, error } = await supabase
@@ -374,7 +398,9 @@ export const waterService = {
   },
 
   async getStatsHistory() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return [];
     const { data, error } = await supabase
       .from('water_daily_stats')

@@ -7,7 +7,9 @@ class CentralEventBus {
   private listeners: Map<NotificationEventType | '*', Set<EventCallback>> = new Map();
 
   /** Emit an app event to all registered listeners and the Notification Engine */
-  public emit(eventPayload: Omit<AppNotificationEventPayload, 'timestamp'> & { timestamp?: number }) {
+  public emit(
+    eventPayload: Omit<AppNotificationEventPayload, 'timestamp'> & { timestamp?: number },
+  ) {
     const fullPayload: AppNotificationEventPayload = {
       timestamp: Date.now(),
       ...eventPayload,

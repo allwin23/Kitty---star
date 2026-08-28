@@ -34,7 +34,7 @@ export default function ReportDetailScreen() {
     enabled: !!reportId,
   });
 
-  const r = (reportQ.data as unknown) as {
+  const r = reportQ.data as unknown as {
     id: string;
     date: string;
     planned_minutes: number;
@@ -101,7 +101,14 @@ export default function ReportDetailScreen() {
                   ) : null}
 
                   {/* Stats grid */}
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginTop: spacing.sm }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flexWrap: 'wrap',
+                      gap: spacing.md,
+                      marginTop: spacing.sm,
+                    }}
+                  >
                     {[
                       { label: 'Tasks Done', value: `${r.completed_tasks}/${r.planned_tasks}` },
                       { label: '🍅 Pomodoros', value: r.total_pomodoros },
@@ -155,7 +162,13 @@ export default function ReportDetailScreen() {
                           }}
                         >
                           {t.completed ? (
-                            <Text style={{ color: palette.primaryText, fontSize: 10, fontWeight: '700' }}>
+                            <Text
+                              style={{
+                                color: palette.primaryText,
+                                fontSize: 10,
+                                fontWeight: '700',
+                              }}
+                            >
                               ✓
                             </Text>
                           ) : null}

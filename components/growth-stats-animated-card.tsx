@@ -11,15 +11,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import {
-  CheckCircle2,
-  Flame,
-  Heart,
-  Sparkles,
-  Star,
-  Timer,
-  Trophy,
-} from 'lucide-react-native';
+import { CheckCircle2, Flame, Heart, Sparkles, Star, Timer, Trophy } from 'lucide-react-native';
 
 import { Card } from '@/components/ui';
 import { useGrowthAnimStore } from '@/stores/growth-anim-store';
@@ -70,7 +62,7 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
     pomodoroRotate.value = withRepeat(
       withTiming(360, { duration: 14000, easing: Easing.linear }),
       -1,
-      false
+      false,
     );
   }, []);
 
@@ -81,11 +73,11 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
     const queued = useGrowthAnimStore.getState().consumeQueue();
     const prev = previousStatsRef.current;
 
-    const levelDiff = (stats.level - prev.level) + queued.levelUps;
-    const xpDiff = (stats.xp - prev.xp) + queued.xp;
-    const streakDiff = (stats.current_streak - prev.current_streak) + queued.streakIncrements;
-    const approvedDiff = (stats.approved_days - prev.approved_days) + queued.approvedIncrements;
-    const pomodoroDiff = (stats.total_pomodoros - prev.total_pomodoros) + queued.pomodoroIncrements;
+    const levelDiff = stats.level - prev.level + queued.levelUps;
+    const xpDiff = stats.xp - prev.xp + queued.xp;
+    const streakDiff = stats.current_streak - prev.current_streak + queued.streakIncrements;
+    const approvedDiff = stats.approved_days - prev.approved_days + queued.approvedIncrements;
+    const pomodoroDiff = stats.total_pomodoros - prev.total_pomodoros + queued.pomodoroIncrements;
 
     // 1. LEVEL UP 360° SPIN ANIMATION (3 full 360° turns, gracefully paced)
     if (levelDiff > 0) {
@@ -94,15 +86,15 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
         300,
         withSequence(
           withTiming(3, { duration: 3200, easing: Easing.out(Easing.cubic) }),
-          withSpring(3, { damping: 12 })
-        )
+          withSpring(3, { damping: 12 }),
+        ),
       );
       levelScale.value = withDelay(
         300,
         withSequence(
           withTiming(1.4, { duration: 1600, easing: Easing.out(Easing.quad) }),
-          withTiming(1.0, { duration: 1600, easing: Easing.inOut(Easing.quad) })
-        )
+          withTiming(1.0, { duration: 1600, easing: Easing.inOut(Easing.quad) }),
+        ),
       );
     }
 
@@ -131,15 +123,12 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
         600,
         withSequence(
           withSpring(1.35, { damping: 8, stiffness: 180 }),
-          withSpring(1.0, { damping: 12, stiffness: 150 })
-        )
+          withSpring(1.0, { damping: 12, stiffness: 150 }),
+        ),
       );
       xpGlow.value = withDelay(
         500,
-        withSequence(
-          withTiming(1, { duration: 500 }),
-          withTiming(0, { duration: 900 })
-        )
+        withSequence(withTiming(1, { duration: 500 }), withTiming(0, { duration: 900 })),
       );
     }
 
@@ -149,12 +138,12 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
         withTiming(1.38, { duration: 600, easing: Easing.out(Easing.back(1.5)) }),
         withTiming(1.1, { duration: 500 }),
         withTiming(1.28, { duration: 500 }),
-        withTiming(1.0, { duration: 600, easing: Easing.out(Easing.quad) })
+        withTiming(1.0, { duration: 600, easing: Easing.out(Easing.quad) }),
       );
       streakFlameOpacity.value = withSequence(
         withTiming(1.0, { duration: 400 }),
         withTiming(0.7, { duration: 500 }),
-        withTiming(1.0, { duration: 600 })
+        withTiming(1.0, { duration: 600 }),
       );
     }
 
@@ -162,11 +151,11 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
     if (approvedDiff > 0) {
       approvedScale.value = withSequence(
         withTiming(1.45, { duration: 700, easing: Easing.out(Easing.cubic) }),
-        withTiming(1.0, { duration: 700, easing: Easing.out(Easing.quad) })
+        withTiming(1.0, { duration: 700, easing: Easing.out(Easing.quad) }),
       );
       approvedGlow.value = withSequence(
         withTiming(1, { duration: 400 }),
-        withTiming(0, { duration: 800 })
+        withTiming(0, { duration: 800 }),
       );
     }
 
@@ -174,7 +163,7 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
     if (pomodoroDiff > 0) {
       pomodoroScale.value = withSequence(
         withTiming(1.4, { duration: 700, easing: Easing.out(Easing.cubic) }),
-        withTiming(1.0, { duration: 700, easing: Easing.out(Easing.quad) })
+        withTiming(1.0, { duration: 700, easing: Easing.out(Easing.quad) }),
       );
     }
 
@@ -183,10 +172,7 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
 
   // Animated Styles
   const levelStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotateY: `${levelSpin.value * 360}deg` },
-      { scale: levelScale.value },
-    ],
+    transform: [{ rotateY: `${levelSpin.value * 360}deg` }, { scale: levelScale.value }],
   }));
 
   const xpStyle = useAnimatedStyle(() => ({
@@ -225,9 +211,7 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
         {/* Card Title */}
         <View style={styles.headerRow}>
           <Sparkles size={16} color={palette.danger} strokeWidth={2.4} />
-          <Text style={styles.headerText}>
-            YOUR GROWTH & STATS
-          </Text>
+          <Text style={styles.headerText}>YOUR GROWTH & STATS</Text>
         </View>
 
         {/* 5 Growth Items Container */}
@@ -264,7 +248,12 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
           <View style={styles.statCol}>
             <Animated.View style={[styles.iconWrapper, streakStyle]}>
               <View style={styles.flameContainer}>
-                <Heart size={18} color={palette.danger} fill={palette.danger} style={{ position: 'absolute' }} />
+                <Heart
+                  size={18}
+                  color={palette.danger}
+                  fill={palette.danger}
+                  style={{ position: 'absolute' }}
+                />
                 <Flame size={20} color="#FF4500" fill="#FFA500" strokeWidth={2} />
               </View>
               <Text style={[styles.statValue, { color: palette.danger }]}>
@@ -280,9 +269,7 @@ export function GrowthStatsAnimatedCard({ stats, isFocused = true }: GrowthStats
               <View style={styles.approvedIconBadge}>
                 <CheckCircle2 size={16} color="#16a34a" strokeWidth={2.4} />
               </View>
-              <Text style={[styles.statValue, { color: '#16a34a' }]}>
-                {stats.approved_days}
-              </Text>
+              <Text style={[styles.statValue, { color: '#16a34a' }]}>{stats.approved_days}</Text>
             </Animated.View>
             <Text style={styles.statLabel}>Approved</Text>
           </View>
@@ -338,7 +325,7 @@ function FlyingStarParticle({
 
     translateX.value = withDelay(
       delay,
-      withTiming(-35, { duration: 1400, easing: Easing.out(Easing.cubic) })
+      withTiming(-35, { duration: 1400, easing: Easing.out(Easing.cubic) }),
     );
 
     translateY.value = withDelay(
@@ -350,7 +337,7 @@ function FlyingStarParticle({
             runOnJS(onComplete)();
           });
         }
-      })
+      }),
     );
   }, []);
 

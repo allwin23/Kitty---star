@@ -114,20 +114,12 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
       >
         <View style={styles.headerRow}>
           {/* Category Icon Badge */}
-          <View style={styles.iconContainer}>
-            {renderCategoryIcon(notification.category, 20)}
-          </View>
+          <View style={styles.iconContainer}>{renderCategoryIcon(notification.category, 20)}</View>
 
           {/* Title and metadata */}
           <View style={{ flex: 1, gap: 2 }}>
             <View style={styles.titleRow}>
-              <Text
-                style={[
-                  styles.titleText,
-                  isUnread && { fontWeight: '800' },
-                ]}
-                numberOfLines={1}
-              >
+              <Text style={[styles.titleText, isUnread && { fontWeight: '800' }]} numberOfLines={1}>
                 {notification.title}
               </Text>
 
@@ -135,16 +127,12 @@ export function NotificationCard({ notification, onMarkRead, onDelete }: Notific
               {isUnread ? <View style={styles.unreadDot} /> : null}
             </View>
 
-            <Text style={styles.timeText}>
-              {formatTime(notification.created_at)}
-            </Text>
+            <Text style={styles.timeText}>{formatTime(notification.created_at)}</Text>
           </View>
         </View>
 
         {/* Body Content */}
-        <Text style={styles.bodyText}>
-          {notification.body}
-        </Text>
+        <Text style={styles.bodyText}>{notification.body}</Text>
 
         {/* Footer Tags & Actions */}
         <View style={styles.footerRow}>

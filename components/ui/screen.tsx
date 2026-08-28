@@ -12,7 +12,13 @@ type ScreenProps = PropsWithChildren<{
   noPadding?: boolean;
 }>;
 
-export function Screen({ children, centered = false, style, contentStyle, noPadding = false }: ScreenProps) {
+export function Screen({
+  children,
+  centered = false,
+  style,
+  contentStyle,
+  noPadding = false,
+}: ScreenProps) {
   return (
     <SafeAreaView style={[{ flex: 1, backgroundColor: '#F63E5F' }, style]}>
       <CherryBackground />
@@ -31,4 +37,3 @@ export function Screen({ children, centered = false, style, contentStyle, noPadd
     </SafeAreaView>
   );
 }
-

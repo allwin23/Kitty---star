@@ -34,7 +34,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
   fetchNotifications: async () => {
     set({ loading: true });
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         set({ notifications: [], unreadCount: 0, loading: false });
         return;
@@ -70,7 +72,7 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       fetchedList.forEach((n) => mergedMap.set(n.id, n));
 
       const mergedList = Array.from(mergedMap.values()).sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       const unread = mergedList.filter((n) => !n.read_at).length;
@@ -96,12 +98,11 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       const updated = { ...current, ...partial } as NotificationPreferences;
       set({ preferences: updated });
 
-      const { error } = await (supabase.from('notification_preferences') as any)
-        .upsert({
-          user_id: userId,
-          ...partial,
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await (supabase.from('notification_preferences') as any).upsert({
+        user_id: userId,
+        ...partial,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) console.error('[NotificationStore] Preference save failed:', error.message);
     } catch (err) {
@@ -113,19 +114,14 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
     try {
       const now = new Date().toISOString();
       set((state) => {
-        const nextList = state.notifications.map((n) =>
-          n.id === id ? { ...n, read_at: now } : n,
-        );
+        const nextList = state.notifications.map((n) => (n.id === id ? { ...n, read_at: now } : n));
         return {
           notifications: nextList,
           unreadCount: nextList.filter((n) => !n.read_at).length,
         };
       });
 
-      await supabase
-        .from('notifications')
-        .update({ read_at: now })
-        .eq('id', id);
+      await supabase.from('notifications').update({ read_at: now }).eq('id', id);
 
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications });
     } catch (err) {
@@ -135,7 +131,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
 
   markAllAsRead: async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       const now = new Date().toISOString();
@@ -181,7 +179,9 @@ export const useNotificationStore = create<NotificationStore>((set, get) => ({
       if (userId) {
         await supabase.from('notifications').delete().eq('user_id', userId);
       } else {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user?.id) {
           await supabase.from('notifications').delete().eq('user_id', user.id);
         }

@@ -22,7 +22,9 @@ export default function ReportsScreen() {
   const user = useAuthStore((s) => s.user);
 
   const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
-  const reportsChannelRef = useRef<ReturnType<typeof reportService.subscribeToReports> | null>(null);
+  const reportsChannelRef = useRef<ReturnType<typeof reportService.subscribeToReports> | null>(
+    null,
+  );
 
   const reportsQ = useQuery({
     queryKey: queryKeys.reports,
@@ -204,17 +206,27 @@ export default function ReportsScreen() {
               <Pressable
                 key={r.id}
                 onPress={() =>
-                  router.push({ pathname: '/(app)/accountability/report', params: { reportId: r.id } })
+                  router.push({
+                    pathname: '/(app)/accountability/report',
+                    params: { reportId: r.id },
+                  })
                 }
               >
                 <Card>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
                     <View style={{ gap: spacing.xs }}>
                       <Text style={{ color: palette.text, fontWeight: '600', fontSize: 15 }}>
                         {format(new Date(r.date), 'EEE, dd MMM yyyy')}
                       </Text>
                       <Text style={{ color: palette.mutedText, fontSize: 12 }}>
-                        {r.completed_tasks}/{r.planned_tasks} tasks · {r.total_pomodoros} 🍅 · +{r.xp_earned} XP
+                        {r.completed_tasks}/{r.planned_tasks} tasks · {r.total_pomodoros} 🍅 · +
+                        {r.xp_earned} XP
                       </Text>
                     </View>
                     <View style={{ alignItems: 'flex-end', gap: 4 }}>

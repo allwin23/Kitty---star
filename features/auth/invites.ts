@@ -29,7 +29,6 @@ export async function createPartnerInvite(
       return { code: existingInvite.code };
     }
 
-    
     const { data: rpcData, error: rpcError } = await (supabase as any).rpc('generate_invite');
     if (!rpcError && rpcData?.code) {
       return { code: rpcData.code };
@@ -65,7 +64,9 @@ export async function connectWithInvite(code: string): Promise<{ error?: string 
   if (!error) return {};
 
   // Fallback to redeem_invite RPC parameter style
-  const { error: redeemErr } = await (supabase as any).rpc('redeem_invite', { p_invite_code: cleanCode });
+  const { error: redeemErr } = await (supabase as any).rpc('redeem_invite', {
+    p_invite_code: cleanCode,
+  });
   if (!redeemErr) return {};
 
   return { error: toReadableError(error) };

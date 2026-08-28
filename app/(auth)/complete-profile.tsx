@@ -45,10 +45,24 @@ export default function CompleteProfileScreen() {
         <Card style={{ gap: spacing[24], paddingVertical: spacing[32] }}>
           <View style={{ alignItems: 'center', gap: spacing[8] }}>
             <Text style={{ fontSize: 44 }}>👤🌸</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: palette.textPrimary,
+                letterSpacing: -0.3,
+              }}
+            >
               Complete Your Profile
             </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+            <Text
+              style={{
+                color: palette.textSecondary,
+                fontSize: 14,
+                textAlign: 'center',
+                lineHeight: 20,
+              }}
+            >
               Add the details your study partner will see in your companion journal.
             </Text>
           </View>
@@ -59,7 +73,11 @@ export default function CompleteProfileScreen() {
               size={88}
               source={avatarUrl ?? undefined}
             />
-            <Button variant="secondary" disabled={selectingAvatar || loading} onPress={chooseAvatar}>
+            <Button
+              variant="secondary"
+              disabled={selectingAvatar || loading}
+              onPress={chooseAvatar}
+            >
               {selectingAvatar ? 'Uploading Photo…' : 'Choose Avatar'}
             </Button>
           </View>
@@ -80,7 +98,14 @@ export default function CompleteProfileScreen() {
           />
 
           {message ? (
-            <Text style={{ color: palette.statusDanger, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+            <Text
+              style={{
+                color: palette.statusDanger,
+                fontSize: 13,
+                textAlign: 'center',
+                fontWeight: '600',
+              }}
+            >
               {message}
             </Text>
           ) : null}
@@ -93,4 +118,3 @@ export default function CompleteProfileScreen() {
     </Screen>
   );
 }
-

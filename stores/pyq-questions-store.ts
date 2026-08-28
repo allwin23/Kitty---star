@@ -41,7 +41,7 @@ export const usePyqQuestionsStore = create<PyqQuestionsState>()(
       deleteSubjectQuestions: (subjectName) =>
         set((state) => ({
           customQuestions: state.customQuestions.filter(
-            (q) => q.subject.toLowerCase() !== subjectName.toLowerCase()
+            (q) => q.subject.toLowerCase() !== subjectName.toLowerCase(),
           ),
         })),
       deleteQuestion: (id) =>
@@ -53,7 +53,7 @@ export const usePyqQuestionsStore = create<PyqQuestionsState>()(
         set((state) => {
           // 1. Remove it from custom questions if it was an uploaded one
           const remainingCustom = state.customQuestions.filter(
-            (q) => q.subject.toLowerCase() !== subjectName.toLowerCase()
+            (q) => q.subject.toLowerCase() !== subjectName.toLowerCase(),
           );
           // 2. Add it to the list of deleted subjects
           const normalized = subjectName.trim();
@@ -72,6 +72,6 @@ export const usePyqQuestionsStore = create<PyqQuestionsState>()(
     {
       name: 'pyq-custom-questions-storage',
       storage: createJSONStorage(() => AsyncStorage),
-    }
-  )
+    },
+  ),
 );

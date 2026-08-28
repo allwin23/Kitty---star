@@ -1,5 +1,13 @@
 import type { PropsWithChildren } from 'react';
-import { Pressable, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type StyleProp,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'destructive' | 'white';
 type ButtonSize = 'sm' | 'md' | 'lg';

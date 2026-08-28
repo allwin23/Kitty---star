@@ -25,7 +25,15 @@ import {
 } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
-import { Button, Card, HeaderTitleCard, Loading, NotificationBadge, ProofViewerModal, Screen } from '@/components/ui';
+import {
+  Button,
+  Card,
+  HeaderTitleCard,
+  Loading,
+  NotificationBadge,
+  ProofViewerModal,
+  Screen,
+} from '@/components/ui';
 import { Send } from 'lucide-react-native';
 import { CompanionBus } from '@/features/companion/event-bus';
 import { EventBus } from '@/features/notifications/event-bus';
@@ -52,7 +60,9 @@ export default function SubmitScreen() {
   const [isSending, setIsSending] = useState(false);
   const [uploadingTaskId, setUploadingTaskId] = useState<string | null>(null);
   const [proofUrls, setProofUrls] = useState<Record<string, string>>({});
-  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(null);
+  const [viewingProof, setViewingProof] = useState<{ url: string; caption?: string | null } | null>(
+    null,
+  );
 
   // Queries
   const partnerProfileQ = useQuery({
@@ -62,7 +72,8 @@ export default function SubmitScreen() {
   });
 
   const partnerProfile = partnerProfileQ.data;
-  const partnerName = partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
+  const partnerName =
+    partnerProfile?.full_name?.trim() || partnerProfile?.email?.split('@')[0] || 'Your partner';
 
   const initialQ = useQuery({
     queryKey: queryKeys.initialPlan(today),
@@ -83,14 +94,29 @@ export default function SubmitScreen() {
   });
 
   const initialTasks: TodoTask[] = (
-    (initialQ.data as { initial_tasks?: { id: string; title: string; estimated_minutes: number; order: number }[] } | null)?.initial_tasks ?? []
+    (
+      initialQ.data as {
+        initial_tasks?: { id: string; title: string; estimated_minutes: number; order: number }[];
+      } | null
+    )?.initial_tasks ?? []
   )
     .slice()
     .sort((a, b) => a.order - b.order)
     .map((t) => ({ ...t, status: 'pending' as const }));
 
   const currentTasks: TodoTask[] = (
-    (currentQ.data as { current_tasks?: { id: string; title: string; estimated_minutes: number; completed_pomodoros: number; status: 'pending' | 'completed'; order: number }[] } | null)?.current_tasks ?? []
+    (
+      currentQ.data as {
+        current_tasks?: {
+          id: string;
+          title: string;
+          estimated_minutes: number;
+          completed_pomodoros: number;
+          status: 'pending' | 'completed';
+          order: number;
+        }[];
+      } | null
+    )?.current_tasks ?? []
   )
     .slice()
     .sort((a, b) => a.order - b.order)
@@ -107,7 +133,13 @@ export default function SubmitScreen() {
   const isSubmitted = !!submission;
   const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
 
-  const proofsArray = (submission?.submission_proofs ? (Array.isArray(submission.submission_proofs) ? submission.submission_proofs : [submission.submission_proofs]) : []) as any[];
+  const proofsArray = (
+    submission?.submission_proofs
+      ? Array.isArray(submission.submission_proofs)
+        ? submission.submission_proofs
+        : [submission.submission_proofs]
+      : []
+  ) as any[];
 
   const loadProofUrl = async (path: string) => {
     if (proofUrls[path]) return;
@@ -130,7 +162,9 @@ export default function SubmitScreen() {
 
     const asset = result.assets[0];
     const ext = asset.uri.split('.').pop()?.toLowerCase() ?? 'jpg';
-    const validExt = (['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg') as 'jpg' | 'png' | 'webp';
+    const validExt = (
+      ['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg'
+    ) as 'jpg' | 'png' | 'webp';
 
     setPickedImages((prev) => [...prev, { uri: asset.uri, ext: validExt, taskId }]);
   };
@@ -146,7 +180,9 @@ export default function SubmitScreen() {
 
     const asset = result.assets[0];
     const ext = asset.uri.split('.').pop()?.toLowerCase() ?? 'jpg';
-    const validExt = (['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg') as 'jpg' | 'png' | 'webp';
+    const validExt = (
+      ['jpg', 'jpeg', 'png', 'webp'].includes(ext) ? (ext === 'jpeg' ? 'jpg' : ext) : 'jpg'
+    ) as 'jpg' | 'png' | 'webp';
 
     if (taskId) setUploadingTaskId(taskId);
     try {
@@ -159,7 +195,7 @@ export default function SubmitScreen() {
         arrayBuffer,
         validExt,
         undefined,
-        taskId
+        taskId,
       );
 
       void queryClient.invalidateQueries({ queryKey: queryKeys.mySubmission(today) });
@@ -207,7 +243,14 @@ export default function SubmitScreen() {
           try {
             const response = await fetch(img.uri);
             const arrayBuffer = await response.arrayBuffer();
-            await submissionService.uploadProof(subResult.id, user.id, arrayBuffer, img.ext, undefined, img.taskId);
+            await submissionService.uploadProof(
+              subResult.id,
+              user.id,
+              arrayBuffer,
+              img.ext,
+              undefined,
+              img.taskId,
+            );
           } catch (e) {
             console.warn('Failed uploading image during submit:', e);
           }
@@ -253,12 +296,19 @@ export default function SubmitScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header Row: Back Arrow + Dark Obsidian Glass Oval Title Card + Notification Badge */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
-                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>←</Text>
+                <Text style={{ color: palette.textPrimary, fontSize: 20, fontWeight: '800' }}>
+                  ←
+                </Text>
               </Pressable>
-              <HeaderTitleCard title={isSubmitted ? "Submission" : "Submit Plan"} showWavingHand={false} />
+              <HeaderTitleCard
+                title={isSubmitted ? 'Submission' : 'Submit Plan'}
+                showWavingHand={false}
+              />
             </View>
             <NotificationBadge />
           </View>
@@ -270,17 +320,20 @@ export default function SubmitScreen() {
               {/* Initial Plan Snapshot Card */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <Text style={styles.sectionTitleText}>
-                    Initial Plan Snapshot
-                  </Text>
-                  <Text style={styles.cardSubText}>
-                    Snapshot created at the start of the day.
-                  </Text>
+                  <Text style={styles.sectionTitleText}>Initial Plan Snapshot</Text>
+                  <Text style={styles.cardSubText}>Snapshot created at the start of the day.</Text>
                   {initialTasks.length === 0 ? (
                     <Text style={styles.cardSubText}>No initial plan tasks recorded.</Text>
                   ) : (
                     initialTasks.map((t) => (
-                      <View key={t.id} style={{ borderBottomWidth: 1, borderBottomColor: 'rgba(250, 215, 224, 0.60)', paddingVertical: 6 }}>
+                      <View
+                        key={t.id}
+                        style={{
+                          borderBottomWidth: 1,
+                          borderBottomColor: 'rgba(250, 215, 224, 0.60)',
+                          paddingVertical: 6,
+                        }}
+                      >
                         <Text style={styles.itemTitleText}>{t.title}</Text>
                         <Text style={styles.cardSubText}>{t.estimated_minutes} min estimated</Text>
                       </View>
@@ -292,10 +345,14 @@ export default function SubmitScreen() {
               {/* Tasks Checklist with Individual Proof Attachment */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={styles.sectionTitleText}>
-                      {"Today's Live Tasks & Proofs"}
-                    </Text>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={styles.sectionTitleText}>{"Today's Live Tasks & Proofs"}</Text>
                     <Text style={styles.badgeCountText}>
                       {completedCount}/{currentTasks.length} done
                     </Text>
@@ -322,21 +379,27 @@ export default function SubmitScreen() {
                             gap: spacing.xs,
                           }}
                         >
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
+                          <View
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}
+                          >
                             <View
                               style={{
                                 width: 20,
                                 height: 20,
                                 borderRadius: 4,
                                 borderWidth: 2,
-                                borderColor: isDone ? palette.cherryBloom : 'rgba(232, 77, 114, 0.35)',
+                                borderColor: isDone
+                                  ? palette.cherryBloom
+                                  : 'rgba(232, 77, 114, 0.35)',
                                 backgroundColor: isDone ? palette.cherryBloom : 'transparent',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                               }}
                             >
                               {isDone ? (
-                                <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>✓</Text>
+                                <Text style={{ color: '#FFFFFF', fontSize: 10, fontWeight: '800' }}>
+                                  ✓
+                                </Text>
                               ) : null}
                             </View>
                             <Text
@@ -351,12 +414,18 @@ export default function SubmitScreen() {
                               {task.title}
                             </Text>
                             <View style={{ alignItems: 'flex-end' }}>
-                              <Text style={[styles.cardSubText, { fontWeight: '700', color: palette.cherryBloom }]}>
+                              <Text
+                                style={[
+                                  styles.cardSubText,
+                                  { fontWeight: '700', color: palette.cherryBloom },
+                                ]}
+                              >
                                 {task.completed_minutes ?? 0}/{task.estimated_minutes} min
                               </Text>
                               {(task.completed_minutes ?? 0) > task.estimated_minutes && (
                                 <Text style={{ color: '#D97706', fontSize: 10, fontWeight: '800' }}>
-                                  🔥 +{(task.completed_minutes ?? 0) - task.estimated_minutes}m overtime
+                                  🔥 +{(task.completed_minutes ?? 0) - task.estimated_minutes}m
+                                  overtime
                                 </Text>
                               )}
                             </View>
@@ -365,23 +434,51 @@ export default function SubmitScreen() {
                           {/* Task proofs container */}
                           <View style={{ marginTop: 4 }}>
                             {isSubmitted && taskProofs.length > 0 && (
-                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  flexWrap: 'wrap',
+                                  gap: 6,
+                                  marginBottom: 6,
+                                }}
+                              >
                                 {taskProofs.map((proof: any) => {
                                   void loadProofUrl(proof.image_url);
                                   const signedUrl = proofUrls[proof.image_url];
                                   return (
                                     <Pressable
                                       key={proof.id}
-                                      onPress={() => signedUrl && setViewingProof({ url: signedUrl, caption: task.title })}
+                                      onPress={() =>
+                                        signedUrl &&
+                                        setViewingProof({ url: signedUrl, caption: task.title })
+                                      }
                                     >
                                       {signedUrl ? (
                                         <Image
                                           source={{ uri: signedUrl }}
-                                          style={{ width: 54, height: 54, borderRadius: 8, borderWidth: 1, borderColor: 'rgba(250, 215, 224, 0.90)' }}
+                                          style={{
+                                            width: 54,
+                                            height: 54,
+                                            borderRadius: 8,
+                                            borderWidth: 1,
+                                            borderColor: 'rgba(250, 215, 224, 0.90)',
+                                          }}
                                         />
                                       ) : (
-                                        <View style={{ width: 54, height: 54, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.05)', alignItems: 'center', justifyContent: 'center' }}>
-                                          <ActivityIndicator size="small" color={palette.cherryBloom} />
+                                        <View
+                                          style={{
+                                            width: 54,
+                                            height: 54,
+                                            borderRadius: 8,
+                                            backgroundColor: 'rgba(0,0,0,0.05)',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                          }}
+                                        >
+                                          <ActivityIndicator
+                                            size="small"
+                                            color={palette.cherryBloom}
+                                          />
                                         </View>
                                       )}
                                     </Pressable>
@@ -391,10 +488,20 @@ export default function SubmitScreen() {
                             )}
 
                             {!isSubmitted && taskPickedImages.length > 0 && (
-                              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 6 }}>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  flexWrap: 'wrap',
+                                  gap: 6,
+                                  marginBottom: 6,
+                                }}
+                              >
                                 {taskPickedImages.map((img) => (
                                   <View key={img.uri} style={{ position: 'relative' }}>
-                                    <Image source={{ uri: img.uri }} style={{ width: 54, height: 54, borderRadius: 8 }} />
+                                    <Image
+                                      source={{ uri: img.uri }}
+                                      style={{ width: 54, height: 54, borderRadius: 8 }}
+                                    />
                                     <Pressable
                                       onPress={() => removePickedImage(img)}
                                       style={{
@@ -409,7 +516,11 @@ export default function SubmitScreen() {
                                         justifyContent: 'center',
                                       }}
                                     >
-                                      <Text style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}>✕</Text>
+                                      <Text
+                                        style={{ color: '#fff', fontSize: 10, fontWeight: 'bold' }}
+                                      >
+                                        ✕
+                                      </Text>
                                     </Pressable>
                                   </View>
                                 ))}
@@ -417,7 +528,11 @@ export default function SubmitScreen() {
                             )}
 
                             <Pressable
-                              onPress={() => void (isSubmitted ? pickAndUploadProof(task.id) : pickLocalProof(task.id))}
+                              onPress={() =>
+                                void (isSubmitted
+                                  ? pickAndUploadProof(task.id)
+                                  : pickLocalProof(task.id))
+                              }
                               disabled={uploadingTaskId === task.id}
                               style={{
                                 alignSelf: 'flex-start',
@@ -437,8 +552,18 @@ export default function SubmitScreen() {
                               ) : (
                                 <>
                                   <Text style={{ fontSize: 12 }}>📷</Text>
-                                  <Text style={{ color: palette.cherryBloom, fontSize: 12, fontWeight: '700' }}>
-                                    {isSubmitted ? '+ Add Task Proof' : taskPickedImages.length > 0 ? '+ Add More' : 'Attach Proof'}
+                                  <Text
+                                    style={{
+                                      color: palette.cherryBloom,
+                                      fontSize: 12,
+                                      fontWeight: '700',
+                                    }}
+                                  >
+                                    {isSubmitted
+                                      ? '+ Add Task Proof'
+                                      : taskPickedImages.length > 0
+                                        ? '+ Add More'
+                                        : 'Attach Proof'}
                                   </Text>
                                 </>
                               )}
@@ -487,9 +612,7 @@ export default function SubmitScreen() {
                     <Text style={styles.cardSubText}>
                       {`${partnerName} has been notified. You can still upload extra proof images above.`}
                     </Text>
-                    <Button onPress={() => router.back()}>
-                      Back to Accountability
-                    </Button>
+                    <Button onPress={() => router.back()}>Back to Accountability</Button>
                   </View>
                 </View>
               ) : (
@@ -505,11 +628,19 @@ export default function SubmitScreen() {
                           padding: spacing.sm,
                         }}
                       >
-                        <Text style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700', textAlign: 'center' }}>
+                        <Text
+                          style={{
+                            color: palette.cherryBloom,
+                            fontSize: 13,
+                            fontWeight: '700',
+                            textAlign: 'center',
+                          }}
+                        >
                           📸 Add at least 1 proof image above before submitting
                         </Text>
                         <Text style={[styles.cardSubText, { textAlign: 'center', marginTop: 4 }]}>
-                          Attach proof to individual tasks or add general proof images to show your work.
+                          Attach proof to individual tasks or add general proof images to show your
+                          work.
                         </Text>
                       </View>
                     ) : (
@@ -525,8 +656,11 @@ export default function SubmitScreen() {
                         }}
                       >
                         <Text style={{ fontSize: 16 }}>✅</Text>
-                        <Text style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700' }}>
-                          {pickedImages.length} proof{pickedImages.length > 1 ? 's' : ''} attached — ready to submit!
+                        <Text
+                          style={{ color: palette.cherryBloom, fontSize: 13, fontWeight: '700' }}
+                        >
+                          {pickedImages.length} proof{pickedImages.length > 1 ? 's' : ''} attached —
+                          ready to submit!
                         </Text>
                       </View>
                     )}
@@ -535,13 +669,16 @@ export default function SubmitScreen() {
                       disabled={isSending || currentTasks.length === 0}
                       onPress={() => {
                         if (pickedImages.length === 0) {
-                          Alert.alert('Proof required', 'Please attach at least 1 proof image above before submitting.');
+                          Alert.alert(
+                            'Proof required',
+                            'Please attach at least 1 proof image above before submitting.',
+                          );
                           return;
                         }
                         void handleSend();
                       }}
                       style={({ pressed }) => ({
-                        opacity: (isSending || currentTasks.length === 0) ? 0.55 : pressed ? 0.88 : 1,
+                        opacity: isSending || currentTasks.length === 0 ? 0.55 : pressed ? 0.88 : 1,
                         transform: [{ scale: pressed ? 0.97 : 1 }],
                         width: '100%',
                         marginTop: spacing.xs,
@@ -563,8 +700,17 @@ export default function SubmitScreen() {
                         }}
                       >
                         <Send size={18} color="#FFFFFF" strokeWidth={2.4} />
-                        <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}>
-                          {isSending ? 'Sending…' : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
+                        <Text
+                          style={{
+                            color: '#FFFFFF',
+                            fontWeight: '800',
+                            fontSize: 16,
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {isSending
+                            ? 'Sending…'
+                            : `Send to ${partnerName} (${pickedImages.length} proof${pickedImages.length !== 1 ? 's' : ''})`}
                         </Text>
                       </View>
                     </Pressable>

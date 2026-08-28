@@ -18,11 +18,9 @@ import {
   StatisticsCard,
 } from '@/components/water';
 
-
 export default function WaterTrackerScreen() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
-
 
   // Queries
   const todayStatsQ = useQuery({
@@ -56,7 +54,7 @@ export default function WaterTrackerScreen() {
       void todayLogsQ.refetch();
       void weeklyStatsQ.refetch();
       void statsHistoryQ.refetch();
-    }, [])
+    }, []),
   );
 
   // Mutation for logging water
@@ -98,8 +96,7 @@ export default function WaterTrackerScreen() {
   };
 
   const isLoading =
-    (todayStatsQ.isLoading && !todayStatsQ.data) ||
-    (todayLogsQ.isLoading && !todayLogsQ.data);
+    (todayStatsQ.isLoading && !todayStatsQ.data) || (todayLogsQ.isLoading && !todayLogsQ.data);
 
   if (isLoading) {
     return (

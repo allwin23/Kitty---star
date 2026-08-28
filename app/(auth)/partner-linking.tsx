@@ -71,7 +71,9 @@ export default function PartnerLinkingScreen() {
 
   return (
     <Screen centered>
-      <View style={{ width: '100%', maxWidth: 420, paddingHorizontal: spacing[16], gap: spacing[16] }}>
+      <View
+        style={{ width: '100%', maxWidth: 420, paddingHorizontal: spacing[16], gap: spacing[16] }}
+      >
         <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
           <Button
             variant="tertiary"
@@ -85,23 +87,54 @@ export default function PartnerLinkingScreen() {
         <Card style={{ gap: spacing[24], paddingVertical: spacing[24] }}>
           <View style={{ alignItems: 'center', gap: spacing[8] }}>
             <Text style={{ fontSize: 40 }}>👥🌸</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: palette.textPrimary,
+                letterSpacing: -0.3,
+              }}
+            >
               Link Study Partner
             </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+            <Text
+              style={{
+                color: palette.textSecondary,
+                fontSize: 14,
+                textAlign: 'center',
+                lineHeight: 20,
+              }}
+            >
               Invite a study companion or join using their unique invite code.
             </Text>
           </View>
 
           {/* Section A: Create Invite */}
           <View style={{ gap: spacing[12] }}>
-            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>Create an Invite</Text>
+            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>
+              Create an Invite
+            </Text>
             <Text style={{ color: palette.textSecondary, fontSize: 13 }}>
               Invite codes expire automatically after 24 hours.
             </Text>
             {createdCode ? (
-              <View style={{ backgroundColor: palette.blush, padding: spacing[12], borderRadius: 16, alignItems: 'center' }}>
-                <Text style={{ fontSize: 28, fontWeight: '800', color: palette.cherryBloom, letterSpacing: 4, fontFamily: "'Martian Mono', monospace" }}>
+              <View
+                style={{
+                  backgroundColor: palette.blush,
+                  padding: spacing[12],
+                  borderRadius: 16,
+                  alignItems: 'center',
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 28,
+                    fontWeight: '800',
+                    color: palette.cherryBloom,
+                    letterSpacing: 4,
+                    fontFamily: "'Martian Mono', monospace",
+                  }}
+                >
                   {createdCode}
                 </Text>
               </View>
@@ -115,7 +148,9 @@ export default function PartnerLinkingScreen() {
 
           {/* Section B: Join with Invite */}
           <View style={{ gap: spacing[12] }}>
-            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>Join with an Invite</Text>
+            <Text style={{ fontWeight: '700', fontSize: 15, color: palette.textPrimary }}>
+              Join with an Invite
+            </Text>
             <Controller
               control={control}
               name="code"
@@ -131,13 +166,24 @@ export default function PartnerLinkingScreen() {
                 />
               )}
             />
-            <Button variant="secondary" disabled={connecting || generating} onPress={handleSubmit(connect)}>
+            <Button
+              variant="secondary"
+              disabled={connecting || generating}
+              onPress={handleSubmit(connect)}
+            >
               {connecting ? 'Connecting…' : 'Connect Partner'}
             </Button>
           </View>
 
           {message ? (
-            <Text style={{ color: palette.statusDanger, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+            <Text
+              style={{
+                color: palette.statusDanger,
+                fontSize: 13,
+                textAlign: 'center',
+                fontWeight: '600',
+              }}
+            >
               {message}
             </Text>
           ) : null}
@@ -146,4 +192,3 @@ export default function PartnerLinkingScreen() {
     </Screen>
   );
 }
-

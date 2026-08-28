@@ -50,14 +50,7 @@ export type MascotAnimationPose =
   | 'surprised';
 
 export type MascotEmotionState =
-  | 'happy'
-  | 'excited'
-  | 'focused'
-  | 'sleepy'
-  | 'serious'
-  | 'concerned'
-  | 'celebratory'
-  | 'calm';
+  'happy' | 'excited' | 'focused' | 'sleepy' | 'serious' | 'concerned' | 'celebratory' | 'calm';
 
 export type VoiceMood = 'excited' | 'calm' | 'serious' | 'playful' | 'cozy' | 'sympathetic';
 

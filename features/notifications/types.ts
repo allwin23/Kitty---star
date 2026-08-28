@@ -26,13 +26,7 @@ export type NotificationEventType =
 export type NotificationPriority = 'urgent' | 'high' | 'medium' | 'low';
 
 export type NotificationCategory =
-  | 'study'
-  | 'partner'
-  | 'water'
-  | 'achievements'
-  | 'ai_coach'
-  | 'reports'
-  | 'social';
+  'study' | 'partner' | 'water' | 'achievements' | 'ai_coach' | 'reports' | 'social';
 
 export type NotificationChannel = 'push' | 'in_app' | 'both';
 
@@ -60,7 +54,7 @@ export interface NotificationPreferences {
   social_activity_enabled: boolean;
   quiet_hours_enabled: boolean;
   quiet_hours_start: string; // "HH:mm" e.g., "22:00"
-  quiet_hours_end: string;   // "HH:mm" e.g., "07:00"
+  quiet_hours_end: string; // "HH:mm" e.g., "07:00"
   relevance_threshold: number; // 0.0 - 1.0
 }
 

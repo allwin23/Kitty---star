@@ -50,7 +50,7 @@ export class ChromiumAdapter implements BrowserAdapter {
   async updateBlockingRules(domains: string[]): Promise<void> {
     if (typeof chrome !== 'undefined' && chrome.declarativeNetRequest) {
       const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
-      const removeRuleIds = existingRules.map(r => r.id);
+      const removeRuleIds = existingRules.map((r) => r.id);
 
       const addRules = domains.map((domain, index) => {
         const id = index + 1;
@@ -58,21 +58,21 @@ export class ChromiumAdapter implements BrowserAdapter {
           id,
           priority: 1,
           action: {
-            type: "block" as chrome.declarativeNetRequest.RuleActionType
+            type: 'block' as chrome.declarativeNetRequest.RuleActionType,
           },
           condition: {
             urlFilter: `||${domain}`,
             resourceTypes: [
-              "main_frame" as chrome.declarativeNetRequest.ResourceType,
-              "sub_frame" as chrome.declarativeNetRequest.ResourceType
-            ]
-          }
+              'main_frame' as chrome.declarativeNetRequest.ResourceType,
+              'sub_frame' as chrome.declarativeNetRequest.ResourceType,
+            ],
+          },
         };
       });
 
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds,
-        addRules
+        addRules,
       });
     }
   }
@@ -80,10 +80,10 @@ export class ChromiumAdapter implements BrowserAdapter {
   async clearBlockingRules(): Promise<void> {
     if (typeof chrome !== 'undefined' && chrome.declarativeNetRequest) {
       const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
-      const removeRuleIds = existingRules.map(r => r.id);
+      const removeRuleIds = existingRules.map((r) => r.id);
       await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds,
-        addRules: []
+        addRules: [],
       });
     }
   }
@@ -118,12 +118,12 @@ export class ChromiumAdapter implements BrowserAdapter {
       if (identity.getProfileUserInfo) {
         try {
           const info = await identity.getProfileUserInfo({ accountStatus: 'ANY' });
-          return info?.email || "";
+          return info?.email || '';
         } catch (e) {
-          console.warn("[Adapter] Failed to fetch profile identity email:", e);
+          console.warn('[Adapter] Failed to fetch profile identity email:', e);
         }
       }
     }
-    return "";
+    return '';
   }
 }

@@ -44,4 +44,3 @@ export function Avatar({ label, size = 40, source }: AvatarProps) {
     </View>
   );
 }
-

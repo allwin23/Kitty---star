@@ -36,10 +36,7 @@ import {
   RecentReportsSection,
   AchievementsSection,
 } from '@/features/statistics';
-import {
-  deriveAccountabilityStats,
-  type TimeFilter,
-} from '@/services/statistics.service';
+import { deriveAccountabilityStats, type TimeFilter } from '@/services/statistics.service';
 
 export default function StatisticsScreen() {
   const queryClient = useQueryClient();
@@ -49,7 +46,6 @@ export default function StatisticsScreen() {
 
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('week');
   const [viewingPartner, setViewingPartner] = useState(false);
-
 
   // Fetch partner_id for current user (or fallback to auth store profile)
   const partnerIdQ = useQuery({
@@ -195,10 +191,7 @@ export default function StatisticsScreen() {
   const activityRows = activityQ.data ?? [];
   const reportsRows = reportsQ.data ?? [];
 
-  const accountabilityStats = useMemo(
-    () => deriveAccountabilityStats(reportsRows),
-    [reportsRows],
-  );
+  const accountabilityStats = useMemo(() => deriveAccountabilityStats(reportsRows), [reportsRows]);
 
   // ── Refresh all queries ────────────────────────────────────────────────────
 
@@ -231,26 +224,25 @@ export default function StatisticsScreen() {
 
   // ─────────────────────────────────────────────────────────────────────────
 
-  const partnerName = viewingPartner
-    ? 'Partner'
-    : profile?.full_name?.split(' ')[0] ?? 'My';
+  const partnerName = viewingPartner ? 'Partner' : (profile?.full_name?.split(' ')[0] ?? 'My');
 
   return (
     <Screen>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isAnyRefreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={isAnyRefreshing} onRefresh={handleRefresh} />}
       >
         <View style={{ gap: spacing[24], paddingBottom: 120 }}>
           {/* Header */}
           <HeaderTitleCard
             title="Statistics"
             showWavingHand={false}
-            subtitle={viewingPartner ? "Viewing partner's statistics" : 'Your overall study progress & growth'}
+            subtitle={
+              viewingPartner
+                ? "Viewing partner's statistics"
+                : 'Your overall study progress & growth'
+            }
           />
-
 
           {/* Partner Toggle */}
           <PartnerToggle
@@ -271,7 +263,9 @@ export default function StatisticsScreen() {
               }}
             >
               <Text style={{ color: palette.mutedText, textAlign: 'center', fontSize: 13 }}>
-                {"You don't have a connected study partner yet. Connect with a partner to view their statistics."}
+                {
+                  "You don't have a connected study partner yet. Connect with a partner to view their statistics."
+                }
               </Text>
             </View>
           ) : null}
@@ -287,9 +281,7 @@ export default function StatisticsScreen() {
                 achievements={achievementsQ.data ?? []}
                 activityRows={activityRows}
                 isLoading={userStatsQ.isLoading}
-                error={
-                  userStatsQ.error ? (userStatsQ.error as Error).message : null
-                }
+                error={userStatsQ.error ? (userStatsQ.error as Error).message : null}
                 onRetry={() => void userStatsQ.refetch()}
               />
 

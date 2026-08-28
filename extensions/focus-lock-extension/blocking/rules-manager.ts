@@ -14,8 +14,8 @@ export class BlockingRuleManager {
   resolveDomains(
     categories: string[],
     customDomains: string[],
-    profileEmail: string = "",
-    studyEmail: string = ""
+    profileEmail: string = '',
+    studyEmail: string = '',
   ): string[] {
     const domainsSet = new Set<string>();
 
@@ -32,11 +32,15 @@ export class BlockingRuleManager {
     });
 
     // YouTube Study Profile Exception
-    const hasActiveStudyEmail = profileEmail && studyEmail &&
+    const hasActiveStudyEmail =
+      profileEmail &&
+      studyEmail &&
       profileEmail.trim().toLowerCase() === studyEmail.trim().toLowerCase();
 
     if (hasActiveStudyEmail) {
-      console.log(`[RuleManager] Study profile match detected (${profileEmail}). Allowing YouTube.`);
+      console.log(
+        `[RuleManager] Study profile match detected (${profileEmail}). Allowing YouTube.`,
+      );
       domainsSet.delete('youtube.com');
       domainsSet.delete('www.youtube.com');
       domainsSet.delete('youtu.be');
@@ -50,7 +54,7 @@ export class BlockingRuleManager {
    */
   async enableRules(categories: string[], customDomains: string[]): Promise<void> {
     const profileEmail = await this.adapter.getProfileEmail();
-    const studyEmail = (await this.adapter.getStorage('studyEmail')) || "";
+    const studyEmail = (await this.adapter.getStorage('studyEmail')) || '';
     const domains = this.resolveDomains(categories, customDomains, profileEmail, studyEmail);
     await this.adapter.updateBlockingRules(domains);
   }

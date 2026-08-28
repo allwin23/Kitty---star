@@ -22,9 +22,13 @@ export async function markLearned(input: WordLearnedInput): Promise<VocabularyPr
 
 /** Get current user's vocabulary statistics (refreshed for current_date). */
 export async function getStats(): Promise<VocabularyStatsRow | null> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data, error } = await supabase.rpc('refresh_vocabulary_stats' as any, { p_user_id: user.id });
+  const { data, error } = await supabase.rpc('refresh_vocabulary_stats' as any, {
+    p_user_id: user.id,
+  });
   return (throwIfError(data, error) ?? null) as VocabularyStatsRow | null;
 }
 
@@ -33,7 +37,9 @@ export async function getStats(): Promise<VocabularyStatsRow | null> {
  * Returns `true` if learned, `false` otherwise.
  */
 export async function isWordLearned(wordId: string): Promise<boolean> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return false;
   const { data, error } = await supabase
     .from('vocabulary_progress')
@@ -50,7 +56,9 @@ export async function isWordLearned(wordId: string): Promise<boolean> {
 export async function getLearnedWords(
   opts: PageOptions = {},
 ): Promise<PageResult<VocabularyProgressRow>> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return buildPageResult([], opts);
   const { from, to } = paginationRange(opts);
   const { data, error } = await supabase
@@ -66,7 +74,9 @@ export async function getLearnedWords(
 /** Returns learned word_ids for a given list – useful for bulk "already learned?" checks. */
 export async function filterLearned(wordIds: string[]): Promise<string[]> {
   if (wordIds.length === 0) return [];
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return [];
   const { data, error } = await supabase
     .from('vocabulary_progress')

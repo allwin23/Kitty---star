@@ -9,7 +9,7 @@ interface ChromeBlockerState {
   strictMode: boolean;
   activeSessionId: string | null;
   studyEmail: string;
-  
+
   setChromeSyncEnabled: (enabled: boolean) => void;
   setBlockedCategories: (categories: string[]) => void;
   setCustomDomains: (domains: string[]) => void;
@@ -40,6 +40,6 @@ export const useChromeBlockerStore = create<ChromeBlockerState>()(
     {
       name: 'chrome-blocker-storage',
       storage: createJSONStorage(() => getStorage()),
-    }
-  )
+    },
+  ),
 );

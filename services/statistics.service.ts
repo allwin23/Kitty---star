@@ -111,10 +111,7 @@ export async function getDailyActivity(
 // ─── Reports ───────────────────────────────────────────────────────────────────
 
 /** Fetch daily_reports for a given user, newest first. */
-export async function getReports(
-  userId: string,
-  filter: TimeFilter,
-): Promise<DailyReportRow[]> {
+export async function getReports(userId: string, filter: TimeFilter): Promise<DailyReportRow[]> {
   const start = filterStartDate(filter);
   let q = supabase
     .from('daily_reports')
@@ -140,10 +137,7 @@ export async function getPYQStats(userId: string): Promise<PYQStatsRow | null> {
 }
 
 /** Fetch pyq_attempts for a given user filtered by time range. */
-export async function getPYQAttempts(
-  userId: string,
-  filter: TimeFilter,
-): Promise<PYQAttemptRow[]> {
+export async function getPYQAttempts(userId: string, filter: TimeFilter): Promise<PYQAttemptRow[]> {
   const start = filterStartDate(filter);
   let q = supabase
     .from('pyq_attempts')
@@ -252,9 +246,7 @@ export async function getFlashcardScheduleStats(userId: string): Promise<{
   const now = new Date().toISOString();
   const dueCards = rows.filter((r) => r.next_review !== null && r.next_review <= now).length;
   const avgIntervalDays =
-    rows.length > 0
-      ? Math.round(rows.reduce((s, r) => s + r.interval_days, 0) / rows.length)
-      : 0;
+    rows.length > 0 ? Math.round(rows.reduce((s, r) => s + r.interval_days, 0) / rows.length) : 0;
   const longestIntervalDays =
     rows.length > 0 ? Math.max(...rows.map((r) => r.interval_days), 0) : 0;
   const avgEaseFactor =
@@ -306,16 +298,13 @@ export interface AccountabilityStats {
  * Derive accountability stats from daily_reports rows.
  * All values come from the backend — no recalculation of business logic.
  */
-export function deriveAccountabilityStats(
-  reports: DailyReportRow[],
-): AccountabilityStats {
+export function deriveAccountabilityStats(reports: DailyReportRow[]): AccountabilityStats {
   const total = reports.length;
   const approvals = reports.filter((r) => r.approval_status === 'approved').length;
   const rejections = reports.filter((r) => r.approval_status === 'rejected').length;
   const tasksPlanned = reports.reduce((s, r) => s + r.planned_tasks, 0);
   const tasksCompleted = reports.reduce((s, r) => s + r.completed_tasks, 0);
-  const avgCompletionPct =
-    tasksPlanned > 0 ? Math.round((tasksCompleted / tasksPlanned) * 100) : 0;
+  const avgCompletionPct = tasksPlanned > 0 ? Math.round((tasksCompleted / tasksPlanned) * 100) : 0;
   const submissionRate = total > 0 ? Math.round((approvals / total) * 100) : 0;
 
   return {
@@ -339,10 +328,7 @@ export interface PomodoroStats {
 }
 
 /** Fetch pomodoro stats for a given user from pomodoro_sessions table. */
-export async function getPomodoroStats(
-  userId: string,
-  filter: TimeFilter,
-): Promise<PomodoroStats> {
+export async function getPomodoroStats(userId: string, filter: TimeFilter): Promise<PomodoroStats> {
   const start = filterStartDate(filter);
   let q = supabase
     .from('pomodoro_sessions')
@@ -389,16 +375,18 @@ export async function getPomodoroStats(
  * Subscribe to real-time changes across all statistics-related tables for a target user.
  * Works seamlessly for both the current user and their connected partner.
  */
-export function subscribeToStatistics(
-  userId: string,
-  onChange: () => void,
-) {
+export function subscribeToStatistics(userId: string, onChange: () => void) {
   const channelId = `stats-sync:${userId}-${Math.random().toString(36).substring(2)}`;
   return supabase
     .channel(channelId)
     .on(
       'postgres_changes',
-      { event: '*', schema: 'public', table: 'daily_user_activity', filter: `user_id=eq.${userId}` },
+      {
+        event: '*',
+        schema: 'public',
+        table: 'daily_user_activity',
+        filter: `user_id=eq.${userId}`,
+      },
       onChange,
     )
     .on(
@@ -471,11 +459,6 @@ export function subscribeToStatistics(
       { event: '*', schema: 'public', table: 'current_plans', filter: `user_id=eq.${userId}` },
       onChange,
     )
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'current_tasks' },
-      onChange,
-    )
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'current_tasks' }, onChange)
     .subscribe();
 }
-

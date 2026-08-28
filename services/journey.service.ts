@@ -129,10 +129,36 @@ export const journeyService = {
     const channelId = `journey-sync:${journeyId}-${Math.random().toString(36).substring(2)}`;
     return supabase
       .channel(channelId)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'journeys', filter: `id=eq.${journeyId}` }, onChange)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'journey_milestones', filter: `journey_id=eq.${journeyId}` }, onChange)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'journey_challenges' }, onChange)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'journey_events', filter: `journey_id=eq.${journeyId}` }, onChange)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'journeys', filter: `id=eq.${journeyId}` },
+        onChange,
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'journey_milestones',
+          filter: `journey_id=eq.${journeyId}`,
+        },
+        onChange,
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'journey_challenges' },
+        onChange,
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'journey_events',
+          filter: `journey_id=eq.${journeyId}`,
+        },
+        onChange,
+      )
       .subscribe();
   },
 };

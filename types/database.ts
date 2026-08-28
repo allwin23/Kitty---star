@@ -201,14 +201,24 @@ export type Database = {
         {
           id: string;
           journey_id: string;
-          event_type: 'milestone_created' | 'milestone_unlocked' | 'reward_claimed' | 'challenge_completed' | 'challenge_failed';
+          event_type:
+            | 'milestone_created'
+            | 'milestone_unlocked'
+            | 'reward_claimed'
+            | 'challenge_completed'
+            | 'challenge_failed';
           data: Json;
           created_at: string;
         },
         {
           id?: string;
           journey_id: string;
-          event_type: 'milestone_created' | 'milestone_unlocked' | 'reward_claimed' | 'challenge_completed' | 'challenge_failed';
+          event_type:
+            | 'milestone_created'
+            | 'milestone_unlocked'
+            | 'reward_claimed'
+            | 'challenge_completed'
+            | 'challenge_failed';
           data?: Json;
           created_at?: string;
         },
@@ -487,8 +497,22 @@ export type Database = {
         never
       >;
       achievements: Table<
-        { id: string; code: string; name: string; description: string; xp_reward?: number; created_at: string },
-        { id?: string; code: string; name: string; description: string; xp_reward?: number; created_at?: string },
+        {
+          id: string;
+          code: string;
+          name: string;
+          description: string;
+          xp_reward?: number;
+          created_at: string;
+        },
+        {
+          id?: string;
+          code: string;
+          name: string;
+          description: string;
+          xp_reward?: number;
+          created_at?: string;
+        },
         never
       >;
       user_achievements: Table<

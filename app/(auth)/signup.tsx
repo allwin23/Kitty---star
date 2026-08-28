@@ -31,7 +31,14 @@ export default function SignupScreen() {
         <Card style={{ gap: spacing[20], paddingVertical: spacing[32] }}>
           <View style={{ gap: spacing[8], alignItems: 'center' }}>
             <Text style={{ fontSize: 32 }}>🐱🌸</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: palette.textPrimary,
+                letterSpacing: -0.3,
+              }}
+            >
               Create your account
             </Text>
             <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center' }}>
@@ -99,7 +106,10 @@ export default function SignupScreen() {
           </View>
 
           <View style={{ alignItems: 'center' }}>
-            <Link href="/(auth)/login" style={{ color: palette.textSecondary, fontWeight: '600', fontSize: 14 }}>
+            <Link
+              href="/(auth)/login"
+              style={{ color: palette.textSecondary, fontWeight: '600', fontSize: 14 }}
+            >
               Already have an account? <Text style={{ color: palette.cherryBloom }}>Sign in</Text>
             </Link>
           </View>
@@ -108,4 +118,3 @@ export default function SignupScreen() {
     </Screen>
   );
 }
-

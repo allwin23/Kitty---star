@@ -22,6 +22,6 @@ export const useAppBlockStore = create<AppBlockState>()(
     {
       name: 'app-block-storage',
       storage: createJSONStorage(() => getStorage()),
-    }
-  )
+    },
+  ),
 );

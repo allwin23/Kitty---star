@@ -37,10 +37,24 @@ export default function ForgotPasswordScreen() {
         <Card style={{ gap: spacing[24], paddingVertical: spacing[32] }}>
           <View style={{ alignItems: 'center', gap: spacing[8] }}>
             <Text style={{ fontSize: 44 }}>🔑🌸</Text>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: palette.textPrimary, letterSpacing: -0.3 }}>
+            <Text
+              style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: palette.textPrimary,
+                letterSpacing: -0.3,
+              }}
+            >
               Reset Password
             </Text>
-            <Text style={{ color: palette.textSecondary, fontSize: 14, textAlign: 'center', lineHeight: 20 }}>
+            <Text
+              style={{
+                color: palette.textSecondary,
+                fontSize: 14,
+                textAlign: 'center',
+                lineHeight: 20,
+              }}
+            >
               We will send reset instructions directly to your email address.
             </Text>
           </View>
@@ -63,7 +77,14 @@ export default function ForgotPasswordScreen() {
           />
 
           {message ? (
-            <Text style={{ color: palette.cherryBloom, fontSize: 13, textAlign: 'center', fontWeight: '600' }}>
+            <Text
+              style={{
+                color: palette.cherryBloom,
+                fontSize: 13,
+                textAlign: 'center',
+                fontWeight: '600',
+              }}
+            >
               {message}
             </Text>
           ) : null}
@@ -73,7 +94,10 @@ export default function ForgotPasswordScreen() {
           </Button>
 
           <View style={{ alignItems: 'center' }}>
-            <Link href="/(auth)/login" style={{ color: palette.cherryBloom, fontWeight: '700', fontSize: 14 }}>
+            <Link
+              href="/(auth)/login"
+              style={{ color: palette.cherryBloom, fontWeight: '700', fontSize: 14 }}
+            >
               Back to Sign In
             </Link>
           </View>
@@ -82,4 +106,3 @@ export default function ForgotPasswordScreen() {
     </Screen>
   );
 }
-

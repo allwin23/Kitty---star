@@ -21,12 +21,7 @@ export interface ProofViewerModalProps {
   onClose: () => void;
 }
 
-export function ProofViewerModal({
-  visible,
-  imageUrl,
-  caption,
-  onClose,
-}: ProofViewerModalProps) {
+export function ProofViewerModal({ visible, imageUrl, caption, onClose }: ProofViewerModalProps) {
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
   const [scale, setScale] = useState(1);
@@ -68,17 +63,17 @@ export function ProofViewerModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         {/* Header toolbar */}
-        <View style={[styles.header, { backgroundColor: palette.surface, borderColor: palette.border }]}>
+        <View
+          style={[styles.header, { backgroundColor: palette.surface, borderColor: palette.border }]}
+        >
           <View style={{ flex: 1, paddingRight: spacing.sm }}>
-            <Text style={[typography.title, { color: palette.text, fontSize: 15 }]} numberOfLines={1}>
+            <Text
+              style={[typography.title, { color: palette.text, fontSize: 15 }]}
+              numberOfLines={1}
+            >
               {caption || 'Proof Image'}
             </Text>
             <Text style={{ color: palette.mutedText, fontSize: 11 }}>
@@ -89,28 +84,44 @@ export function ProofViewerModal({
           {/* Action buttons */}
           <View style={styles.actionsGroup}>
             <Pressable
-              style={({ pressed }) => [styles.toolBtn, { backgroundColor: palette.surface }, pressed && { opacity: 0.7 }]}
+              style={({ pressed }) => [
+                styles.toolBtn,
+                { backgroundColor: palette.surface },
+                pressed && { opacity: 0.7 },
+              ]}
               onPress={handleZoomOut}
             >
               <Text style={{ color: palette.text, fontSize: 16, fontWeight: '700' }}>–</Text>
             </Pressable>
 
             <Pressable
-              style={({ pressed }) => [styles.toolBtn, { backgroundColor: palette.surface }, pressed && { opacity: 0.7 }]}
+              style={({ pressed }) => [
+                styles.toolBtn,
+                { backgroundColor: palette.surface },
+                pressed && { opacity: 0.7 },
+              ]}
               onPress={handleResetZoom}
             >
               <Text style={{ color: palette.text, fontSize: 12, fontWeight: '600' }}>1x</Text>
             </Pressable>
 
             <Pressable
-              style={({ pressed }) => [styles.toolBtn, { backgroundColor: palette.surface }, pressed && { opacity: 0.7 }]}
+              style={({ pressed }) => [
+                styles.toolBtn,
+                { backgroundColor: palette.surface },
+                pressed && { opacity: 0.7 },
+              ]}
               onPress={handleZoomIn}
             >
               <Text style={{ color: palette.text, fontSize: 16, fontWeight: '700' }}>+</Text>
             </Pressable>
 
             <Pressable
-              style={({ pressed }) => [styles.downloadBtn, { backgroundColor: palette.primary }, pressed && { opacity: 0.8 }]}
+              style={({ pressed }) => [
+                styles.downloadBtn,
+                { backgroundColor: palette.primary },
+                pressed && { opacity: 0.8 },
+              ]}
               onPress={handleDownloadOrOpen}
             >
               <Text style={{ color: palette.primaryText, fontSize: 12, fontWeight: '700' }}>
@@ -141,7 +152,10 @@ export function ProofViewerModal({
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
           >
-            <Pressable onPress={handleToggleZoom} style={{ alignItems: 'center', justifyContent: 'center' }}>
+            <Pressable
+              onPress={handleToggleZoom}
+              style={{ alignItems: 'center', justifyContent: 'center' }}
+            >
               <Image
                 source={{ uri: imageUrl }}
                 style={{

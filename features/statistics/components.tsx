@@ -33,8 +33,6 @@ function usePalette() {
   return palette;
 }
 
-
-
 // ─── PartnerToggle ─────────────────────────────────────────────────────────────
 
 export interface PartnerToggleProps {
@@ -295,7 +293,8 @@ export function OverviewSection({
   onRetry,
 }: OverviewSectionProps) {
   if (isLoading && !userStats) return <StatisticsSection title="Overview" emoji="📊" isLoading />;
-  if (error && !userStats) return <StatisticsSection title="Overview" emoji="📊" error={error} onRetry={onRetry} />;
+  if (error && !userStats)
+    return <StatisticsSection title="Overview" emoji="📊" error={error} onRetry={onRetry} />;
   if (!userStats) {
     return (
       <StatisticsSection title="Overview" emoji="📊">
@@ -372,11 +371,15 @@ export function AccountabilitySection({
   onRetry,
 }: AccountabilitySectionProps) {
   if (isLoading && !stats) return <StatisticsSection title="Accountability" emoji="✅" isLoading />;
-  if (error && !stats) return <StatisticsSection title="Accountability" emoji="✅" error={error} onRetry={onRetry} />;
+  if (error && !stats)
+    return <StatisticsSection title="Accountability" emoji="✅" error={error} onRetry={onRetry} />;
   if (!stats || stats.daysSubmitted === 0) {
     return (
       <StatisticsSection title="Accountability" emoji="✅">
-        <EmptyState title="No submissions yet" description="Submit a day to see accountability stats." />
+        <EmptyState
+          title="No submissions yet"
+          description="Submit a day to see accountability stats."
+        />
       </StatisticsSection>
     );
   }
@@ -427,11 +430,15 @@ export interface PomodoroSectionProps {
 
 export function PomodoroSection({ stats, isLoading, error, onRetry }: PomodoroSectionProps) {
   if (isLoading && !stats) return <StatisticsSection title="Pomodoro" emoji="🍅" isLoading />;
-  if (error && !stats) return <StatisticsSection title="Pomodoro" emoji="🍅" error={error} onRetry={onRetry} />;
+  if (error && !stats)
+    return <StatisticsSection title="Pomodoro" emoji="🍅" error={error} onRetry={onRetry} />;
   if (!stats || stats.pomodorosCompleted === 0) {
     return (
       <StatisticsSection title="Pomodoro" emoji="🍅">
-        <EmptyState title="No sessions yet" description="Complete a Pomodoro session to see stats." />
+        <EmptyState
+          title="No sessions yet"
+          description="Complete a Pomodoro session to see stats."
+        />
       </StatisticsSection>
     );
   }
@@ -479,11 +486,15 @@ export interface PYQSectionProps {
 
 export function PYQSection({ stats, isLoading, error, onRetry }: PYQSectionProps) {
   if (isLoading && !stats) return <StatisticsSection title="PYQ Practice" emoji="📚" isLoading />;
-  if (error && !stats) return <StatisticsSection title="PYQ Practice" emoji="📚" error={error} onRetry={onRetry} />;
+  if (error && !stats)
+    return <StatisticsSection title="PYQ Practice" emoji="📚" error={error} onRetry={onRetry} />;
   if (!stats || stats.total_tests === 0) {
     return (
       <StatisticsSection title="PYQ Practice" emoji="📚">
-        <EmptyState title="No tests yet" description="Attempt a PYQ test to see your performance." />
+        <EmptyState
+          title="No tests yet"
+          description="Attempt a PYQ test to see your performance."
+        />
       </StatisticsSection>
     );
   }
@@ -546,14 +557,20 @@ export function FlashcardSection({
   error,
   onRetry,
 }: FlashcardSectionProps) {
-  const hasData = scheduleStats && (scheduleStats.totalCards > 0 || reviewsCount > 0 || scheduleStats.dueCards > 0);
+  const hasData =
+    scheduleStats &&
+    (scheduleStats.totalCards > 0 || reviewsCount > 0 || scheduleStats.dueCards > 0);
 
   if (isLoading) return <StatisticsSection title="Flashcards" emoji="⚡" isLoading />;
-  if (error) return <StatisticsSection title="Flashcards" emoji="⚡" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Flashcards" emoji="⚡" error={error} onRetry={onRetry} />;
   if (!hasData) {
     return (
       <StatisticsSection title="Flashcards" emoji="⚡">
-        <EmptyState title="No flashcards reviewed" description="Review or create flashcards to see stats." />
+        <EmptyState
+          title="No flashcards reviewed"
+          description="Review or create flashcards to see stats."
+        />
       </StatisticsSection>
     );
   }
@@ -624,7 +641,8 @@ export function VocabularySection({
   onRetry,
 }: VocabularySectionProps) {
   if (isLoading) return <StatisticsSection title="Vocabulary" emoji="📖" isLoading />;
-  if (error) return <StatisticsSection title="Vocabulary" emoji="📖" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Vocabulary" emoji="📖" error={error} onRetry={onRetry} />;
   if (!stats || stats.total_words === 0) {
     return (
       <StatisticsSection title="Vocabulary" emoji="📖">
@@ -682,7 +700,8 @@ export function GrammarSection({
 }: GrammarSectionProps) {
   const palette = usePalette();
   if (isLoading) return <StatisticsSection title="Grammar" emoji="✍️" isLoading />;
-  if (error) return <StatisticsSection title="Grammar" emoji="✍️" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Grammar" emoji="✍️" error={error} onRetry={onRetry} />;
   if (!stats || stats.total_questions === 0) {
     return (
       <StatisticsSection title="Grammar" emoji="✍️">
@@ -707,9 +726,7 @@ export function GrammarSection({
       <MetricGrid metrics={metrics} />
       {topicBreakdown.length > 0 ? (
         <View style={{ gap: 4, marginTop: spacing.xs }}>
-          <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>
-            Topics
-          </Text>
+          <Text style={{ color: palette.mutedText, fontSize: 12, fontWeight: '600' }}>Topics</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
             {topicBreakdown.slice(0, 8).map((t) => (
               <View
@@ -752,11 +769,15 @@ export interface WaterSectionProps {
 
 export function WaterSection({ waterRows, isLoading, error, onRetry }: WaterSectionProps) {
   if (isLoading) return <StatisticsSection title="Water Tracker" emoji="💧" isLoading />;
-  if (error) return <StatisticsSection title="Water Tracker" emoji="💧" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Water Tracker" emoji="💧" error={error} onRetry={onRetry} />;
   if (waterRows.length === 0) {
     return (
       <StatisticsSection title="Water Tracker" emoji="💧">
-        <EmptyState title="No water logged" description="Log water intake to see hydration stats." />
+        <EmptyState
+          title="No water logged"
+          description="Log water intake to see hydration stats."
+        />
       </StatisticsSection>
     );
   }
@@ -880,7 +901,8 @@ export function DailyActivitySection({
   const palette = usePalette();
 
   if (isLoading) return <StatisticsSection title="Daily Activity" emoji="📅" isLoading />;
-  if (error) return <StatisticsSection title="Daily Activity" emoji="📅" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Daily Activity" emoji="📅" error={error} onRetry={onRetry} />;
   if (activityRows.length === 0) {
     return (
       <StatisticsSection title="Daily Activity" emoji="📅">
@@ -905,7 +927,11 @@ export function DailyActivitySection({
             }}
           >
             <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
             >
               <Text style={{ color: palette.text, fontWeight: '600', fontSize: 13 }}>
                 {format(new Date(row.date), 'EEE, dd MMM')}
@@ -958,7 +984,8 @@ export function RecentReportsSection({
   const router = useRouter();
 
   if (isLoading) return <StatisticsSection title="Recent Reports" emoji="📋" isLoading />;
-  if (error) return <StatisticsSection title="Recent Reports" emoji="📋" error={error} onRetry={onRetry} />;
+  if (error)
+    return <StatisticsSection title="Recent Reports" emoji="📋" error={error} onRetry={onRetry} />;
   if (reports.length === 0) {
     return (
       <StatisticsSection title="Recent Reports" emoji="📋">
@@ -998,7 +1025,8 @@ export function RecentReportsSection({
                   {format(new Date(r.date), 'EEE, dd MMM yyyy')}
                 </Text>
                 <Text style={{ color: palette.mutedText, fontSize: 11 }}>
-                  {r.completed_tasks}/{r.planned_tasks} tasks · 🍅{r.total_pomodoros} · +{r.xp_earned} XP
+                  {r.completed_tasks}/{r.planned_tasks} tasks · 🍅{r.total_pomodoros} · +
+                  {r.xp_earned} XP
                 </Text>
               </View>
               <Text
@@ -1039,7 +1067,10 @@ export function AchievementsSection({ achievements, isLoading, error }: Achievem
   if (achievements.length === 0) {
     return (
       <StatisticsSection title="Achievements" emoji="🏆">
-        <EmptyState title="No achievements yet" description="Keep studying to unlock achievements." />
+        <EmptyState
+          title="No achievements yet"
+          description="Keep studying to unlock achievements."
+        />
       </StatisticsSection>
     );
   }

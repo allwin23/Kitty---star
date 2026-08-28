@@ -27,11 +27,12 @@ export default function AppLayout() {
       elevation: 6,
       zIndex: 99999,
     },
-    Platform.OS === 'web' && ({
-      transform: 'translateX(-50%)',
-      backdropFilter: 'blur(16px) saturate(160%)',
-      WebkitBackdropFilter: 'blur(16px) saturate(160%)',
-    } as any),
+    Platform.OS === 'web' &&
+      ({
+        transform: 'translateX(-50%)',
+        backdropFilter: 'blur(16px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(160%)',
+      } as any),
   ];
 
   return (
@@ -39,7 +40,7 @@ export default function AppLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        ...( { safeAreaInsets: { bottom: 0, top: 0 } } as any ),
+        ...({ safeAreaInsets: { bottom: 0, top: 0 } } as any),
         tabBarItemStyle: {
           flex: 1,
           alignItems: 'center',
@@ -56,7 +57,19 @@ export default function AppLayout() {
         },
         tabBarStyle: tabBarStyleResolved,
         tabBarBackground: () => (
-          <View style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, width: '100%', height: '100%', borderRadius: 31, overflow: 'hidden' }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              width: '100%',
+              height: '100%',
+              borderRadius: 31,
+              overflow: 'hidden',
+            }}
+          >
             <NavBouquetBackdrop />
           </View>
         ),
@@ -67,36 +80,28 @@ export default function AppLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ focused }) => (
-            <AnimatedTabIcon name="home" focused={focused} />
-          ),
+          tabBarIcon: ({ focused }) => <AnimatedTabIcon name="home" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="accountability"
         options={{
           title: 'Plan',
-          tabBarIcon: ({ focused }) => (
-            <AnimatedTabIcon name="accountability" focused={focused} />
-          ),
+          tabBarIcon: ({ focused }) => <AnimatedTabIcon name="accountability" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="pomodoro"
         options={{
           title: 'Timer',
-          tabBarIcon: ({ focused }) => (
-            <AnimatedTabIcon name="pomodoro" focused={focused} />
-          ),
+          tabBarIcon: ({ focused }) => <AnimatedTabIcon name="pomodoro" focused={focused} />,
         }}
       />
       <Tabs.Screen
         name="statistics"
         options={{
           title: 'Stats',
-          tabBarIcon: ({ focused }) => (
-            <AnimatedTabIcon name="statistics" focused={focused} />
-          ),
+          tabBarIcon: ({ focused }) => <AnimatedTabIcon name="statistics" focused={focused} />,
         }}
       />
 
@@ -113,6 +118,7 @@ export default function AppLayout() {
       <Tabs.Screen name="english" options={{ href: null }} />
       <Tabs.Screen name="notifications" options={{ href: null }} />
       <Tabs.Screen name="notifications-settings" options={{ href: null }} />
+      <Tabs.Screen name="urge-control" options={{ href: null }} />
       <Tabs.Screen name="companion" options={{ href: null }} />
     </Tabs>
   );

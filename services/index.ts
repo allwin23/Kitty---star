@@ -11,5 +11,3 @@ export * as writingService from './writing.service';
 export * as statisticsService from './statistics.service';
 export * as achievementService from './achievement.service';
 export * as journeyService from './journey.service';
-
-

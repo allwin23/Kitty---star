@@ -46,35 +46,32 @@ export function NotificationBadge() {
           withTiming(-8, { duration: 80 }),
           withTiming(8, { duration: 80 }),
           withTiming(0, { duration: 150 }),
-          withTiming(0, { duration: 1800 }) // pause between ring alerts
+          withTiming(0, { duration: 1800 }), // pause between ring alerts
         ),
         -1,
-        false
+        false,
       );
 
       // Glowing Ripple Ring Animation
       pulseScale.value = withRepeat(
         withTiming(1.45, { duration: 1200, easing: Easing.out(Easing.quad) }),
         -1,
-        false
+        false,
       );
       pulseOpacity.value = withRepeat(
-        withSequence(
-          withTiming(0.6, { duration: 300 }),
-          withTiming(0, { duration: 900 })
-        ),
+        withSequence(withTiming(0.6, { duration: 300 }), withTiming(0, { duration: 900 })),
         -1,
-        false
+        false,
       );
 
       // Badge Pulse
       badgeScale.value = withRepeat(
         withSequence(
           withSpring(1.2, { damping: 4, stiffness: 200 }),
-          withSpring(1, { damping: 6, stiffness: 150 })
+          withSpring(1, { damping: 6, stiffness: 150 }),
         ),
         -1,
-        true
+        true,
       );
     } else {
       // Gentle Idle Swaying
@@ -82,10 +79,10 @@ export function NotificationBadge() {
         withSequence(
           withTiming(-6, { duration: 1200, easing: Easing.inOut(Easing.quad) }),
           withTiming(6, { duration: 1200, easing: Easing.inOut(Easing.quad) }),
-          withTiming(0, { duration: 1200 })
+          withTiming(0, { duration: 1200 }),
         ),
         -1,
-        true
+        true,
       );
       pulseOpacity.value = withTiming(0, { duration: 300 });
       pulseScale.value = 1;
@@ -95,9 +92,7 @@ export function NotificationBadge() {
 
   // Animated Styles
   const bellAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { rotate: `${rotation.value}deg` },
-    ],
+    transform: [{ rotate: `${rotation.value}deg` }],
   }));
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
@@ -124,7 +119,7 @@ export function NotificationBadge() {
       withTiming(25, { duration: 80 }),
       withTiming(-15, { duration: 80 }),
       withTiming(15, { duration: 80 }),
-      withTiming(0, { duration: 120 })
+      withTiming(0, { duration: 120 }),
     );
   };
 
@@ -143,10 +138,11 @@ export function NotificationBadge() {
         style={[
           styles.container,
           containerAnimatedStyle,
-          Platform.OS === 'web' && ({
-            backdropFilter: 'blur(16px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(16px) saturate(180%)',
-          } as any),
+          Platform.OS === 'web' &&
+            ({
+              backdropFilter: 'blur(16px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(16px) saturate(180%)',
+            } as any),
         ]}
       >
         <Animated.View style={[{ transformOrigin: 'top center' }, bellAnimatedStyle]}>
@@ -155,9 +151,7 @@ export function NotificationBadge() {
 
         {unreadCount > 0 ? (
           <Animated.View style={[styles.badge, badgeAnimatedStyle]}>
-            <Text style={styles.badgeText}>
-              {unreadCount > 99 ? '99+' : unreadCount}
-            </Text>
+            <Text style={styles.badgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
           </Animated.View>
         ) : (
           <View style={styles.dotIndicator} />

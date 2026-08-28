@@ -20,7 +20,9 @@ export type WaterDailyStatsRow = TableRow<'water_daily_stats'>;
 /** Log a water intake amount (in ml). */
 export async function logWater(input: WaterLogInput): Promise<WaterLogRow> {
   const parsed = waterLogSchema.parse(input);
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) throw new Error('Authentication required.');
 
   const { data, error } = await supabase.rpc('log_water', {
@@ -32,7 +34,9 @@ export async function logWater(input: WaterLogInput): Promise<WaterLogRow> {
 
 /** Get today's aggregated water stats for the current user. */
 export async function getTodayStats(): Promise<WaterDailyStatsRow | null> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data, error } = await supabase
     .from('water_daily_stats')
@@ -45,7 +49,9 @@ export async function getTodayStats(): Promise<WaterDailyStatsRow | null> {
 
 /** Get daily history for a given date (default today). */
 export async function getDailyHistory(date = todayIso()): Promise<WaterLogRow[]> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return [];
   const { data, error } = await supabase
     .from('water_logs')
@@ -59,7 +65,9 @@ export async function getDailyHistory(date = todayIso()): Promise<WaterLogRow[]>
 
 /** Get daily stats for the most recent N days (default 7). */
 export async function getWeeklyStats(days = 7): Promise<WaterDailyStatsRow[]> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return [];
   const sinceIso = daysAgoIso(days - 1);
 

@@ -9,7 +9,7 @@ export const focusLockSyncService = {
     durationMinutes: number,
     blockedCategories: string[],
     strictMode: boolean,
-    customDomains: string[]
+    customDomains: string[],
   ): Promise<string | null> {
     const user = useAuthStore.getState().user;
     if (!user) {
@@ -46,9 +46,7 @@ export const focusLockSyncService = {
         session_id: sessionId,
         category_id: catId,
       }));
-      const { error: catError } = await db
-        .from('focus_session_categories')
-        .insert(categoryRows);
+      const { error: catError } = await db.from('focus_session_categories').insert(categoryRows);
 
       if (catError) {
         console.error('[FocusLockSync] Failed to insert session categories:', catError);
@@ -64,9 +62,7 @@ export const focusLockSyncService = {
         session_id: sessionId,
         domain: domain.trim().toLowerCase(),
       }));
-      const { error: domainError } = await db
-        .from('focus_session_custom_sites')
-        .insert(domainRows);
+      const { error: domainError } = await db.from('focus_session_custom_sites').insert(domainRows);
 
       if (domainError) {
         console.error('[FocusLockSync] Failed to insert session custom sites:', domainError);
@@ -128,13 +124,14 @@ export const focusLockSyncService = {
 
     const cleanEmail = studyEmail.trim().toLowerCase();
 
-    const { error } = await db
-      .from('user_settings')
-      .upsert({
+    const { error } = await db.from('user_settings').upsert(
+      {
         user_id: user.id,
         study_email: cleanEmail,
         updated_at: new Date().toISOString(),
-      }, { onConflict: 'user_id' });
+      },
+      { onConflict: 'user_id' },
+    );
 
     if (error) {
       console.error('[FocusLockSync] Failed to update study email:', error);

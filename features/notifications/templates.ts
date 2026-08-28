@@ -15,7 +15,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     ],
     bodies: [
       'You are in the zone! Put distractions away and dominate {taskTitle}.',
-      'Timer is running for {taskTitle}. Let\'s build momentum together!',
+      "Timer is running for {taskTitle}. Let's build momentum together!",
       'Focus session started for {taskTitle}. Every minute moves you forward!',
       'Focus mode engaged. Stay sharp and power through!',
     ],
@@ -66,7 +66,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     actionUrl: '/(app)/accountability',
     titles: [
       '💡 Unfinished Goal Alert',
-      '🌱 Don\'t Stop Now!',
+      "🌱 Don't Stop Now!",
       '⏰ Reset & Keep Going',
       '📋 Task Still Pending',
     ],
@@ -142,15 +142,15 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     actionUrl: '/(app)/water',
     titles: [
       '⚠️ Hydration Target Falling Behind',
-      '💧 Don\'t Forget Your Water Goal',
+      "💧 Don't Forget Your Water Goal",
       '🥤 Hydration Alert',
       '🌊 Drink Water to Stay Alert',
     ],
     bodies: [
-      'You haven\'t logged water in a while. Drink a glass to keep your energy high!',
+      "You haven't logged water in a while. Drink a glass to keep your energy high!",
       'Feeling fatigue? Dehydration lowers concentration. Take a sip!',
       'Your hydration target is low today. Log your water intake to catch up.',
-      'Quick reminder: Stay hydrated so you don\'t burn out during study sessions.',
+      "Quick reminder: Stay hydrated so you don't burn out during study sessions.",
     ],
   },
 
@@ -180,15 +180,15 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     actionUrl: '/(app)/accountability/reports',
     titles: [
       '📊 Your Daily Study Summary',
-      '📑 Today\'s Progress Report Ready',
+      "📑 Today's Progress Report Ready",
       '🌟 Day Summary Available',
       '📈 See How You Did Today!',
     ],
     bodies: [
       'Your daily study report is ready! Tap to review your focus time and completed tasks.',
       'Great work today! Check out your daily summary and partner feedback.',
-      'Today\'s report has been generated. See your XP earned and study streak!',
-      'Review today\'s achievements in your daily report before planning tomorrow.',
+      "Today's report has been generated. See your XP earned and study streak!",
+      "Review today's achievements in your daily report before planning tomorrow.",
     ],
   },
 
@@ -237,15 +237,15 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     actionUrl: '/(app)/journey',
     titles: [
       '🔥 {streakDays}-Day Study Streak Active!',
-      '⚡ You\'re on a Roll!',
+      "⚡ You're on a Roll!",
       '🚀 Streak Extended to {streakDays} Days!',
       '💥 Study Streak Power-Up!',
     ],
     bodies: [
       'You are on a {streakDays}-day streak! Keep up the daily momentum to earn bonus XP.',
       '{streakDays} days in a row! Consistency is your super power. Keep going!',
-      'Streak extended to {streakDays} days! Don\'t break the chain tomorrow.',
-      'You\'re building a unstoppable study habit. {streakDays} days strong!',
+      "Streak extended to {streakDays} days! Don't break the chain tomorrow.",
+      "You're building a unstoppable study habit. {streakDays} days strong!",
     ],
   },
 
@@ -263,7 +263,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     bodies: [
       'Your study streak was reset. Complete 1 focus session today to start a fresh streak!',
       'Missed yesterday? No problem! The best time to restart your streak is right now.',
-      'Don\'t get discouraged. Start a brand new streak today and build back stronger!',
+      "Don't get discouraged. Start a brand new streak today and build back stronger!",
       'Rebuild your streak today! 25 minutes of focus is all it takes to get back on track.',
     ],
   },
@@ -282,7 +282,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     bodies: [
       'Your focus session was paused. Take a deep breath and jump right back in!',
       'Distracted? Reset your mind and resume your session on "{taskTitle}".',
-      'Don\'t let a small interruption ruin your momentum. Tap to resume focus mode!',
+      "Don't let a small interruption ruin your momentum. Tap to resume focus mode!",
       'Get back into the groove! You can still complete your focus session.',
     ],
   },
@@ -321,7 +321,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
       '{examName} is only {daysUntilExam} days away! Plan your revision tasks now.',
       '{daysUntilExam} days left before {examName}. Stay focused and stick to your daily plan!',
       'Exam approaching in {daysUntilExam} days! Review your weak topics and practice PYQs today.',
-      'Countdown alert: {daysUntilExam} days remaining until {examName}. You\'ve got this!',
+      "Countdown alert: {daysUntilExam} days remaining until {examName}. You've got this!",
     ],
   },
 
@@ -338,7 +338,7 @@ export const NOTIFICATION_TEMPLATES: Record<NotificationEventType, NotificationT
     ],
     bodies: [
       'You are now connected with your study partner! Track plans & study together.',
-      'Study partner linked! Share daily goals and boost each other\'s momentum.',
+      "Study partner linked! Share daily goals and boost each other's momentum.",
       'Your partner is connected. Start a pomodoro focus session together!',
       'Partner linked successfully! Check off daily tasks to stay accountable.',
     ],
@@ -379,14 +379,16 @@ export function generateNotificationContent(
 
   // Filter out recent titles/bodies to prevent repetition
   const unusedTitles = template.titles.filter((t) => !recentCopyHistory.has(t));
-  const chosenTitleRaw = unusedTitles.length > 0
-    ? unusedTitles[Math.floor(Math.random() * unusedTitles.length)]
-    : template.titles[Math.floor(Math.random() * template.titles.length)];
+  const chosenTitleRaw =
+    unusedTitles.length > 0
+      ? unusedTitles[Math.floor(Math.random() * unusedTitles.length)]
+      : template.titles[Math.floor(Math.random() * template.titles.length)];
 
   const unusedBodies = template.bodies.filter((b) => !recentCopyHistory.has(b));
-  const chosenBodyRaw = unusedBodies.length > 0
-    ? unusedBodies[Math.floor(Math.random() * unusedBodies.length)]
-    : template.bodies[Math.floor(Math.random() * template.bodies.length)];
+  const chosenBodyRaw =
+    unusedBodies.length > 0
+      ? unusedBodies[Math.floor(Math.random() * unusedBodies.length)]
+      : template.bodies[Math.floor(Math.random() * template.bodies.length)];
 
   // Track in history
   recentCopyHistory.add(chosenTitleRaw);

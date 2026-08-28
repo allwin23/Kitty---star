@@ -29,7 +29,9 @@ export class CompanionNotificationQueue {
       PRIORITY_ORDER[item.priority] > PRIORITY_ORDER[this.activeAnnouncement.priority] &&
       item.priority === 'critical'
     ) {
-      console.log(`[CompanionNotificationQueue] CRITICAL event ${item.eventType} interrupting current announcement ${this.activeAnnouncement.eventType}`);
+      console.log(
+        `[CompanionNotificationQueue] CRITICAL event ${item.eventType} interrupting current announcement ${this.activeAnnouncement.eventType}`,
+      );
       // Push interrupted active item back to front of queue if not expired
       if (this.activeAnnouncement.expiresAt > Date.now()) {
         this.queue.unshift(this.activeAnnouncement);

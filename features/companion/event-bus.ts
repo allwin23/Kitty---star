@@ -19,7 +19,9 @@ class CompanionEventBus {
     if (fullEvent.priority !== 'critical' && fullEvent.cooldown) {
       const lastTriggered = this.cooldownTracker.get(fullEvent.eventType) || 0;
       if (Date.now() - lastTriggered < fullEvent.cooldown) {
-        console.log(`[CompanionEventBus] Event ${fullEvent.eventType} suppressed by cooldown (${fullEvent.cooldown}ms)`);
+        console.log(
+          `[CompanionEventBus] Event ${fullEvent.eventType} suppressed by cooldown (${fullEvent.cooldown}ms)`,
+        );
         return;
       }
     }
@@ -99,4 +101,3 @@ CompanionBus.on('*', (event) => {
     console.warn('[CompanionBus] Queue forward error:', e);
   }
 });
-

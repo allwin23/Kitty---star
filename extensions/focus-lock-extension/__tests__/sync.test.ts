@@ -37,10 +37,14 @@ class MockBrowserAdapter implements BrowserAdapter {
     this.blockedDomains = [];
   }
 
-  onMessage(callback: (message: any, sendResponse: (response: any) => void) => void): void { }
-  async sendMessage(message: any): Promise<any> { return null; }
+  onMessage(callback: (message: any, sendResponse: (response: any) => void) => void): void {}
+  async sendMessage(message: any): Promise<any> {
+    return null;
+  }
   profileEmail = '';
-  async getProfileEmail(): Promise<string> { return this.profileEmail; }
+  async getProfileEmail(): Promise<string> {
+    return this.profileEmail;
+  }
 }
 
 // Mock variables must be prefixed with "mock" to bypass hoisting restrictions
@@ -58,19 +62,19 @@ jest.mock('../supabase/client', () => {
       mockSubscribe(cb);
       if (cb) cb('SUBSCRIBED');
       return mockChannel;
-    })
+    }),
   };
 
   return {
     supabase: {
       auth: {
         onAuthStateChange: jest.fn(),
-        getSession: jest.fn().mockResolvedValue({ data: { session: null } })
+        getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
       },
       channel: jest.fn().mockReturnValue(mockChannel),
       removeChannel: jest.fn(),
-      from: jest.fn()
-    }
+      from: jest.fn(),
+    },
   };
 });
 
@@ -92,7 +96,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       status: 'active',
       ends_at: new Date(Date.now() + 600000).toISOString(), // 10m in future
       focus_session_categories: [{ category_id: 'social' }],
-      focus_session_custom_sites: [{ domain: 'test.com' }]
+      focus_session_custom_sites: [{ domain: 'test.com' }],
     };
 
     // Access private method to test state reconciliation directly
@@ -109,7 +113,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       id: 'session-expired',
       status: 'active',
       ends_at: new Date(Date.now() - 5000).toISOString(), // 5s in past
-      focus_session_categories: [{ category_id: 'social' }]
+      focus_session_categories: [{ category_id: 'social' }],
     };
 
     await (syncManager as any).applyRemoteSession(remoteSession);
@@ -127,7 +131,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       id: 'session-123',
       status: 'cancelled',
       ends_at: new Date(Date.now() + 600000).toISOString(),
-      focus_session_categories: []
+      focus_session_categories: [],
     };
 
     await (syncManager as any).applyRemoteSession(remoteSession);
@@ -143,7 +147,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       status: 'active',
       ends_at: new Date(endsAt).toISOString(),
       focus_session_categories: [{ category_id: 'social' }],
-      focus_session_custom_sites: []
+      focus_session_custom_sites: [],
     };
 
     const spyStart = jest.spyOn(engine, 'startFocusSession');
@@ -169,7 +173,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       eq: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
       limit: jest.fn().mockReturnThis(),
-      maybeSingle: jest.fn().mockRejectedValue(new Error("Network is down!"))
+      maybeSingle: jest.fn().mockRejectedValue(new Error('Network is down!')),
     });
 
     (syncManager as any).currentUserId = 'user-abc';
@@ -189,7 +193,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       ends_at: new Date(Date.now() + 600000).toISOString(),
       updated_at: '2026-08-27T12:00:00.000Z',
       focus_session_categories: [{ category_id: 'social' }],
-      focus_session_custom_sites: []
+      focus_session_custom_sites: [],
     };
 
     const staleSession = {
@@ -198,7 +202,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       ends_at: new Date(Date.now() + 300000).toISOString(),
       updated_at: '2026-08-27T11:59:00.000Z',
       focus_session_categories: [{ category_id: 'social' }],
-      focus_session_custom_sites: []
+      focus_session_custom_sites: [],
     };
 
     // Apply the first session
@@ -235,7 +239,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
     // 3. Trigger DELETE event with a non-matching ID
     await sessionCallback!({
       eventType: 'DELETE',
-      old: { id: 'session-other-999' }
+      old: { id: 'session-other-999' },
     });
 
     // Blocker should remain active
@@ -245,7 +249,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
     // 4. Trigger DELETE event with matching ID
     await sessionCallback!({
       eventType: 'DELETE',
-      old: { id: 'session-active-123' }
+      old: { id: 'session-active-123' },
     });
 
     // Blocker should be cancelled
@@ -282,7 +286,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
     // 3. Trigger user settings update event
     await settingsCallback!({
       eventType: 'UPDATE',
-      new: { study_email: 'test@study.edu' }
+      new: { study_email: 'test@study.edu' },
     });
 
     // Verify startFocusSession is re-called with all preserved properties
@@ -292,7 +296,7 @@ describe('SyncManager Synchronization Unit Tests', () => {
       ['social'],
       [],
       true, // strictMode preserved
-      'session-active-123' // sessionId preserved
+      'session-active-123', // sessionId preserved
     );
 
     spyStart.mockRestore();
