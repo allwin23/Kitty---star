@@ -117,7 +117,7 @@ export class ChromiumAdapter implements BrowserAdapter {
       const identity = chrome.identity as any;
       if (identity.getProfileUserInfo) {
         try {
-          const info = await identity.getProfileUserInfo({ container: 'ANY' });
+          const info = await identity.getProfileUserInfo({ accountStatus: 'ANY' });
           return info?.email || "";
         } catch (e) {
           console.warn("[Adapter] Failed to fetch profile identity email:", e);

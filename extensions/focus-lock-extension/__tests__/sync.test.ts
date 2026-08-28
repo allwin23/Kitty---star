@@ -43,11 +43,19 @@ class MockBrowserAdapter implements BrowserAdapter {
   async getProfileEmail(): Promise<string> { return this.profileEmail; }
 }
 
+// Mock variables must be prefixed with "mock" to bypass hoisting restrictions
+const mockOn = jest.fn();
+const mockSubscribe = jest.fn();
+
 // Jest mocks for Supabase client
 jest.mock('../supabase/client', () => {
   const mockChannel = {
-    on: jest.fn().mockReturnThis(),
+    on: jest.fn().mockImplementation((event, filter, callback) => {
+      mockOn(event, filter, callback);
+      return mockChannel;
+    }),
     subscribe: jest.fn().mockImplementation((cb) => {
+      mockSubscribe(cb);
       if (cb) cb('SUBSCRIBED');
       return mockChannel;
     })
@@ -170,5 +178,123 @@ describe('SyncManager Synchronization Unit Tests', () => {
     // Verify: local session remains active (failsafe lock)
     const localState = await engine.getSessionState();
     expect(localState.active).toBe(true);
+  });
+
+  test('Out-of-order sync event with older updated_at is ignored', async () => {
+    const spyStart = jest.spyOn(engine, 'startFocusSession');
+
+    const firstSession = {
+      id: 'session-123',
+      status: 'active',
+      ends_at: new Date(Date.now() + 600000).toISOString(),
+      updated_at: '2026-08-27T12:00:00.000Z',
+      focus_session_categories: [{ category_id: 'social' }],
+      focus_session_custom_sites: []
+    };
+
+    const staleSession = {
+      id: 'session-123',
+      status: 'active',
+      ends_at: new Date(Date.now() + 300000).toISOString(),
+      updated_at: '2026-08-27T11:59:00.000Z',
+      focus_session_categories: [{ category_id: 'social' }],
+      focus_session_custom_sites: []
+    };
+
+    // Apply the first session
+    await (syncManager as any).applyRemoteSession(firstSession);
+    expect(spyStart).toHaveBeenCalledTimes(1);
+
+    // Apply the stale out-of-order session (should be ignored)
+    await (syncManager as any).applyRemoteSession(staleSession);
+    expect(spyStart).toHaveBeenCalledTimes(1);
+
+    spyStart.mockRestore();
+  });
+
+  test('DELETE realtime event cancels locally if session ID matches active session', async () => {
+    const spyCancel = jest.spyOn(engine, 'cancelFocusSession');
+
+    // 1. Initialize syncManager subscription
+    syncManager.subscribeToRealtime('user-abc');
+
+    // Find the callback registered for focus_sessions
+    let sessionCallback: ((payload: any) => Promise<void>) | null = null;
+    mockOn.mock.calls.forEach((call) => {
+      if (call[1]?.table === 'focus_sessions') {
+        sessionCallback = call[2];
+      }
+    });
+
+    expect(sessionCallback).toBeDefined();
+
+    // 2. Start a local session with an active ID
+    await engine.startFocusSession(25, ['social'], [], false, 'session-active-123');
+    expect((await engine.getSessionState()).active).toBe(true);
+
+    // 3. Trigger DELETE event with a non-matching ID
+    await sessionCallback!({
+      eventType: 'DELETE',
+      old: { id: 'session-other-999' }
+    });
+
+    // Blocker should remain active
+    expect((await engine.getSessionState()).active).toBe(true);
+    expect(spyCancel).not.toHaveBeenCalled();
+
+    // 4. Trigger DELETE event with matching ID
+    await sessionCallback!({
+      eventType: 'DELETE',
+      old: { id: 'session-active-123' }
+    });
+
+    // Blocker should be cancelled
+    expect((await engine.getSessionState()).active).toBe(false);
+    expect(spyCancel).toHaveBeenCalledTimes(1);
+
+    spyCancel.mockRestore();
+  });
+
+  test('User settings update re-applies rules keeping strict mode and session ID', async () => {
+    const spyStart = jest.spyOn(engine, 'startFocusSession');
+
+    // 1. Initialize syncManager subscription
+    syncManager.subscribeToRealtime('user-abc');
+
+    // Find the callback registered for user_settings
+    let settingsCallback: ((payload: any) => Promise<void>) | null = null;
+    mockOn.mock.calls.forEach((call) => {
+      if (call[1]?.table === 'user_settings') {
+        settingsCallback = call[2];
+      }
+    });
+
+    expect(settingsCallback).toBeDefined();
+
+    // 2. Start session with strictMode and sessionId
+    await engine.startFocusSession(25, ['social'], [], true, 'session-active-123');
+    expect((await engine.getSessionState()).active).toBe(true);
+    expect((await engine.getSessionState()).strictMode).toBe(true);
+
+    // Reset spy count before triggering settings update
+    spyStart.mockClear();
+
+    // 3. Trigger user settings update event
+    await settingsCallback!({
+      eventType: 'UPDATE',
+      new: { study_email: 'test@study.edu' }
+    });
+
+    // Verify startFocusSession is re-called with all preserved properties
+    expect(spyStart).toHaveBeenCalledTimes(1);
+    expect(spyStart).toHaveBeenLastCalledWith(
+      expect.any(Number),
+      ['social'],
+      [],
+      true, // strictMode preserved
+      'session-active-123' // sessionId preserved
+    );
+
+    spyStart.mockRestore();
   });
 });

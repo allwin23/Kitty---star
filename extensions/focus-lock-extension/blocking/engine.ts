@@ -36,8 +36,6 @@ export class CoreFocusEngine {
       const blockedCategories = await this.adapter.getStorage("blockedCategories");
       const customDomains = await this.adapter.getStorage("customDomains");
       const isCompleted = await this.adapter.getStorage("isCompleted");
-      const rawStrict = await this.adapter.getStorage("strictMode");
-      const strictMode = typeof rawStrict === 'boolean' ? rawStrict : false;
 
       // Validate storage values to check for corruption
       const isValidActive = typeof active === 'boolean';
@@ -83,7 +81,7 @@ export class CoreFocusEngine {
     }
   }
 
-  async startFocusSession(durationMinutes: number, blockedCategories: string[], customDomains: string[], strictMode = false) {
+  async startFocusSession(durationMinutes: number, blockedCategories: string[], customDomains: string[], strictMode = false, sessionId: string | null = null) {
     const endsAt = Date.now() + durationMinutes * 60 * 1000;
     await this.adapter.setStorage("active", true);
     await this.adapter.setStorage("endsAt", endsAt);
@@ -91,6 +89,7 @@ export class CoreFocusEngine {
     await this.adapter.setStorage("customDomains", customDomains);
     await this.adapter.setStorage("isCompleted", false);
     await this.adapter.setStorage("strictMode", strictMode);
+    await this.adapter.setStorage("sessionId", sessionId);
     await this.startBlocking(blockedCategories, customDomains, endsAt);
   }
 
@@ -107,6 +106,7 @@ export class CoreFocusEngine {
     await this.adapter.setStorage("customDomains", []);
     await this.adapter.setStorage("isCompleted", true);
     await this.adapter.setStorage("strictMode", false);
+    await this.adapter.setStorage("sessionId", null);
 
     await this.rulesManager.disableRules();
     await this.adapter.clearAlarm(this.alarmName);
@@ -128,6 +128,7 @@ export class CoreFocusEngine {
     await this.adapter.setStorage("customDomains", []);
     await this.adapter.setStorage("isCompleted", false);
     await this.adapter.setStorage("strictMode", false);
+    await this.adapter.setStorage("sessionId", null);
 
     await this.rulesManager.disableRules();
     await this.adapter.clearAlarm(this.alarmName);
@@ -141,6 +142,7 @@ export class CoreFocusEngine {
     await this.adapter.setStorage("customDomains", []);
     await this.adapter.setStorage("isCompleted", false);
     await this.adapter.setStorage("strictMode", false);
+    await this.adapter.setStorage("sessionId", null);
     
     await this.rulesManager.disableRules();
     await this.adapter.clearAlarm(this.alarmName);
@@ -153,6 +155,15 @@ export class CoreFocusEngine {
     const customDomains = await this.adapter.getStorage("customDomains") || [];
     const isCompleted = await this.adapter.getStorage("isCompleted") || false;
     const strictMode = await this.adapter.getStorage("strictMode") || false;
-    return { active, endsAt, blockedCategories, customDomains, isCompleted, strictMode };
+    const sessionId = await this.adapter.getStorage("sessionId") || null;
+    return { active, endsAt, blockedCategories, customDomains, isCompleted, strictMode, sessionId };
+  }
+
+  async getStorage(key: string): Promise<any> {
+    return this.adapter.getStorage(key);
+  }
+
+  async setStorage(key: string, value: any): Promise<void> {
+    await this.adapter.setStorage(key, value);
   }
 }

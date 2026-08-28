@@ -32,7 +32,8 @@ adapter.onMessage((message, sendResponse) => {
       message.durationMinutes,
       message.blockedCategories || [],
       message.customDomains || [],
-      message.strictMode || false
+      message.strictMode || false,
+      message.sessionId || null
     )
       .then(() => sendResponse({ success: true }))
       .catch((err) => sendResponse({ success: false, error: err.message }));

@@ -48,10 +48,8 @@ export class SyncManager {
         .maybeSingle();
 
       if (settings && settings.study_email !== undefined) {
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-          await chrome.storage.local.set({ studyEmail: settings.study_email });
-          console.log(`[SyncManager] Synced study email from DB: ${settings.study_email}`);
-        }
+        await this.engine.setStorage('studyEmail', settings.study_email);
+        console.log(`[SyncManager] Synced study email from DB: ${settings.study_email}`);
       }
 
       console.log("[SyncManager] Fetching latest active session...");
@@ -62,6 +60,7 @@ export class SyncManager {
           status,
           ends_at,
           strict_mode,
+          updated_at,
           focus_session_categories (category_id),
           focus_session_custom_sites (domain)
         `)
@@ -107,8 +106,18 @@ export class SyncManager {
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
             await this.fetchAndApplySession(newRow.id);
           } else if (payload.eventType === 'DELETE') {
-            // Cancel session locally
-            await this.engine.cancelFocusSession();
+            const oldRow = payload.old as any;
+            const localState = await this.engine.getSessionState();
+            if (oldRow && oldRow.id === localState.sessionId) {
+              console.log(`[SyncManager] Active session ${oldRow.id} deleted remotely. Cancelling locally.`);
+              try {
+                await this.engine.cancelFocusSession();
+              } catch (err: any) {
+                console.warn("[SyncManager] Remote cancellation via DELETE ignored due to Strict Mode lock:", err.message);
+              }
+            } else {
+              console.log(`[SyncManager] Non-matching session ${oldRow?.id} deleted remotely. Ignoring.`);
+            }
           }
         }
       )
@@ -124,18 +133,18 @@ export class SyncManager {
           console.log('[SyncManager] User settings payload received:', payload);
           const newRow = payload.new as any;
           if (newRow && newRow.study_email !== undefined) {
-            if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-              await chrome.storage.local.set({ studyEmail: newRow.study_email });
-              console.log(`[SyncManager] Realtime updated study email from DB: ${newRow.study_email}`);
-              // Re-apply rules with new study email if session is active
-              const localState = await this.engine.getSessionState();
-              if (localState.active) {
-                await this.engine.startFocusSession(
-                  Math.round((localState.endsAt - Date.now()) / 60000),
-                  localState.blockedCategories,
-                  localState.customDomains
-                );
-              }
+            await this.engine.setStorage('studyEmail', newRow.study_email);
+            console.log(`[SyncManager] Realtime updated study email from DB: ${newRow.study_email}`);
+            // Re-apply rules with new study email if session is active
+            const localState = await this.engine.getSessionState();
+            if (localState.active) {
+              await this.engine.startFocusSession(
+                Math.round((localState.endsAt - Date.now()) / 60000),
+                localState.blockedCategories,
+                localState.customDomains,
+                localState.strictMode,
+                localState.sessionId
+              );
             }
           }
         }
@@ -166,6 +175,7 @@ export class SyncManager {
           status,
           ends_at,
           strict_mode,
+          updated_at,
           focus_session_categories (category_id),
           focus_session_custom_sites (domain)
         `)
@@ -182,6 +192,16 @@ export class SyncManager {
   }
 
   private async applyRemoteSession(session: any) {
+    const remoteUpdatedAt = session.updated_at || "";
+    if (remoteUpdatedAt) {
+      const lastSynced = await this.engine.getStorage("lastSyncedUpdatedAt") || "";
+      if (lastSynced && new Date(remoteUpdatedAt).getTime() <= new Date(lastSynced).getTime()) {
+        console.log(`[SyncManager] Received stale or out-of-order session event (Remote: ${remoteUpdatedAt}, Local Last: ${lastSynced}). Ignoring.`);
+        return;
+      }
+      await this.engine.setStorage("lastSyncedUpdatedAt", remoteUpdatedAt);
+    }
+
     const endsAtMs = new Date(session.ends_at).getTime();
     
     // Validation
@@ -196,6 +216,7 @@ export class SyncManager {
       // Idempotency: skip if already active, endsAt matches, and categories/domains are equal
       const isAlreadyMatching = 
         localState.active &&
+        localState.sessionId === session.id &&
         Math.abs(localState.endsAt - endsAtMs) < 2000 && // allow small round-trip millisecond difference
         JSON.stringify(localState.blockedCategories.sort()) === JSON.stringify(categories.sort()) &&
         JSON.stringify(localState.customDomains.sort()) === JSON.stringify(customDomains.sort());
@@ -207,18 +228,29 @@ export class SyncManager {
           durationMinutes > 0 ? durationMinutes : 1,
           categories,
           customDomains,
-          session.strict_mode || false
+          session.strict_mode || false,
+          session.id
         );
       }
     } else if (session.status === 'completed' || isExpired) {
-      console.log("[SyncManager] Remote session completed/expired. Completing locally.");
-      await this.engine.completeFocusSession();
+      const localState = await this.engine.getSessionState();
+      if (!localState.active || !localState.sessionId || localState.sessionId === session.id) {
+        console.log("[SyncManager] Remote session completed/expired. Completing locally.");
+        await this.engine.completeFocusSession();
+      } else {
+        console.log("[SyncManager] Completed session event does not match active session. Ignoring.");
+      }
     } else if (session.status === 'cancelled') {
-      console.log("[SyncManager] Remote session cancelled. Cancelling locally.");
-      try {
-        await this.engine.cancelFocusSession();
-      } catch (err: any) {
-        console.warn("[SyncManager] Remote cancellation ignored due to Strict Mode lock:", err.message);
+      const localState = await this.engine.getSessionState();
+      if (!localState.active || !localState.sessionId || localState.sessionId === session.id) {
+        console.log("[SyncManager] Remote session cancelled. Cancelling locally.");
+        try {
+          await this.engine.cancelFocusSession();
+        } catch (err: any) {
+          console.warn("[SyncManager] Remote cancellation ignored due to Strict Mode lock:", err.message);
+        }
+      } else {
+        console.log("[SyncManager] Cancelled session event does not match active session. Ignoring.");
       }
     }
   }
