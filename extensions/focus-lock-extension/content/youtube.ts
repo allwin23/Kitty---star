@@ -17,98 +17,91 @@
         return;
       }
 
-      // Create and show verification overlay immediately to prevent content flashing
-      showVerificationOverlay(studyEmail);
+      // Hide YouTube content temporarily during verification without breaking page scripts
+      applyLoadingStyle();
 
-      // Listen for the extracted email from the injected script
-      let resolved = false;
+      let verified = false;
+      let detectedEmail = "";
+      let attempts = 0;
+      const maxAttempts = 15; // 15 attempts * 200ms = 3 seconds
+
+      // Listen for email extraction from injected script (for displaying on block overlay)
       const handleMessage = (event: MessageEvent) => {
         if (event.source !== window || !event.data) return;
-
         if (event.data.type === 'YT_EMAIL_EXTRACTED') {
-          resolved = true;
-          window.removeEventListener('message', handleMessage);
-          
           const ytEmail = (event.data.email || "").trim().toLowerCase();
-          console.log("[FocusLock] YouTube email detected:", ytEmail);
-
+          detectedEmail = ytEmail;
           if (ytEmail === studyEmail) {
-            console.log("[FocusLock] YouTube email matches study email. Unblocking page.");
-            removeOverlay();
-          } else {
-            console.log("[FocusLock] YouTube email does not match study email. Blocking.");
-            showBlockedOverlay(`Current account (${ytEmail}) does not match study email (${studyEmail}).`, studyEmail, ytEmail);
+            verified = true;
+            unblockPage();
           }
-        } else if (event.data.type === 'YT_EMAIL_NOT_FOUND') {
-          resolved = true;
-          window.removeEventListener('message', handleMessage);
-          console.log("[FocusLock] No logged in account detected on YouTube. Blocking.");
-          showBlockedOverlay(`You must be logged in with your study email (${studyEmail}) to access YouTube.`, studyEmail, "Logged Out");
         }
       };
-
       window.addEventListener('message', handleMessage);
 
-      // Inject the extractor script into the page context
+      // Inject the extractor script to poll page context variables
       injectExtractor();
 
-      // Safety timeout: if after 5 seconds the injected script hasn't responded, assume blocked
-      setTimeout(() => {
-        if (!resolved) {
+      // Main polling loop
+      const interval = setInterval(() => {
+        attempts++;
+
+        // 1. Authoritative check: does the HTML contain the study email string?
+        const pageHtml = document.documentElement.innerHTML || "";
+        if (pageHtml.toLowerCase().includes(studyEmail)) {
+          console.log("[FocusLock] Study email found in page HTML source.");
+          verified = true;
+          unblockPage();
+          clearInterval(interval);
           window.removeEventListener('message', handleMessage);
-          showBlockedOverlay(`Verification timed out. You must be logged in with ${studyEmail}.`, studyEmail, "Unknown");
+          return;
         }
-      }, 5000);
+
+        // 2. If verified via injected script event
+        if (verified) {
+          clearInterval(interval);
+          return;
+        }
+
+        // 3. Timeout reached, block page
+        if (attempts >= maxAttempts) {
+          clearInterval(interval);
+          window.removeEventListener('message', handleMessage);
+          console.log("[FocusLock] Verification timed out. Locking YouTube.");
+          showBlockedOverlay(`You must be logged in with your study email (${studyEmail}) to access YouTube.`, studyEmail, detectedEmail || "Logged Out");
+        }
+      }, 200);
     }
   });
 
   let overlayElement: HTMLDivElement | null = null;
 
-  function showVerificationOverlay(studyEmail: string) {
-    if (overlayElement) return;
-
-    overlayElement = document.createElement('div');
-    overlayElement.id = 'focus-lock-verification-overlay';
-    overlayElement.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: #FFF7F8;
-      color: #2A1D22;
-      z-index: 2147483647;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      padding: 24px;
-      box-sizing: border-box;
-      text-align: center;
+  function applyLoadingStyle() {
+    if (document.getElementById('focus-lock-loading-style')) return;
+    const style = document.createElement('style');
+    style.id = 'focus-lock-loading-style';
+    style.textContent = `
+      html, body { 
+        opacity: 0.05 !important; 
+        pointer-events: none !important; 
+      }
     `;
+    document.documentElement.appendChild(style);
+  }
 
-    overlayElement.innerHTML = `
-      <div style="background: #FFFFFF; border: 2px solid rgba(232, 77, 114, 0.25); border-radius: 16px; padding: 32px; max-width: 400px; width: 100%; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 16px; align-items: center;">
-        <div style="font-size: 48px;">🛡️</div>
-        <h2 style="color: #C73A57; margin: 0; font-size: 20px; font-weight: 800;">Verifying YouTube Session</h2>
-        <p style="color: #66545B; font-size: 13px; margin: 0; line-height: 1.6; font-weight: 500;">
-          Checking if your active YouTube account matches your study email:<br>
-          <strong style="color: #2A1D22; word-break: break-all;">${studyEmail}</strong>
-        </p>
-        <div style="width: 24px; height: 24px; border: 3px solid rgba(232, 77, 114, 0.2); border-top-color: #C73A57; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-      </div>
-      <style>
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      </style>
-    `;
+  function removeLoadingStyle() {
+    const style = document.getElementById('focus-lock-loading-style');
+    if (style) style.remove();
+  }
 
-    document.documentElement.appendChild(overlayElement);
+  function unblockPage() {
+    removeLoadingStyle();
+    removeOverlay();
   }
 
   function showBlockedOverlay(reason: string, studyEmail: string = "", currentEmail: string = "") {
+    removeLoadingStyle();
+
     if (!overlayElement) {
       overlayElement = document.createElement('div');
       overlayElement.id = 'focus-lock-verification-overlay';
@@ -142,7 +135,7 @@
         </div>
         <div style="display: flex; justify-content: space-between;">
           <span style="color: #66545B; font-weight: 600;">Active Account:</span>
-          <strong style="color: #C73A57; word-break: break-all;">${currentEmail || "Unknown"}</strong>
+          <strong style="color: #C73A57; word-break: break-all;">${currentEmail || "Logged Out"}</strong>
         </div>
       </div>
     ` : '';
@@ -195,13 +188,14 @@
         let attempts = 0;
         function check() {
           attempts++;
-          const email = findEmail(window.ytInitialData) || findEmail(window.ytcfg);
+          const email = findEmail(window.ytInitialData) || 
+                        findEmail(window.ytcfg) || 
+                        findEmail(window.yt) || 
+                        findEmail(window.ytPlayer);
           if (email) {
             window.postMessage({ type: 'YT_EMAIL_EXTRACTED', email }, '*');
           } else if (attempts < 20) {
             setTimeout(check, 100);
-          } else {
-            window.postMessage({ type: 'YT_EMAIL_NOT_FOUND' }, '*');
           }
         }
         
