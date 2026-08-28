@@ -181,6 +181,15 @@
     <a href="#" id="signout-link" style="font-size: 11px; color: #C73A57; margin-left: 8px; font-weight: 700; text-decoration: none;">Sign Out</a>
   </div>
 
+  <!-- Debug Block for Troubleshooting -->
+  <div id="debug-block" style="font-size: 9px; color: #9A8D93; margin-top: 10px; padding: 6px; border-top: 1px dashed rgba(232, 77, 114, 0.2); line-height: 1.4;">
+    <div>Engine State: <span id="debug-active">false</span> | Ends: <span id="debug-ends">0</span></div>
+    <div>Local Time: <span id="debug-time">0</span> | Diff: <span id="debug-diff">0</span></div>
+    <div id="debug-error-row" style="color: #C73A57; display: none; font-weight: bold; margin-top: 3px;">
+      Err: <span id="debug-error">None</span>
+    </div>
+  </div>
+
   <script src="../dist/ui/popup.js"></script>
 </body>
 </html>

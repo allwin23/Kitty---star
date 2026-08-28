@@ -66,6 +66,15 @@ Promise.all([
     format: 'esm',
     target: 'chrome100',
     define
+  }),
+  esbuild.build({
+    entryPoints: ['content/youtube.ts'],
+    bundle: true,
+    outfile: 'dist/content/youtube.js',
+    platform: 'browser',
+    format: 'esm',
+    target: 'chrome100',
+    define
   })
 ]).then(() => {
   console.log('⚡ Build complete!');

@@ -27,14 +27,24 @@ export class SyncManager {
     });
 
     // Check active session immediately on startup if already authenticated
-    void supabase.auth.getSession().then(({ data }) => {
-      const userId = data.session?.user?.id || null;
-      if (userId) {
-        this.currentUserId = userId;
-        this.subscribeToRealtime(userId);
-        void this.syncLatestSession();
-      }
-    });
+    void supabase.auth.getSession()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("[SyncManager] getSession error on startup:", error.message);
+          void this.engine.setStorage("lastSyncError", `Startup auth failed: ${error.message}`);
+          return;
+        }
+        const userId = data.session?.user?.id || null;
+        if (userId) {
+          this.currentUserId = userId;
+          this.subscribeToRealtime(userId);
+          void this.syncLatestSession();
+        }
+      })
+      .catch((err) => {
+        console.error("[SyncManager] getSession exception on startup:", err);
+        void this.engine.setStorage("lastSyncError", `Startup auth error: ${err.message || String(err)}`);
+      });
   }
 
   async syncLatestSession() {
@@ -79,9 +89,11 @@ export class SyncManager {
         // DO NOT unlock locally! Maintain local lock as authoritative.
         console.log("[SyncManager] No remote active sessions found. Preserving local session state.");
       }
-    } catch (err) {
+      await this.engine.setStorage("lastSyncError", null);
+    } catch (err: any) {
       console.error("[SyncManager] Error syncing latest session from DB:", err);
       // Network/Database failure must NEVER automatically unlock an active local session.
+      await this.engine.setStorage("lastSyncError", `DB sync error: ${err.message || String(err)}`);
     }
   }
 
@@ -186,8 +198,10 @@ export class SyncManager {
       if (session) {
         await this.applyRemoteSession(session);
       }
-    } catch (err) {
+      await this.engine.setStorage("lastSyncError", null);
+    } catch (err: any) {
       console.error(`[SyncManager] Failed to fetch updated session data for ID ${sessionId}:`, err);
+      await this.engine.setStorage("lastSyncError", `Fetch session failed: ${err.message || String(err)}`);
     }
   }
 

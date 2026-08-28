@@ -26,6 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const studyEmailDisplay = document.getElementById("study-email-display")!;
   const exceptionStatusDisplay = document.getElementById("exception-status-display")!;
 
+  // Debug Spans
+  const debugActive = document.getElementById("debug-active")!;
+  const debugEnds = document.getElementById("debug-ends")!;
+  const debugTime = document.getElementById("debug-time")!;
+  const debugDiff = document.getElementById("debug-diff")!;
+  const debugErrorRow = document.getElementById("debug-error-row")!;
+  const debugError = document.getElementById("debug-error")!;
+
   let timerInterval: any = null;
 
   // Observe auth state changes
@@ -144,6 +152,15 @@ document.addEventListener("DOMContentLoaded", () => {
         exceptionStatusDisplay.textContent = "🔴 INACTIVE (YouTube Blocked)";
         (exceptionStatusDisplay as HTMLElement).style.color = "#C73A57";
       }
+
+      // Fetch and display any engine errors from background sync
+      const syncError = await adapter.getStorage("lastSyncError");
+      if (syncError) {
+        debugError.textContent = syncError;
+        debugErrorRow.style.display = "block";
+      } else {
+        debugErrorRow.style.display = "none";
+      }
     } catch (e) {
       console.error("[Popup] Failed to load sync info:", e);
     }
@@ -158,6 +175,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (response && response.success && response.session) {
           const { active, endsAt, blockedCategories, customDomains, isCompleted, strictMode } = response.session;
           
+          // Update Debug Spans
+          debugActive.textContent = active.toString();
+          debugEnds.textContent = endsAt.toString();
+          debugTime.textContent = Date.now().toString();
+          debugDiff.textContent = (endsAt - Date.now()).toString();
+
           if (isCompleted) {
             idleView.style.display = "none";
             activeView.style.display = "none";
@@ -184,6 +207,9 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const tick = () => {
               const remaining = endsAt - Date.now();
+              debugTime.textContent = Date.now().toString();
+              debugDiff.textContent = remaining.toString();
+
               if (remaining <= 0) {
                 clearInterval(timerInterval);
                 timerInterval = null;

@@ -50,6 +50,13 @@ adapter.onMessage((message, sendResponse) => {
     engine.getSessionState()
       .then((session) => sendResponse({ success: true, session }))
       .catch((err) => sendResponse({ success: false, error: err.message }));
+  } else if (message.type === "CHECK_YOUTUBE_SESSION") {
+    engine.getSessionState()
+      .then(async (session) => {
+        const studyEmail = (await engine.getStorage("studyEmail")) || "";
+        sendResponse({ success: true, active: session.active, studyEmail });
+      })
+      .catch((err) => sendResponse({ success: false, error: err.message }));
   }
 });
 
@@ -64,13 +71,28 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
           console.log("[Background] Auth token updated in storage. Re-establishing session...");
           try {
             const session = typeof change.newValue === 'string' ? JSON.parse(change.newValue) : change.newValue;
-            void supabase.auth.setSession(session);
-          } catch (e) {
+            supabase.auth.setSession(session)
+              .then(({ error }) => {
+                if (error) {
+                  console.error("[Background] Auth setSession failed:", error.message);
+                  void engine.setStorage("lastSyncError", `Auth sync failed: ${error.message}`);
+                } else {
+                  console.log("[Background] Auth setSession succeeded.");
+                  void engine.setStorage("lastSyncError", null);
+                }
+              })
+              .catch((err: any) => {
+                console.error("[Background] Auth setSession error:", err);
+                void engine.setStorage("lastSyncError", `Auth error: ${err.message || String(err)}`);
+              });
+          } catch (e: any) {
             console.error("[Background] Failed to parse new auth token session:", e);
+            void engine.setStorage("lastSyncError", `Parse auth error: ${e.message || String(e)}`);
           }
         } else {
           console.log("[Background] Auth token removed from storage. Signing out...");
           void supabase.auth.signOut();
+          void engine.setStorage("lastSyncError", null);
         }
       }
     }

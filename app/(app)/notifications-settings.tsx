@@ -526,7 +526,16 @@ export default function NotificationSettingsScreen() {
                   </View>
                   <Switch
                     value={isBlockerEnabled}
-                    onValueChange={setBlockerEnabled}
+                    onValueChange={(val) => {
+                      if (val && (Platform.OS !== 'android' || !AppBlocker)) {
+                        Alert.alert(
+                          'Custom Build Required',
+                          'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK to test.'
+                        );
+                        return;
+                      }
+                      setBlockerEnabled(val);
+                    }}
                     trackColor={{ false: 'rgba(250, 215, 224, 0.85)', true: palette.danger }}
                     thumbColor="#ffffff"
                   />
@@ -554,7 +563,16 @@ export default function NotificationSettingsScreen() {
 
                         {!usagePermission && (
                           <Pressable
-                            onPress={() => AppBlocker?.requestUsageStatsPermission()}
+                            onPress={() => {
+                              if (Platform.OS !== 'android' || !AppBlocker) {
+                                Alert.alert(
+                                  'Custom Build Required',
+                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.'
+                                );
+                                return;
+                              }
+                              AppBlocker.requestUsageStatsPermission();
+                            }}
                             style={{
                               backgroundColor: '#B45309',
                               borderRadius: radius.sm,
@@ -570,7 +588,16 @@ export default function NotificationSettingsScreen() {
 
                         {!overlayPermission && (
                           <Pressable
-                            onPress={() => AppBlocker?.requestOverlayPermission()}
+                            onPress={() => {
+                              if (Platform.OS !== 'android' || !AppBlocker) {
+                                Alert.alert(
+                                  'Custom Build Required',
+                                  'App Blocker requires custom Android native code. Please build and run a Custom Development Build using "npx expo run:android" or compile a new APK.'
+                                );
+                                return;
+                              }
+                              AppBlocker.requestOverlayPermission();
+                            }}
                             style={{
                               backgroundColor: '#B45309',
                               borderRadius: radius.sm,
