@@ -97,31 +97,44 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged)
       if (authKey) {
         const change = changes[authKey];
         if (change.newValue) {
-          console.log("[Background] Auth token updated in storage. Re-establishing session...");
           try {
-            const session = typeof change.newValue === 'string' ? JSON.parse(change.newValue) : change.newValue;
-            supabase.auth.setSession(session)
-              .then(({ error }) => {
-                if (error) {
-                  console.error("[Background] Auth setSession failed:", error.message);
-                  void engine.setStorage("lastSyncError", `Auth sync failed: ${error.message}`);
-                } else {
-                  console.log("[Background] Auth setSession succeeded.");
-                  void engine.setStorage("lastSyncError", null);
-                }
-              })
-              .catch((err: any) => {
-                console.error("[Background] Auth setSession error:", err);
-                void engine.setStorage("lastSyncError", `Auth error: ${err.message || String(err)}`);
-              });
+            const sessionObj = typeof change.newValue === 'string' ? JSON.parse(change.newValue) : change.newValue;
+            
+            // Check if current loaded session already matches to break infinite update loop
+            supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+              if (currentSession?.access_token === sessionObj?.access_token) {
+                return; // already synced
+              }
+              
+              console.log("[Background] Auth token updated in storage. Re-establishing session...");
+              supabase.auth.setSession(sessionObj)
+                .then(({ error }) => {
+                  if (error) {
+                    console.error("[Background] Auth setSession failed:", error.message);
+                    void engine.setStorage("lastSyncError", `Auth sync failed: ${error.message}`);
+                  } else {
+                    console.log("[Background] Auth setSession succeeded.");
+                    void engine.setStorage("lastSyncError", null);
+                  }
+                })
+                .catch((err: any) => {
+                  console.error("[Background] Auth setSession error:", err);
+                  void engine.setStorage("lastSyncError", `Auth error: ${err.message || String(err)}`);
+                });
+            });
           } catch (e: any) {
             console.error("[Background] Failed to parse new auth token session:", e);
             void engine.setStorage("lastSyncError", `Parse auth error: ${e.message || String(e)}`);
           }
         } else {
-          console.log("[Background] Auth token removed from storage. Signing out...");
-          void supabase.auth.signOut();
-          void engine.setStorage("lastSyncError", null);
+          // Only sign out if current session is not already empty
+          supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+            if (currentSession) {
+              console.log("[Background] Auth token removed from storage. Signing out...");
+              void supabase.auth.signOut();
+            }
+            void engine.setStorage("lastSyncError", null);
+          });
         }
       }
     }
