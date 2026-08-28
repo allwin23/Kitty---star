@@ -1,9 +1,39 @@
+import { useEffect } from 'react';
 import { Tabs } from 'expo-router';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View, AppState } from 'react-native';
 import { AnimatedTabIcon } from '@/components/ui/animated-tab-icon';
 import { NavBouquetBackdrop } from '@/components/ui/nav-bouquet-backdrop';
+import { usePomodoroStore } from '@/stores';
 
 export default function AppLayout() {
+  // Global Pomodoro background/active synchronizer
+  useEffect(() => {
+    // 1. Sync timer on mount
+    void usePomodoroStore.getState().syncBackgroundTime();
+
+    // 2. Sync timer when AppState changes to active
+    const subscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        void usePomodoroStore.getState().syncBackgroundTime();
+      }
+    });
+
+    // 3. Periodic check every 5 seconds to catch timer expiration while inside the app on other screens
+    const checkInterval = setInterval(() => {
+      const { isRunning, isPaused, targetEndTime } = usePomodoroStore.getState();
+      if (isRunning && !isPaused && targetEndTime) {
+        if (Date.now() >= targetEndTime) {
+          void usePomodoroStore.getState().syncBackgroundTime();
+        }
+      }
+    }, 5000);
+
+    return () => {
+      subscription.remove();
+      clearInterval(checkInterval);
+    };
+  }, []);
+
   const tabBarStyleResolved = [
     {
       position: Platform.OS === 'web' ? ('fixed' as any) : 'absolute',
