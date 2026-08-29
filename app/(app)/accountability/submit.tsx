@@ -134,6 +134,11 @@ export default function SubmitScreen() {
   const submission = submissionQ.data;
   const isSubmitted = !!submission;
   const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
+  const totalPomodoros = currentTasks.reduce((acc, t) => acc + (t.completed_pomodoros || 0), 0);
+  const totalPlannedMinutes = currentTasks.reduce((acc, t) => acc + (t.estimated_minutes || 0), 0);
+  const totalCompletedMinutes = currentTasks.reduce((acc, t) => acc + (t.completed_minutes || 0), 0);
+  const totalPlannedHrs = (totalPlannedMinutes / 60).toFixed(1).replace('.0', '');
+  const totalCompletedHrs = (totalCompletedMinutes / 60).toFixed(1).replace('.0', '');
 
   const proofsArray = (
     submission?.submission_proofs
@@ -320,6 +325,39 @@ export default function SubmitScreen() {
             <Loading />
           ) : (
             <>
+              {/* Today's Study Summary Stats Card */}
+              <View style={[glassCardStyle, styles.pinkGlassCard]}>
+                <View style={{ gap: spacing.md }}>
+                  <Text style={styles.sectionTitleText}>Today's Study Summary</Text>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.xs, paddingRight: spacing.xs }}>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '800', fontSize: 20, color: palette.cherryBloom }}>
+                        {completedCount}
+                      </Text>
+                      <Text style={styles.cardSubText}>Completed</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
+                        {currentTasks.length}
+                      </Text>
+                      <Text style={styles.cardSubText}>Total Tasks</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
+                        {totalPomodoros}
+                      </Text>
+                      <Text style={styles.cardSubText}>🍅 Pomodoros</Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
+                        {totalCompletedHrs}/{totalPlannedHrs}h
+                      </Text>
+                      <Text style={styles.cardSubText}>Study Time</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
               {/* Initial Plan Snapshot Card */}
               <View style={[glassCardStyle, styles.pinkGlassCard]}>
                 <View style={{ gap: spacing.md }}>
