@@ -13,7 +13,7 @@ import { getPartnerProfile } from '@/services/planner-read.service';
 import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { supabase } from '@/lib/supabase';
-import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
+import { Card, EmptyState, ErrorState, Loading, Screen, HeaderTitleCard } from '@/components/ui';
 import { GrowthStatsAnimatedCard } from '@/components/growth-stats-animated-card';
 import { colors, radius, spacing, typography } from '@/theme';
 
@@ -157,14 +157,14 @@ export default function ReportsScreen() {
         }
       >
         <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
-          {/* Header Row: Back arrow + Title */}
+          {/* Header Row: Back arrow + HeaderTitleCard */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
             <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
               <Text style={{ color: palette.text, fontSize: 20, fontWeight: '800' }}>
                 ←
               </Text>
             </Pressable>
-            <Text style={[typography.heading, { color: palette.text, flex: 1 }]}>Reports</Text>
+            <HeaderTitleCard title="Reports" showWavingHand={false} />
           </View>
 
           {/* Slider / Segmented Control Tab Bar */}

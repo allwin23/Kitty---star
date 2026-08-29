@@ -9,7 +9,7 @@ import { format } from 'date-fns';
 
 import { queryKeys } from '@/lib/query-keys';
 import { supabase } from '@/lib/supabase';
-import { Card, ErrorState, Loading, Screen } from '@/components/ui';
+import { Card, ErrorState, Loading, Screen, HeaderTitleCard } from '@/components/ui';
 import { colors, spacing, typography } from '@/theme';
 
 async function fetchReport(id: string) {
@@ -66,11 +66,13 @@ export default function ReportDetailScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ gap: spacing.lg, paddingBottom: 120 }}>
           {/* Header */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-            <Pressable onPress={() => router.back()}>
-              <Text style={{ color: palette.primary, fontSize: 16 }}>← Back</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Pressable onPress={() => router.back()} style={{ padding: 4 }}>
+              <Text style={{ color: palette.text, fontSize: 20, fontWeight: '800' }}>
+                ←
+              </Text>
             </Pressable>
-            <Text style={[typography.title, { color: palette.text, flex: 1 }]}>Report Detail</Text>
+            <HeaderTitleCard title="Report Detail" showWavingHand={false} />
           </View>
 
           {reportQ.isLoading ? (

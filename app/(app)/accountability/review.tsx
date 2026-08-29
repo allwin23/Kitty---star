@@ -177,13 +177,26 @@ export default function ReviewScreen() {
         payload: { submissionId },
       });
 
-      Alert.alert(
-        variables.status === 'approved' ? 'Day Approved!' : 'Day Rejected',
-        variables.status === 'approved'
-          ? "You approved your partner's day. Stats updated!"
-          : 'Submission marked as rejected.',
-        [{ text: 'OK', onPress: () => router.back() }],
-      );
+      const navigateAway = () => {
+        router.replace('/(app)/accountability');
+      };
+
+      if (Platform.OS === 'web') {
+        alert(
+          variables.status === 'approved'
+            ? "You approved your partner's day. Stats updated!"
+            : 'Submission marked as rejected.'
+        );
+        navigateAway();
+      } else {
+        Alert.alert(
+          variables.status === 'approved' ? 'Day Approved!' : 'Day Rejected',
+          variables.status === 'approved'
+            ? "You approved your partner's day. Stats updated!"
+            : 'Submission marked as rejected.',
+          [{ text: 'OK', onPress: navigateAway }],
+        );
+      }
     },
     onError: (e: Error) => Alert.alert('Review error', e.message),
   });
@@ -228,6 +241,10 @@ export default function ReviewScreen() {
     .sort((a, b) => a.order - b.order);
   const completedCount = currentTasks.filter((t) => t.status === 'completed').length;
   const totalPomodoros = currentTasks.reduce((acc, t) => acc + (t.completed_pomodoros || 0), 0);
+  const totalPlannedMinutes = currentTasks.reduce((acc, t) => acc + ((t as any).estimated_minutes || 0), 0);
+  const totalCompletedMinutes = currentTasks.reduce((acc, t) => acc + ((t as any).completed_minutes || 0), 0);
+  const totalPlannedHrs = (totalPlannedMinutes / 60).toFixed(1).replace('.0', '');
+  const totalCompletedHrs = (totalCompletedMinutes / 60).toFixed(1).replace('.0', '');
 
   const alreadyReviewed = submission.status !== 'pending';
   const generalProofs = submission.submission_proofs.filter((p) => !p.task_id);
@@ -298,7 +315,7 @@ export default function ReviewScreen() {
                 </Text>
               ) : null}
               {/* Study summary */}
-              <View style={{ flexDirection: 'row', gap: spacing.lg, marginTop: spacing.sm }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm, paddingRight: spacing.xs }}>
                 <View style={{ alignItems: 'center' }}>
                   <Text style={{ fontWeight: '800', fontSize: 20, color: palette.cherryBloom }}>
                     {completedCount}
@@ -316,6 +333,12 @@ export default function ReviewScreen() {
                     {totalPomodoros}
                   </Text>
                   <Text style={styles.cardSubText}>🍅 Pomodoros</Text>
+                </View>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ fontWeight: '800', fontSize: 20, color: palette.textPrimary }}>
+                    {totalCompletedHrs}/{totalPlannedHrs}h
+                  </Text>
+                  <Text style={styles.cardSubText}>Study Time</Text>
                 </View>
               </View>
             </View>
