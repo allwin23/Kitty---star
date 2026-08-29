@@ -63,15 +63,15 @@ export function CatBulletinStage() {
       true,
     );
 
-    // Auto-advance bulletin board every 12 seconds so users can read content & enjoy cat images
+    // Auto-advance bulletin board every 45 seconds so users can read content & enjoy cat images
     const interval = setInterval(() => {
       useCompanionQueueStore.getState().nextScenario();
-    }, 12000);
+    }, 45000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // Constant & Continuous Typewriter Typing Loop (holds static text for 10 seconds before subtle loop)
+  // Constant & Continuous Typewriter Typing Loop (holds static text for ~42 seconds before subtle loop)
   useEffect(() => {
     setDisplayedSubtext('');
     let charIdx = 0;
@@ -81,8 +81,8 @@ export function CatBulletinStage() {
       if (charIdx <= fullText.length) {
         setDisplayedSubtext(fullText.slice(0, charIdx));
         charIdx++;
-      } else if (charIdx > fullText.length + 260) {
-        // Hold static for ~10 seconds after typing finishes, then re-type
+      } else if (charIdx > fullText.length + 1100) {
+        // Hold static for ~42 seconds after typing finishes, then re-type
         charIdx = 0;
         setDisplayedSubtext('');
       } else {
