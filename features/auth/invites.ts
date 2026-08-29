@@ -6,9 +6,11 @@ import { supabase } from '@/lib/supabase';
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
 function generateInviteCode(): string {
-  const values = new Uint32Array(8);
-  crypto.getRandomValues(values);
-  return Array.from(values, (value) => alphabet[value % alphabet.length]).join('');
+  let result = '';
+  for (let i = 0; i < 8; i++) {
+    result += alphabet[Math.floor(Math.random() * alphabet.length)];
+  }
+  return result;
 }
 
 export async function createPartnerInvite(
