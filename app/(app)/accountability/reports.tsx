@@ -14,6 +14,7 @@ import { queryKeys } from '@/lib/query-keys';
 import { useAuthStore } from '@/stores';
 import { supabase } from '@/lib/supabase';
 import { Card, EmptyState, ErrorState, Loading, Screen } from '@/components/ui';
+import { GrowthStatsAnimatedCard } from '@/components/growth-stats-animated-card';
 import { colors, radius, spacing, typography } from '@/theme';
 
 export default function ReportsScreen() {
@@ -33,7 +34,6 @@ export default function ReportsScreen() {
   const [selectedTab, setSelectedTab] = useState<'my' | 'partner'>('my');
   const [showOlderMy, setShowOlderMy] = useState(false);
   const [showOlderPartner, setShowOlderPartner] = useState(false);
-  const [showOlderAchievements, setShowOlderAchievements] = useState(false);
 
   const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
   const reportsChannelRef = useRef<ReturnType<typeof reportService.subscribeToReports> | null>(
@@ -48,11 +48,6 @@ export default function ReportsScreen() {
   const statsQ = useQuery({
     queryKey: queryKeys.userStats,
     queryFn: () => reportService.stats(),
-  });
-
-  const achievementsQ = useQuery({
-    queryKey: queryKeys.achievements,
-    queryFn: () => reportService.achievements(),
   });
 
   const partnerProfileQ = useQuery({
@@ -89,7 +84,6 @@ export default function ReportsScreen() {
     reportsChannelRef.current = reportService.subscribeToReports(userId, () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
       void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
-      void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
     });
 
     // Also keep notifications fallback listener
@@ -100,7 +94,6 @@ export default function ReportsScreen() {
       ) {
         void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
         void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
-        void queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
       }
     });
 
@@ -148,12 +141,6 @@ export default function ReportsScreen() {
     approved_days: number;
     rejected_days: number;
   } | null;
-
-  const achievements = (achievementsQ.data ?? []) as {
-    id: string;
-    unlocked_at: string;
-    achievements: { name: string; description: string } | null;
-  }[];
 
   return (
     <Screen>
@@ -238,127 +225,16 @@ export default function ReportsScreen() {
 
           {/* Stats Card */}
           {selectedTab === 'my' && stats ? (
-            <Card>
-              <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: cardText, fontWeight: '700', fontSize: 16 }}>
-                  Your Stats
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
-                  {[
-                    { label: 'Level', value: stats.level },
-                    { label: 'XP', value: stats.xp },
-                    { label: 'Streak', value: `${stats.current_streak}d` },
-                    { label: 'Best Streak', value: `${stats.longest_streak}d` },
-                    { label: '🍅 Total', value: stats.total_pomodoros },
-                    { label: '✅ Days', value: stats.approved_days },
-                    { label: '❌ Rejected', value: stats.rejected_days },
-                  ].map((s) => (
-                    <View key={s.label} style={{ alignItems: 'center', minWidth: 70 }}>
-                      <Text style={{ fontWeight: '700', fontSize: 20, color: cardPrimary }}>
-                        {s.value}
-                      </Text>
-                      <Text style={{ color: cardMutedText, fontSize: 11 }}>{s.label}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </Card>
+            <GrowthStatsAnimatedCard stats={stats} />
           ) : selectedTab === 'partner' && partnerStatsQ.isLoading ? (
             <Card>
               <Loading />
             </Card>
           ) : selectedTab === 'partner' && partnerStatsQ.data ? (
-            <Card>
-              <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: cardText, fontWeight: '700', fontSize: 16 }}>
-                  {`${partnerName}'s Stats`}
-                </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
-                  {[
-                    { label: 'Level', value: partnerStatsQ.data.level },
-                    { label: 'XP', value: partnerStatsQ.data.xp },
-                    { label: 'Streak', value: `${partnerStatsQ.data.current_streak}d` },
-                    { label: 'Best Streak', value: `${partnerStatsQ.data.longest_streak}d` },
-                    { label: '🍅 Total', value: partnerStatsQ.data.total_pomodoros },
-                    { label: '✅ Days', value: partnerStatsQ.data.approved_days },
-                    { label: '❌ Rejected', value: partnerStatsQ.data.rejected_days },
-                  ].map((s) => (
-                    <View key={s.label} style={{ alignItems: 'center', minWidth: 70 }}>
-                      <Text style={{ fontWeight: '700', fontSize: 20, color: cardPrimary }}>
-                        {s.value}
-                      </Text>
-                      <Text style={{ color: cardMutedText, fontSize: 11 }}>{s.label}</Text>
-                    </View>
-                  ))}
-                </View>
-              </View>
-            </Card>
+            <GrowthStatsAnimatedCard stats={partnerStatsQ.data} />
           ) : null}
 
-          {/* Achievements Card (Only for user tab) */}
-          {selectedTab === 'my' && achievements.length > 0 ? (
-            <Card>
-              <View style={{ gap: spacing.sm }}>
-                <Text style={{ color: cardText, fontWeight: '700', fontSize: 16 }}>
-                  Achievements ({achievements.length})
-                </Text>
-                {(showOlderAchievements ? achievements : achievements.slice(0, 7)).map((a) => (
-                  <View
-                    key={a.id}
-                    style={{
-                      flexDirection: 'row',
-                      gap: spacing.sm,
-                      alignItems: 'center',
-                      borderBottomColor: cardBorder,
-                      borderBottomWidth: 1,
-                      paddingVertical: spacing.xs,
-                    }}
-                  >
-                    <Text style={{ fontSize: 24 }}>🏆</Text>
-                    <View style={{ flex: 1 }}>
-                      <Text style={{ color: cardText, fontWeight: '600' }}>
-                        {a.achievements?.name}
-                      </Text>
-                      <Text style={{ color: cardMutedText, fontSize: 12 }}>
-                        {a.achievements?.description}
-                      </Text>
-                    </View>
-                    <Text style={{ color: cardMutedText, fontSize: 11 }}>
-                      {format(new Date(a.unlocked_at), 'dd MMM')}
-                    </Text>
-                  </View>
-                ))}
 
-                {/* Show Older Achievements Button */}
-                {achievements.length > 7 && !showOlderAchievements ? (
-                  <Pressable
-                    onPress={() => setShowOlderAchievements(true)}
-                    style={({ pressed }) => ({
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                      borderColor: 'rgba(232, 77, 114, 0.20)',
-                      borderWidth: 1.5,
-                      borderRadius: 20,
-                      paddingVertical: 10,
-                      marginTop: spacing.sm,
-                      opacity: pressed ? 0.8 : 1,
-                    })}
-                  >
-                    <Text
-                      style={{
-                        color: cardText,
-                        fontWeight: '800',
-                        fontSize: 13,
-                      }}
-                    >
-                      Show Older Achievements
-                    </Text>
-                  </Pressable>
-                ) : null}
-              </View>
-            </Card>
-          ) : null}
 
           {/* Reports List Title */}
           <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>

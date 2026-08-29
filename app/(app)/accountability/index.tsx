@@ -259,13 +259,13 @@ export default function AccountabilityScreen() {
       if (!pId) return null;
       const { data, error } = await supabase
         .from('daily_reports')
-        .select('*')
+        .select('*, report_tasks(*)')
         .eq('user_id', pId)
         .order('date', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (error) throw error;
-      return data as { date: string; approval_status: 'approved' | 'rejected' } | null;
+      return data;
     },
     enabled: !!profile?.partner_id,
   });
@@ -825,6 +825,28 @@ export default function AccountabilityScreen() {
 
               {partnerPlanQ.isLoading ? (
                 <Loading />
+              ) : partnerLatestReportQ.data && partnerLatestReportQ.data.date === today ? (
+                <View style={{ gap: spacing.sm }}>
+                  <TodoList
+                    tasks={(Array.isArray(partnerLatestReportQ.data.report_tasks)
+                      ? partnerLatestReportQ.data.report_tasks
+                      : []
+                    ).map((t: any) => ({
+                      id: t.id,
+                      title: t.title,
+                      estimated_minutes: t.estimated_minutes,
+                      completed_minutes: t.completed_minutes,
+                      status: t.completed ? 'completed' : 'pending',
+                      completed_pomodoros: t.pomodoros,
+                      order: t.order ?? 0,
+                    }))}
+                    readOnly
+                    showPomodoro
+                  />
+                  <Text style={{ color: palette.mutedText, fontSize: 12, textAlign: 'center', marginTop: 4 }}>
+                    {`${partnerName} completed their day: ${partnerLatestReportQ.data.approval_status}! \u2728`}
+                  </Text>
+                </View>
               ) : !partnerPlan ? (
                 <EmptyState
                   title="No tasks yet"
@@ -855,10 +877,17 @@ export default function AccountabilityScreen() {
                 />
               ) : !partnerSub ? (
                 <View style={{ gap: spacing.sm }}>
-                  <EmptyState
-                    title="No submission"
-                    description={`${partnerName} hasn't submitted today's plan yet.`}
-                  />
+                  {partnerLatestReportQ.data && partnerLatestReportQ.data.date === today ? (
+                    <EmptyState
+                      title="Day Finalized"
+                      description={`You reviewed and finalized ${partnerName}'s day today.`}
+                    />
+                  ) : (
+                    <EmptyState
+                      title="No submission"
+                      description={`${partnerName} hasn't submitted today's plan yet.`}
+                    />
+                  )}
                   <View style={{ marginTop: spacing.md, gap: spacing.md }}>
                     <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14, textAlign: 'center' }}>
                       Latest Review Results
@@ -1024,9 +1053,13 @@ export default function AccountabilityScreen() {
 
           {/* Reports History link */}
           <Button
-            variant="white"
+            variant="primary"
             size="lg"
             onPress={() => router.push('/(app)/accountability/reports')}
+            style={{
+              backgroundColor: '#C73A57',
+              borderRadius: 20,
+            }}
           >
             {'View Report History \u2192'}
           </Button>
