@@ -377,6 +377,7 @@ export default function AccountabilityScreen() {
       id: t.id,
       title: t.title,
       estimated_minutes: t.estimated_minutes,
+      completed_minutes: t.completed_minutes,
       status: t.status,
       completed_pomodoros: t.completed_pomodoros,
       order: t.order,
@@ -643,11 +644,13 @@ export default function AccountabilityScreen() {
                       id: t.id,
                       title: t.title,
                       estimated_minutes: t.estimated_minutes,
+                      completed_minutes: t.completed_minutes,
                       status: t.completed ? 'completed' : 'pending',
                       completed_pomodoros: t.pomodoros,
                       order: t.order ?? 0,
                     }))}
                     readOnly
+                    showPomodoro
                   />
                   <View
                     style={{
@@ -696,7 +699,7 @@ export default function AccountabilityScreen() {
                 </View>
               ) : currentPlan.status === 'submitted' ? (
                 <View style={{ gap: spacing.sm }}>
-                  <TodoList tasks={currentTasks} readOnly />
+                  <TodoList tasks={currentTasks} readOnly showPomodoro />
                   <Text style={{ color: palette.mutedText, fontSize: 13, textAlign: 'center' }}>
                     Day submitted. Awaiting partner review.
                   </Text>
@@ -708,6 +711,7 @@ export default function AccountabilityScreen() {
                   onDelete={handleTaskDelete}
                   onAdd={handleTaskAdd}
                   savingId={savingTaskId}
+                  showPomodoro
                 />
               )}
             </View>
@@ -900,22 +904,51 @@ export default function AccountabilityScreen() {
                       {'\u00B7'} {t.title} {t.status === 'completed' ? '\u2713' : ''}
                     </Text>
                   ))}
-                  {partnerSub.status === 'pending' ? (
-                    <Button
-                      onPress={() =>
-                        router.push({
-                          pathname: '/(app)/accountability/review',
-                          params: { submissionId: partnerSub.id },
-                        })
-                      }
-                    >
-                      Review Submission
-                    </Button>
-                  ) : null}
                 </View>
               )}
             </View>
           </Card>
+
+          {/* Review Partner Submission Button (Placed after Card!) */}
+          {partnerSub && partnerSub.status === 'pending' ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={() =>
+                router.push({
+                  pathname: '/(app)/accountability/review',
+                  params: { submissionId: partnerSub.id },
+                })
+              }
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.88 : 1,
+                transform: [{ scale: pressed ? 0.97 : 1 }],
+                width: '100%',
+                marginTop: spacing.md,
+              })}
+            >
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  width: '100%',
+                  backgroundColor: '#C73A57',
+                  borderRadius: 20,
+                  borderWidth: 1,
+                  borderColor: 'rgba(255, 255, 255, 0.30)',
+                  paddingVertical: 14,
+                  paddingHorizontal: 16,
+                }}
+              >
+                <Text
+                  style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 16, letterSpacing: 0.2 }}
+                >
+                  {'Review Partner Submission \u2192'}
+                </Text>
+              </View>
+            </Pressable>
+          ) : null}
 
           {/* Reports History link */}
           <Button

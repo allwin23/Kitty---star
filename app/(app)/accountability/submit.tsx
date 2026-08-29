@@ -111,6 +111,7 @@ export default function SubmitScreen() {
           id: string;
           title: string;
           estimated_minutes: number;
+          completed_minutes: number;
           completed_pomodoros: number;
           status: 'pending' | 'completed';
           order: number;
@@ -124,6 +125,7 @@ export default function SubmitScreen() {
       id: t.id,
       title: t.title,
       estimated_minutes: t.estimated_minutes,
+      completed_minutes: t.completed_minutes,
       status: t.status,
       completed_pomodoros: t.completed_pomodoros,
       order: t.order,
@@ -251,8 +253,9 @@ export default function SubmitScreen() {
               undefined,
               img.taskId,
             );
-          } catch (e) {
+          } catch (e: any) {
             console.warn('Failed uploading image during submit:', e);
+            throw new Error(`Failed to upload proof image: ${e.message || e}`);
           }
         }
       }
