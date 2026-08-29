@@ -252,6 +252,41 @@ export default function AccountabilityScreen() {
     enabled: !!user,
   });
 
+  const partnerLatestReportQ = useQuery({
+    queryKey: ['partner-latest-report', profile?.partner_id],
+    queryFn: async () => {
+      const pId = profile?.partner_id;
+      if (!pId) return null;
+      const { data, error } = await supabase
+        .from('daily_reports')
+        .select('*')
+        .eq('user_id', pId)
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data as { date: string; approval_status: 'approved' | 'rejected' } | null;
+    },
+    enabled: !!profile?.partner_id,
+  });
+
+  const myLatestReportQ = useQuery({
+    queryKey: ['my-latest-report', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from('daily_reports')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('date', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data as { date: string; approval_status: 'approved' | 'rejected'; review_comment: string | null } | null;
+    },
+    enabled: !!user?.id,
+  });
+
   // ─── Cache invalidation ─────────────────────────────────────────────────────
 
   const invalidateAll = useCallback(() => {
@@ -263,7 +298,9 @@ export default function AccountabilityScreen() {
     void queryClient.invalidateQueries({ queryKey: queryKeys.reports });
     void queryClient.invalidateQueries({ queryKey: queryKeys.userStats });
     void queryClient.invalidateQueries({ queryKey: ['today-report', today] });
-  }, [queryClient]);
+    void queryClient.invalidateQueries({ queryKey: ['partner-latest-report', profile?.partner_id] });
+    void queryClient.invalidateQueries({ queryKey: ['my-latest-report', user?.id] });
+  }, [queryClient, today, profile?.partner_id, user?.id]);
 
   // Realtime: listen for notifications to auto-refresh on review events
   const channelRef = useRef<ReturnType<typeof notificationService.subscribe> | null>(null);
@@ -652,43 +689,6 @@ export default function AccountabilityScreen() {
                     readOnly
                     showPomodoro
                   />
-                  <View
-                    style={{
-                      backgroundColor:
-                        todayReport.approval_status === 'approved' ? '#f0fdf4' : '#fef2f2',
-                      borderColor:
-                        todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
-                      borderRadius: radius.md,
-                      borderWidth: 1,
-                      padding: spacing.sm,
-                      marginTop: spacing.sm,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: todayReport.approval_status === 'approved' ? '#16a34a' : '#ef4444',
-                        fontWeight: '700',
-                        textAlign: 'center',
-                        fontSize: 14,
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      Day Completed: {todayReport.approval_status} 🎉
-                    </Text>
-                    {todayReport.review_comment ? (
-                      <Text
-                        style={{
-                          color: palette.mutedText,
-                          fontSize: 12,
-                          textAlign: 'center',
-                          marginTop: 4,
-                          fontStyle: 'italic',
-                        }}
-                      >
-                        &quot;{todayReport.review_comment}&quot;
-                      </Text>
-                    ) : null}
-                  </View>
                 </View>
               ) : !currentPlan ? (
                 <View style={{ gap: spacing.sm, alignItems: 'center' }}>
@@ -854,10 +854,82 @@ export default function AccountabilityScreen() {
                   onRetry={() => void partnerQ.refetch()}
                 />
               ) : !partnerSub ? (
-                <EmptyState
-                  title="No submission"
-                  description={`${partnerName} hasn't submitted today's plan yet.`}
-                />
+                <View style={{ gap: spacing.sm }}>
+                  <EmptyState
+                    title="No submission"
+                    description={`${partnerName} hasn't submitted today's plan yet.`}
+                  />
+                  <View style={{ marginTop: spacing.md, gap: spacing.md }}>
+                    <Text style={{ color: palette.text, fontWeight: '700', fontSize: 14, textAlign: 'center' }}>
+                      Latest Review Results
+                    </Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: spacing.md }}>
+                      {/* My Latest Report */}
+                      {myLatestReportQ.data ? (
+                        <View style={{ alignItems: 'center', gap: 4 }}>
+                          <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+                            My Last Day:
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: myLatestReportQ.data.approval_status === 'approved' ? 'rgba(22, 163, 74, 0.08)' : 'rgba(217, 76, 97, 0.08)',
+                              borderColor: myLatestReportQ.data.approval_status === 'approved' ? '#16a34a' : '#d94c61',
+                              borderWidth: 1.5,
+                              borderRadius: 20,
+                              paddingVertical: 8,
+                              paddingHorizontal: 16,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color: myLatestReportQ.data.approval_status === 'approved' ? '#16a34a' : '#d94c61',
+                                fontWeight: '800',
+                                fontSize: 12,
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {`${format(new Date(myLatestReportQ.data.date + 'T00:00:00'), 'MMM d')} ${myLatestReportQ.data.approval_status}`}
+                            </Text>
+                          </View>
+                        </View>
+                      ) : null}
+
+                      {/* Partner's Latest Report */}
+                      {partnerLatestReportQ.data ? (
+                        <View style={{ alignItems: 'center', gap: 4 }}>
+                          <Text style={{ color: palette.mutedText, fontSize: 11 }}>
+                            {`${partnerName}'s Last Day:`}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              backgroundColor: partnerLatestReportQ.data.approval_status === 'approved' ? 'rgba(22, 163, 74, 0.08)' : 'rgba(217, 76, 97, 0.08)',
+                              borderColor: partnerLatestReportQ.data.approval_status === 'approved' ? '#16a34a' : '#d94c61',
+                              borderWidth: 1.5,
+                              borderRadius: 20,
+                              paddingVertical: 8,
+                              paddingHorizontal: 16,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                color: partnerLatestReportQ.data.approval_status === 'approved' ? '#16a34a' : '#d94c61',
+                                fontWeight: '800',
+                                fontSize: 12,
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              {`${format(new Date(partnerLatestReportQ.data.date + 'T00:00:00'), 'MMM d')} ${partnerLatestReportQ.data.approval_status}`}
+                            </Text>
+                          </View>
+                        </View>
+                      ) : null}
+                    </View>
+                  </View>
+                </View>
               ) : (
                 <View style={{ gap: spacing.sm }}>
                   <Text style={{ color: palette.text, fontWeight: '600' }}>

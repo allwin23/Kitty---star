@@ -25,6 +25,10 @@ async function fetchReport(id: string) {
 export default function ReportDetailScreen() {
   const colorScheme = useColorScheme();
   const palette = colors[colorScheme === 'dark' ? 'dark' : 'light'];
+  const cardText = colors.light.text;
+  const cardMutedText = colors.light.mutedText;
+  const cardPrimary = colors.light.primary;
+  const cardBorder = 'rgba(232, 77, 114, 0.20)';
   const router = useRouter();
   const { reportId } = useLocalSearchParams<{ reportId: string }>();
 
@@ -81,12 +85,12 @@ export default function ReportDetailScreen() {
               {/* Summary */}
               <Card>
                 <View style={{ gap: spacing.sm }}>
-                  <Text style={[typography.title, { color: palette.text }]}>
+                  <Text style={[typography.title, { color: cardText }]}>
                     {format(new Date(r.date), 'EEEE, d MMMM yyyy')}
                   </Text>
                   <Text
                     style={{
-                      color: r.approval_status === 'approved' ? '#16a34a' : palette.danger,
+                      color: r.approval_status === 'approved' ? '#16a34a' : cardPrimary,
                       fontWeight: '700',
                       textTransform: 'capitalize',
                       fontSize: 16,
@@ -95,7 +99,7 @@ export default function ReportDetailScreen() {
                     {r.approval_status === 'approved' ? '✓ Approved' : '✗ Rejected'}
                   </Text>
                   {r.review_comment ? (
-                    <Text style={{ color: palette.mutedText, fontSize: 14 }}>
+                    <Text style={{ color: cardMutedText, fontSize: 14 }}>
                       Partner note: &quot;{r.review_comment}&quot;
                     </Text>
                   ) : null}
@@ -117,10 +121,10 @@ export default function ReportDetailScreen() {
                       { label: 'Streak', value: `${r.streak_after_day}d` },
                     ].map((s) => (
                       <View key={s.label} style={{ alignItems: 'center', minWidth: 80 }}>
-                        <Text style={{ fontWeight: '700', fontSize: 20, color: palette.primary }}>
+                        <Text style={{ fontWeight: '700', fontSize: 20, color: cardPrimary }}>
                           {s.value}
                         </Text>
-                        <Text style={{ color: palette.mutedText, fontSize: 11 }}>{s.label}</Text>
+                        <Text style={{ color: cardMutedText, fontSize: 11 }}>{s.label}</Text>
                       </View>
                     ))}
                   </View>
@@ -130,7 +134,7 @@ export default function ReportDetailScreen() {
               {/* Task breakdown */}
               <Card>
                 <View style={{ gap: spacing.sm }}>
-                  <Text style={{ color: palette.text, fontWeight: '700', fontSize: 16 }}>
+                  <Text style={{ color: cardText, fontWeight: '700', fontSize: 16 }}>
                     Task Breakdown
                   </Text>
                   {r.report_tasks
@@ -143,7 +147,7 @@ export default function ReportDetailScreen() {
                           flexDirection: 'row',
                           alignItems: 'flex-start',
                           gap: spacing.sm,
-                          borderBottomColor: palette.border,
+                          borderBottomColor: cardBorder,
                           borderBottomWidth: 1,
                           paddingVertical: spacing.xs,
                         }}
@@ -153,9 +157,9 @@ export default function ReportDetailScreen() {
                             width: 20,
                             height: 20,
                             borderRadius: 4,
-                            backgroundColor: t.completed ? palette.primary : 'transparent',
+                            backgroundColor: t.completed ? cardPrimary : 'transparent',
                             borderWidth: 2,
-                            borderColor: t.completed ? palette.primary : palette.border,
+                            borderColor: t.completed ? cardPrimary : cardBorder,
                             alignItems: 'center',
                             justifyContent: 'center',
                             marginTop: 2,
@@ -176,20 +180,20 @@ export default function ReportDetailScreen() {
                         <View style={{ flex: 1 }}>
                           <Text
                             style={{
-                              color: palette.text,
+                              color: cardText,
                               textDecorationLine: t.completed ? 'line-through' : 'none',
                               opacity: t.completed ? 0.6 : 1,
                             }}
                           >
                             {t.title}
                           </Text>
-                          <Text style={{ color: palette.mutedText, fontSize: 12 }}>
+                          <Text style={{ color: cardMutedText, fontSize: 12 }}>
                             {t.completed_minutes}/{t.estimated_minutes} min · {t.pomodoros} 🍅
                           </Text>
                         </View>
                         <Text
                           style={{
-                            color: t.completed ? '#16a34a' : palette.danger,
+                            color: t.completed ? '#16a34a' : cardPrimary,
                             fontSize: 12,
                             fontWeight: '600',
                           }}

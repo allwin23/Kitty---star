@@ -203,6 +203,13 @@ export default function ReviewScreen() {
   }
 
   if (submissionQ.isError || !submission) {
+    if (reviewMutation.isSuccess) {
+      return (
+        <Screen>
+          <Loading />
+        </Screen>
+      );
+    }
     return (
       <Screen>
         <ErrorState
