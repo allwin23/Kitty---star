@@ -1,0 +1,346 @@
+{
+  "title": "Urge Battle Dice",
+  "duration_minutes": "2-5",
+  "core_goal": "I do not have to obey an urge. I can experience it without acting on it.",
+  "urge_surfing_reminder": {
+    "title": "Remember: Urges Are Waves",
+    "message": "An urge rises, peaks, and falls. I don't need to fight it or feed it. I can observe it, breathe through it, and let it pass.",
+    "steps": [
+      "Notice: I am having an urge.",
+      "Name it: This is an urge, not an instruction.",
+      "Breathe slowly.",
+      "Notice the sensations without reacting.",
+      "Wait and let the wave change.",
+      "Choose my action instead of obeying the impulse."
+    ]
+  },
+  "motivation_quotes": [
+    "An urge is a feeling, not a command.",
+    "I don't need to win forever. I only need to win this moment.",
+    "The urge will pass whether I feed it or not.",
+    "I can feel uncomfortable without escaping into stimulation.",
+    "My future self is built by what I do in moments like this.",
+    "I am training my brain every time I choose restraint.",
+    "I don't have to negotiate with an impulse.",
+    "Pause first. Decide later.",
+    "This feeling is temporary. My goal is bigger.",
+    "I am the person making the decision, not the urge.",
+    "Discomfort is not danger.",
+    "I can surf this wave without drowning in it.",
+    "Every resisted urge is practice.",
+    "I don't need perfection. I need the next good decision.",
+    "My attention belongs to me.",
+    "I choose what I consume.",
+    "The easiest choice isn't always the choice I want.",
+    "Ten minutes of discomfort can protect hours of regret.",
+    "I can redirect my attention.",
+    "I don't have to act just because my brain asks.",
+    "Let the urge be there. Let it leave.",
+    "I can tolerate this moment.",
+    "My impulse is loud, but I don't have to listen.",
+    "I am learning to sit with boredom.",
+    "I am building self-control one decision at a time."
+  ],
+  "activities": [
+    {
+      "id": 1,
+      "activity": "Take 20 slow breaths. Count each exhale.",
+      "focus": "Calm the nervous system.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 2,
+      "activity": "Stand up and slowly stretch your entire body.",
+      "focus": "Change your physical state.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 3,
+      "activity": "Walk around your home without your phone.",
+      "focus": "Break the automatic behavior loop.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 4,
+      "activity": "Do 20 squats, rest, then repeat once.",
+      "focus": "Redirect physical energy.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 5,
+      "activity": "Drink a full glass of water slowly.",
+      "focus": "Pause before acting.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 6,
+      "activity": "Look around and name 5 things you see, 4 you feel, 3 you hear.",
+      "focus": "Ground yourself in the present.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 7,
+      "activity": "Go outside and walk for a few minutes.",
+      "focus": "Change environment.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 8,
+      "activity": "Do 10 push-ups or an easier variation.",
+      "focus": "Turn the urge into physical action.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 9,
+      "activity": "Take a cool or refreshing face wash.",
+      "focus": "Interrupt the automatic loop.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 10,
+      "activity": "Put your phone in another room and sit somewhere else.",
+      "focus": "Create distance from the trigger.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 11,
+      "activity": "Write: 'What am I feeling right now?' and answer honestly.",
+      "focus": "Identify the emotion behind the urge.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 12,
+      "activity": "Write three reasons you want to break this habit.",
+      "focus": "Reconnect with your goal.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 13,
+      "activity": "Write one thing your future self will thank you for.",
+      "focus": "Think beyond the immediate urge.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 14,
+      "activity": "Do a 3-minute room cleanup.",
+      "focus": "Turn impulse into productive action.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 15,
+      "activity": "Fold or organize some clothes.",
+      "focus": "Give your hands something useful to do.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 16,
+      "activity": "Wash a few dishes.",
+      "focus": "Replace passive stimulation with action.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 17,
+      "activity": "Organize your desk.",
+      "focus": "Create order around you.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 18,
+      "activity": "Read two pages of a physical book.",
+      "focus": "Train sustained attention.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 19,
+      "activity": "Write 5 sentences about what you want your life to look like in one year.",
+      "focus": "Reconnect with long-term goals.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 20,
+      "activity": "Write down exactly what triggered the urge.",
+      "focus": "Learn your patterns.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 21,
+      "activity": "Sit quietly and watch the urge like a wave for 3 minutes.",
+      "focus": "Practice urge surfing.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 22,
+      "activity": "Rate the urge from 1-10. Re-rate it after 3 minutes.",
+      "focus": "See that urges change over time.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 23,
+      "activity": "Close your eyes and notice where the urge appears in your body.",
+      "focus": "Observe instead of reacting.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 24,
+      "activity": "Take slow breaths while repeating: 'I can let this pass.'",
+      "focus": "Practice acceptance.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 25,
+      "activity": "Walk while counting your steps from 1 to 100.",
+      "focus": "Redirect attention.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 26,
+      "activity": "Look outside and describe everything you can see in detail.",
+      "focus": "Ground your attention.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 27,
+      "activity": "Do 30 jumping jacks, then breathe slowly.",
+      "focus": "Change your physiological state.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 28,
+      "activity": "Hold a plank for as long as comfortable, rest, and repeat.",
+      "focus": "Practice tolerating discomfort.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 29,
+      "activity": "Stretch your neck, shoulders, back, hips, and legs.",
+      "focus": "Release tension.",
+      "duration_minutes": 4
+    },
+    {
+      "id": 30,
+      "activity": "Walk up and down a safe set of stairs slowly.",
+      "focus": "Redirect restless energy.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 31,
+      "activity": "Write a short letter to your future self.",
+      "focus": "Strengthen your long-term identity.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 32,
+      "activity": "Write: 'If I obey this urge, how will I feel afterward?'",
+      "focus": "Remember consequences.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 33,
+      "activity": "Write: 'If I resist this urge, how will I feel afterward?'",
+      "focus": "Remember the reward of restraint.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 34,
+      "activity": "Write down one thing you are proud of accomplishing recently.",
+      "focus": "Build self-respect.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 35,
+      "activity": "Write three things you are grateful for.",
+      "focus": "Shift attention away from craving.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 36,
+      "activity": "Plan the next hour of your day.",
+      "focus": "Replace impulsive behavior with intention.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 37,
+      "activity": "Choose one tiny task you've been avoiding and start it.",
+      "focus": "Build action over avoidance.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 38,
+      "activity": "Put away 10 objects that are out of place.",
+      "focus": "Use the urge as a cue for productivity.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 39,
+      "activity": "Make your bed carefully.",
+      "focus": "Create an immediate win.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 40,
+      "activity": "Prepare a healthy snack or drink.",
+      "focus": "Care for yourself instead of escaping.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 41,
+      "activity": "Write one sentence describing the person you want to become.",
+      "focus": "Strengthen your identity.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 42,
+      "activity": "Repeat slowly: 'I choose my actions even when my feelings are strong.'",
+      "focus": "Build psychological distance from urges.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 43,
+      "activity": "Imagine the urge as a wave and watch it rise and fall.",
+      "focus": "Visualize urge surfing.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 44,
+      "activity": "Set a 5-minute timer and simply sit without entertainment.",
+      "focus": "Practice being comfortable without stimulation.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 45,
+      "activity": "Do slow breathing: inhale 4 seconds, exhale 6 seconds.",
+      "focus": "Reduce arousal and regain control.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 46,
+      "activity": "Write down the exact thought trying to convince you to give in.",
+      "focus": "Recognize the brain's negotiation.",
+      "duration_minutes": 3
+    },
+    {
+      "id": 47,
+      "activity": "Answer the thought with: 'Maybe, but I choose not to.'",
+      "focus": "Stop negotiating with the urge.",
+      "duration_minutes": 2
+    },
+    {
+      "id": 48,
+      "activity": "Take a 5-minute phone-free walk and notice your surroundings.",
+      "focus": "Restore attention naturally.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 49,
+      "activity": "Write today's most important goal and take one step toward it.",
+      "focus": "Convert impulse into progress.",
+      "duration_minutes": 5
+    },
+    {
+      "id": 50,
+      "activity": "Sit quietly, breathe, and repeat: 'I don't need to win forever. I only need to win this moment.'",
+      "focus": "Strengthen restraint.",
+      "duration_minutes": 3
+    }
+  ]
+}

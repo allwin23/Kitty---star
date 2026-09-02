@@ -1,0 +1,127 @@
+[
+  {
+    "id": "grammar_001",
+    "topic": "Subject Verb Agreement",
+    "question": "Each of the students ____ ready.",
+    "options": ["are", "is", "were", "have"],
+    "answer": 2,
+    "explanation": "Each is singular, therefore takes 'is'."
+  },
+  {
+    "id": "grammar_002",
+    "topic": "Subject Verb Agreement",
+    "question": "Either the teacher or the students ____ responsible.",
+    "options": ["is", "are", "was", "has"],
+    "answer": 2,
+    "explanation": "With 'either... or', the verb agrees with the closer subject ('the students' is plural, so 'are')."
+  },
+  {
+    "id": "grammar_003",
+    "topic": "Subject Verb Agreement",
+    "question": "The pack of wolves ____ howling at the moon.",
+    "options": ["were", "are", "is", "have"],
+    "answer": 3,
+    "explanation": "'Pack' is a collective noun acting as a single unit, so it takes the singular verb 'is'."
+  },
+  {
+    "id": "grammar_004",
+    "topic": "Pronoun Case",
+    "question": "This secret is between you and ____.",
+    "options": ["I", "me", "he", "they"],
+    "answer": 2,
+    "explanation": "'Between' is a preposition and requires object pronouns like 'me'."
+  },
+  {
+    "id": "grammar_005",
+    "topic": "Pronoun Case",
+    "question": "____ did you invite to the party?",
+    "options": ["Who", "Whom", "Whose", "Which"],
+    "answer": 2,
+    "explanation": "'Whom' is the objective pronoun and acts as the object of the verb 'invite'."
+  },
+  {
+    "id": "grammar_006",
+    "topic": "Tenses",
+    "question": "By the time the train arrived, we ____ for two hours.",
+    "options": ["waited", "have waited", "had been waiting", "will wait"],
+    "answer": 3,
+    "explanation": "The past perfect continuous ('had been waiting') describes an action that was ongoing up to another point in the past."
+  },
+  {
+    "id": "grammar_007",
+    "topic": "Tenses",
+    "question": "She ____ in London since 2015.",
+    "options": ["lives", "is living", "has lived", "lived"],
+    "answer": 3,
+    "explanation": "Present perfect tense ('has lived') is used for an action that started in the past and continues in the present."
+  },
+  {
+    "id": "grammar_008",
+    "topic": "Modifiers",
+    "question": "Walking down the street, ____.",
+    "options": [
+      "the trees looked beautiful",
+      "I saw a beautiful bird",
+      "a coin was found by me",
+      "my hat blew off"
+    ],
+    "answer": 2,
+    "explanation": "To avoid a dangling modifier, the subject of the sentence ('I') must perform the action in the participle phrase ('Walking down the street')."
+  },
+  {
+    "id": "grammar_009",
+    "topic": "Conditional Sentences",
+    "question": "If I ____ you, I would accept the job offer.",
+    "options": ["was", "am", "were", "be"],
+    "answer": 3,
+    "explanation": "The subjunctive mood 'were' is used in hypothetical or contrary-to-fact conditional clauses (Type 2 conditional)."
+  },
+  {
+    "id": "grammar_010",
+    "topic": "Conditional Sentences",
+    "question": "If she had studied harder, she ____ the exam.",
+    "options": ["will pass", "would pass", "would have passed", "passed"],
+    "answer": 3,
+    "explanation": "Type 3 conditional sentences use 'if + past perfect' in the conditional clause and 'would have + past participle' in the main clause."
+  },
+  {
+    "id": "grammar_011",
+    "topic": "Articles",
+    "question": "He is ____ honorable man.",
+    "options": ["a", "an", "the", "no article"],
+    "answer": 2,
+    "explanation": "We use 'an' because 'honorable' starts with a silent 'h' and thus a vowel sound."
+  },
+  {
+    "id": "grammar_012",
+    "topic": "Prepositions",
+    "question": "She is proficient ____ playing the piano.",
+    "options": ["at", "in", "with", "on"],
+    "answer": 2,
+    "explanation": "'Proficient' is idiomatically paired with 'in' (proficient in something)."
+  },
+  {
+    "id": "grammar_013",
+    "topic": "Parallel Structure",
+    "question": "She likes hiking, swimming, and ____.",
+    "options": ["to ride a bicycle", "riding a bicycle", "bicycles", "ride a bicycle"],
+    "answer": 2,
+    "explanation": "To maintain parallel structure, the items in the list should all use the gerund form (-ing)."
+  },
+  {
+    "id": "grammar_014",
+    "topic": "Relative Clauses",
+    "question": "The book ____ you lent me was fascinating.",
+    "options": ["who", "whom", "whose", "which"],
+    "answer": 4,
+    "explanation": "'Which' (or 'that') is used to refer to inanimate objects (like a book)."
+  },
+  {
+    "id": "grammar_015",
+    "topic": "Word Choice",
+    "question": "The new rules will ____ our performance.",
+    "options": ["effect", "affect", "affects", "effects"],
+    "answer": 2,
+    "explanation": "'Affect' is a verb meaning 'to influence', whereas 'effect' is typically a noun meaning 'result'."
+  }
+]

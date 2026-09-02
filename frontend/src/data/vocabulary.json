@@ -1,0 +1,227 @@
+[
+  {
+    "id": "vocab_001",
+    "word": "Assiduous",
+    "meaning": "Showing great care and perseverance.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Diligent", "Hardworking", "Sedulous"],
+    "antonyms": ["Lazy", "Negligent", "Idle"],
+    "example": "She remained assiduous throughout her medical preparation."
+  },
+  {
+    "id": "vocab_002",
+    "word": "Persuasion",
+    "meaning": "The action or fact of persuading someone or of being persuaded to do or believe something.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Coaxing", "Inducement", "Conviction"],
+    "antonyms": ["Dissuasion", "Discouragement"],
+    "example": "It took a lot of persuasion to get him to agree to the terms."
+  },
+  {
+    "id": "vocab_003",
+    "word": "Venerate",
+    "meaning": "Regard with great respect; revere.",
+    "partOfSpeech": "Verb",
+    "synonyms": ["Revere", "Adore", "Honor"],
+    "antonyms": ["Despise", "Disdain", "Dishonor"],
+    "example": "In many cultures, people venerate their ancestors."
+  },
+  {
+    "id": "vocab_004",
+    "word": "Scrutiny",
+    "meaning": "Critical observation or examination.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Inspection", "Analysis", "Investigation"],
+    "antonyms": ["Neglect", "Ignorance", "Glance"],
+    "example": "The design plans were subjected to intense scrutiny by the engineering team."
+  },
+  {
+    "id": "vocab_005",
+    "word": "Recompense",
+    "meaning": "Make amends to someone for loss or harm suffered; compensate.",
+    "partOfSpeech": "Verb",
+    "synonyms": ["Compensate", "Repay", "Reimburse"],
+    "antonyms": ["Deprive", "Penalize"],
+    "example": "The company will recompense you for any extra travel expenses incurred."
+  },
+  {
+    "id": "vocab_006",
+    "word": "Alacrity",
+    "meaning": "Brisk and cheerful readiness.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Eagerness", "Enthusiasm", "Promptness"],
+    "antonyms": ["Apathy", "Lethargy", "Reluctance"],
+    "example": "She accepted the job offer with alacrity."
+  },
+  {
+    "id": "vocab_007",
+    "word": "Cacophony",
+    "meaning": "A harsh, discordant mixture of sounds.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Din", "Noise", "Clash"],
+    "antonyms": ["Harmony", "Silence", "Euphony"],
+    "example": "A cacophony of car horns kept him awake all night."
+  },
+  {
+    "id": "vocab_008",
+    "word": "Ephemeral",
+    "meaning": "Lasting for a very short time.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Transient", "Fleeting", "Momentary"],
+    "antonyms": ["Permanent", "Enduring", "Eternal"],
+    "example": "The beauty of the cherry blossoms is famously ephemeral."
+  },
+  {
+    "id": "vocab_009",
+    "word": "Garrulous",
+    "meaning": "Excessively talkative, especially on trivial matters.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Talkative", "Loquacious", "Chatty"],
+    "antonyms": ["Taciturn", "Silent", "Reticent"],
+    "example": "He became more garrulous after having a few glasses of juice."
+  },
+  {
+    "id": "vocab_010",
+    "word": "Harangue",
+    "meaning": "A lengthy and aggressive speech.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Tirade", "Lecture", "Diatribe"],
+    "antonyms": ["Acclaim", "Tribute"],
+    "example": "They were subjected to a long harangue about their lack of discipline."
+  },
+  {
+    "id": "vocab_011",
+    "word": "Iconoclast",
+    "meaning": "A person who attacks cherished beliefs or institutions.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Rebel", "Maverick", "Dissident"],
+    "antonyms": ["Conformist", "Believer"],
+    "example": "As an iconoclast, she challenged the traditional styles of painting."
+  },
+  {
+    "id": "vocab_012",
+    "word": "Laconic",
+    "meaning": "Using very few words.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Brief", "Concise", "Terse"],
+    "antonyms": ["Verbose", "Wordy", "Garrulous"],
+    "example": "His laconic reply suggested he lacked interest in the project."
+  },
+  {
+    "id": "vocab_013",
+    "word": "Magnanimous",
+    "meaning": "Generous or forgiving, especially toward a rival or less powerful person.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Noble", "Generous", "Forgiving"],
+    "antonyms": ["Mean", "Selfish", "Petty"],
+    "example": "It was magnanimous of them to offer help after the conflict."
+  },
+  {
+    "id": "vocab_014",
+    "word": "Nefarious",
+    "meaning": "Wicked, impious, or criminal.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Evil", "Villainous", "Heinous"],
+    "antonyms": ["Good", "Admirable", "Honorable"],
+    "example": "The hackers had a nefarious plan to disable the city's power grid."
+  },
+  {
+    "id": "vocab_015",
+    "word": "Obsequious",
+    "meaning": "Obedient or attentive to an excessive or servile degree.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Servile", "Fawning", "Submissive"],
+    "antonyms": ["Domineering", "Independent", "Rebellious"],
+    "example": "The obsequious assistants hovered around the director, anticipating his every whim."
+  },
+  {
+    "id": "vocab_016",
+    "word": "Paradigm",
+    "meaning": "A typical example or pattern of something; a model.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Model", "Pattern", "Archetype"],
+    "antonyms": ["Anomaly", "Deviation"],
+    "example": "The research shifted the paradigm of how we understand genetics."
+  },
+  {
+    "id": "vocab_017",
+    "word": "Querulous",
+    "meaning": "Complaining in a petulant or whining manner.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Complaining", "Whiny", "Fretful"],
+    "antonyms": ["Cheerful", "Contented", "Easygoing"],
+    "example": "The querulous patient was never satisfied with the service."
+  },
+  {
+    "id": "vocab_018",
+    "word": "Recalcitrant",
+    "meaning": "Having an obstinately uncooperative attitude toward authority or discipline.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Uncooperative", "Intractable", "Defiant"],
+    "antonyms": ["Amenable", "Compliant", "Docile"],
+    "example": "The recalcitrant student refused to follow the classroom rules."
+  },
+  {
+    "id": "vocab_019",
+    "word": "Sycophant",
+    "meaning": "A person who acts obsequiously toward someone important in order to gain advantage.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Flatterer", "Toady", "Bootlicker"],
+    "antonyms": ["Detractor", "Rebel"],
+    "example": "He surrounded himself with sycophants who praised his every decision."
+  },
+  {
+    "id": "vocab_020",
+    "word": "Taciturn",
+    "meaning": "Reserved or uncommunicative in speech; saying little.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Reticent", "Quiet", "Silent"],
+    "antonyms": ["Talkative", "Loquacious", "Garrulous"],
+    "example": "My friend is taciturn around strangers but very vocal with family."
+  },
+  {
+    "id": "vocab_021",
+    "word": "Ubiquitous",
+    "meaning": "Present, appearing, or found everywhere.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Omnipresent", "Pervasive", "Universal"],
+    "antonyms": ["Rare", "Scarce", "Uncommon"],
+    "example": "Mobile phones are now ubiquitous in modern society."
+  },
+  {
+    "id": "vocab_022",
+    "word": "Vociferous",
+    "meaning": "Vehement or clamorous; expressing feelings in a loud and forceful way.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Loud", "Clamorous", "Outspoken"],
+    "antonyms": ["Quiet", "Silent", "Muted"],
+    "example": "There was vociferous opposition to the new tax plan."
+  },
+  {
+    "id": "vocab_023",
+    "word": "Wary",
+    "meaning": "Feeling or showing caution about possible dangers or problems.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Cautious", "Careful", "Chary"],
+    "antonyms": ["Reckless", "Trusting", "Foolhardy"],
+    "example": "You should be wary of email requests for your password."
+  },
+  {
+    "id": "vocab_024",
+    "word": "Zealot",
+    "meaning": "A person who is fanatical and uncompromising in pursuit of their religious, political, or other ideals.",
+    "partOfSpeech": "Noun",
+    "synonyms": ["Fanatic", "Extremist", "Radical"],
+    "antonyms": ["Moderate", "Apathist"],
+    "example": "He was a zealot who spent all his time protesting for social changes."
+  },
+  {
+    "id": "vocab_025",
+    "word": "Capricious",
+    "meaning": "Given to sudden and unaccountable changes of mood or behavior.",
+    "partOfSpeech": "Adjective",
+    "synonyms": ["Fickle", "Inconstant", "Variable"],
+    "antonyms": ["Stable", "Consistent", "Constant"],
+    "example": "The administration's capricious policies made planning impossible."
+  }
+]
