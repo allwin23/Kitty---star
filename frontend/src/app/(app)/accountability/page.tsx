@@ -115,7 +115,7 @@ export default function AccountabilityPage() {
         plan_id: currentPlan.id,
         title: newTaskTitle.trim(),
         estimated_minutes: parseInt(newTaskMinutes, 10) || 30,
-        order: (currentPlan.current_tasks?.length ?? 0) + 1,
+        order: ((currentPlan as any)?.current_tasks?.length ?? 0) + 1,
       });
     },
     onSuccess: () => {
@@ -394,7 +394,7 @@ export default function AccountabilityPage() {
                 </p>
               ) : (
                 <div className="space-y-1.5">
-                  {(partnerPlan.current_tasks ?? []).map((pt: any) => (
+                  {((partnerPlan as any)?.current_tasks ?? []).map((pt: any) => (
                     <div
                       key={pt.id}
                       className="flex items-center justify-between p-2.5 rounded-[14px] bg-[#FFF3F5] text-xs"
@@ -439,11 +439,11 @@ export default function AccountabilityPage() {
               <p className="text-xs font-bold text-[#C73A57]">
                 Tomorrow&apos;s Planned Goals:
               </p>
-              {(tomorrowDraft?.draft_tasks ?? []).length === 0 ? (
+              {((tomorrowDraft as any)?.draft_tasks ?? []).length === 0 ? (
                 <p className="text-xs text-[#66545B] italic">No draft tasks added yet for tomorrow.</p>
               ) : (
                 <div className="space-y-1.5">
-                  {(tomorrowDraft?.draft_tasks ?? []).map((dt: any) => (
+                  {((tomorrowDraft as any)?.draft_tasks ?? []).map((dt: any) => (
                     <div
                       key={dt.id}
                       className="flex items-center justify-between bg-white p-2.5 rounded-[12px] border border-[#FAD7E0] text-xs font-bold"
@@ -468,7 +468,7 @@ export default function AccountabilityPage() {
                 size="sm"
                 onClick={async () => {
                   if (!newDraftTitle.trim()) return;
-                  const currentTasks = (tomorrowDraft?.draft_tasks ?? []).map((t: any) => ({
+                  const currentTasks = ((tomorrowDraft as any)?.draft_tasks ?? []).map((t: any) => ({
                     title: t.title,
                     estimated_minutes: t.estimated_minutes,
                   }));

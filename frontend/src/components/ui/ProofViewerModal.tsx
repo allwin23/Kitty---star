@@ -16,7 +16,7 @@ export function ProofViewerModal({ isOpen, onClose, imageUrl, caption }: ProofVi
     <Modal isOpen={isOpen} onClose={onClose} title="Submitted Evidence Proof" maxWidth="lg">
       <div className="space-y-4 text-center">
         <div className="relative rounded-[20px] overflow-hidden border border-[#FAD7E0] bg-[#FFF3F5] flex items-center justify-center min-h-[260px] max-h-[500px]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {}
           <img
             src={imageUrl}
             alt="Study Proof"

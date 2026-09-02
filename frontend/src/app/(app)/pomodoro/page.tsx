@@ -58,7 +58,7 @@ export default function PomodoroPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
-      setNotifGranted(Notification.permission === 'granted');
+      setTimeout(() => setNotifGranted(Notification.permission === 'granted'), 0);
     }
   }, []);
 

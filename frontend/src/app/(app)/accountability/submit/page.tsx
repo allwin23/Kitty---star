@@ -124,7 +124,7 @@ export default function SubmitEvidencePage() {
 
                 {previewUrl ? (
                   <div className="space-y-3">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {}
                     <img
                       src={previewUrl}
                       alt="Proof Preview"

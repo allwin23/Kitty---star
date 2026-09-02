@@ -136,7 +136,7 @@ export default function ReviewPartnerSubmissionPage() {
                       onClick={() => setViewingProofUrl(url)}
                       className="group relative h-36 rounded-[18px] overflow-hidden border border-[#FAD7E0] bg-[#FFF3F5] cursor-pointer shadow-xs hover:shadow-md transition-all"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      {}
                       <img
                         src={url}
                         alt="Proof"

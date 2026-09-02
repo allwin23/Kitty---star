@@ -9,7 +9,7 @@ export function CatBulletinStage() {
 
   // Typewriter effect
   useEffect(() => {
-    setTypedText('');
+    setTimeout(() => setTypedText(''), 0);
     let idx = 0;
     const text = activeScenario.subtext;
 
@@ -70,7 +70,7 @@ export function CatBulletinStage() {
       <div className="flex flex-col sm:flex-row items-center gap-4">
         {/* Kitty Photo Frame */}
         <div className="relative shrink-0 w-28 h-28 sm:w-32 sm:h-32 rounded-[22px] overflow-hidden border-2 border-[#FAD7E0] bg-[#FFE4EB] shadow-md group">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {}
           <img
             src={activeScenario.imageSrc}
             alt="Kitty Companion"
