@@ -25,13 +25,15 @@ class AppBlockerModule(reactContext: ReactApplicationContext) : ReactContextBase
             val list = Arguments.createArray()
 
             for (packageInfo in packages) {
+                val appInfo = packageInfo.applicationInfo ?: continue
+                
                 // Skip system apps or studypartner itself
-                val isSystem = (packageInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+                val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
                 if (isSystem || packageInfo.packageName == reactApplicationContext.packageName) {
                     continue
                 }
 
-                val appName = packageInfo.applicationInfo.loadLabel(pm).toString()
+                val appName = appInfo.loadLabel(pm).toString()
                 val appMap = Arguments.createMap()
                 appMap.putString("name", appName)
                 appMap.putString("packageName", packageInfo.packageName)
