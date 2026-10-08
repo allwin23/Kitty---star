@@ -25,35 +25,38 @@ class AppBlockingService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val packages = intent?.getStringArrayListExtra("blockedPackages")
-        if (packages != null) {
-            blockedPackages = packages
-        }
-
-        // Create foreground notification
-        val notificationIntent = packageManager.getLaunchIntentForPackage(packageName)
-        val pendingIntent = PendingIntent.getActivity(
-            this,
-            0,
-            notificationIntent,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            } else {
-                PendingIntent.FLAG_UPDATE_CURRENT
+        try {
+            val packages = intent?.getStringArrayListExtra("blockedPackages")
+            if (packages != null) {
+                blockedPackages = packages
             }
-        )
 
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Pomodoro Mode Active")
-            .setContentText("Banned apps are currently blocked.")
-            .setSmallIcon(applicationInfo.icon)
-            .setContentIntent(pendingIntent)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .build()
+            // Create foreground notification
+            val notificationIntent = packageManager.getLaunchIntentForPackage(packageName)
+            val pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                notificationIntent,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                } else {
+                    PendingIntent.FLAG_UPDATE_CURRENT
+                }
+            )
 
-        startForeground(1, notification)
+            val notification = NotificationCompat.Builder(this, channelId)
+                .setContentTitle("Pomodoro Mode Active")
+                .setContentText("Banned apps are currently blocked.")
+                .setSmallIcon(applicationInfo.icon)
+                .setContentIntent(pendingIntent)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build()
 
-        startBlockingLoop()
+            startForeground(1, notification)
+            startBlockingLoop()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         return START_NOT_STICKY
     }
@@ -61,18 +64,22 @@ class AppBlockingService : Service() {
     private fun startBlockingLoop() {
         runnable = object : Runnable {
             override fun run() {
-                val currentApp = getForegroundPackageName()
-                if (currentApp != null && currentApp != packageName && blockedPackages.contains(currentApp)) {
-                    // Redirect back to our app
-                    val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
-                    if (launchIntent != null) {
-                        launchIntent.addFlags(
-                            Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
-                            Intent.FLAG_ACTIVITY_SINGLE_TOP
-                        )
-                        startActivity(launchIntent)
+                try {
+                    val currentApp = getForegroundPackageName()
+                    if (currentApp != null && currentApp != packageName && blockedPackages.contains(currentApp)) {
+                        // Redirect back to our app
+                        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
+                        if (launchIntent != null) {
+                            launchIntent.addFlags(
+                                Intent.FLAG_ACTIVITY_NEW_TASK or
+                                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                                Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            )
+                            startActivity(launchIntent)
+                        }
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
                 handler.postDelayed(this, 1000) // check every second
             }
@@ -81,25 +88,34 @@ class AppBlockingService : Service() {
     }
 
     private fun getForegroundPackageName(): String? {
-        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        val endTime = System.currentTimeMillis()
-        val startTime = endTime - 10000 // Query last 10 seconds
-        val usageEvents = usageStatsManager.queryEvents(startTime, endTime)
-        val event = UsageEvents.Event()
-        var lastEventPackage: String? = null
-        while (usageEvents.hasNextEvent()) {
-            usageEvents.getNextEvent(event)
-            if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-                lastEventPackage = event.packageName
+        try {
+            val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            val endTime = System.currentTimeMillis()
+            val startTime = endTime - 10000 // Query last 10 seconds
+            val usageEvents = usageStatsManager.queryEvents(startTime, endTime)
+            val event = UsageEvents.Event()
+            var lastEventPackage: String? = null
+            while (usageEvents.hasNextEvent()) {
+                usageEvents.getNextEvent(event)
+                if (event.eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
+                    lastEventPackage = event.packageName
+                }
             }
+            return lastEventPackage
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
-        return lastEventPackage
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        runnable?.let { handler.removeCallbacks(it) }
-        stopForeground(true)
+        try {
+            super.onDestroy()
+            runnable?.let { handler.removeCallbacks(it) }
+            stopForeground(true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -107,14 +123,18 @@ class AppBlockingService : Service() {
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val serviceChannel = NotificationChannel(
-                channelId,
-                "App Blocking Service Channel",
-                NotificationManager.IMPORTANCE_LOW
-            )
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(serviceChannel)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val serviceChannel = NotificationChannel(
+                    channelId,
+                    "App Blocking Service Channel",
+                    NotificationManager.IMPORTANCE_LOW
+                )
+                val manager = getSystemService(NotificationManager::class.java)
+                manager.createNotificationChannel(serviceChannel)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 }
