@@ -36,6 +36,8 @@ interface PomodoroState {
 
 const getStorage = () => AsyncStorage;
 
+let isLoggingExpiredTimer = false;
+
 export const usePomodoroStore = create<PomodoroState>()(
   persist(
     (set, get) => ({
@@ -164,7 +166,9 @@ export const usePomodoroStore = create<PomodoroState>()(
         if (isRunning && !isPaused && targetEndTime) {
           const remaining = Math.max(0, Math.ceil((targetEndTime - Date.now()) / 1000));
           if (remaining <= 0) {
-            void checkAndLogExpiredTimer();
+            if (!isLoggingExpiredTimer) {
+              void checkAndLogExpiredTimer();
+            }
           } else {
             set({ timerSeconds: remaining });
           }
@@ -185,6 +189,7 @@ export const usePomodoroStore = create<PomodoroState>()(
       },
 
       checkAndLogExpiredTimer: async () => {
+        if (isLoggingExpiredTimer) return;
         const {
           isRunning,
           isPaused,
@@ -201,11 +206,23 @@ export const usePomodoroStore = create<PomodoroState>()(
         const now = Date.now();
         if (now < targetEndTime) return;
 
+        // Staleness guard: If targetEndTime is older than 2 hours (or from a previous day),
+        // don't attempt to log a zombie session — silently purge and reset.
+        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+        if (now - targetEndTime > TWO_HOURS_MS) {
+          console.log('[PomodoroStore] Purging expired stale timer (>2h old)');
+          resetTimer();
+          return;
+        }
+
+        isLoggingExpiredTimer = true;
+
         // Set running state to false and targetEndTime to null immediately to prevent duplicate runs
         set({
           isRunning: false,
           isPaused: false,
           targetEndTime: null,
+          timerSeconds: 0,
         });
 
         try {
@@ -218,7 +235,7 @@ export const usePomodoroStore = create<PomodoroState>()(
           const { useChromeBlockerStore } = await import('./chrome-blocker-store');
           const { useGrowthAnimStore } = await import('./growth-anim-store');
           const Notifications = await import('expo-notifications');
-          const { Platform, Alert } = await import('react-native');
+          const { Platform } = await import('react-native');
 
           const today = todayIso();
           let targetPlan = (await getCurrentPlan(today)) as any;
@@ -313,18 +330,8 @@ export const usePomodoroStore = create<PomodoroState>()(
 
           resetTimer();
 
-          const typeLabel =
-            sessionType === 'focus'
-              ? 'Focus session logged!'
-              : sessionType === 'short_break'
-                ? 'Short break finished!'
-                : 'Long break finished!';
-
-          if (Platform.OS === 'web') {
-            window.alert(`Nice job! ${typeLabel}`);
-          } else {
-            Alert.alert('Session Complete! 🍅', typeLabel);
-          }
+          // NOTE: Do not call Alert.alert() directly from store to prevent WindowManager BadTokenException on Android
+          // The completion event was dispatched to EventBus for UI handling.
 
           // Invalidate queries to update tasks list, dashboard, stats, achievements
           void queryClient.invalidateQueries({ queryKey: queryKeys.currentPlan(today) });
@@ -346,6 +353,8 @@ export const usePomodoroStore = create<PomodoroState>()(
             } catch (e) {}
           }
           resetTimer();
+        } finally {
+          isLoggingExpiredTimer = false;
         }
       },
     }),
@@ -365,20 +374,43 @@ export const usePomodoroStore = create<PomodoroState>()(
         hasAutoOpened: state.hasAutoOpened,
       }),
       onRehydrateStorage: () => (state) => {
+        if (!state) return;
+
+        const now = Date.now();
+        const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+
+        // Auto-heal stale sessions (>2h old): Purge zombie state from days ago
+        if (state.targetEndTime && now - state.targetEndTime > TWO_HOURS_MS) {
+          console.log('[PomodoroStore] Rehydrated stale timer (>2h old), auto-healing state...');
+          usePomodoroStore.setState({
+            isRunning: false,
+            isPaused: false,
+            timerSeconds: state.durationMinutes * 60,
+            startedAt: null,
+            targetEndTime: null,
+            isFullScreen: false,
+            scheduledNotifId: null,
+            hasAutoOpened: false,
+          });
+          return;
+        }
+
         // On app startup: if the persisted state has isRunning=true but timerSeconds<=0,
         // it means the app was killed mid-session after the timer expired. Log the completed session.
-        if (state && state.isRunning && state.timerSeconds <= 0) {
+        if (state.isRunning && state.timerSeconds <= 0) {
           setTimeout(() => {
             void usePomodoroStore.getState().checkAndLogExpiredTimer();
-          }, 200);
+          }, 300);
+          return;
         }
-        // Also check: if targetEndTime is in the past, compute remaining and reset if expired
-        if (state && state.isRunning && !state.isPaused && state.targetEndTime) {
-          const remaining = Math.max(0, Math.ceil((state.targetEndTime - Date.now()) / 1000));
+
+        // Also check: if targetEndTime is in the past (< 2 hours), compute remaining or log
+        if (state.isRunning && !state.isPaused && state.targetEndTime) {
+          const remaining = Math.max(0, Math.ceil((state.targetEndTime - now) / 1000));
           if (remaining <= 0) {
             setTimeout(() => {
               void usePomodoroStore.getState().checkAndLogExpiredTimer();
-            }, 200);
+            }, 300);
           } else {
             usePomodoroStore.setState({ timerSeconds: remaining });
           }

@@ -410,16 +410,20 @@ export default function PomodoroScreen() {
   useEffect(() => {
     if (Platform.OS !== 'android' || !NativeModules.AppBlocker) return;
 
-    if (
-      isBlockerEnabled &&
-      isRunning &&
-      !isPaused &&
-      sessionType === 'focus' &&
-      blockedPackages.length > 0
-    ) {
-      NativeModules.AppBlocker.startBlockingService(blockedPackages);
-    } else {
-      NativeModules.AppBlocker.stopBlockingService();
+    try {
+      if (
+        isBlockerEnabled &&
+        isRunning &&
+        !isPaused &&
+        sessionType === 'focus' &&
+        blockedPackages.length > 0
+      ) {
+        NativeModules.AppBlocker.startBlockingService(blockedPackages);
+      } else {
+        NativeModules.AppBlocker.stopBlockingService();
+      }
+    } catch (err) {
+      console.warn('[Pomodoro] AppBlocker service call error:', err);
     }
   }, [isBlockerEnabled, isRunning, isPaused, sessionType, blockedPackages]);
 
@@ -440,18 +444,6 @@ export default function PomodoroScreen() {
       }
     }
   }, [currentTasks, selectedTaskId, setSelectedTaskId, currentPlan]);
-
-  // AppState listener for background / inactive app time sync
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', (nextState) => {
-      if (nextState === 'active') {
-        syncBackgroundTime();
-      }
-    });
-    return () => {
-      subscription.remove();
-    };
-  }, [syncBackgroundTime]);
 
   // 3-Second delay timer -> automatically open Full-Screen Running View ONLY ONCE per session
   useEffect(() => {
@@ -847,11 +839,14 @@ export default function PomodoroScreen() {
     );
   }
 
-  const totalDurationSecs = Math.max(1, durationMinutes * 60);
-  const progressPct = Math.min(
-    100,
-    Math.max(0, ((totalDurationSecs - timerSeconds) / totalDurationSecs) * 100),
-  );
+  const totalDurationSecs = Math.max(1, (Number(durationMinutes) || 25) * 60);
+  const safeTimerSecs = Math.max(0, Number(timerSeconds) || 0);
+  const progressPct = isNaN(totalDurationSecs)
+    ? 0
+    : Math.min(
+        100,
+        Math.max(0, Math.round(((totalDurationSecs - safeTimerSecs) / totalDurationSecs) * 100)),
+      );
 
   return (
     <Screen>
@@ -1191,13 +1186,15 @@ export default function PomodoroScreen() {
                 const isCompleted = task.status === 'completed';
                 const isSelected = selectedTaskId === task.id;
 
-                const estMins = task.estimated_minutes;
-                const compMins = task.completed_minutes;
+                const estMins = Math.max(1, Number(task.estimated_minutes) || 1);
+                const compMins = Math.max(0, Number(task.completed_minutes) || 0);
                 const remainingMins = Math.max(0, estMins - compMins);
                 const overtimeMins = compMins > estMins ? compMins - estMins : 0;
-                const completedPomodoros = task.completed_pomodoros;
+                const completedPomodoros = Math.max(0, Number(task.completed_pomodoros) || 0);
 
-                const taskProgressPct = Math.min(100, Math.round((compMins / estMins) * 100));
+                const taskProgressPct = isNaN(compMins / estMins)
+                  ? 0
+                  : Math.min(100, Math.max(0, Math.round((compMins / estMins) * 100)));
 
                 let stateLabel = 'Not Started';
                 let badgeColor: string = palette.textSecondary;

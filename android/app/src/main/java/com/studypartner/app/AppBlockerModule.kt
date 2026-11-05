@@ -112,6 +112,7 @@ class AppBlockerModule(reactContext: ReactApplicationContext) : ReactContextBase
     @ReactMethod
     fun startBlockingService(blockedPackages: ReadableArray) {
         try {
+            val context = reactApplicationContext ?: return
             val list = ArrayList<String>()
             for (i in 0 until blockedPackages.size()) {
                 val pkg = blockedPackages.getString(i)
@@ -120,13 +121,13 @@ class AppBlockerModule(reactContext: ReactApplicationContext) : ReactContextBase
                 }
             }
 
-            val serviceIntent = Intent(reactApplicationContext, AppBlockingService::class.java)
+            val serviceIntent = Intent(context, AppBlockingService::class.java)
             serviceIntent.putStringArrayListExtra("blockedPackages", list)
             
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                reactApplicationContext.startForegroundService(serviceIntent)
+                context.startForegroundService(serviceIntent)
             } else {
-                reactApplicationContext.startService(serviceIntent)
+                context.startService(serviceIntent)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -136,8 +137,9 @@ class AppBlockerModule(reactContext: ReactApplicationContext) : ReactContextBase
     @ReactMethod
     fun stopBlockingService() {
         try {
-            val serviceIntent = Intent(reactApplicationContext, AppBlockingService::class.java)
-            reactApplicationContext.stopService(serviceIntent)
+            val context = reactApplicationContext ?: return
+            val serviceIntent = Intent(context, AppBlockingService::class.java)
+            context.stopService(serviceIntent)
         } catch (e: Exception) {
             e.printStackTrace()
         }
